@@ -7,7 +7,7 @@ import { createPermissionDirective } from '@/app-permission/permission-directive
 import { createRouteGenerator } from '@/app-router/route-generator'
 import { loadRouteModules } from '@/app-router/route-loader'
 import { createTokenManager } from '@/app-auth/token-manager'
-import { createAppConfig } from '@/app-config/config-provider'
+import { installAppConfig } from '@/app-config/config-provider'
 import type { AppPlugin } from '@/app-core/types'
 import type { TokenStorage } from '@/app-auth/types'
 
@@ -54,8 +54,8 @@ describe('Core Pipeline Integration', () => {
 
     const configPlugin: AppPlugin = {
       name: 'config',
-      install: () => {
-        createAppConfig({
+      install: (app) => {
+        installAppConfig(app, {
           project: {
             title: 'Test Admin',
             logo: '',

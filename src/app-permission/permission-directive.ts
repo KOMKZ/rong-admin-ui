@@ -26,6 +26,8 @@ function applyPermission(
   if (hasAccess) {
     el.removeAttribute('disabled')
     el.style.removeProperty('display')
+    el.style.removeProperty('pointer-events')
+    el.style.removeProperty('opacity')
     return
   }
 

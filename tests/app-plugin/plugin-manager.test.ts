@@ -1,7 +1,15 @@
-import { describe, expect, it, vi } from 'vitest'
+import { describe, expect, it, vi, afterEach } from 'vitest'
 import { createApp, defineComponent, h } from 'vue'
-import { createPluginManager, getDiscreteApi } from '@/app-plugin/plugin-manager'
+import {
+  createPluginManager,
+  getDiscreteApi,
+  resetDiscreteApi,
+} from '@/app-plugin/plugin-manager'
 import type { UILibraryAdapter, DiscreteApiProvider } from '@/app-plugin/types'
+
+afterEach(() => {
+  resetDiscreteApi()
+})
 
 describe('createPluginManager', () => {
   it('should install UI library adapter', () => {
@@ -53,18 +61,37 @@ describe('createPluginManager', () => {
     expect(api).toBe(mockApi)
   })
 
-  it('should throw if getDiscreteApi called before setup', () => {
-    expect(() => {
-      // Reset by creating manager without discrete api
-      const plugin = createPluginManager({
-        uiLibrary: { name: 'bare', install: vi.fn() },
-      })
-      const app = createApp(defineComponent({ render: () => h('div') }))
-      plugin.install(app)
-      // This won't throw because previous test set it. That's expected behavior
-      // since it's a module-level singleton.
-      getDiscreteApi()
-    }).not.toThrow()
+  it('should clear discreteApi when adapter has no setupDiscreteApi', () => {
+    const plugin = createPluginManager({
+      uiLibrary: { name: 'bare', install: vi.fn() },
+    })
+    const app = createApp(defineComponent({ render: () => h('div') }))
+    plugin.install(app)
+
+    expect(() => getDiscreteApi()).toThrow('[app-plugin]')
+  })
+
+  it('should reset discreteApi via resetDiscreteApi', () => {
+    const mockApi: DiscreteApiProvider = {
+      message: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
+      dialog: { warning: vi.fn(), error: vi.fn(), info: vi.fn() },
+      notification: { success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() },
+      loadingBar: { start: vi.fn(), finish: vi.fn(), error: vi.fn() },
+    }
+
+    const adapter: UILibraryAdapter = {
+      name: 'test-ui',
+      install: vi.fn(),
+      setupDiscreteApi: () => mockApi,
+    }
+
+    const plugin = createPluginManager({ uiLibrary: adapter })
+    const app = createApp(defineComponent({ render: () => h('div') }))
+    plugin.install(app)
+    expect(getDiscreteApi()).toBe(mockApi)
+
+    resetDiscreteApi()
+    expect(() => getDiscreteApi()).toThrow('[app-plugin]')
   })
 
   it('should have correct plugin metadata', () => {

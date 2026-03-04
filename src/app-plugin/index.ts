@@ -10,4 +10,4 @@ export type {
   DirectiveDefinition,
   PluginManagerConfig,
 } from './types'
-export { createPluginManager, getDiscreteApi } from './plugin-manager'
+export { createPluginManager, getDiscreteApi, resetDiscreteApi } from './plugin-manager'

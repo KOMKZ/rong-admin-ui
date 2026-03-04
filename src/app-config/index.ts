@@ -8,4 +8,4 @@ export type {
   ConfigStore,
 } from './types'
 export type { AppConfigContext, AppConfigInput } from './config-provider'
-export { createAppConfig, useAppConfig } from './config-provider'
+export { createAppConfig, installAppConfig, useAppConfig } from './config-provider'

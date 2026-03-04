@@ -1,3 +1,4 @@
+import type { App } from 'vue'
 import { inject, provide, reactive, readonly, type DeepReadonly } from 'vue'
 import type { DesignConfig, ProjectConfig, RuntimeConfig, WebsiteConfig } from './types'
 
@@ -52,13 +53,13 @@ const defaultWebsiteConfig: WebsiteConfig = {
   logo: '',
 }
 
-export function createAppConfig(input?: Partial<AppConfigInput>): AppConfigContext {
+function buildConfigContext(input?: Partial<AppConfigInput>): AppConfigContext {
   const design = reactive<DesignConfig>({ ...defaultDesignConfig, ...input?.design })
   const project = reactive<ProjectConfig>({ ...defaultProjectConfig, ...input?.project })
   const runtime = reactive<RuntimeConfig>({ ...defaultRuntimeConfig, ...input?.runtime })
   const website = reactive<WebsiteConfig>({ ...defaultWebsiteConfig, ...input?.website })
 
-  const context: AppConfigContext = {
+  return {
     design: readonly(design),
     project: readonly(project),
     runtime: readonly(runtime),
@@ -70,8 +71,24 @@ export function createAppConfig(input?: Partial<AppConfigInput>): AppConfigConte
       Object.assign(project, partial)
     },
   }
+}
 
+/**
+ * Use inside component setup() — injects via Vue provide/inject.
+ */
+export function createAppConfig(input?: Partial<AppConfigInput>): AppConfigContext {
+  const context = buildConfigContext(input)
   provide(CONFIG_INJECTION_KEY, context)
+  return context
+}
+
+/**
+ * Use inside app.use() or plugin install() — injects via app.provide,
+ * safe to call outside of setup().
+ */
+export function installAppConfig(app: App, input?: Partial<AppConfigInput>): AppConfigContext {
+  const context = buildConfigContext(input)
+  app.provide(CONFIG_INJECTION_KEY, context)
   return context
 }
 
@@ -79,7 +96,7 @@ export function useAppConfig(): AppConfigContext {
   const context = inject<AppConfigContext>(CONFIG_INJECTION_KEY)
   if (!context) {
     throw new Error(
-      '[app-config] AppConfig not provided. Call createAppConfig in a parent component.',
+      '[app-config] AppConfig not provided. Call installAppConfig(app) or createAppConfig() in setup.',
     )
   }
   return context

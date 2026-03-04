@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
-import { defineComponent, h, nextTick } from 'vue'
+import { createApp, defineComponent, h, nextTick } from 'vue'
 import { mount } from '@vue/test-utils'
-import { createAppConfig, useAppConfig } from '@/app-config/config-provider'
+import { createAppConfig, installAppConfig, useAppConfig } from '@/app-config/config-provider'
 
 const ProviderComponent = defineComponent({
   props: { input: { type: Object, default: () => ({}) } },
@@ -80,5 +80,38 @@ describe('createAppConfig / useAppConfig', () => {
     expect(() => {
       mount(ConsumerComponent)
     }).toThrow('[app-config]')
+  })
+})
+
+describe('installAppConfig', () => {
+  it('should inject config via app.provide (safe outside setup)', () => {
+    const app = createApp(defineComponent({ render: () => h('div') }))
+    const ctx = installAppConfig(app, {
+      design: { darkMode: true, primaryColor: '#123456', borderRadius: 4, fontSize: 16 },
+    })
+
+    expect(ctx.design.darkMode).toBe(true)
+    expect(ctx.design.primaryColor).toBe('#123456')
+    expect(ctx.project.navMode).toBe('vertical')
+  })
+
+  it('should work when used in plugin install() then consumed in component', () => {
+    const wrapper = mount(ConsumerComponent, {
+      global: {
+        plugins: [
+          {
+            install(app) {
+              installAppConfig(app, {
+                runtime: { apiBaseURL: '/v2', env: 'production', debug: false },
+              })
+            },
+          },
+        ],
+      },
+    })
+
+    const ctx = wrapper.vm.config
+    expect(ctx.runtime.apiBaseURL).toBe('/v2')
+    expect(ctx.runtime.env).toBe('production')
   })
 })

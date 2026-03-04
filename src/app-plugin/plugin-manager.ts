@@ -13,6 +13,10 @@ export function getDiscreteApi(): DiscreteApiProvider {
   return _discreteApi
 }
 
+export function resetDiscreteApi(): void {
+  _discreteApi = null
+}
+
 export function createPluginManager(config: PluginManagerConfig): AppPlugin {
   return {
     name: 'app-plugin-manager',
@@ -22,7 +26,11 @@ export function createPluginManager(config: PluginManagerConfig): AppPlugin {
 
         if (config.uiLibrary.setupDiscreteApi) {
           _discreteApi = config.uiLibrary.setupDiscreteApi()
+        } else {
+          _discreteApi = null
         }
+      } else {
+        _discreteApi = null
       }
 
       if (config.directives) {
