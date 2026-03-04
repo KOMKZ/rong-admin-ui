@@ -10,12 +10,19 @@ const TestComponent = defineComponent({
   },
 })
 
+function createContainer(): HTMLDivElement {
+  const el = document.createElement('div')
+  document.body.appendChild(el)
+  return el
+}
+
+function removeContainer(el: HTMLDivElement): void {
+  if (el.parentNode) document.body.removeChild(el)
+}
+
 describe('bootstrapApp', () => {
   it('should mount app to container', async () => {
-    const container = document.createElement('div')
-    container.id = 'app'
-    document.body.appendChild(container)
-
+    const container = createContainer()
     const ctx = await bootstrapApp({
       rootComponent: TestComponent,
       rootContainer: container,
@@ -25,22 +32,25 @@ describe('bootstrapApp', () => {
     expect(ctx.app).toBeDefined()
 
     ctx.destroy()
-    document.body.removeChild(container)
+    removeContainer(container)
   })
 
   it('should install plugins in order', async () => {
-    const container = document.createElement('div')
-    document.body.appendChild(container)
-
+    const container = createContainer()
     const installOrder: string[] = []
+
     const pluginA: AppPlugin = {
       name: 'plugin-a',
-      install: () => { installOrder.push('a') },
+      install: () => {
+        installOrder.push('a')
+      },
       order: 20,
     }
     const pluginB: AppPlugin = {
       name: 'plugin-b',
-      install: () => { installOrder.push('b') },
+      install: () => {
+        installOrder.push('b')
+      },
       order: 10,
     }
 
@@ -53,13 +63,11 @@ describe('bootstrapApp', () => {
     expect(installOrder).toEqual(['b', 'a'])
 
     ctx.destroy()
-    document.body.removeChild(container)
+    removeContainer(container)
   })
 
   it('should call onReady callback', async () => {
-    const container = document.createElement('div')
-    document.body.appendChild(container)
-
+    const container = createContainer()
     const onReady = vi.fn()
 
     const ctx = await bootstrapApp({
@@ -71,6 +79,51 @@ describe('bootstrapApp', () => {
     expect(onReady).toHaveBeenCalledOnce()
 
     ctx.destroy()
-    document.body.removeChild(container)
+    removeContainer(container)
+  })
+
+  it('should remove global listeners on destroy', async () => {
+    const container = createContainer()
+    const removeSpy = vi.spyOn(window, 'removeEventListener')
+
+    const rejectionHandler = vi.fn()
+    const errorHandler = vi.fn()
+
+    const ctx = await bootstrapApp({
+      rootComponent: TestComponent,
+      rootContainer: container,
+      onError: {
+        onVueError: vi.fn(),
+        onUnhandledRejection: rejectionHandler,
+        onGlobalError: errorHandler,
+      },
+    })
+
+    ctx.destroy()
+
+    expect(removeSpy).toHaveBeenCalledWith('unhandledrejection', rejectionHandler)
+    expect(removeSpy).toHaveBeenCalledWith('error', errorHandler)
+
+    removeSpy.mockRestore()
+    removeContainer(container)
+  })
+
+  it('should be safe to call destroy multiple times', async () => {
+    const container = createContainer()
+
+    const ctx = await bootstrapApp({
+      rootComponent: TestComponent,
+      rootContainer: container,
+      onError: {
+        onVueError: vi.fn(),
+        onUnhandledRejection: vi.fn(),
+      },
+    })
+
+    ctx.destroy()
+    ctx.destroy()
+    ctx.destroy()
+
+    removeContainer(container)
   })
 })

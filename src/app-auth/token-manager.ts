@@ -16,6 +16,8 @@ const DEFAULT_REFRESH_THRESHOLD_MS = 5 * 60 * 1000
 const DEFAULT_REFRESH_INTERVAL_MS = 60 * 1000
 const CROSS_TAB_CHANNEL = 'rong_auth_sync'
 
+type SyncAction = 'logout' | 'login' | 'token_refreshed'
+
 export function createTokenManager(config: AuthConfig): TokenManagerInstance {
   const keys = { ...DEFAULT_STORAGE_KEYS, ...config.storageKeys }
   const storage = config.storage
@@ -23,6 +25,7 @@ export function createTokenManager(config: AuthConfig): TokenManagerInstance {
   let refreshTimer: ReturnType<typeof setInterval> | null = null
   let broadcastChannel: BroadcastChannel | null = null
   let isRefreshing = false
+  let initialized = false
 
   function getState(): AuthState {
     const token = storage.get(keys.accessToken)
@@ -90,6 +93,7 @@ export function createTokenManager(config: AuthConfig): TokenManagerInstance {
   }
 
   function startAutoRefresh(): void {
+    stopAutoRefresh()
     const interval = config.refreshIntervalMs ?? DEFAULT_REFRESH_INTERVAL_MS
     refreshTimer = setInterval(() => {
       void attemptRefresh()
@@ -103,24 +107,47 @@ export function createTokenManager(config: AuthConfig): TokenManagerInstance {
     }
   }
 
-  function broadcastSync(action: string): void {
+  function broadcastSync(action: SyncAction): void {
     broadcastChannel?.postMessage({ action })
+  }
+
+  function handleSyncMessage(action: SyncAction): void {
+    switch (action) {
+      case 'logout':
+        clearTokens()
+        stopAutoRefresh()
+        config.onTokenExpired?.()
+        break
+      case 'login':
+      case 'token_refreshed':
+        if (config.refreshApi && !refreshTimer) {
+          startAutoRefresh()
+        }
+        break
+    }
   }
 
   function setupCrossTabSync(): void {
     if (!config.enableCrossTabSync || typeof BroadcastChannel === 'undefined') return
 
+    teardownCrossTabSync()
     broadcastChannel = new BroadcastChannel(CROSS_TAB_CHANNEL)
-    broadcastChannel.onmessage = (event: MessageEvent<{ action: string }>) => {
-      if (event.data.action === 'logout') {
-        clearTokens()
-        stopAutoRefresh()
-        config.onTokenExpired?.()
-      }
+    broadcastChannel.onmessage = (event: MessageEvent<{ action: SyncAction }>) => {
+      handleSyncMessage(event.data.action)
+    }
+  }
+
+  function teardownCrossTabSync(): void {
+    if (broadcastChannel) {
+      broadcastChannel.close()
+      broadcastChannel = null
     }
   }
 
   function init(): void {
+    if (initialized) return
+    initialized = true
+
     if (isAuthenticated() && config.refreshApi) {
       startAutoRefresh()
     }
@@ -129,8 +156,8 @@ export function createTokenManager(config: AuthConfig): TokenManagerInstance {
 
   function destroy(): void {
     stopAutoRefresh()
-    broadcastChannel?.close()
-    broadcastChannel = null
+    teardownCrossTabSync()
+    initialized = false
   }
 
   function onLoginSuccess(tokenPair: TokenPair): void {

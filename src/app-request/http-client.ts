@@ -3,6 +3,7 @@ import type {
   HttpClient,
   HttpClientConfig,
   RequestError,
+  RequestErrorKind,
   RequestOptions,
 } from './types'
 
@@ -81,6 +82,27 @@ async function handleError(config: HttpClientConfig, error: RequestError): Promi
   throw error
 }
 
+function mergeSignals(timeoutSignal: AbortSignal, externalSignal?: AbortSignal): AbortSignal {
+  if (!externalSignal) return timeoutSignal
+  if (typeof AbortSignal.any === 'function') {
+    return AbortSignal.any([timeoutSignal, externalSignal])
+  }
+  const controller = new AbortController()
+  const onAbort = (): void => controller.abort()
+  timeoutSignal.addEventListener('abort', onAbort, { once: true })
+  externalSignal.addEventListener('abort', onAbort, { once: true })
+  return controller.signal
+}
+
+function classifyAbortError(
+  timeoutController: AbortController,
+  externalSignal?: AbortSignal,
+): RequestErrorKind {
+  if (timeoutController.signal.aborted) return 'TIMEOUT'
+  if (externalSignal?.aborted) return 'CANCELLED'
+  return 'CANCELLED'
+}
+
 export function createHttpClient(config: HttpClientConfig): HttpClient {
   async function request<T = unknown>(options: RequestOptions): Promise<ApiResponse<T>> {
     const processedOptions = await applyRequestInterceptors(config, options)
@@ -92,23 +114,21 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
     )
     const headers = buildHeaders(config, processedOptions)
 
+    const timeoutController = new AbortController()
+    const timeout = processedOptions.timeout ?? config.requestConfig.timeout ?? 30000
+    const timeoutId = setTimeout(() => timeoutController.abort(), timeout)
+
+    const signal = mergeSignals(timeoutController.signal, processedOptions.signal)
+
     const fetchOptions: RequestInit = {
       method,
       headers,
       credentials: config.requestConfig.withCredentials ? 'include' : 'same-origin',
-      signal: processedOptions.signal,
+      signal,
     }
 
     if (processedOptions.data && method !== 'GET') {
       fetchOptions.body = JSON.stringify(processedOptions.data)
-    }
-
-    const controller = new AbortController()
-    const timeout = processedOptions.timeout ?? config.requestConfig.timeout ?? 30000
-    const timeoutId = setTimeout(() => controller.abort(), timeout)
-
-    if (!fetchOptions.signal) {
-      fetchOptions.signal = controller.signal
     }
 
     try {
@@ -117,6 +137,7 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
 
       if (!response.ok) {
         const error: RequestError = {
+          kind: 'HTTP_ERROR',
           code: response.status,
           message: response.statusText,
           status: response.status,
@@ -128,7 +149,21 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
       return applyResponseInterceptors(config, json)
     } catch (err) {
       clearTimeout(timeoutId)
+
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        const kind = classifyAbortError(timeoutController, processedOptions.signal)
+        const error: RequestError = {
+          kind,
+          code: kind,
+          message:
+            kind === 'TIMEOUT' ? `Request timed out after ${timeout}ms` : 'Request cancelled',
+          originalError: err,
+        }
+        return handleError(config, error)
+      }
+
       const error: RequestError = {
+        kind: 'NETWORK_ERROR',
         code: 'NETWORK_ERROR',
         message: err instanceof Error ? err.message : 'Unknown error',
         originalError: err instanceof Error ? err : undefined,

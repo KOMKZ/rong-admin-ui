@@ -15,29 +15,30 @@ async function installPlugins(
   }
 }
 
-function setupErrorHandling(app: ReturnType<typeof createApp>, config: AppBootstrapConfig): void {
-  if (!config.onError) return
-
-  const handler = config.onError
-
-  app.config.errorHandler = (err, instance, info) => {
-    const componentName = instance?.$options?.name ?? null
-    handler.onVueError(err instanceof Error ? err : new Error(String(err)), componentName, info)
-  }
-
-  if (handler.onUnhandledRejection) {
-    window.addEventListener('unhandledrejection', handler.onUnhandledRejection)
-  }
-
-  if (handler.onGlobalError) {
-    window.addEventListener('error', handler.onGlobalError)
-  }
-}
-
 export async function bootstrapApp(config: AppBootstrapConfig): Promise<AppContext> {
   const app = createApp(config.rootComponent)
+  const cleanupFns: Array<() => void> = []
 
-  setupErrorHandling(app, config)
+  if (config.onError) {
+    const handler = config.onError
+
+    app.config.errorHandler = (err, instance, info) => {
+      const componentName = instance?.$options?.name ?? null
+      handler.onVueError(err instanceof Error ? err : new Error(String(err)), componentName, info)
+    }
+
+    if (handler.onUnhandledRejection) {
+      const listener = handler.onUnhandledRejection
+      window.addEventListener('unhandledrejection', listener)
+      cleanupFns.push(() => window.removeEventListener('unhandledrejection', listener))
+    }
+
+    if (handler.onGlobalError) {
+      const listener = handler.onGlobalError
+      window.addEventListener('error', listener)
+      cleanupFns.push(() => window.removeEventListener('error', listener))
+    }
+  }
 
   if (config.plugins?.length) {
     await installPlugins(app, config.plugins)
@@ -49,9 +50,20 @@ export async function bootstrapApp(config: AppBootstrapConfig): Promise<AppConte
 
   app.mount(config.rootContainer)
 
+  let destroyed = false
+
   return {
     app,
     isReady: true,
-    destroy: () => app.unmount(),
+    destroy(): void {
+      if (destroyed) return
+      destroyed = true
+      for (const fn of cleanupFns) {
+        fn()
+      }
+      cleanupFns.length = 0
+      app.config.errorHandler = undefined
+      app.unmount()
+    },
   }
 }

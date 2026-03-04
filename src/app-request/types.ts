@@ -1,5 +1,7 @@
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE'
 
+export type RequestErrorKind = 'HTTP_ERROR' | 'NETWORK_ERROR' | 'TIMEOUT' | 'CANCELLED'
+
 export interface RequestConfig {
   baseURL: string
   timeout?: number
@@ -31,6 +33,7 @@ export interface RequestInterceptor {
 }
 
 export interface RequestError {
+  kind: RequestErrorKind
   code: string | number
   message: string
   status?: number

@@ -25,29 +25,55 @@ function menuToRoute(
   isTopLevel: boolean,
 ): RouteRecordRaw | null {
   const hasChildren = menu.children && menu.children.length > 0
+  const meta: Record<string, unknown> = {
+    title: menu.name,
+    icon: menu.icon,
+    hidden: menu.hidden,
+    orderNum: menu.orderNum,
+    ...menu.meta,
+  }
 
-  const route: RouteRecordRaw = {
-    name: menu.name,
-    path: menu.path,
-    meta: {
-      title: menu.name,
-      icon: menu.icon,
-      hidden: menu.hidden,
-      orderNum: menu.orderNum,
-      ...menu.meta,
-    },
-    children: [],
+  if (isTopLevel && menu.redirect) {
+    return {
+      name: menu.name,
+      path: menu.path,
+      redirect: menu.redirect,
+      component: options.layoutComponent,
+      meta,
+      children: hasChildren
+        ? menu
+            .children!.map((child) => menuToRoute(child, options, false))
+            .filter((r): r is RouteRecordRaw => r !== null)
+        : [],
+    }
   }
 
   if (isTopLevel) {
-    route.component = options.layoutComponent
-    if (hasChildren) {
-      route.redirect = menu.redirect ?? menu.children![0].path
+    const children = hasChildren
+      ? menu
+          .children!.map((child) => menuToRoute(child, options, false))
+          .filter((r): r is RouteRecordRaw => r !== null)
+      : []
+
+    const redirect = hasChildren ? menu.children![0].path : undefined
+
+    if (redirect) {
+      return {
+        name: menu.name,
+        path: menu.path,
+        redirect,
+        component: options.layoutComponent,
+        meta,
+        children,
+      }
     }
-  } else if (menu.component) {
-    const viewComponent = findViewComponent(options.viewModules, menu.component)
-    if (viewComponent) {
-      route.component = viewComponent
+
+    return {
+      name: menu.name,
+      path: menu.path,
+      component: options.layoutComponent,
+      meta,
+      children,
     }
   }
 
@@ -56,13 +82,33 @@ function menuToRoute(
       .children!.map((child) => menuToRoute(child, options, false))
       .filter((r): r is RouteRecordRaw => r !== null)
 
-    if (childRoutes.length > 0 && !isTopLevel) {
-      route.component = options.parentLayoutComponent
+    return {
+      name: menu.name,
+      path: menu.path,
+      component: options.parentLayoutComponent,
+      meta,
+      children: childRoutes,
     }
-    route.children = childRoutes
   }
 
-  return route
+  if (menu.component) {
+    const viewComponent = findViewComponent(options.viewModules, menu.component)
+    if (viewComponent) {
+      return {
+        name: menu.name,
+        path: menu.path,
+        component: viewComponent,
+        meta,
+      }
+    }
+  }
+
+  return {
+    name: menu.name,
+    path: menu.path,
+    component: options.notFoundComponent,
+    meta,
+  }
 }
 
 export function createRouteGenerator(options: RouteGeneratorOptions) {

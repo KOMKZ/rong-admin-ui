@@ -1,5 +1,6 @@
 export type {
   HttpMethod,
+  RequestErrorKind,
   RequestConfig,
   RequestOptions,
   ApiResponse,
