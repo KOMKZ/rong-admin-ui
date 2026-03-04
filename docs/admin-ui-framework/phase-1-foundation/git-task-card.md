@@ -1,0 +1,25 @@
+# Git 任务卡
+
+- 任务名称：Phase 1 基础框架封装 v0.1
+- 目标仓库：`SKILL_RONG_ADMIN_UI_PATH` → `/Users/lartik.zhong/pro/yogan/rong-admin-ui`
+- 分支名称：`feature/phase1-foundation-v0.1`
+- 任务边界（包含）：
+  - 项目工程初始化（package.json / tsconfig / vite / vitest / eslint / prettier）
+  - 8 个核心模块 Contract 定义（types.ts）
+  - 8 个核心模块最小实现
+  - 6 个测试文件 / 24 个单元测试
+  - 质量门禁脚本与执行
+  - Phase 1 设计文档、三级任务清单、门禁报告、迭代日志
+- 任务边界（不包含）：
+  - 业务逻辑代码
+  - Vue 组件 UI 实现
+  - Phase 2 组件标准化
+  - 集成测试 / E2E 测试
+- 验收标准：
+  - vue-tsc --noEmit 通过
+  - ESLint 0 warnings（no-explicit-any: error）
+  - Prettier 格式一致
+  - 24/24 单元测试通过
+- 门禁要求：lint / type-check / test / review
+- 风险点：vue-router 类型兼容性（已解决）
+- 回滚方案：删除 feature 分支，main 分支无改动
