@@ -1,0 +1,96 @@
+{
+  "name": "@rong/admin-ui",
+  "version": "0.1.0",
+  "description": "Rong Admin UI Framework - Reusable admin framework with standardized contracts",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./app-core": {
+      "types": "./dist/app-core/index.d.ts",
+      "import": "./dist/app-core/index.js"
+    },
+    "./app-plugin": {
+      "types": "./dist/app-plugin/index.d.ts",
+      "import": "./dist/app-plugin/index.js"
+    },
+    "./app-layout": {
+      "types": "./dist/app-layout/index.d.ts",
+      "import": "./dist/app-layout/index.js"
+    },
+    "./app-router": {
+      "types": "./dist/app-router/index.d.ts",
+      "import": "./dist/app-router/index.js"
+    },
+    "./app-permission": {
+      "types": "./dist/app-permission/index.d.ts",
+      "import": "./dist/app-permission/index.js"
+    },
+    "./app-request": {
+      "types": "./dist/app-request/index.d.ts",
+      "import": "./dist/app-request/index.js"
+    },
+    "./app-auth": {
+      "types": "./dist/app-auth/index.d.ts",
+      "import": "./dist/app-auth/index.js"
+    },
+    "./app-config": {
+      "types": "./dist/app-config/index.d.ts",
+      "import": "./dist/app-config/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "vue-tsc --noEmit",
+    "lint": "eslint src --ext .ts,.vue --max-warnings 0",
+    "lint:fix": "eslint src --ext .ts,.vue --fix",
+    "format": "prettier --write \"src/**/*.{ts,vue,json}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,vue,json}\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "quality-gate": "bash scripts/quality-gate.sh"
+  },
+  "dependencies": {
+    "pinia": "^2.2.0",
+    "vue": "^3.5.0",
+    "vue-router": "^4.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@vitejs/plugin-vue": "^5.0.0",
+    "@vue/test-utils": "^2.4.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-vue": "^9.0.0",
+    "happy-dom": "^15.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.6.0",
+    "vite": "^6.0.0",
+    "vite-plugin-dts": "^4.0.0",
+    "vitest": "^2.0.0",
+    "vue-tsc": "^2.0.0"
+  },
+  "peerDependencies": {
+    "pinia": ">=2.0.0",
+    "vue": ">=3.4.0",
+    "vue-router": ">=4.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}
