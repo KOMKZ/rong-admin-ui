@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
-import type { StatCardTrend, StatCardSize, StatCardVariant } from './types'
+import type { StatCardTrend, StatCardSize, StatCardVariant, StatCardCompare } from './types'
 import { RIcon } from '../icon'
 
 const props = withDefaults(
@@ -12,6 +12,7 @@ const props = withDefaults(
     trend?: StatCardTrend
     trendValue?: string
     trendLabel?: string
+    compare?: StatCardCompare
     icon?: string
     iconColor?: string
     description?: string
@@ -26,6 +27,7 @@ const props = withDefaults(
     trend: undefined,
     trendValue: '',
     trendLabel: '',
+    compare: undefined,
     icon: '',
     iconColor: '',
     description: '',
@@ -40,15 +42,40 @@ const emit = defineEmits<{
   click: []
 }>()
 
+const compareResult = computed(() => {
+  if (!props.compare) return null
+  const { previousValue, currentValue, period, periodLabel } = props.compare
+  if (previousValue === 0) {
+    return { percent: currentValue > 0 ? '+100%' : '0%', direction: 'up' as const, label: periodLabel ?? periodLabelMap[period] }
+  }
+  const change = ((currentValue - previousValue) / Math.abs(previousValue)) * 100
+  const rounded = Math.abs(change) < 0.01 ? '0%' : `${change > 0 ? '+' : ''}${change.toFixed(1)}%`
+  const direction = change > 0 ? 'up' : change < 0 ? 'down' : 'flat'
+  return { percent: rounded, direction: direction as 'up' | 'down' | 'flat', label: periodLabel ?? periodLabelMap[period] }
+})
+
+const periodLabelMap: Record<string, string> = {
+  day: 'vs yesterday',
+  week: 'vs last week',
+  month: 'vs last month',
+  quarter: 'vs last quarter',
+  year: 'vs last year',
+  custom: '',
+}
+
+const effectiveTrend = computed(() => props.trend ?? compareResult.value?.direction)
+const effectiveTrendValue = computed(() => props.trendValue || compareResult.value?.percent || '')
+const effectiveTrendLabel = computed(() => props.trendLabel || compareResult.value?.label || '')
+
 const trendIcon = computed(() => {
-  if (props.trend === 'up') return 'trending-up'
-  if (props.trend === 'down') return 'trending-down'
+  if (effectiveTrend.value === 'up') return 'trending-up'
+  if (effectiveTrend.value === 'down') return 'trending-down'
   return 'minus'
 })
 
 const trendClass = computed(() => {
-  if (props.trend === 'up') return 'r-stat-card__trend--up'
-  if (props.trend === 'down') return 'r-stat-card__trend--down'
+  if (effectiveTrend.value === 'up') return 'r-stat-card__trend--up'
+  if (effectiveTrend.value === 'down') return 'r-stat-card__trend--down'
   return 'r-stat-card__trend--flat'
 })
 
@@ -106,10 +133,16 @@ function handleClick(): void {
           <span v-if="suffix" class="r-stat-card__suffix">{{ suffix }}</span>
         </div>
 
-        <div v-if="trend || trendValue" class="r-stat-card__trend" :class="trendClass">
-          <RIcon v-if="trend" :name="trendIcon" size="xs" />
-          <span v-if="trendValue" class="r-stat-card__trend-value">{{ trendValue }}</span>
-          <span v-if="trendLabel" class="r-stat-card__trend-label">{{ trendLabel }}</span>
+        <div v-if="effectiveTrend || effectiveTrendValue" class="r-stat-card__trend" :class="trendClass">
+          <RIcon v-if="effectiveTrend" :name="trendIcon" size="xs" />
+          <span v-if="effectiveTrendValue" class="r-stat-card__trend-value">{{ effectiveTrendValue }}</span>
+          <span v-if="effectiveTrendLabel" class="r-stat-card__trend-label">{{ effectiveTrendLabel }}</span>
+        </div>
+
+        <div v-if="compare" class="r-stat-card__compare" data-testid="stat-card-compare">
+          <span class="r-stat-card__compare-prev">
+            Previous: {{ compare.previousValue.toLocaleString() }}
+          </span>
         </div>
       </div>
 
@@ -271,6 +304,17 @@ function handleClick(): void {
 .r-stat-card__trend-label {
   color: var(--ra-color-text-tertiary);
   font-weight: var(--ra-font-weight-normal);
+}
+
+.r-stat-card__compare {
+  margin-top: var(--ra-spacing-2);
+  padding-top: var(--ra-spacing-2);
+  border-top: 1px solid var(--ra-color-border-light);
+}
+
+.r-stat-card__compare-prev {
+  font-size: var(--ra-font-size-xs);
+  color: var(--ra-color-text-quaternary);
 }
 
 .r-stat-card__description {

@@ -37,6 +37,10 @@ const queryModel = ref<Record<string, unknown>>(buildDefaultQuery())
 const checkedKeys = ref<DataTableRowKey[]>([])
 const sortState = ref<DataTableSortState>({ columnKey: '', order: false })
 
+const emit = defineEmits<{
+  'update:checkedKeys': [keys: DataTableRowKey[]]
+}>()
+
 function buildDefaultQuery(): Record<string, unknown> {
   const m: Record<string, unknown> = {}
   for (const field of props.querySchema) {
@@ -146,7 +150,7 @@ onMounted(() => {
       :pagination="{ page, pageSize, total, pageSizes }"
       @update:page="handlePageChange"
       @update:page-size="handlePageSizeChange"
-      @update:checked-row-keys="(keys: DataTableRowKey[]) => (checkedKeys = keys)"
+      @update:checked-row-keys="(keys: DataTableRowKey[]) => { checkedKeys = keys; emit('update:checkedKeys', keys) }"
       @update:sort="handleSortChange"
     />
   </div>

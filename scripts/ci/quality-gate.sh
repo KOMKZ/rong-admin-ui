@@ -74,7 +74,7 @@ enabled_gate_count() {
   case "$RISK_LEVEL" in
     R1) echo 4 ;;
     R2) echo 8 ;;
-    R3) echo 10 ;;
+    R3) echo 14 ;;
     *)
       echo "Invalid risk level: $RISK_LEVEL (expected R1/R2/R3)" >&2
       exit 2
@@ -92,6 +92,10 @@ GATE_7_CMD="run_in \"$UI_DIR\" \"npm run test:changed\""
 GATE_8_CMD="run_in \"$UI_DIR\" \"npm run gate:contract\""
 GATE_9_CMD="run_in \"$WEB_DIR\" \"npm run gate:consumption\""
 GATE_10_CMD="run_in \"$WEB_DIR\" \"npm run test:e2e:smoke\""
+GATE_11_CMD="run_in \"$UI_DIR\" \"npm run build\" && run_in \"$WEB_DIR\" \"npm run build\""
+GATE_12_CMD="run_in \"$WEB_DIR\" 'grep -q \"@rong/admin-ui/style.css\" src/main.ts && ! grep -q \"@rong/admin-ui/dist/admin-ui.css\" src/main.ts'"
+GATE_13_CMD="run_in \"$WEB_DIR\" \"npx playwright test e2e/style-load.spec.ts --reporter=list\""
+GATE_14_CMD="bash \"$UI_DIR/scripts/ci/pack-smoke.sh\""
 
 COUNT="$(enabled_gate_count)"
 
@@ -110,6 +114,13 @@ fi
 if [[ "$COUNT" -ge 10 ]]; then
   run_gate "G9" "web-consumption" "$GATE_9_CMD"
   run_gate "G10" "e2e-smoke" "$GATE_10_CMD"
+fi
+
+if [[ "$COUNT" -ge 14 ]]; then
+  run_gate "G11" "build-parity" "$GATE_11_CMD"
+  run_gate "G12" "css-import-check" "$GATE_12_CMD"
+  run_gate "G13" "style-load-verification" "$GATE_13_CMD"
+  run_gate "G14" "pack-consumption-smoke" "$GATE_14_CMD"
 fi
 
 {

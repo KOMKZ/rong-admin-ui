@@ -32,6 +32,18 @@ export {
   NLayoutContent,
   NLayoutHeader,
   NLayoutFooter,
+  NTimeline,
+  NTimelineItem,
+  NProgress,
+  NSteps,
+  NStep,
+  NPagination,
+  NEmpty,
+  NCheckbox,
+  NCheckboxGroup,
+  NPopover,
+  NCollapse,
+  NCollapseItem,
 } from 'naive-ui'
 
 export { darkTheme } from 'naive-ui'

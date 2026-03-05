@@ -2,7 +2,7 @@
 import { ref, computed, watch } from 'vue'
 import { NDrawer, NDrawerContent, NButton, NSpace, NSpin } from 'naive-ui'
 import type { FormFieldSchema } from '../form-renderer/types'
-import type { DrawerPlacement, DrawerWidth } from './types'
+import type { DrawerPlacement, DrawerWidth, DrawerFormError } from './types'
 import { RFormRenderer } from '../form-renderer'
 import { RIcon } from '../icon'
 
@@ -17,10 +17,12 @@ const props = withDefaults(
     loading?: boolean
     submitText?: string
     cancelText?: string
+    retryText?: string
     showFooter?: boolean
     closeOnMaskClick?: boolean
     labelWidth?: number
     labelPlacement?: 'left' | 'top'
+    asyncValidator?: (model: Record<string, unknown>) => Promise<DrawerFormError[]>
   }>(),
   {
     placement: 'right',
@@ -28,10 +30,12 @@ const props = withDefaults(
     loading: false,
     submitText: 'Submit',
     cancelText: 'Cancel',
+    retryText: 'Retry',
     showFooter: true,
     closeOnMaskClick: true,
     labelWidth: 100,
     labelPlacement: 'left',
+    asyncValidator: undefined,
   },
 )
 
@@ -40,10 +44,13 @@ const emit = defineEmits<{
   'update:model': [value: Record<string, unknown>]
   submit: [model: Record<string, unknown>]
   cancel: []
+  retry: []
 }>()
 
 const formRef = ref<InstanceType<typeof RFormRenderer> | null>(null)
 const submitting = ref(false)
+const submitErrors = ref<DrawerFormError[]>([])
+const hasSubmitFailed = ref(false)
 
 const widthMap: Record<string, string> = {
   small: '400px',
@@ -71,21 +78,48 @@ function handleMaskClick(): void {
 }
 
 function handleModelChange(newModel: Record<string, unknown>): void {
+  if (submitErrors.value.length > 0) {
+    submitErrors.value = []
+  }
   emit('update:model', newModel)
+}
+
+function clearErrors(): void {
+  submitErrors.value = []
+  hasSubmitFailed.value = false
 }
 
 async function handleSubmit(): Promise<void> {
   if (!formRef.value) return
-  
+
+  submitErrors.value = []
   submitting.value = true
   try {
     const isValid = await formRef.value.validate()
-    if (isValid) {
-      emit('submit', props.model)
+    if (!isValid) return
+
+    if (props.asyncValidator) {
+      const errors = await props.asyncValidator(props.model)
+      if (errors.length > 0) {
+        submitErrors.value = errors
+        hasSubmitFailed.value = true
+        return
+      }
     }
+
+    hasSubmitFailed.value = false
+    emit('submit', props.model)
+  } catch (err) {
+    hasSubmitFailed.value = true
+    submitErrors.value = [{ message: err instanceof Error ? err.message : 'Submission failed. Please try again.' }]
   } finally {
     submitting.value = false
   }
+}
+
+async function handleRetry(): Promise<void> {
+  emit('retry')
+  await handleSubmit()
 }
 
 function validate(): Promise<boolean> {
@@ -94,6 +128,7 @@ function validate(): Promise<boolean> {
 
 function resetFields(): void {
   formRef.value?.resetFields()
+  clearErrors()
 }
 
 watch(
@@ -101,6 +136,8 @@ watch(
   (newVal) => {
     if (!newVal) {
       submitting.value = false
+      submitErrors.value = []
+      hasSubmitFailed.value = false
     }
   },
 )
@@ -108,6 +145,7 @@ watch(
 defineExpose({
   validate,
   resetFields,
+  clearErrors,
 })
 </script>
 
@@ -129,6 +167,28 @@ defineExpose({
       </template>
 
       <div class="r-drawer-form__body" data-testid="drawer-form-body">
+        <div
+          v-if="submitErrors.length > 0"
+          class="r-drawer-form__error-summary"
+          role="alert"
+          data-testid="drawer-form-errors"
+        >
+          <div class="r-drawer-form__error-header">
+            <RIcon name="alert-circle" size="sm" />
+            <span>{{ submitErrors.length }} error{{ submitErrors.length > 1 ? 's' : '' }} occurred</span>
+          </div>
+          <ul class="r-drawer-form__error-list">
+            <li
+              v-for="(error, idx) in submitErrors"
+              :key="idx"
+              class="r-drawer-form__error-item"
+            >
+              <strong v-if="error.field">{{ error.field }}:</strong>
+              {{ error.message }}
+            </li>
+          </ul>
+        </div>
+
         <NSpin :show="loading">
           <RFormRenderer
             ref="formRef"
@@ -154,6 +214,19 @@ defineExpose({
                 <RIcon name="x" size="sm" />
               </template>
               {{ cancelText }}
+            </NButton>
+            <NButton
+              v-if="hasSubmitFailed"
+              type="warning"
+              :loading="submitting"
+              :disabled="loading"
+              data-testid="drawer-form-retry"
+              @click="handleRetry"
+            >
+              <template #icon>
+                <RIcon name="refresh-cw" size="sm" />
+              </template>
+              {{ retryText }}
             </NButton>
             <NButton
               type="primary"
@@ -190,6 +263,36 @@ defineExpose({
 
 .r-drawer-form__body {
   padding: var(--ra-spacing-2) 0;
+}
+
+.r-drawer-form__error-summary {
+  margin-bottom: var(--ra-spacing-4);
+  padding: var(--ra-spacing-3) var(--ra-spacing-4);
+  background: var(--ra-color-danger-bg);
+  border: 1px solid var(--ra-color-danger);
+  border-radius: var(--ra-radius-md);
+}
+
+.r-drawer-form__error-header {
+  display: flex;
+  align-items: center;
+  gap: var(--ra-spacing-2);
+  color: var(--ra-color-danger-text);
+  font-weight: var(--ra-font-weight-semibold);
+  font-size: var(--ra-font-size-sm);
+  margin-bottom: var(--ra-spacing-2);
+}
+
+.r-drawer-form__error-list {
+  margin: 0;
+  padding-left: var(--ra-spacing-5);
+  list-style-type: disc;
+}
+
+.r-drawer-form__error-item {
+  font-size: var(--ra-font-size-sm);
+  color: var(--ra-color-danger-text);
+  line-height: var(--ra-line-height-relaxed);
 }
 
 .r-drawer-form__footer {
