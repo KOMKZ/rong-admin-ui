@@ -2,17 +2,15 @@
 import { computed, ref, type PropType } from 'vue'
 import { NButton, NTooltip } from 'naive-ui'
 import RIcon from '../icon/RIcon.vue'
-import type {
-  DescriptionItem,
-  DescriptionGroup,
-  DescriptionsPanelExpose,
-} from './types'
+import type { DescriptionItem, DescriptionGroup, DescriptionsPanelExpose } from './types'
 
 const props = defineProps({
   items: { type: Array as PropType<DescriptionItem[]>, default: () => [] },
   groups: { type: Array as PropType<DescriptionGroup[]>, default: () => [] },
   columns: {
-    type: [Number, Object] as PropType<number | { xs?: number; sm?: number; md?: number; lg?: number; xl?: number }>,
+    type: [Number, Object] as PropType<
+      number | { xs?: number; sm?: number; md?: number; lg?: number; xl?: number }
+    >,
     default: 3,
   },
   bordered: { type: Boolean, default: false },
@@ -24,11 +22,9 @@ const props = defineProps({
   emptyText: { type: String, default: '-' },
 })
 
-const collapsedGroups = ref<Set<number>>(new Set(
-  (props.groups || [])
-    .map((g, i) => (g.defaultCollapsed ? i : -1))
-    .filter((i) => i >= 0),
-))
+const collapsedGroups = ref<Set<number>>(
+  new Set((props.groups || []).map((g, i) => (g.defaultCollapsed ? i : -1)).filter((i) => i >= 0)),
+)
 
 const columnCount = computed(() => {
   if (typeof props.columns === 'number') return props.columns
@@ -69,7 +65,9 @@ function collapseAll(): void {
 async function copyToClipboard(text: string): Promise<void> {
   try {
     await navigator.clipboard.writeText(text)
-  } catch { /* fallback silent */ }
+  } catch {
+    /* fallback silent */
+  }
 }
 
 const expose: DescriptionsPanelExpose = { toggleGroup, expandAll, collapseAll }
@@ -80,7 +78,6 @@ defineExpose(expose)
   <div
     class="r-descriptions-panel"
     :class="[`r-descriptions-panel--${size}`, { 'r-descriptions-panel--bordered': bordered }]"
-    data-testid="descriptions-panel"
   >
     <!-- Header -->
     <div v-if="title || $slots.title || $slots.extra" class="r-descriptions-panel__header">
@@ -113,13 +110,21 @@ defineExpose(expose)
             <template v-if="item.render">
               <component :is="{ render: item.render }" />
             </template>
-            <span v-else :class="{ 'r-descriptions-panel__empty': !item.value && item.value !== 0 }">
+            <span
+              v-else
+              :class="{ 'r-descriptions-panel__empty': !item.value && item.value !== 0 }"
+            >
               {{ formatValue(item) }}
             </span>
           </slot>
           <NTooltip v-if="item.copyable && item.value">
             <template #trigger>
-              <NButton text size="tiny" class="r-descriptions-panel__copy" @click="copyToClipboard(String(item.value))">
+              <NButton
+                text
+                size="tiny"
+                class="r-descriptions-panel__copy"
+                @click="copyToClipboard(String(item.value))"
+              >
                 <RIcon name="copy" :size="12" />
               </NButton>
             </template>
@@ -130,18 +135,18 @@ defineExpose(expose)
     </div>
 
     <!-- Grouped items -->
-    <div v-for="(group, gIdx) in groups" :key="gIdx" class="r-descriptions-panel__group" :data-testid="`desc-group-${gIdx}`">
+    <div
+      v-for="(group, gIdx) in groups"
+      :key="gIdx"
+      class="r-descriptions-panel__group"
+      :data-testid="`desc-group-${gIdx}`"
+    >
       <div v-if="group.title" class="r-descriptions-panel__group-header">
         <div class="r-descriptions-panel__group-title">
           <RIcon v-if="group.icon" :name="group.icon" :size="16" />
           <span>{{ group.title }}</span>
         </div>
-        <NButton
-          v-if="group.collapsible"
-          text
-          size="tiny"
-          @click="toggleGroup(gIdx)"
-        >
+        <NButton v-if="group.collapsible" text size="tiny" @click="toggleGroup(gIdx)">
           <RIcon :name="isGroupCollapsed(gIdx) ? 'chevron-down' : 'chevron-up'" :size="14" />
         </NButton>
       </div>
@@ -158,7 +163,10 @@ defineExpose(expose)
           :style="item.span ? { gridColumn: `span ${item.span}` } : {}"
           :data-testid="`desc-item-${item.key}`"
         >
-          <div class="r-descriptions-panel__label" :style="layout === 'horizontal' ? labelStyle : {}">
+          <div
+            class="r-descriptions-panel__label"
+            :style="layout === 'horizontal' ? labelStyle : {}"
+          >
             {{ item.label }}{{ colon ? '：' : '' }}
           </div>
           <div class="r-descriptions-panel__value">
@@ -166,13 +174,21 @@ defineExpose(expose)
               <template v-if="item.render">
                 <component :is="{ render: item.render }" />
               </template>
-              <span v-else :class="{ 'r-descriptions-panel__empty': !item.value && item.value !== 0 }">
+              <span
+                v-else
+                :class="{ 'r-descriptions-panel__empty': !item.value && item.value !== 0 }"
+              >
                 {{ formatValue(item) }}
               </span>
             </slot>
             <NTooltip v-if="item.copyable && item.value">
               <template #trigger>
-                <NButton text size="tiny" class="r-descriptions-panel__copy" @click="copyToClipboard(String(item.value))">
+                <NButton
+                  text
+                  size="tiny"
+                  class="r-descriptions-panel__copy"
+                  @click="copyToClipboard(String(item.value))"
+                >
                   <RIcon name="copy" :size="12" />
                 </NButton>
               </template>

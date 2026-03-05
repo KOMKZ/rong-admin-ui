@@ -5,7 +5,7 @@ export type UploadListType = 'text' | 'image' | 'image-card'
 export interface UploadFile {
   id: string
   name: string
-  status: 'pending' | 'uploading' | 'success' | 'error' | 'paused'
+  status: 'pending' | 'uploading' | 'success' | 'error' | 'paused' | 'removed'
   url?: string
   thumbUrl?: string
   size?: number

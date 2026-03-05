@@ -150,7 +150,12 @@ onMounted(() => {
       :pagination="{ page, pageSize, total, pageSizes }"
       @update:page="handlePageChange"
       @update:page-size="handlePageSizeChange"
-      @update:checked-row-keys="(keys: DataTableRowKey[]) => { checkedKeys = keys; emit('update:checkedKeys', keys) }"
+      @update:checked-row-keys="
+        (keys: DataTableRowKey[]) => {
+          checkedKeys = keys
+          emit('update:checkedKeys', keys)
+        }
+      "
       @update:sort="handleSortChange"
     />
   </div>

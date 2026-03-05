@@ -69,7 +69,7 @@ defineExpose(expose)
 </script>
 
 <template>
-  <div class="r-table-toolbar-pro" data-testid="table-toolbar-pro">
+  <div class="r-table-toolbar-pro">
     <div class="r-table-toolbar-pro__left">
       <slot name="prefix" />
       <slot name="title">

@@ -28,11 +28,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <div
-    class="r-empty-state"
-    :class="`r-empty-state--${size}`"
-    data-testid="empty-state"
-  >
+  <div class="r-empty-state" :class="`r-empty-state--${size}`" data-testid="empty-state">
     <div class="r-empty-state__icon-wrapper">
       <RIcon
         :name="icon"

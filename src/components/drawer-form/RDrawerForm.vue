@@ -111,7 +111,9 @@ async function handleSubmit(): Promise<void> {
     emit('submit', props.model)
   } catch (err) {
     hasSubmitFailed.value = true
-    submitErrors.value = [{ message: err instanceof Error ? err.message : 'Submission failed. Please try again.' }]
+    submitErrors.value = [
+      { message: err instanceof Error ? err.message : 'Submission failed. Please try again.' },
+    ]
   } finally {
     submitting.value = false
   }
@@ -175,14 +177,15 @@ defineExpose({
         >
           <div class="r-drawer-form__error-header">
             <RIcon name="alert-circle" size="sm" />
-            <span>{{ submitErrors.length }} error{{ submitErrors.length > 1 ? 's' : '' }} occurred</span>
+            <span
+              >{{ submitErrors.length }} error{{
+                submitErrors.length > 1 ? 's' : ''
+              }}
+              occurred</span
+            >
           </div>
           <ul class="r-drawer-form__error-list">
-            <li
-              v-for="(error, idx) in submitErrors"
-              :key="idx"
-              class="r-drawer-form__error-item"
-            >
+            <li v-for="(error, idx) in submitErrors" :key="idx" class="r-drawer-form__error-item">
               <strong v-if="error.field">{{ error.field }}:</strong>
               {{ error.message }}
             </li>
@@ -205,11 +208,7 @@ defineExpose({
       <template v-if="showFooter" #footer>
         <div class="r-drawer-form__footer" data-testid="drawer-form-footer">
           <NSpace justify="end">
-            <NButton
-              :disabled="submitting"
-              data-testid="drawer-form-cancel"
-              @click="handleClose"
-            >
+            <NButton :disabled="submitting" data-testid="drawer-form-cancel" @click="handleClose">
               <template #icon>
                 <RIcon name="x" size="sm" />
               </template>

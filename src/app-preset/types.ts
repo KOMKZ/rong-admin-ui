@@ -4,7 +4,12 @@ import type { TokenStorage, TokenRefreshApi, TokenManagerInstance } from '../app
 import type { RequestInterceptor, ErrorStrategyConfig, HttpClient } from '../app-request/types'
 import type { ProjectConfig, RuntimeConfig, WebsiteConfig } from '../app-config/types'
 import type { PermissionServiceInstance } from '../app-permission/permission-service'
-import type { ThemePresetName, ThemeMode, ThemeProviderInstance, ThemeProviderOptions } from '../theme/types'
+import type {
+  ThemePresetName,
+  ThemeMode,
+  ThemeProviderInstance,
+  ThemeProviderOptions,
+} from '../theme/types'
 import type { RouterPipelineOptions, RouterPipelineInstance } from '../app-router/router-pipeline'
 import type { RouteRecordRaw } from 'vue-router'
 

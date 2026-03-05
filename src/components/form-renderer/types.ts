@@ -11,6 +11,7 @@ export type FormFieldType =
   | 'daterange'
   | 'number'
   | 'upload'
+  | 'button-group'
   | 'custom'
 
 export interface FormFieldOption {
@@ -30,9 +31,7 @@ export interface FormFieldRule {
 }
 
 /** Async options loader — resolved when field first renders or when dependencies change */
-export type AsyncOptionsLoader = (
-  model: Record<string, unknown>,
-) => Promise<FormFieldOption[]>
+export type AsyncOptionsLoader = (model: Record<string, unknown>) => Promise<FormFieldOption[]>
 
 /** Field dependency declaration — when any dependency field changes, re-evaluate this field */
 export interface FieldDependency {
@@ -76,6 +75,8 @@ export interface FormFieldSchema {
   disabled?: boolean | ((model: Record<string, unknown>) => boolean)
   component?: Component
   componentProps?: Record<string, unknown>
+  /** When type is 'button-group', allow multiple selection */
+  buttonGroupMultiple?: boolean
   /** Group key this field belongs to (used with FormRendererProps.groups) */
   group?: string
 }

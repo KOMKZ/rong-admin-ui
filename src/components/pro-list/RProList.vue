@@ -13,7 +13,9 @@ const props = defineProps({
     default: false,
   },
   rowKey: {
-    type: [String, Function] as PropType<string | ((row: Record<string, unknown>) => string | number)>,
+    type: [String, Function] as PropType<
+      string | ((row: Record<string, unknown>) => string | number)
+    >,
     default: 'id',
   },
   selectable: { type: Boolean, default: false },
@@ -78,7 +80,9 @@ const gridStyle = computed(() => ({
   gridTemplateColumns: `repeat(auto-fill, minmax(${props.cardMinWidth}px, 1fr))`,
 }))
 
-const clearSelection = (): void => { emit('update:checkedKeys', []) }
+const clearSelection = (): void => {
+  emit('update:checkedKeys', [])
+}
 const toggleViewMode = (): void => {
   switchView(localViewMode.value === 'card' ? 'list' : 'card')
 }
@@ -120,7 +124,11 @@ defineExpose(expose)
     </div>
 
     <!-- Empty state -->
-    <div v-if="data.length === 0 && !loading" class="r-pro-list__empty" data-testid="pro-list-empty">
+    <div
+      v-if="data.length === 0 && !loading"
+      class="r-pro-list__empty"
+      data-testid="pro-list-empty"
+    >
       <slot name="empty">
         <NEmpty :description="emptyText">
           <template #icon>
@@ -161,7 +169,11 @@ defineExpose(expose)
             <pre class="r-pro-list__default-content">{{ JSON.stringify(item, null, 2) }}</pre>
           </slot>
         </div>
-        <div v-if="actions.length > 0 || $slots.actions" class="r-pro-list__card-actions" @click.stop>
+        <div
+          v-if="actions.length > 0 || $slots.actions"
+          class="r-pro-list__card-actions"
+          @click.stop
+        >
           <slot name="actions" :item="item">
             <NSpace size="small">
               <NButton
@@ -205,7 +217,11 @@ defineExpose(expose)
             <pre class="r-pro-list__default-content">{{ JSON.stringify(item, null, 2) }}</pre>
           </slot>
         </div>
-        <div v-if="actions.length > 0 || $slots.actions" class="r-pro-list__list-actions" @click.stop>
+        <div
+          v-if="actions.length > 0 || $slots.actions"
+          class="r-pro-list__list-actions"
+          @click.stop
+        >
           <slot name="actions" :item="item">
             <NSpace size="small">
               <NButton
@@ -270,7 +286,9 @@ defineExpose(expose)
   border: 1px solid var(--ra-color-border-default);
   border-radius: var(--ra-radius-lg);
   padding: var(--ra-spacing-4);
-  transition: box-shadow var(--ra-transition-fast), border-color var(--ra-transition-fast);
+  transition:
+    box-shadow var(--ra-transition-fast),
+    border-color var(--ra-transition-fast);
   cursor: pointer;
   display: flex;
   flex-direction: column;
@@ -335,7 +353,9 @@ defineExpose(expose)
   animation: spin 1s linear infinite;
 }
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 .r-pro-list__pagination {
   display: flex;

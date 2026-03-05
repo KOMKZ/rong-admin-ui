@@ -41,6 +41,7 @@ export {
   NEmpty,
   NCheckbox,
   NCheckboxGroup,
+  NBadge,
   NPopover,
   NCollapse,
   NCollapseItem,

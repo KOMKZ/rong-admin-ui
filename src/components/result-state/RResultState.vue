@@ -18,7 +18,10 @@ const props = withDefaults(
 )
 
 const statusConfig = computed(() => {
-  const configs: Record<ResultStatus, { icon: string; color: string; defaultTitle: string; defaultDesc: string }> = {
+  const configs: Record<
+    ResultStatus,
+    { icon: string; color: string; defaultTitle: string; defaultDesc: string }
+  > = {
     success: {
       icon: 'check-circle-2',
       color: 'success',

@@ -19,7 +19,8 @@ function blueNaiveLight(): GlobalThemeOverrides {
       textColor2: '#4a5568',
       textColor3: '#6b7785',
       borderRadius: '6px',
-      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif",
+      fontFamily:
+        "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif",
     },
   }
 }
@@ -152,7 +153,8 @@ function cloudOpsNaiveLight(): GlobalThemeOverrides {
       textColor2: '#475569',
       textColor3: '#64748b',
       borderRadius: '8px',
-      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+      fontFamily:
+        "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
     },
   }
 }
@@ -197,7 +199,8 @@ function slateProNaiveLight(): GlobalThemeOverrides {
       textColor2: '#374151',
       textColor3: '#6b7280',
       borderRadius: '8px',
-      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
+      fontFamily:
+        "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
     },
   }
 }

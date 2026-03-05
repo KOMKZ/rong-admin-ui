@@ -20,12 +20,7 @@ const emit = defineEmits<{
 </script>
 
 <template>
-  <header
-    class="r-topbar"
-    :style="{ height: `${height}px` }"
-    data-testid="topbar"
-    role="banner"
-  >
+  <header class="r-topbar" :style="{ height: `${height}px` }" data-testid="topbar" role="banner">
     <div class="r-topbar__left">
       <button
         v-if="showMenuButton"
@@ -37,10 +32,19 @@ const emit = defineEmits<{
         <RIcon name="menu" size="sm" />
       </button>
 
-      <nav v-if="showBreadcrumb && breadcrumbs.length > 0" class="r-topbar__breadcrumb" aria-label="Breadcrumb">
+      <nav
+        v-if="showBreadcrumb && breadcrumbs.length > 0"
+        class="r-topbar__breadcrumb"
+        aria-label="Breadcrumb"
+      >
         <ol>
           <li v-for="(item, index) in breadcrumbs" :key="index">
-            <RIcon v-if="index > 0" name="chevron-right" size="xs" class="r-topbar__breadcrumb-sep" />
+            <RIcon
+              v-if="index > 0"
+              name="chevron-right"
+              size="xs"
+              class="r-topbar__breadcrumb-sep"
+            />
             <a
               v-if="item.path && index < breadcrumbs.length - 1"
               :href="item.path"
@@ -49,7 +53,11 @@ const emit = defineEmits<{
             >
               {{ item.label }}
             </a>
-            <span v-else class="r-topbar__breadcrumb-current" :aria-current="index === breadcrumbs.length - 1 ? 'page' : undefined">
+            <span
+              v-else
+              class="r-topbar__breadcrumb-current"
+              :aria-current="index === breadcrumbs.length - 1 ? 'page' : undefined"
+            >
               {{ item.label }}
             </span>
           </li>
@@ -61,11 +69,7 @@ const emit = defineEmits<{
 
     <div class="r-topbar__center">
       <slot name="search">
-        <button
-          class="r-topbar__search-btn"
-          aria-label="Search"
-          @click="emit('search')"
-        >
+        <button class="r-topbar__search-btn" aria-label="Search" @click="emit('search')">
           <RIcon name="search" size="sm" />
           <span class="r-topbar__search-text">Search...</span>
           <kbd class="r-topbar__search-kbd">⌘K</kbd>
@@ -213,7 +217,7 @@ const emit = defineEmits<{
   .r-topbar__center {
     display: none;
   }
-  
+
   .r-topbar__search-text,
   .r-topbar__search-kbd {
     display: none;

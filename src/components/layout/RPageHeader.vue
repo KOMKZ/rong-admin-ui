@@ -27,16 +27,17 @@ const statusConfig = {
 </script>
 
 <template>
-  <header
-    class="r-page-header"
-    :class="{ 'r-page-header--sticky': sticky }"
-    data-testid="page-header"
-  >
+  <header class="r-page-header" :class="{ 'r-page-header--sticky': sticky }">
     <div class="r-page-header__top">
       <nav v-if="breadcrumbs.length > 0" class="r-page-header__breadcrumb" aria-label="Breadcrumb">
         <ol>
           <li v-for="(item, index) in breadcrumbs" :key="index">
-            <RIcon v-if="index > 0" name="chevron-right" size="xs" class="r-page-header__breadcrumb-sep" />
+            <RIcon
+              v-if="index > 0"
+              name="chevron-right"
+              size="xs"
+              class="r-page-header__breadcrumb-sep"
+            />
             <a
               v-if="item.path && index < breadcrumbs.length - 1"
               :href="item.path"

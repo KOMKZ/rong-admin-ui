@@ -37,7 +37,7 @@ onUnmounted(() => {
 })
 
 const currentSidebarWidth = computed(() =>
-  isMobile.value ? 0 : (props.sidebarCollapsed ? props.collapsedWidth : props.sidebarWidth),
+  isMobile.value ? 0 : props.sidebarCollapsed ? props.collapsedWidth : props.sidebarWidth,
 )
 
 const mainStyle = computed(() => ({
@@ -46,9 +46,13 @@ const mainStyle = computed(() => ({
 
 const sidebarStyle = computed(() => ({
   width: isMobile.value
-    ? (mobileOpen.value ? `${props.sidebarWidth}px` : '0px')
-    : (props.sidebarCollapsed ? `${props.collapsedWidth}px` : `${props.sidebarWidth}px`),
-  position: isMobile.value ? 'fixed' as const : 'fixed' as const,
+    ? mobileOpen.value
+      ? `${props.sidebarWidth}px`
+      : '0px'
+    : props.sidebarCollapsed
+      ? `${props.collapsedWidth}px`
+      : `${props.sidebarWidth}px`,
+  position: isMobile.value ? ('fixed' as const) : ('fixed' as const),
 }))
 
 function toggleMobileSidebar(): void {
@@ -63,17 +67,10 @@ function toggleMobileSidebar(): void {
 <template>
   <div class="r-app-shell" data-testid="app-shell">
     <!-- Mobile overlay -->
-    <div
-      v-if="isMobile && mobileOpen"
-      class="r-app-shell__overlay"
-      @click="mobileOpen = false"
-    />
+    <div v-if="isMobile && mobileOpen" class="r-app-shell__overlay" @click="mobileOpen = false" />
 
     <!-- Sidebar slot -->
-    <div
-      class="r-app-shell__sidebar"
-      :style="sidebarStyle"
-    >
+    <div class="r-app-shell__sidebar" :style="sidebarStyle">
       <slot name="sidebar" :collapsed="sidebarCollapsed" :toggle="toggleMobileSidebar" />
     </div>
 

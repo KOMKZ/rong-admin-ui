@@ -17,6 +17,7 @@ import {
   NSpace,
   type FormRules,
 } from 'naive-ui'
+import { RCheckButtonGroup } from '../check-button-group'
 import type { FormFieldSchema, FormFieldOption, FormFieldGroup, FormRendererExpose } from './types'
 
 const props = defineProps({
@@ -185,6 +186,13 @@ function fieldDateRange(key: string): [number, number] | null {
   return Array.isArray(v) && v.length === 2 ? (v as [number, number]) : null
 }
 
+function fieldButtonGroupValue(key: string): (string | number)[] | string | number | null {
+  const v = props.model[key]
+  if (Array.isArray(v)) return v as (string | number)[]
+  if (typeof v === 'string' || typeof v === 'number') return v
+  return null
+}
+
 function toStrNum(v: unknown): string | number {
   if (typeof v === 'number') return v
   return String(v ?? '')
@@ -279,7 +287,9 @@ defineExpose(expose)
             </button>
             <h4 class="r-form-group__title">{{ gf.group.title }}</h4>
           </div>
-          <p v-if="gf.group.description && !gf.collapsed" class="r-form-group__desc">{{ gf.group.description }}</p>
+          <p v-if="gf.group.description && !gf.collapsed" class="r-form-group__desc">
+            {{ gf.group.description }}
+          </p>
         </slot>
         <NGrid v-if="!gf.collapsed" :cols="cols" :x-gap="16" :y-gap="0">
           <NFormItemGi
@@ -290,22 +300,112 @@ defineExpose(expose)
             :span="field.span ?? 1"
           >
             <slot name="fieldPrefix" :field="field" />
-            <component :is="'span'" v-if="asyncLoadingMap[field.key]" class="r-form-async-hint">Loading...</component>
+            <component :is="'span'" v-if="asyncLoadingMap[field.key]" class="r-form-async-hint"
+              >Loading...</component
+            >
             <template v-else>
-              <NInput v-if="field.type === 'input'" :value="fieldStr(field.key)" :placeholder="field.placeholder" :disabled="isFieldDisabled(field)" :readonly="readonly" @update:value="updateField(field.key, $event)" />
-              <NInput v-else-if="field.type === 'textarea'" type="textarea" :value="fieldStr(field.key)" :placeholder="field.placeholder" :disabled="isFieldDisabled(field)" :readonly="readonly" :rows="3" @update:value="updateField(field.key, $event)" />
-              <NInputNumber v-else-if="field.type === 'number'" :value="fieldNum(field.key)" :placeholder="field.placeholder" :disabled="isFieldDisabled(field)" :readonly="readonly" style="width: 100%" @update:value="updateField(field.key, $event)" />
-              <NSelect v-else-if="field.type === 'select'" :value="fieldStrNum(field.key)" :placeholder="field.placeholder" :disabled="isFieldDisabled(field)" :options="resolvedOptions(field)" @update:value="updateField(field.key, $event)" />
-              <NRadioGroup v-else-if="field.type === 'radio'" :value="fieldStrNum(field.key)" :disabled="isFieldDisabled(field)" @update:value="updateField(field.key, $event)">
-                <NRadio v-for="opt in (field.options ?? [])" :key="String(opt.value)" :value="toStrNum(opt.value)" :disabled="opt.disabled">{{ opt.label }}</NRadio>
+              <NInput
+                v-if="field.type === 'input'"
+                :value="fieldStr(field.key)"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                :readonly="readonly"
+                @update:value="updateField(field.key, $event)"
+              />
+              <NInput
+                v-else-if="field.type === 'textarea'"
+                type="textarea"
+                :value="fieldStr(field.key)"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                :readonly="readonly"
+                :rows="3"
+                @update:value="updateField(field.key, $event)"
+              />
+              <NInputNumber
+                v-else-if="field.type === 'number'"
+                :value="fieldNum(field.key)"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                :readonly="readonly"
+                style="width: 100%"
+                @update:value="updateField(field.key, $event)"
+              />
+              <NSelect
+                v-else-if="field.type === 'select'"
+                :value="fieldStrNum(field.key)"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                :options="resolvedOptions(field)"
+                @update:value="updateField(field.key, $event)"
+              />
+              <NRadioGroup
+                v-else-if="field.type === 'radio'"
+                :value="fieldStrNum(field.key)"
+                :disabled="isFieldDisabled(field)"
+                @update:value="updateField(field.key, $event)"
+              >
+                <NRadio
+                  v-for="opt in field.options ?? []"
+                  :key="String(opt.value)"
+                  :value="toStrNum(opt.value)"
+                  :disabled="opt.disabled"
+                  >{{ opt.label }}</NRadio
+                >
               </NRadioGroup>
-              <NCheckboxGroup v-else-if="field.type === 'checkbox'" :value="fieldArr(field.key)" :disabled="isFieldDisabled(field)" @update:value="updateField(field.key, $event)">
-                <NCheckbox v-for="opt in (field.options ?? [])" :key="String(opt.value)" :value="toStrNum(opt.value)" :disabled="opt.disabled" :label="opt.label" />
+              <NCheckboxGroup
+                v-else-if="field.type === 'checkbox'"
+                :value="fieldArr(field.key)"
+                :disabled="isFieldDisabled(field)"
+                @update:value="updateField(field.key, $event)"
+              >
+                <NCheckbox
+                  v-for="opt in field.options ?? []"
+                  :key="String(opt.value)"
+                  :value="toStrNum(opt.value)"
+                  :disabled="opt.disabled"
+                  :label="opt.label"
+                />
               </NCheckboxGroup>
-              <NSwitch v-else-if="field.type === 'switch'" :value="fieldBool(field.key)" :disabled="isFieldDisabled(field)" @update:value="updateField(field.key, $event)" />
-              <NDatePicker v-else-if="field.type === 'date'" type="date" :value="fieldNum(field.key)" :placeholder="field.placeholder" :disabled="isFieldDisabled(field)" style="width: 100%" @update:value="updateField(field.key, $event)" />
-              <NDatePicker v-else-if="field.type === 'daterange'" type="daterange" :value="fieldDateRange(field.key)" :disabled="isFieldDisabled(field)" style="width: 100%" @update:value="updateField(field.key, $event)" />
-              <component :is="field.component" v-else-if="field.type === 'custom' && field.component" :model-value="model[field.key]" v-bind="field.componentProps" @update:model-value="updateField(field.key, $event)" />
+              <NSwitch
+                v-else-if="field.type === 'switch'"
+                :value="fieldBool(field.key)"
+                :disabled="isFieldDisabled(field)"
+                @update:value="updateField(field.key, $event)"
+              />
+              <NDatePicker
+                v-else-if="field.type === 'date'"
+                type="date"
+                :value="fieldNum(field.key)"
+                :placeholder="field.placeholder"
+                :disabled="isFieldDisabled(field)"
+                style="width: 100%"
+                @update:value="updateField(field.key, $event)"
+              />
+              <NDatePicker
+                v-else-if="field.type === 'daterange'"
+                type="daterange"
+                :value="fieldDateRange(field.key)"
+                :disabled="isFieldDisabled(field)"
+                style="width: 100%"
+                @update:value="updateField(field.key, $event)"
+              />
+              <RCheckButtonGroup
+                v-else-if="field.type === 'button-group'"
+                :model-value="fieldButtonGroupValue(field.key)"
+                :options="resolvedOptions(field)"
+                :multiple="!!field.buttonGroupMultiple"
+                :disabled="isFieldDisabled(field)"
+                :size="size"
+                @update:model-value="updateField(field.key, $event)"
+              />
+              <component
+                :is="field.component"
+                v-else-if="field.type === 'custom' && field.component"
+                :model-value="model[field.key]"
+                v-bind="field.componentProps"
+                @update:model-value="updateField(field.key, $event)"
+              />
             </template>
             <slot name="fieldSuffix" :field="field" />
           </NFormItemGi>
@@ -313,10 +413,30 @@ defineExpose(expose)
       </div>
       <!-- Ungrouped fields -->
       <NGrid v-if="ungroupedFields.length > 0" :cols="cols" :x-gap="16" :y-gap="0">
-        <NFormItemGi v-for="field in ungroupedFields" :key="field.key" :label="field.label" :path="field.key" :span="field.span ?? 1">
+        <NFormItemGi
+          v-for="field in ungroupedFields"
+          :key="field.key"
+          :label="field.label"
+          :path="field.key"
+          :span="field.span ?? 1"
+        >
           <slot name="fieldPrefix" :field="field" />
-          <NInput v-if="field.type === 'input'" :value="fieldStr(field.key)" :placeholder="field.placeholder" :disabled="isFieldDisabled(field)" :readonly="readonly" @update:value="updateField(field.key, $event)" />
-          <NSelect v-else-if="field.type === 'select'" :value="fieldStrNum(field.key)" :placeholder="field.placeholder" :disabled="isFieldDisabled(field)" :options="resolvedOptions(field)" @update:value="updateField(field.key, $event)" />
+          <NInput
+            v-if="field.type === 'input'"
+            :value="fieldStr(field.key)"
+            :placeholder="field.placeholder"
+            :disabled="isFieldDisabled(field)"
+            :readonly="readonly"
+            @update:value="updateField(field.key, $event)"
+          />
+          <NSelect
+            v-else-if="field.type === 'select'"
+            :value="fieldStrNum(field.key)"
+            :placeholder="field.placeholder"
+            :disabled="isFieldDisabled(field)"
+            :options="resolvedOptions(field)"
+            @update:value="updateField(field.key, $event)"
+          />
           <slot name="fieldSuffix" :field="field" />
         </NFormItemGi>
       </NGrid>
@@ -332,22 +452,112 @@ defineExpose(expose)
         :span="field.span ?? 1"
       >
         <slot name="fieldPrefix" :field="field" />
-        <component :is="'span'" v-if="asyncLoadingMap[field.key]" class="r-form-async-hint">Loading...</component>
+        <component :is="'span'" v-if="asyncLoadingMap[field.key]" class="r-form-async-hint"
+          >Loading...</component
+        >
         <template v-else>
-          <NInput v-if="field.type === 'input'" :value="fieldStr(field.key)" :placeholder="field.placeholder" :disabled="isFieldDisabled(field)" :readonly="readonly" @update:value="updateField(field.key, $event)" />
-          <NInput v-else-if="field.type === 'textarea'" type="textarea" :value="fieldStr(field.key)" :placeholder="field.placeholder" :disabled="isFieldDisabled(field)" :readonly="readonly" :rows="3" @update:value="updateField(field.key, $event)" />
-          <NInputNumber v-else-if="field.type === 'number'" :value="fieldNum(field.key)" :placeholder="field.placeholder" :disabled="isFieldDisabled(field)" :readonly="readonly" style="width: 100%" @update:value="updateField(field.key, $event)" />
-          <NSelect v-else-if="field.type === 'select'" :value="fieldStrNum(field.key)" :placeholder="field.placeholder" :disabled="isFieldDisabled(field)" :options="resolvedOptions(field)" @update:value="updateField(field.key, $event)" />
-          <NRadioGroup v-else-if="field.type === 'radio'" :value="fieldStrNum(field.key)" :disabled="isFieldDisabled(field)" @update:value="updateField(field.key, $event)">
-            <NRadio v-for="opt in (field.options ?? [])" :key="String(opt.value)" :value="toStrNum(opt.value)" :disabled="opt.disabled">{{ opt.label }}</NRadio>
+          <NInput
+            v-if="field.type === 'input'"
+            :value="fieldStr(field.key)"
+            :placeholder="field.placeholder"
+            :disabled="isFieldDisabled(field)"
+            :readonly="readonly"
+            @update:value="updateField(field.key, $event)"
+          />
+          <NInput
+            v-else-if="field.type === 'textarea'"
+            type="textarea"
+            :value="fieldStr(field.key)"
+            :placeholder="field.placeholder"
+            :disabled="isFieldDisabled(field)"
+            :readonly="readonly"
+            :rows="3"
+            @update:value="updateField(field.key, $event)"
+          />
+          <NInputNumber
+            v-else-if="field.type === 'number'"
+            :value="fieldNum(field.key)"
+            :placeholder="field.placeholder"
+            :disabled="isFieldDisabled(field)"
+            :readonly="readonly"
+            style="width: 100%"
+            @update:value="updateField(field.key, $event)"
+          />
+          <NSelect
+            v-else-if="field.type === 'select'"
+            :value="fieldStrNum(field.key)"
+            :placeholder="field.placeholder"
+            :disabled="isFieldDisabled(field)"
+            :options="resolvedOptions(field)"
+            @update:value="updateField(field.key, $event)"
+          />
+          <NRadioGroup
+            v-else-if="field.type === 'radio'"
+            :value="fieldStrNum(field.key)"
+            :disabled="isFieldDisabled(field)"
+            @update:value="updateField(field.key, $event)"
+          >
+            <NRadio
+              v-for="opt in field.options ?? []"
+              :key="String(opt.value)"
+              :value="toStrNum(opt.value)"
+              :disabled="opt.disabled"
+              >{{ opt.label }}</NRadio
+            >
           </NRadioGroup>
-          <NCheckboxGroup v-else-if="field.type === 'checkbox'" :value="fieldArr(field.key)" :disabled="isFieldDisabled(field)" @update:value="updateField(field.key, $event)">
-            <NCheckbox v-for="opt in (field.options ?? [])" :key="String(opt.value)" :value="toStrNum(opt.value)" :disabled="opt.disabled" :label="opt.label" />
+          <NCheckboxGroup
+            v-else-if="field.type === 'checkbox'"
+            :value="fieldArr(field.key)"
+            :disabled="isFieldDisabled(field)"
+            @update:value="updateField(field.key, $event)"
+          >
+            <NCheckbox
+              v-for="opt in field.options ?? []"
+              :key="String(opt.value)"
+              :value="toStrNum(opt.value)"
+              :disabled="opt.disabled"
+              :label="opt.label"
+            />
           </NCheckboxGroup>
-          <NSwitch v-else-if="field.type === 'switch'" :value="fieldBool(field.key)" :disabled="isFieldDisabled(field)" @update:value="updateField(field.key, $event)" />
-          <NDatePicker v-else-if="field.type === 'date'" type="date" :value="fieldNum(field.key)" :placeholder="field.placeholder" :disabled="isFieldDisabled(field)" style="width: 100%" @update:value="updateField(field.key, $event)" />
-          <NDatePicker v-else-if="field.type === 'daterange'" type="daterange" :value="fieldDateRange(field.key)" :disabled="isFieldDisabled(field)" style="width: 100%" @update:value="updateField(field.key, $event)" />
-          <component :is="field.component" v-else-if="field.type === 'custom' && field.component" :model-value="model[field.key]" v-bind="field.componentProps" @update:model-value="updateField(field.key, $event)" />
+          <NSwitch
+            v-else-if="field.type === 'switch'"
+            :value="fieldBool(field.key)"
+            :disabled="isFieldDisabled(field)"
+            @update:value="updateField(field.key, $event)"
+          />
+          <NDatePicker
+            v-else-if="field.type === 'date'"
+            type="date"
+            :value="fieldNum(field.key)"
+            :placeholder="field.placeholder"
+            :disabled="isFieldDisabled(field)"
+            style="width: 100%"
+            @update:value="updateField(field.key, $event)"
+          />
+          <NDatePicker
+            v-else-if="field.type === 'daterange'"
+            type="daterange"
+            :value="fieldDateRange(field.key)"
+            :disabled="isFieldDisabled(field)"
+            style="width: 100%"
+            @update:value="updateField(field.key, $event)"
+          />
+          <RCheckButtonGroup
+            v-else-if="field.type === 'button-group'"
+            :model-value="fieldButtonGroupValue(field.key)"
+            :options="resolvedOptions(field)"
+            :multiple="!!field.buttonGroupMultiple"
+            :disabled="isFieldDisabled(field)"
+            :size="size"
+            @update:model-value="updateField(field.key, $event)"
+          />
+          <component
+            :is="field.component"
+            v-else-if="field.type === 'custom' && field.component"
+            :model-value="model[field.key]"
+            v-bind="field.componentProps"
+            @update:model-value="updateField(field.key, $event)"
+          />
         </template>
         <slot name="fieldSuffix" :field="field" />
       </NFormItemGi>

@@ -6,17 +6,9 @@ export type {
   ThemeProviderInstance,
 } from './types'
 
-export {
-  createThemeProvider,
-  getActiveThemeProvider,
-  resetThemeProvider,
-} from './theme-provider'
+export { createThemeProvider, getActiveThemeProvider, resetThemeProvider } from './theme-provider'
 
-export {
-  themePresets,
-  getPreset,
-  getPresetNames,
-} from './presets'
+export { themePresets, getPreset, getPresetNames } from './presets'
 
 export {
   primitiveColors,

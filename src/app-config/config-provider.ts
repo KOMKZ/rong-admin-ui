@@ -1,6 +1,7 @@
 import type { App } from 'vue'
 import { inject, provide, reactive, readonly, type DeepReadonly } from 'vue'
 import type { DesignConfig, ProjectConfig, RuntimeConfig, WebsiteConfig } from './types'
+import { resolveEnvConfig } from './env-resolver'
 
 const CONFIG_INJECTION_KEY = Symbol('rong-config')
 
@@ -54,9 +55,14 @@ const defaultWebsiteConfig: WebsiteConfig = {
 }
 
 function buildConfigContext(input?: Partial<AppConfigInput>): AppConfigContext {
+  const envOverrides = resolveEnvConfig()
   const design = reactive<DesignConfig>({ ...defaultDesignConfig, ...input?.design })
   const project = reactive<ProjectConfig>({ ...defaultProjectConfig, ...input?.project })
-  const runtime = reactive<RuntimeConfig>({ ...defaultRuntimeConfig, ...input?.runtime })
+  const runtime = reactive<RuntimeConfig>({
+    ...defaultRuntimeConfig,
+    ...envOverrides,
+    ...input?.runtime,
+  })
   const website = reactive<WebsiteConfig>({ ...defaultWebsiteConfig, ...input?.website })
 
   return {

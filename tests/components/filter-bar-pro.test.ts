@@ -16,7 +16,7 @@ describe('RFilterBarPro', () => {
     const wrapper = mount(RFilterBarPro, {
       props: { schema: baseSchema, modelValue: {} },
     })
-    expect(wrapper.find('[data-testid="filter-bar-pro"]').exists()).toBe(true)
+    expect(wrapper.find('.r-filter-bar-pro').exists()).toBe(true)
   })
 
   it('renders search and reset buttons', () => {

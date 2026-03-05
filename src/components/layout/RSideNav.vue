@@ -48,6 +48,8 @@ function isActive(item: MenuItem): boolean {
       <span v-if="!collapsed" class="r-side-nav__title">{{ title }}</span>
     </div>
 
+    <slot name="prepend" />
+
     <nav class="r-side-nav__menu">
       <ul role="menubar">
         <template v-for="item in visibleMenus" :key="item.key">
@@ -64,7 +66,12 @@ function isActive(item: MenuItem): boolean {
               :aria-current="isActive(item) ? 'page' : undefined"
               @click="handleSelect(item.key)"
             >
-              <RIcon v-if="typeof item.icon === 'string'" :name="item.icon" size="sm" class="r-side-nav__icon" />
+              <RIcon
+                v-if="typeof item.icon === 'string'"
+                :name="item.icon"
+                size="sm"
+                class="r-side-nav__icon"
+              />
               <span v-if="!collapsed" class="r-side-nav__label">{{ item.label }}</span>
             </button>
           </li>
@@ -90,7 +97,12 @@ function isActive(item: MenuItem): boolean {
                   :aria-current="child.key === activeKey ? 'page' : undefined"
                   @click="handleSelect(child.key)"
                 >
-                  <RIcon v-if="typeof child.icon === 'string'" :name="child.icon" size="sm" class="r-side-nav__icon" />
+                  <RIcon
+                    v-if="typeof child.icon === 'string'"
+                    :name="child.icon"
+                    size="sm"
+                    class="r-side-nav__icon"
+                  />
                   <span v-if="!collapsed" class="r-side-nav__label">{{ child.label }}</span>
                 </button>
               </li>

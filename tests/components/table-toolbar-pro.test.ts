@@ -6,7 +6,7 @@ import type { TableToolbarProExpose } from '../../src/components/table-toolbar/t
 describe('RTableToolbarPro', () => {
   it('renders with default props', () => {
     const wrapper = mount(RTableToolbarPro)
-    expect(wrapper.find('[data-testid="table-toolbar-pro"]').exists()).toBe(true)
+    expect(wrapper.find('.r-table-toolbar-pro').exists()).toBe(true)
   })
 
   it('renders title when provided', () => {

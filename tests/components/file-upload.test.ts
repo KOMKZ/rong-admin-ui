@@ -98,4 +98,27 @@ describe('RFileUpload', () => {
     })
     expect(wrapper.html()).toContain('document.pdf')
   })
+
+  it('should expose pause, resume, retry methods', () => {
+    const wrapper = mount(RFileUpload, {
+      props: { fileList: [] },
+    })
+    const vm = wrapper.vm as unknown as {
+      pause: (id: string) => void
+      resume: (id: string) => void
+      retry: (id: string) => void
+    }
+    expect(typeof vm.pause).toBe('function')
+    expect(typeof vm.resume).toBe('function')
+    expect(typeof vm.retry).toBe('function')
+  })
+
+  it('should include removed status in UploadFile type', () => {
+    const file: UploadFile = {
+      id: 'test',
+      name: 'test.pdf',
+      status: 'removed',
+    }
+    expect(file.status).toBe('removed')
+  })
 })

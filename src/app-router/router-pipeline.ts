@@ -33,9 +33,7 @@ export interface RouterPipelineInstance {
   isDynamicLoaded: () => boolean
 }
 
-export function createAdminRouterPipeline(
-  options: RouterPipelineOptions,
-): RouterPipelineInstance {
+export function createAdminRouterPipeline(options: RouterPipelineOptions): RouterPipelineInstance {
   const {
     staticRoutes = [],
     whiteList = [],

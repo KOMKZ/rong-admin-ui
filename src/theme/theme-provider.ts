@@ -10,14 +10,24 @@ import { getPreset, getPresetNames } from './presets'
 const STORAGE_KEY_PRESET = 'ra-theme-preset'
 const STORAGE_KEY_MODE = 'ra-theme-mode'
 
-function safeStorage(custom?: ThemeProviderOptions['storage']): NonNullable<ThemeProviderOptions['storage']> {
+function safeStorage(
+  custom?: ThemeProviderOptions['storage'],
+): NonNullable<ThemeProviderOptions['storage']> {
   if (custom) return custom
   return {
     get: (key: string): string | null => {
-      try { return localStorage.getItem(key) } catch { return null }
+      try {
+        return localStorage.getItem(key)
+      } catch {
+        return null
+      }
     },
     set: (key: string, value: string): void => {
-      try { localStorage.setItem(key, value) } catch { /* noop */ }
+      try {
+        localStorage.setItem(key, value)
+      } catch {
+        /* noop */
+      }
     },
   }
 }
@@ -44,27 +54,29 @@ export function createThemeProvider(options: ThemeProviderOptions = {}): ThemePr
   }
 
   const storage = safeStorage(options.storage)
-  const storageKeyPreset = options.storageKey
-    ? `${options.storageKey}-preset`
-    : STORAGE_KEY_PRESET
-  const storageKeyMode = options.storageKey
-    ? `${options.storageKey}-mode`
-    : STORAGE_KEY_MODE
+  const storageKeyPreset = options.storageKey ? `${options.storageKey}-preset` : STORAGE_KEY_PRESET
+  const storageKeyMode = options.storageKey ? `${options.storageKey}-mode` : STORAGE_KEY_MODE
 
   let storedPreset: string | null = null
   let storedMode: string | null = null
-  try { storedPreset = storage.get(storageKeyPreset) } catch { /* storage unavailable */ }
-  try { storedMode = storage.get(storageKeyMode) } catch { /* storage unavailable */ }
+  try {
+    storedPreset = storage.get(storageKeyPreset)
+  } catch {
+    /* storage unavailable */
+  }
+  try {
+    storedMode = storage.get(storageKeyMode)
+  } catch {
+    /* storage unavailable */
+  }
 
   const currentPreset: Ref<ThemePresetName> = ref(
     storedPreset && isValidPreset(storedPreset)
       ? storedPreset
-      : options.defaultPreset ?? 'enterprise-blue',
+      : (options.defaultPreset ?? 'enterprise-blue'),
   )
   const currentMode: Ref<ThemeMode> = ref(
-    storedMode && isValidMode(storedMode)
-      ? storedMode
-      : options.defaultMode ?? 'light',
+    storedMode && isValidMode(storedMode) ? storedMode : (options.defaultMode ?? 'light'),
   )
 
   const naiveOverrides = computed(() => {
@@ -89,8 +101,16 @@ export function createThemeProvider(options: ThemeProviderOptions = {}): ThemePr
   }
 
   function persist(): void {
-    try { storage.set(storageKeyPreset, currentPreset.value) } catch { /* storage unavailable */ }
-    try { storage.set(storageKeyMode, currentMode.value) } catch { /* storage unavailable */ }
+    try {
+      storage.set(storageKeyPreset, currentPreset.value)
+    } catch {
+      /* storage unavailable */
+    }
+    try {
+      storage.set(storageKeyMode, currentMode.value)
+    } catch {
+      /* storage unavailable */
+    }
   }
 
   function setPreset(name: ThemePresetName): void {
@@ -119,9 +139,15 @@ export function createThemeProvider(options: ThemeProviderOptions = {}): ThemePr
   persist()
 
   const instance: ThemeProviderInstance = {
-    get currentPreset() { return currentPreset.value },
-    get currentMode() { return currentMode.value },
-    get naiveOverrides() { return naiveOverrides.value },
+    get currentPreset() {
+      return currentPreset.value
+    },
+    get currentMode() {
+      return currentMode.value
+    },
+    get naiveOverrides() {
+      return naiveOverrides.value
+    },
     setPreset,
     setMode,
     toggle,

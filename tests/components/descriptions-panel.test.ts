@@ -36,7 +36,7 @@ describe('RDescriptionsPanel', () => {
     const wrapper = mount(RDescriptionsPanel, {
       props: { items: sampleItems },
     })
-    expect(wrapper.find('[data-testid="descriptions-panel"]').exists()).toBe(true)
+    expect(wrapper.find('.r-descriptions-panel').exists()).toBe(true)
     expect(wrapper.find('[data-testid="descriptions-items"]').exists()).toBe(true)
   })
 

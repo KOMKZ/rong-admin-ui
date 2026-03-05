@@ -4,11 +4,7 @@ import { NButton, NSpace, NTag, NPopover, NInput } from 'naive-ui'
 import RFormRenderer from '../form-renderer/RFormRenderer.vue'
 import RIcon from '../icon/RIcon.vue'
 import type { FormFieldSchema } from '../form-renderer/types'
-import type {
-  FilterBarProExpose,
-  FilterScheme,
-  QuickFilter,
-} from './types'
+import type { FilterBarProExpose, FilterScheme, QuickFilter } from './types'
 
 const props = defineProps({
   schema: { type: Array as PropType<FormFieldSchema[]>, required: true },
@@ -42,7 +38,9 @@ const localModel = ref<Record<string, unknown>>({ ...props.modelValue })
 
 watch(
   () => props.modelValue,
-  (v) => { localModel.value = { ...v } },
+  (v) => {
+    localModel.value = { ...v }
+  },
   { deep: true },
 )
 
@@ -51,7 +49,9 @@ const visibleSchema = computed(() => {
   return props.schema.slice(0, props.maxVisibleFields)
 })
 
-const hasAdvanced = computed(() => props.collapsible && props.schema.length > props.maxVisibleFields)
+const hasAdvanced = computed(
+  () => props.collapsible && props.schema.length > props.maxVisibleFields,
+)
 
 const activeQuickFilters = computed(() => {
   return props.quickFilters.filter((qf) => localModel.value[qf.key] === qf.value)
@@ -78,7 +78,9 @@ function handleSearch(): void {
 
 function handleReset(): void {
   const empty: Record<string, unknown> = {}
-  props.schema.forEach((s) => { empty[s.key] = undefined })
+  props.schema.forEach((s) => {
+    empty[s.key] = undefined
+  })
   localModel.value = empty
   emit('update:modelValue', empty)
   emit('reset')
@@ -126,7 +128,9 @@ function persistSchemes(): void {
   if (!props.storageKey) return
   try {
     localStorage.setItem(props.storageKey, JSON.stringify(props.savedSchemes))
-  } catch { /* quota exceeded, ignore */ }
+  } catch {
+    /* quota exceeded, ignore */
+  }
 }
 
 const expose: FilterBarProExpose = {
@@ -147,16 +151,20 @@ defineExpose(expose)
 </script>
 
 <template>
-  <div class="r-filter-bar-pro" data-testid="filter-bar-pro">
+  <div class="r-filter-bar-pro">
     <!-- Quick Filters -->
     <div v-if="quickFilters.length > 0" class="r-filter-bar-pro__quick" data-testid="quick-filters">
       <NSpace size="small">
         <NTag
           v-for="qf in quickFilters"
           :key="qf.key + '-' + String(qf.value)"
-          :type="activeQuickFilters.some(a => a.key === qf.key && a.value === qf.value) ? 'primary' : 'default'"
+          :type="
+            activeQuickFilters.some((a) => a.key === qf.key && a.value === qf.value)
+              ? 'primary'
+              : 'default'
+          "
           :checkable="true"
-          :checked="activeQuickFilters.some(a => a.key === qf.key && a.value === qf.value)"
+          :checked="activeQuickFilters.some((a) => a.key === qf.key && a.value === qf.value)"
           size="small"
           round
           :data-testid="`quick-filter-${qf.key}`"
@@ -207,11 +215,7 @@ defineExpose(expose)
         </NButton>
 
         <!-- Saved Schemes -->
-        <NPopover
-          v-if="storageKey"
-          trigger="click"
-          placement="bottom-start"
-        >
+        <NPopover v-if="storageKey" trigger="click" placement="bottom-start">
           <template #trigger>
             <NButton text size="small" data-testid="filter-schemes-btn">
               <template #icon><RIcon name="bookmark" :size="14" /></template>
@@ -219,7 +223,11 @@ defineExpose(expose)
             </NButton>
           </template>
           <div class="r-filter-bar-pro__schemes" data-testid="filter-schemes-panel">
-            <div v-for="scheme in savedSchemes" :key="scheme.id" class="r-filter-bar-pro__scheme-item">
+            <div
+              v-for="scheme in savedSchemes"
+              :key="scheme.id"
+              class="r-filter-bar-pro__scheme-item"
+            >
               <NButton text size="small" @click="loadScheme(scheme)">{{ scheme.name }}</NButton>
               <NButton text size="tiny" type="error" @click="deleteScheme(scheme.id)">
                 <RIcon name="x" :size="12" />
@@ -239,9 +247,18 @@ defineExpose(expose)
                 data-testid="scheme-name-input"
                 @keydown.enter="handleSaveScheme"
               />
-              <NButton size="tiny" type="primary" data-testid="scheme-save-confirm" @click="handleSaveScheme">保存</NButton>
+              <NButton
+                size="tiny"
+                type="primary"
+                data-testid="scheme-save-confirm"
+                @click="handleSaveScheme"
+                >保存</NButton
+              >
             </div>
-            <div v-if="savedSchemes.length === 0 && !showSchemeSave" class="r-filter-bar-pro__scheme-empty">
+            <div
+              v-if="savedSchemes.length === 0 && !showSchemeSave"
+              class="r-filter-bar-pro__scheme-empty"
+            >
               暂无保存的方案
             </div>
           </div>
@@ -252,7 +269,11 @@ defineExpose(expose)
     </div>
 
     <!-- Active Filter Chips -->
-    <div v-if="activeFilterChips.length > 0" class="r-filter-bar-pro__chips" data-testid="filter-chips">
+    <div
+      v-if="activeFilterChips.length > 0"
+      class="r-filter-bar-pro__chips"
+      data-testid="filter-chips"
+    >
       <NSpace size="small">
         <NTag
           v-for="chip in activeFilterChips"

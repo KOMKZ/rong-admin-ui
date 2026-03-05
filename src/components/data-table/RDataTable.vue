@@ -66,7 +66,9 @@ function initColumnConfig(): void {
           return
         }
       }
-    } catch { /* use defaults */ }
+    } catch {
+      /* use defaults */
+    }
   }
 
   columnConfig.value = props.columns.map((col, idx) => ({
@@ -82,21 +84,27 @@ function persistColumnConfig(): void {
   if (!props.columnStorageKey) return
   try {
     localStorage.setItem(`ra-col-cfg-${props.columnStorageKey}`, JSON.stringify(columnConfig.value))
-  } catch { /* noop */ }
+  } catch {
+    /* noop */
+  }
 }
 
-watch(() => props.columns, () => {
-  const existingKeys = new Set(columnConfig.value.map((c) => c.key))
-  for (const col of props.columns) {
-    if (!existingKeys.has(col.key)) {
-      columnConfig.value.push({
-        key: col.key,
-        visible: col.defaultVisible !== false,
-        order: columnConfig.value.length,
-      })
+watch(
+  () => props.columns,
+  () => {
+    const existingKeys = new Set(columnConfig.value.map((c) => c.key))
+    for (const col of props.columns) {
+      if (!existingKeys.has(col.key)) {
+        columnConfig.value.push({
+          key: col.key,
+          visible: col.defaultVisible !== false,
+          order: columnConfig.value.length,
+        })
+      }
     }
-  }
-}, { deep: true })
+  },
+  { deep: true },
+)
 
 const effectiveColumns = computed(() => {
   if (!props.columnConfigurable) return props.columns
@@ -250,10 +258,17 @@ defineExpose(expose)
       </button>
     </div>
 
-    <div v-if="showColumnConfig && columnConfigurable" class="r-data-table__config-panel" role="dialog" aria-label="Column configuration">
+    <div
+      v-if="showColumnConfig && columnConfigurable"
+      class="r-data-table__config-panel"
+      role="dialog"
+      aria-label="Column configuration"
+    >
       <div class="r-data-table__config-header">
         <span>Column Settings</span>
-        <button class="r-data-table__config-reset" @click="resetColumnConfigToDefaults">Reset</button>
+        <button class="r-data-table__config-reset" @click="resetColumnConfigToDefaults">
+          Reset
+        </button>
       </div>
       <label
         v-for="col in columns"
@@ -263,7 +278,7 @@ defineExpose(expose)
       >
         <input
           type="checkbox"
-          :checked="columnConfig.find(c => c.key === col.key)?.visible ?? true"
+          :checked="columnConfig.find((c) => c.key === col.key)?.visible ?? true"
           :disabled="col.configurable === false"
           @change="toggleColumnVisibility(col.key)"
         />
@@ -273,9 +288,7 @@ defineExpose(expose)
 
     <div v-if="showBatchToolbar" class="r-data-table__batch-toolbar" data-testid="batch-toolbar">
       <slot name="batchToolbar" :selected-count="selectedCount" :selected-keys="checkedRowKeys">
-        <span class="r-data-table__batch-info">
-          {{ selectedCount }} item(s) selected
-        </span>
+        <span class="r-data-table__batch-info"> {{ selectedCount }} item(s) selected </span>
       </slot>
     </div>
 

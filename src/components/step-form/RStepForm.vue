@@ -110,7 +110,9 @@ function reset(): void {
   finished.value = false
   const empty: Record<string, unknown> = {}
   props.steps.forEach((s) => {
-    s.schema?.forEach((f) => { empty[f.key] = undefined })
+    s.schema?.forEach((f) => {
+      empty[f.key] = undefined
+    })
   })
   localModel.value = empty
   emit('update:modelValue', empty)
@@ -149,11 +151,7 @@ defineExpose(expose)
     </div>
 
     <!-- Step error message -->
-    <div
-      v-if="stepErrors.has(localStep)"
-      class="r-step-form__error"
-      data-testid="step-error"
-    >
+    <div v-if="stepErrors.has(localStep)" class="r-step-form__error" data-testid="step-error">
       <RIcon name="alert-circle" :size="16" />
       <span>{{ stepErrors.get(localStep) }}</span>
     </div>
@@ -200,12 +198,7 @@ defineExpose(expose)
         :submit="submit"
       >
         <NSpace>
-          <NButton
-            v-if="!isFirst"
-            :disabled="disabled"
-            data-testid="step-prev-btn"
-            @click="prev"
-          >
+          <NButton v-if="!isFirst" :disabled="disabled" data-testid="step-prev-btn" @click="prev">
             <template #icon><RIcon name="arrow-left" :size="14" /></template>
             {{ prevButtonLabel }}
           </NButton>

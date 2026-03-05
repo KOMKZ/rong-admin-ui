@@ -37,8 +37,7 @@ const filteredItems = computed(() => {
   return props.items.filter(
     (item) =>
       !item.disabled &&
-      (item.label.toLowerCase().includes(query) ||
-        item.description?.toLowerCase().includes(query)),
+      (item.label.toLowerCase().includes(query) || item.description?.toLowerCase().includes(query)),
   )
 })
 
@@ -133,11 +132,7 @@ onUnmounted(() => {
         data-testid="command-palette-overlay"
         @click="close"
       >
-        <div
-          class="r-command-palette"
-          data-testid="command-palette"
-          @click.stop
-        >
+        <div class="r-command-palette" data-testid="command-palette" @click.stop>
           <div class="r-command-palette__header">
             <RIcon name="search" size="sm" class="r-command-palette__search-icon" />
             <input
@@ -171,13 +166,21 @@ onUnmounted(() => {
                 v-for="item in groupItems"
                 :key="item.id"
                 class="r-command-palette__item"
-                :class="{ 'r-command-palette__item--selected': filteredItems.indexOf(item) === selectedIndex }"
+                :class="{
+                  'r-command-palette__item--selected':
+                    filteredItems.indexOf(item) === selectedIndex,
+                }"
                 :data-selected="filteredItems.indexOf(item) === selectedIndex"
                 :data-testid="`command-item-${item.id}`"
                 @click="selectItem(item)"
                 @mouseenter="selectedIndex = filteredItems.indexOf(item)"
               >
-                <RIcon v-if="item.icon" :name="item.icon" size="sm" class="r-command-palette__item-icon" />
+                <RIcon
+                  v-if="item.icon"
+                  :name="item.icon"
+                  size="sm"
+                  class="r-command-palette__item-icon"
+                />
                 <div class="r-command-palette__item-content">
                   <span class="r-command-palette__item-label">{{ item.label }}</span>
                   <span v-if="item.description" class="r-command-palette__item-desc">
@@ -193,9 +196,7 @@ onUnmounted(() => {
 
           <div class="r-command-palette__footer">
             <span class="r-command-palette__hint">
-              <kbd>↑↓</kbd> to navigate
-              <kbd>↵</kbd> to select
-              <kbd>esc</kbd> to close
+              <kbd>↑↓</kbd> to navigate <kbd>↵</kbd> to select <kbd>esc</kbd> to close
             </span>
           </div>
         </div>
@@ -394,7 +395,9 @@ onUnmounted(() => {
 
 .r-command-palette-enter-active .r-command-palette,
 .r-command-palette-leave-active .r-command-palette {
-  transition: transform var(--ra-transition-fast), opacity var(--ra-transition-fast);
+  transition:
+    transform var(--ra-transition-fast),
+    opacity var(--ra-transition-fast);
 }
 
 .r-command-palette-enter-from,

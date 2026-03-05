@@ -166,6 +166,7 @@ function handleCustomRequest(options: {
 
   const newList = [...props.fileList, uploadFile]
   emit('update:fileList', newList)
+  emit('change', { file: uploadFile, fileList: newList })
 
   if (props.queueConfig) {
     uploadQueue.push({ fileId, rawFile: options.file.file })
@@ -208,6 +209,10 @@ function handleRemove(data: { file: { id: string } }): boolean {
 
   const newList = props.fileList.filter((f) => f.id !== data.file.id)
   emit('update:fileList', newList)
+  emit('change', {
+    file: { ...target, status: 'removed' as UploadFile['status'] },
+    fileList: newList,
+  })
   emit('remove', target)
 
   const controller = abortControllers.get(target.id)
@@ -224,8 +229,8 @@ function handlePreview(fileId: string): void {
   if (target) emit('preview', target)
 }
 
-function onNaivePreview(file: Record<string, unknown>): void {
-  const id = (file.id as string) ?? (file.file as Record<string, string>)?.name ?? ''
+function onNaivePreview(file: { id?: string; file?: File | null }): void {
+  const id = file.id ?? file.file?.name ?? ''
   handlePreview(id)
 }
 

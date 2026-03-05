@@ -46,12 +46,20 @@ const compareResult = computed(() => {
   if (!props.compare) return null
   const { previousValue, currentValue, period, periodLabel } = props.compare
   if (previousValue === 0) {
-    return { percent: currentValue > 0 ? '+100%' : '0%', direction: 'up' as const, label: periodLabel ?? periodLabelMap[period] }
+    return {
+      percent: currentValue > 0 ? '+100%' : '0%',
+      direction: 'up' as const,
+      label: periodLabel ?? periodLabelMap[period],
+    }
   }
   const change = ((currentValue - previousValue) / Math.abs(previousValue)) * 100
   const rounded = Math.abs(change) < 0.01 ? '0%' : `${change > 0 ? '+' : ''}${change.toFixed(1)}%`
   const direction = change > 0 ? 'up' : change < 0 ? 'down' : 'flat'
-  return { percent: rounded, direction: direction as 'up' | 'down' | 'flat', label: periodLabel ?? periodLabelMap[period] }
+  return {
+    percent: rounded,
+    direction: direction as 'up' | 'down' | 'flat',
+    label: periodLabel ?? periodLabelMap[period],
+  }
 })
 
 const periodLabelMap: Record<string, string> = {
@@ -133,10 +141,18 @@ function handleClick(): void {
           <span v-if="suffix" class="r-stat-card__suffix">{{ suffix }}</span>
         </div>
 
-        <div v-if="effectiveTrend || effectiveTrendValue" class="r-stat-card__trend" :class="trendClass">
+        <div
+          v-if="effectiveTrend || effectiveTrendValue"
+          class="r-stat-card__trend"
+          :class="trendClass"
+        >
           <RIcon v-if="effectiveTrend" :name="trendIcon" size="xs" />
-          <span v-if="effectiveTrendValue" class="r-stat-card__trend-value">{{ effectiveTrendValue }}</span>
-          <span v-if="effectiveTrendLabel" class="r-stat-card__trend-label">{{ effectiveTrendLabel }}</span>
+          <span v-if="effectiveTrendValue" class="r-stat-card__trend-value">{{
+            effectiveTrendValue
+          }}</span>
+          <span v-if="effectiveTrendLabel" class="r-stat-card__trend-label">{{
+            effectiveTrendLabel
+          }}</span>
         </div>
 
         <div v-if="compare" class="r-stat-card__compare" data-testid="stat-card-compare">
