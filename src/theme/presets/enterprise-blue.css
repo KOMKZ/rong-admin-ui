@@ -1,54 +1,97 @@
 /*
  * Enterprise Blue — Default preset
  * Calm, neutral blue-gray palette for general-purpose admin consoles.
+ * v0.6 Modern Enhancement
  */
 
 /* ── Light mode (default) ─────────────────────────────── */
 .ra-theme-enterprise-blue {
+  /* Background layers */
   --ra-color-bg-page: var(--ra-primitive-neutral-2);
   --ra-color-bg-surface: var(--ra-primitive-neutral-1);
+  --ra-color-bg-surface-secondary: var(--ra-primitive-neutral-2);
+  --ra-color-bg-surface-tertiary: var(--ra-primitive-neutral-3);
   --ra-color-bg-elevated: var(--ra-primitive-neutral-1);
+  --ra-color-bg-elevated-soft: rgba(255, 255, 255, 0.9);
   --ra-color-bg-muted: var(--ra-primitive-neutral-3);
+  --ra-color-bg-hover: var(--ra-primitive-neutral-3);
+  --ra-color-bg-active: var(--ra-primitive-neutral-4);
 
+  /* Text hierarchy */
   --ra-color-text-primary: var(--ra-primitive-neutral-11);
   --ra-color-text-secondary: var(--ra-primitive-neutral-8);
   --ra-color-text-tertiary: var(--ra-primitive-neutral-7);
+  --ra-color-text-quaternary: var(--ra-primitive-neutral-6);
 
+  /* Border */
   --ra-color-border-default: var(--ra-primitive-neutral-4);
   --ra-color-border-light: var(--ra-primitive-neutral-3);
+  --ra-color-border-strong: var(--ra-primitive-neutral-6);
+  --ra-color-border-interactive: var(--ra-primitive-neutral-5);
+  --ra-color-border-focus: var(--ra-primitive-blue-5);
 
+  /* Brand */
   --ra-color-brand-primary: var(--ra-primitive-blue-6);
   --ra-color-brand-hover: var(--ra-primitive-blue-7);
   --ra-color-brand-active: var(--ra-primitive-blue-8);
   --ra-color-brand-light: var(--ra-primitive-blue-1);
+  --ra-color-brand-subtle: rgba(32, 128, 240, 0.06);
 
+  /* Focus */
   --ra-color-focus-ring: rgba(32, 128, 240, 0.35);
+
+  /* Info status */
+  --ra-color-info: var(--ra-primitive-blue-6);
+  --ra-color-info-bg: var(--ra-primitive-blue-1);
+  --ra-color-info-text: var(--ra-primitive-blue-8);
+  --ra-color-info-border: var(--ra-primitive-blue-3);
+
+  /* Text links */
+  --ra-color-text-link: var(--ra-primitive-blue-6);
+  --ra-color-text-link-hover: var(--ra-primitive-blue-7);
 }
 
 /* ── Dark mode ────────────────────────────────────────── */
 .ra-theme-enterprise-blue.ra-dark {
+  /* Background layers */
   --ra-color-bg-page: #111318;
   --ra-color-bg-surface: #1a1d24;
+  --ra-color-bg-surface-secondary: #1f232c;
+  --ra-color-bg-surface-tertiary: #262b36;
   --ra-color-bg-elevated: #22262e;
+  --ra-color-bg-elevated-soft: rgba(34, 38, 46, 0.95);
   --ra-color-bg-overlay: rgba(0, 0, 0, 0.65);
   --ra-color-bg-muted: #2a2e38;
   --ra-color-bg-code: #2a2e38;
+  --ra-color-bg-hover: #2e333d;
+  --ra-color-bg-active: #363c48;
 
+  /* Text hierarchy */
   --ra-color-text-primary: #e8eaed;
   --ra-color-text-secondary: #9aa0aa;
   --ra-color-text-tertiary: #6b7280;
+  --ra-color-text-quaternary: #525866;
   --ra-color-text-inverse: #111318;
   --ra-color-text-code: #8bb4d4;
 
+  /* Border */
   --ra-color-border-default: #2e333d;
   --ra-color-border-light: #252930;
   --ra-color-border-strong: #3e4452;
+  --ra-color-border-interactive: #4a5160;
+  --ra-color-border-focus: #4a9cff;
 
+  /* Brand */
   --ra-color-brand-primary: #4a9cff;
   --ra-color-brand-hover: #7ab8ff;
   --ra-color-brand-active: #2080f0;
   --ra-color-brand-light: rgba(32, 128, 240, 0.15);
+  --ra-color-brand-subtle: rgba(32, 128, 240, 0.08);
 
+  /* Focus */
+  --ra-color-focus-ring: rgba(74, 156, 255, 0.4);
+
+  /* Status colors */
   --ra-color-success: #34d399;
   --ra-color-success-bg: rgba(24, 160, 88, 0.15);
   --ra-color-success-text: #6ee7b7;
@@ -64,9 +107,19 @@
   --ra-color-danger-text: #fca5a5;
   --ra-color-danger-border: rgba(208, 48, 80, 0.3);
 
-  --ra-color-focus-ring: rgba(74, 156, 255, 0.4);
+  --ra-color-info: #60a5fa;
+  --ra-color-info-bg: rgba(59, 130, 246, 0.15);
+  --ra-color-info-text: #93c5fd;
+  --ra-color-info-border: rgba(59, 130, 246, 0.3);
 
-  --ra-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  /* Text links */
+  --ra-color-text-link: #4a9cff;
+  --ra-color-text-link-hover: #7ab8ff;
+
+  /* Shadows */
+  --ra-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --ra-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.15);
   --ra-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
   --ra-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --ra-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.35), 0 10px 10px -5px rgba(0, 0, 0, 0.25);
 }

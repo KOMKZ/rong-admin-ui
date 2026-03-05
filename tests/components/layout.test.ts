@@ -397,8 +397,11 @@ describe('RSideNav', () => {
   })
 
   it('renders icon in menu item', () => {
-    const wrapper = mount(RSideNav, { props: { menus: baseMenus } })
-    expect(wrapper.find('.r-side-nav__icon').text()).toContain('🏠')
+    const menusWithLucideIcon: MenuItem[] = [
+      { key: 'home', label: 'Home', icon: 'home', path: '/home' },
+    ]
+    const wrapper = mount(RSideNav, { props: { menus: menusWithLucideIcon } })
+    expect(wrapper.find('.r-side-nav__icon').exists()).toBe(true)
   })
 
   it('menu items have role="menuitem" for accessibility', () => {

@@ -26,6 +26,9 @@ export {
   shadowVar,
   fontSizeVar,
   transitionVar,
+  fontWeightVar,
+  lineHeightVar,
+  zIndexVar,
   resolveToken,
 } from './tokens'
 
@@ -35,7 +38,10 @@ export type {
   RadiusToken,
   ShadowToken,
   FontSizeToken,
+  FontWeightToken,
+  LineHeightToken,
   TransitionToken,
+  ZIndexToken,
 } from './tokens'
 
 import './primitives.css'
@@ -43,3 +49,5 @@ import './semantic.css'
 import './presets/enterprise-blue.css'
 import './presets/teal-ops.css'
 import './presets/graphite-pro.css'
+import './presets/cloud-ops.css'
+import './presets/slate-pro.css'

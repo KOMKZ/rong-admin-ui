@@ -85,10 +85,12 @@
     "quality-gate": "bash scripts/quality-gate.sh",
     "quality-gate:local": "bash scripts/ci/run-local.sh",
     "quality-gate:ci": "bash scripts/ci/run-ci.sh",
+    "knowledge:new": "node scripts/knowledge/new-iteration.mjs",
     "prepublishOnly": "npm run build",
     "pack:dry": "npm pack --dry-run"
   },
   "dependencies": {
+    "lucide-vue-next": "^0.577.0",
     "pinia": ">=2.0.0",
     "vue": ">=3.4.0",
     "vue-router": ">=4.0.0"

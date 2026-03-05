@@ -1,6 +1,6 @@
 import type { GlobalThemeOverrides } from 'naive-ui'
 
-export type ThemePresetName = 'enterprise-blue' | 'teal-ops' | 'graphite-pro'
+export type ThemePresetName = 'enterprise-blue' | 'teal-ops' | 'graphite-pro' | 'cloud-ops' | 'slate-pro'
 export type ThemeMode = 'light' | 'dark'
 
 export interface ThemePreset {

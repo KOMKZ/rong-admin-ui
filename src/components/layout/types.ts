@@ -68,3 +68,20 @@ export interface TabsViewEmits {
   (e: 'close-other', key: string): void
   (e: 'close-all'): void
 }
+
+export type PageHeaderStatus = 'draft' | 'active' | 'archived' | 'error' | ''
+
+export interface PageHeaderProps {
+  title: string
+  description?: string
+  breadcrumbs?: BreadcrumbItem[]
+  backUrl?: string
+  status?: PageHeaderStatus
+  statusLabel?: string
+  sticky?: boolean
+}
+
+export interface PageHeaderEmits {
+  (e: 'back'): void
+  (e: 'navigate', path: string): void
+}

@@ -4,6 +4,7 @@
  * tokens programmatically (e.g. for inline styles or Naive UI overrides).
  *
  * Components MUST use semantic tokens only.
+ * v0.6 Modern Enhancement
  */
 
 /* ──────────────────────── Primitive Scales ──────────────────────── */
@@ -15,29 +16,41 @@ export const primitiveColors = {
   amber: ['#fffbeb', '#fef3c7', '#fde68a', '#fcd34d', '#fbbf24', '#f0a020', '#d4891a', '#b87315', '#925a0f', '#6b420b'],
   red: ['#fef2f2', '#fee2e2', '#fecaca', '#fca5a5', '#f87171', '#d03050', '#b52a46', '#99233c', '#7d1d31', '#611727'],
   teal: ['#f0fdfa', '#ccfbf1', '#99f6e4', '#5eead4', '#2dd4bf', '#14b8a6', '#0f9688', '#0d7a6f', '#0a5e55', '#07423c'],
+  cyan: ['#ecfeff', '#cffafe', '#a5f3fc', '#67e8f9', '#22d3ee', '#06b6d4', '#0891b2', '#0e7490', '#155e75', '#164e63'],
+  violet: ['#f5f3ff', '#ede9fe', '#ddd6fe', '#c4b5fd', '#a78bfa', '#8b5cf6', '#7c3aed', '#6d28d9', '#5b21b6', '#4c1d95'],
 } as const
 
 /* ──────────────────────── Semantic Token Keys ──────────────────────── */
 
 export type SemanticColorToken =
-  | 'bg-page' | 'bg-surface' | 'bg-elevated' | 'bg-overlay' | 'bg-muted' | 'bg-code'
-  | 'text-primary' | 'text-secondary' | 'text-tertiary' | 'text-inverse' | 'text-code'
-  | 'border-default' | 'border-light' | 'border-strong'
-  | 'brand-primary' | 'brand-hover' | 'brand-active' | 'brand-light'
+  | 'bg-page' | 'bg-surface' | 'bg-surface-secondary' | 'bg-surface-tertiary'
+  | 'bg-elevated' | 'bg-elevated-soft' | 'bg-overlay' | 'bg-muted' | 'bg-code'
+  | 'bg-hover' | 'bg-active'
+  | 'text-primary' | 'text-secondary' | 'text-tertiary' | 'text-quaternary'
+  | 'text-inverse' | 'text-code' | 'text-link' | 'text-link-hover'
+  | 'border-default' | 'border-light' | 'border-strong' | 'border-interactive' | 'border-focus'
+  | 'brand-primary' | 'brand-hover' | 'brand-active' | 'brand-light' | 'brand-subtle'
   | 'success' | 'success-bg' | 'success-text' | 'success-border'
   | 'warning' | 'warning-bg' | 'warning-text' | 'warning-border'
   | 'danger' | 'danger-bg' | 'danger-text' | 'danger-border'
+  | 'info' | 'info-bg' | 'info-text' | 'info-border'
   | 'focus-ring'
 
-export type SpacingToken = '1' | '2' | '3' | '4' | '5' | '6' | '8' | '10' | '12'
+export type SpacingToken = '0' | 'px' | '0-5' | '1' | '1-5' | '2' | '2-5' | '3' | '4' | '5' | '6' | '8' | '10' | '12' | '16' | '20' | '24'
 
-export type RadiusToken = 'sm' | 'md' | 'lg' | 'xl' | 'full'
+export type RadiusToken = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full'
 
-export type ShadowToken = 'sm' | 'md' | 'lg' | 'xl'
+export type ShadowToken = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'inner'
 
-export type FontSizeToken = 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl'
+export type FontSizeToken = '2xs' | 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl'
 
-export type TransitionToken = 'fast' | 'base' | 'slow'
+export type FontWeightToken = 'normal' | 'medium' | 'semibold' | 'bold'
+
+export type LineHeightToken = 'none' | 'tight' | 'snug' | 'base' | 'relaxed' | 'loose'
+
+export type TransitionToken = 'fast' | 'base' | 'slow' | 'slower'
+
+export type ZIndexToken = 'dropdown' | 'sticky' | 'fixed' | 'modal-backdrop' | 'modal' | 'popover' | 'tooltip' | 'command-palette'
 
 /* ──────────────────────── CSS Variable Resolvers ──────────────────────── */
 
@@ -69,6 +82,21 @@ export function fontSizeVar(token: FontSizeToken): string {
 /** Returns `var(--ra-transition-{token})` */
 export function transitionVar(token: TransitionToken): string {
   return `var(--ra-transition-${token})`
+}
+
+/** Returns `var(--ra-font-weight-{token})` */
+export function fontWeightVar(token: FontWeightToken): string {
+  return `var(--ra-font-weight-${token})`
+}
+
+/** Returns `var(--ra-line-height-{token})` */
+export function lineHeightVar(token: LineHeightToken): string {
+  return `var(--ra-line-height-${token})`
+}
+
+/** Returns `var(--ra-z-{token})` */
+export function zIndexVar(token: ZIndexToken): string {
+  return `var(--ra-z-${token})`
 }
 
 /* ──────────────────────── Runtime Computed Value ──────────────────────── */

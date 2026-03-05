@@ -1,0 +1,139 @@
+/*
+ * Slate Pro — Professional Business Preset
+ * Sophisticated slate-gray palette with subtle violet accents.
+ * Ideal for enterprise dashboards, business analytics, and professional tools.
+ */
+
+/* ── Light mode ─────────────────────────────────────── */
+.ra-theme-slate-pro {
+  /* Background layers - warm neutral slate */
+  --ra-color-bg-page: #f8f9fa;
+  --ra-color-bg-surface: #ffffff;
+  --ra-color-bg-surface-secondary: #fafbfc;
+  --ra-color-bg-surface-tertiary: #f3f4f6;
+  --ra-color-bg-elevated: #ffffff;
+  --ra-color-bg-elevated-soft: rgba(255, 255, 255, 0.95);
+  --ra-color-bg-muted: #f1f3f5;
+  --ra-color-bg-hover: #e9ecef;
+  --ra-color-bg-active: #dee2e6;
+
+  /* Text hierarchy - deeper contrast */
+  --ra-color-text-primary: #111827;
+  --ra-color-text-secondary: #374151;
+  --ra-color-text-tertiary: #6b7280;
+  --ra-color-text-quaternary: #9ca3af;
+
+  /* Border */
+  --ra-color-border-default: #e5e7eb;
+  --ra-color-border-light: #f3f4f6;
+  --ra-color-border-strong: #d1d5db;
+  --ra-color-border-interactive: #9ca3af;
+  --ra-color-border-focus: #7c3aed;
+
+  /* Brand - Violet accent */
+  --ra-color-brand-primary: #7c3aed;
+  --ra-color-brand-hover: #6d28d9;
+  --ra-color-brand-active: #5b21b6;
+  --ra-color-brand-light: #f5f3ff;
+  --ra-color-brand-subtle: rgba(124, 58, 237, 0.06);
+
+  /* Focus */
+  --ra-color-focus-ring: rgba(124, 58, 237, 0.35);
+
+  /* Status colors */
+  --ra-color-success: #059669;
+  --ra-color-success-bg: #ecfdf5;
+  --ra-color-success-text: #047857;
+  --ra-color-success-border: #a7f3d0;
+
+  --ra-color-warning: #d97706;
+  --ra-color-warning-bg: #fffbeb;
+  --ra-color-warning-text: #b45309;
+  --ra-color-warning-border: #fde68a;
+
+  --ra-color-danger: #dc2626;
+  --ra-color-danger-bg: #fef2f2;
+  --ra-color-danger-text: #b91c1c;
+  --ra-color-danger-border: #fecaca;
+
+  --ra-color-info: #2563eb;
+  --ra-color-info-bg: #eff6ff;
+  --ra-color-info-text: #1d4ed8;
+  --ra-color-info-border: #bfdbfe;
+
+  /* Text links */
+  --ra-color-text-link: #7c3aed;
+  --ra-color-text-link-hover: #6d28d9;
+}
+
+/* ── Dark mode ──────────────────────────────────────── */
+.ra-theme-slate-pro.ra-dark {
+  /* Background layers - rich slate */
+  --ra-color-bg-page: #0f0f12;
+  --ra-color-bg-surface: #18181c;
+  --ra-color-bg-surface-secondary: #1f1f24;
+  --ra-color-bg-surface-tertiary: #26262d;
+  --ra-color-bg-elevated: #1f1f24;
+  --ra-color-bg-elevated-soft: rgba(31, 31, 36, 0.95);
+  --ra-color-bg-overlay: rgba(0, 0, 0, 0.7);
+  --ra-color-bg-muted: #26262d;
+  --ra-color-bg-code: #26262d;
+  --ra-color-bg-hover: #2d2d35;
+  --ra-color-bg-active: #35353e;
+
+  /* Text hierarchy */
+  --ra-color-text-primary: #f9fafb;
+  --ra-color-text-secondary: #d1d5db;
+  --ra-color-text-tertiary: #9ca3af;
+  --ra-color-text-quaternary: #6b7280;
+  --ra-color-text-inverse: #0f0f12;
+  --ra-color-text-code: #c4b5fd;
+
+  /* Border */
+  --ra-color-border-default: #2d2d35;
+  --ra-color-border-light: #26262d;
+  --ra-color-border-strong: #3f3f47;
+  --ra-color-border-interactive: #525260;
+  --ra-color-border-focus: #a78bfa;
+
+  /* Brand - Violet glow */
+  --ra-color-brand-primary: #a78bfa;
+  --ra-color-brand-hover: #c4b5fd;
+  --ra-color-brand-active: #8b5cf6;
+  --ra-color-brand-light: rgba(167, 139, 250, 0.12);
+  --ra-color-brand-subtle: rgba(167, 139, 250, 0.06);
+
+  /* Focus */
+  --ra-color-focus-ring: rgba(167, 139, 250, 0.4);
+
+  /* Status colors - dark mode variants */
+  --ra-color-success: #34d399;
+  --ra-color-success-bg: rgba(16, 185, 129, 0.12);
+  --ra-color-success-text: #6ee7b7;
+  --ra-color-success-border: rgba(16, 185, 129, 0.25);
+
+  --ra-color-warning: #fbbf24;
+  --ra-color-warning-bg: rgba(245, 158, 11, 0.12);
+  --ra-color-warning-text: #fde68a;
+  --ra-color-warning-border: rgba(245, 158, 11, 0.25);
+
+  --ra-color-danger: #f87171;
+  --ra-color-danger-bg: rgba(239, 68, 68, 0.12);
+  --ra-color-danger-text: #fca5a5;
+  --ra-color-danger-border: rgba(239, 68, 68, 0.25);
+
+  --ra-color-info: #60a5fa;
+  --ra-color-info-bg: rgba(37, 99, 235, 0.12);
+  --ra-color-info-text: #93c5fd;
+  --ra-color-info-border: rgba(37, 99, 235, 0.25);
+
+  /* Text links */
+  --ra-color-text-link: #a78bfa;
+  --ra-color-text-link-hover: #c4b5fd;
+
+  /* Shadows for dark mode */
+  --ra-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --ra-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.25);
+  --ra-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.45), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --ra-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.35);
+}

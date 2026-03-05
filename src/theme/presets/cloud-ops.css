@@ -1,0 +1,139 @@
+/*
+ * Cloud Ops — Modern Operations & Monitoring Preset
+ * Cool teal-cyan palette with high information density support.
+ * Ideal for DevOps dashboards, monitoring consoles, and cloud infrastructure.
+ */
+
+/* ── Light mode ─────────────────────────────────────── */
+.ra-theme-cloud-ops {
+  /* Background layers */
+  --ra-color-bg-page: #f4f7f9;
+  --ra-color-bg-surface: #ffffff;
+  --ra-color-bg-surface-secondary: #f8fafb;
+  --ra-color-bg-surface-tertiary: #f0f4f6;
+  --ra-color-bg-elevated: #ffffff;
+  --ra-color-bg-elevated-soft: rgba(255, 255, 255, 0.92);
+  --ra-color-bg-muted: #edf2f5;
+  --ra-color-bg-hover: #e8eef2;
+  --ra-color-bg-active: #dce4ea;
+
+  /* Text hierarchy */
+  --ra-color-text-primary: #0f172a;
+  --ra-color-text-secondary: #475569;
+  --ra-color-text-tertiary: #64748b;
+  --ra-color-text-quaternary: #94a3b8;
+
+  /* Border */
+  --ra-color-border-default: #e2e8f0;
+  --ra-color-border-light: #f1f5f9;
+  --ra-color-border-strong: #cbd5e1;
+  --ra-color-border-interactive: #94a3b8;
+  --ra-color-border-focus: var(--ra-primitive-teal-5);
+
+  /* Brand - Teal/Cyan primary */
+  --ra-color-brand-primary: #0891b2;
+  --ra-color-brand-hover: #0e7490;
+  --ra-color-brand-active: #155e75;
+  --ra-color-brand-light: #ecfeff;
+  --ra-color-brand-subtle: rgba(8, 145, 178, 0.08);
+
+  /* Focus */
+  --ra-color-focus-ring: rgba(8, 145, 178, 0.35);
+
+  /* Status colors - slightly cooler tones */
+  --ra-color-success: #059669;
+  --ra-color-success-bg: #ecfdf5;
+  --ra-color-success-text: #047857;
+  --ra-color-success-border: #a7f3d0;
+
+  --ra-color-warning: #d97706;
+  --ra-color-warning-bg: #fffbeb;
+  --ra-color-warning-text: #b45309;
+  --ra-color-warning-border: #fde68a;
+
+  --ra-color-danger: #dc2626;
+  --ra-color-danger-bg: #fef2f2;
+  --ra-color-danger-text: #b91c1c;
+  --ra-color-danger-border: #fecaca;
+
+  --ra-color-info: #0284c7;
+  --ra-color-info-bg: #f0f9ff;
+  --ra-color-info-text: #0369a1;
+  --ra-color-info-border: #bae6fd;
+
+  /* Text links */
+  --ra-color-text-link: #0891b2;
+  --ra-color-text-link-hover: #0e7490;
+}
+
+/* ── Dark mode ──────────────────────────────────────── */
+.ra-theme-cloud-ops.ra-dark {
+  /* Background layers */
+  --ra-color-bg-page: #0c1222;
+  --ra-color-bg-surface: #131b2e;
+  --ra-color-bg-surface-secondary: #1a2540;
+  --ra-color-bg-surface-tertiary: #222f4a;
+  --ra-color-bg-elevated: #1e2a45;
+  --ra-color-bg-elevated-soft: rgba(30, 42, 69, 0.95);
+  --ra-color-bg-overlay: rgba(0, 0, 0, 0.65);
+  --ra-color-bg-muted: #1a2540;
+  --ra-color-bg-code: #1a2540;
+  --ra-color-bg-hover: #243352;
+  --ra-color-bg-active: #2d3f5f;
+
+  /* Text hierarchy */
+  --ra-color-text-primary: #f1f5f9;
+  --ra-color-text-secondary: #94a3b8;
+  --ra-color-text-tertiary: #64748b;
+  --ra-color-text-quaternary: #475569;
+  --ra-color-text-inverse: #0c1222;
+  --ra-color-text-code: #7dd3fc;
+
+  /* Border */
+  --ra-color-border-default: #1e3a5f;
+  --ra-color-border-light: #162d4d;
+  --ra-color-border-strong: #2d4a6e;
+  --ra-color-border-interactive: #3b5f8a;
+  --ra-color-border-focus: #22d3ee;
+
+  /* Brand - Cyan glow effect */
+  --ra-color-brand-primary: #22d3ee;
+  --ra-color-brand-hover: #67e8f9;
+  --ra-color-brand-active: #06b6d4;
+  --ra-color-brand-light: rgba(34, 211, 238, 0.12);
+  --ra-color-brand-subtle: rgba(34, 211, 238, 0.06);
+
+  /* Focus */
+  --ra-color-focus-ring: rgba(34, 211, 238, 0.4);
+
+  /* Status colors - dark mode variants */
+  --ra-color-success: #34d399;
+  --ra-color-success-bg: rgba(16, 185, 129, 0.12);
+  --ra-color-success-text: #6ee7b7;
+  --ra-color-success-border: rgba(16, 185, 129, 0.25);
+
+  --ra-color-warning: #fbbf24;
+  --ra-color-warning-bg: rgba(245, 158, 11, 0.12);
+  --ra-color-warning-text: #fde68a;
+  --ra-color-warning-border: rgba(245, 158, 11, 0.25);
+
+  --ra-color-danger: #f87171;
+  --ra-color-danger-bg: rgba(239, 68, 68, 0.12);
+  --ra-color-danger-text: #fca5a5;
+  --ra-color-danger-border: rgba(239, 68, 68, 0.25);
+
+  --ra-color-info: #38bdf8;
+  --ra-color-info-bg: rgba(14, 165, 233, 0.12);
+  --ra-color-info-text: #7dd3fc;
+  --ra-color-info-border: rgba(14, 165, 233, 0.25);
+
+  /* Text links */
+  --ra-color-text-link: #22d3ee;
+  --ra-color-text-link-hover: #67e8f9;
+
+  /* Shadows for dark mode */
+  --ra-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --ra-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.35), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --ra-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
+  --ra-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.45), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+}
