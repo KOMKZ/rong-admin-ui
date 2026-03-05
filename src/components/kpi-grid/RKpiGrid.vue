@@ -58,25 +58,25 @@ function handleItemClick(key: string): void {
 <style scoped>
 .r-kpi-grid {
   display: grid;
-  grid-template-columns: repeat(var(--kpi-grid-cols), 1fr);
-  gap: var(--kpi-grid-gap);
+  grid-template-columns: repeat(var(--kpi-grid-cols, 4), minmax(0, 1fr));
+  gap: var(--kpi-grid-gap, 16px);
 }
 
 @media (max-width: 1280px) {
   .r-kpi-grid {
-    grid-template-columns: repeat(min(var(--kpi-grid-cols), 3), 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 1024px) {
   .r-kpi-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 640px) {
   .r-kpi-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 </style>
