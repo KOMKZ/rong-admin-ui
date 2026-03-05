@@ -1,0 +1,72 @@
+/*
+ * Teal Ops — Operations & monitoring preset
+ * Teal-green accent for DevOps / infrastructure dashboards.
+ */
+
+/* ── Light mode ───────────────────────────────────────── */
+.ra-theme-teal-ops {
+  --ra-color-bg-page: #f7fafa;
+  --ra-color-bg-surface: var(--ra-primitive-neutral-1);
+  --ra-color-bg-elevated: var(--ra-primitive-neutral-1);
+  --ra-color-bg-muted: #f0f5f4;
+
+  --ra-color-text-primary: #1a2b2a;
+  --ra-color-text-secondary: #4a6968;
+  --ra-color-text-tertiary: #7a9594;
+
+  --ra-color-border-default: #d5e0df;
+  --ra-color-border-light: #e8efee;
+
+  --ra-color-brand-primary: var(--ra-primitive-teal-6);
+  --ra-color-brand-hover: var(--ra-primitive-teal-7);
+  --ra-color-brand-active: var(--ra-primitive-teal-8);
+  --ra-color-brand-light: var(--ra-primitive-teal-1);
+
+  --ra-color-focus-ring: rgba(20, 184, 166, 0.35);
+}
+
+/* ── Dark mode ────────────────────────────────────────── */
+.ra-theme-teal-ops.ra-dark {
+  --ra-color-bg-page: #0d1514;
+  --ra-color-bg-surface: #141d1c;
+  --ra-color-bg-elevated: #1c2726;
+  --ra-color-bg-overlay: rgba(0, 0, 0, 0.65);
+  --ra-color-bg-muted: #243130;
+  --ra-color-bg-code: #243130;
+
+  --ra-color-text-primary: #e0edec;
+  --ra-color-text-secondary: #8aaba9;
+  --ra-color-text-tertiary: #5e807e;
+  --ra-color-text-inverse: #0d1514;
+  --ra-color-text-code: #7ac4bf;
+
+  --ra-color-border-default: #2a3d3b;
+  --ra-color-border-light: #1f2e2d;
+  --ra-color-border-strong: #3a524f;
+
+  --ra-color-brand-primary: var(--ra-primitive-teal-5);
+  --ra-color-brand-hover: var(--ra-primitive-teal-4);
+  --ra-color-brand-active: var(--ra-primitive-teal-6);
+  --ra-color-brand-light: rgba(20, 184, 166, 0.15);
+
+  --ra-color-success: #34d399;
+  --ra-color-success-bg: rgba(24, 160, 88, 0.15);
+  --ra-color-success-text: #6ee7b7;
+  --ra-color-success-border: rgba(24, 160, 88, 0.3);
+
+  --ra-color-warning: #fbbf24;
+  --ra-color-warning-bg: rgba(240, 160, 32, 0.15);
+  --ra-color-warning-text: #fde68a;
+  --ra-color-warning-border: rgba(240, 160, 32, 0.3);
+
+  --ra-color-danger: #f87171;
+  --ra-color-danger-bg: rgba(208, 48, 80, 0.15);
+  --ra-color-danger-text: #fca5a5;
+  --ra-color-danger-border: rgba(208, 48, 80, 0.3);
+
+  --ra-color-focus-ring: rgba(45, 212, 191, 0.4);
+
+  --ra-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --ra-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+  --ra-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}

@@ -1,0 +1,47 @@
+# 组件目录
+
+## 组件分层
+
+| 层级 | 定位 | 组件 |
+|------|------|------|
+| business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RFileUpload |
+
+## 组件清单
+
+### RDataTable
+
+- **文件**: `src/components/data-table/RDataTable.vue`
+- **契约**: `src/components/data-table/types.ts`
+- **规格文档**: `phase-2-components/data-table-spec.md`
+- **测试**: `tests/components/data-table.test.ts` (12 tests)
+- **a11y**: `tests/components/a11y.test.ts` (3 tests)
+- **消费方调用**: `rong-admin-web/src/stories/DataTableStory.vue`
+
+### RFormRenderer
+
+- **文件**: `src/components/form-renderer/RFormRenderer.vue`
+- **契约**: `src/components/form-renderer/types.ts`
+- **规格文档**: `phase-2-components/form-renderer-spec.md`
+- **测试**: `tests/components/form-renderer.test.ts` (13 tests)
+- **a11y**: `tests/components/a11y.test.ts` (2 tests)
+- **消费方调用**: `rong-admin-web/src/stories/FormRendererStory.vue`
+
+### RModalDialog
+
+- **文件**: `src/components/modal-dialog/RModalDialog.vue`
+- **契约**: `src/components/modal-dialog/types.ts`
+- **测试**: `tests/components/modal-dialog.test.ts` (12 tests)
+- **a11y**: `tests/components/a11y.test.ts` (2 tests)
+- **消费方调用**: `rong-admin-web/src/stories/ModalDialogStory.vue`
+
+### RFileUpload
+
+- **文件**: `src/components/file-upload/RFileUpload.vue`
+- **契约**: `src/components/file-upload/types.ts`
+- **测试**: `tests/components/file-upload.test.ts` (11 tests)
+- **a11y**: `tests/components/a11y.test.ts` (2 tests)
+- **消费方调用**: `rong-admin-web/src/stories/FileUploadStory.vue`
+
+## 组件依赖
+
+所有组件依赖 `naive-ui` (peer dependency)，无框架层内部模块依赖。

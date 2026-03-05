@@ -1,0 +1,51 @@
+name: quality-gate
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout UI repository
+        uses: actions/checkout@v4
+
+      - name: Checkout Web repository (monorepo workspace sibling)
+        uses: actions/checkout@v4
+        with:
+          repository: KOMKZ/rong-admin-web
+          path: ../rong-admin-web
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            ../rong-admin-web/package-lock.json
+
+      - name: Install UI dependencies
+        run: bash -c "npm ci"
+
+      - name: Install Web dependencies
+        run: bash -c "cd ../rong-admin-web && npm ci"
+
+      - name: Run single-source quality gate
+        env:
+          RISK_LEVEL: R3
+          UI_DIR: ${{ github.workspace }}
+          WEB_DIR: ${{ github.workspace }}/../rong-admin-web
+        run: bash -c "bash scripts/ci/run-ci.sh"
+
+      - name: Upload gate artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-gate-artifacts
+          path: .artifacts/

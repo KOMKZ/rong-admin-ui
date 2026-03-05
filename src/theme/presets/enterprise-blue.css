@@ -1,0 +1,72 @@
+/*
+ * Enterprise Blue — Default preset
+ * Calm, neutral blue-gray palette for general-purpose admin consoles.
+ */
+
+/* ── Light mode (default) ─────────────────────────────── */
+.ra-theme-enterprise-blue {
+  --ra-color-bg-page: var(--ra-primitive-neutral-2);
+  --ra-color-bg-surface: var(--ra-primitive-neutral-1);
+  --ra-color-bg-elevated: var(--ra-primitive-neutral-1);
+  --ra-color-bg-muted: var(--ra-primitive-neutral-3);
+
+  --ra-color-text-primary: var(--ra-primitive-neutral-11);
+  --ra-color-text-secondary: var(--ra-primitive-neutral-8);
+  --ra-color-text-tertiary: var(--ra-primitive-neutral-7);
+
+  --ra-color-border-default: var(--ra-primitive-neutral-4);
+  --ra-color-border-light: var(--ra-primitive-neutral-3);
+
+  --ra-color-brand-primary: var(--ra-primitive-blue-6);
+  --ra-color-brand-hover: var(--ra-primitive-blue-7);
+  --ra-color-brand-active: var(--ra-primitive-blue-8);
+  --ra-color-brand-light: var(--ra-primitive-blue-1);
+
+  --ra-color-focus-ring: rgba(32, 128, 240, 0.35);
+}
+
+/* ── Dark mode ────────────────────────────────────────── */
+.ra-theme-enterprise-blue.ra-dark {
+  --ra-color-bg-page: #111318;
+  --ra-color-bg-surface: #1a1d24;
+  --ra-color-bg-elevated: #22262e;
+  --ra-color-bg-overlay: rgba(0, 0, 0, 0.65);
+  --ra-color-bg-muted: #2a2e38;
+  --ra-color-bg-code: #2a2e38;
+
+  --ra-color-text-primary: #e8eaed;
+  --ra-color-text-secondary: #9aa0aa;
+  --ra-color-text-tertiary: #6b7280;
+  --ra-color-text-inverse: #111318;
+  --ra-color-text-code: #8bb4d4;
+
+  --ra-color-border-default: #2e333d;
+  --ra-color-border-light: #252930;
+  --ra-color-border-strong: #3e4452;
+
+  --ra-color-brand-primary: #4a9cff;
+  --ra-color-brand-hover: #7ab8ff;
+  --ra-color-brand-active: #2080f0;
+  --ra-color-brand-light: rgba(32, 128, 240, 0.15);
+
+  --ra-color-success: #34d399;
+  --ra-color-success-bg: rgba(24, 160, 88, 0.15);
+  --ra-color-success-text: #6ee7b7;
+  --ra-color-success-border: rgba(24, 160, 88, 0.3);
+
+  --ra-color-warning: #fbbf24;
+  --ra-color-warning-bg: rgba(240, 160, 32, 0.15);
+  --ra-color-warning-text: #fde68a;
+  --ra-color-warning-border: rgba(240, 160, 32, 0.3);
+
+  --ra-color-danger: #f87171;
+  --ra-color-danger-bg: rgba(208, 48, 80, 0.15);
+  --ra-color-danger-text: #fca5a5;
+  --ra-color-danger-border: rgba(208, 48, 80, 0.3);
+
+  --ra-color-focus-ring: rgba(74, 156, 255, 0.4);
+
+  --ra-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --ra-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+  --ra-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}

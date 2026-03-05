@@ -1,0 +1,84 @@
+/*
+ * Rong Admin — Primitive Tokens
+ *
+ * Atomic color scales. Components MUST NOT reference these directly;
+ * use semantic tokens from semantic.css instead.
+ *
+ * Scale convention: 1 = lightest … 10 = darkest (12 for neutral)
+ */
+
+:root {
+  /* ───── Blue ───── */
+  --ra-primitive-blue-1: #f0f7ff;
+  --ra-primitive-blue-2: #d6eaff;
+  --ra-primitive-blue-3: #aed4ff;
+  --ra-primitive-blue-4: #7ab8ff;
+  --ra-primitive-blue-5: #4a9cff;
+  --ra-primitive-blue-6: #2080f0;
+  --ra-primitive-blue-7: #1a6dd4;
+  --ra-primitive-blue-8: #155ab8;
+  --ra-primitive-blue-9: #0f4899;
+  --ra-primitive-blue-10: #0a3577;
+
+  /* ───── Neutral ───── */
+  --ra-primitive-neutral-1: #ffffff;
+  --ra-primitive-neutral-2: #fafbfc;
+  --ra-primitive-neutral-3: #f5f6f7;
+  --ra-primitive-neutral-4: #eef0f2;
+  --ra-primitive-neutral-5: #dde1e5;
+  --ra-primitive-neutral-6: #c2c8ce;
+  --ra-primitive-neutral-7: #99a1ab;
+  --ra-primitive-neutral-8: #6b7785;
+  --ra-primitive-neutral-9: #4a5568;
+  --ra-primitive-neutral-10: #2d3748;
+  --ra-primitive-neutral-11: #1a202c;
+  --ra-primitive-neutral-12: #0f1419;
+
+  /* ───── Green ───── */
+  --ra-primitive-green-1: #ecfdf5;
+  --ra-primitive-green-2: #d1fae5;
+  --ra-primitive-green-3: #a7f3d0;
+  --ra-primitive-green-4: #6ee7b7;
+  --ra-primitive-green-5: #34d399;
+  --ra-primitive-green-6: #18a058;
+  --ra-primitive-green-7: #158a4d;
+  --ra-primitive-green-8: #117340;
+  --ra-primitive-green-9: #0d5d33;
+  --ra-primitive-green-10: #094727;
+
+  /* ───── Amber ───── */
+  --ra-primitive-amber-1: #fffbeb;
+  --ra-primitive-amber-2: #fef3c7;
+  --ra-primitive-amber-3: #fde68a;
+  --ra-primitive-amber-4: #fcd34d;
+  --ra-primitive-amber-5: #fbbf24;
+  --ra-primitive-amber-6: #f0a020;
+  --ra-primitive-amber-7: #d4891a;
+  --ra-primitive-amber-8: #b87315;
+  --ra-primitive-amber-9: #925a0f;
+  --ra-primitive-amber-10: #6b420b;
+
+  /* ───── Red ───── */
+  --ra-primitive-red-1: #fef2f2;
+  --ra-primitive-red-2: #fee2e2;
+  --ra-primitive-red-3: #fecaca;
+  --ra-primitive-red-4: #fca5a5;
+  --ra-primitive-red-5: #f87171;
+  --ra-primitive-red-6: #d03050;
+  --ra-primitive-red-7: #b52a46;
+  --ra-primitive-red-8: #99233c;
+  --ra-primitive-red-9: #7d1d31;
+  --ra-primitive-red-10: #611727;
+
+  /* ───── Teal (used by teal-ops preset) ───── */
+  --ra-primitive-teal-1: #f0fdfa;
+  --ra-primitive-teal-2: #ccfbf1;
+  --ra-primitive-teal-3: #99f6e4;
+  --ra-primitive-teal-4: #5eead4;
+  --ra-primitive-teal-5: #2dd4bf;
+  --ra-primitive-teal-6: #14b8a6;
+  --ra-primitive-teal-7: #0f9688;
+  --ra-primitive-teal-8: #0d7a6f;
+  --ra-primitive-teal-9: #0a5e55;
+  --ra-primitive-teal-10: #07423c;
+}

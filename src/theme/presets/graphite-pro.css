@@ -1,0 +1,72 @@
+/*
+ * Graphite Pro — Premium tech preset
+ * Deep gray with restrained accent for professional tools.
+ */
+
+/* ── Light mode ───────────────────────────────────────── */
+.ra-theme-graphite-pro {
+  --ra-color-bg-page: #f4f4f6;
+  --ra-color-bg-surface: var(--ra-primitive-neutral-1);
+  --ra-color-bg-elevated: var(--ra-primitive-neutral-1);
+  --ra-color-bg-muted: #eaeaed;
+
+  --ra-color-text-primary: #1c1c1e;
+  --ra-color-text-secondary: #636366;
+  --ra-color-text-tertiary: #8e8e93;
+
+  --ra-color-border-default: #d8d8dc;
+  --ra-color-border-light: #e8e8ec;
+
+  --ra-color-brand-primary: #5856d6;
+  --ra-color-brand-hover: #4a48c4;
+  --ra-color-brand-active: #3d3bb2;
+  --ra-color-brand-light: #f0f0ff;
+
+  --ra-color-focus-ring: rgba(88, 86, 214, 0.35);
+}
+
+/* ── Dark mode ────────────────────────────────────────── */
+.ra-theme-graphite-pro.ra-dark {
+  --ra-color-bg-page: #0e0e10;
+  --ra-color-bg-surface: #161618;
+  --ra-color-bg-elevated: #1e1e22;
+  --ra-color-bg-overlay: rgba(0, 0, 0, 0.65);
+  --ra-color-bg-muted: #28282c;
+  --ra-color-bg-code: #28282c;
+
+  --ra-color-text-primary: #e5e5ea;
+  --ra-color-text-secondary: #8e8e93;
+  --ra-color-text-tertiary: #636366;
+  --ra-color-text-inverse: #0e0e10;
+  --ra-color-text-code: #a5a3e8;
+
+  --ra-color-border-default: #2c2c30;
+  --ra-color-border-light: #222226;
+  --ra-color-border-strong: #3a3a40;
+
+  --ra-color-brand-primary: #7b79e8;
+  --ra-color-brand-hover: #9b99f0;
+  --ra-color-brand-active: #5856d6;
+  --ra-color-brand-light: rgba(88, 86, 214, 0.15);
+
+  --ra-color-success: #34d399;
+  --ra-color-success-bg: rgba(24, 160, 88, 0.15);
+  --ra-color-success-text: #6ee7b7;
+  --ra-color-success-border: rgba(24, 160, 88, 0.3);
+
+  --ra-color-warning: #fbbf24;
+  --ra-color-warning-bg: rgba(240, 160, 32, 0.15);
+  --ra-color-warning-text: #fde68a;
+  --ra-color-warning-border: rgba(240, 160, 32, 0.3);
+
+  --ra-color-danger: #f87171;
+  --ra-color-danger-bg: rgba(208, 48, 80, 0.15);
+  --ra-color-danger-text: #fca5a5;
+  --ra-color-danger-border: rgba(208, 48, 80, 0.3);
+
+  --ra-color-focus-ring: rgba(123, 121, 232, 0.4);
+
+  --ra-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --ra-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+  --ra-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+}
