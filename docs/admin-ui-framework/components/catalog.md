@@ -12,7 +12,7 @@
 
 - **文件**: `src/components/data-table/RDataTable.vue`
 - **契约**: `src/components/data-table/types.ts`
-- **规格文档**: `phase-2-components/data-table-spec.md`
+- **规格文档**: `components/spec-data-table.md`
 - **测试**: `tests/components/data-table.test.ts` (12 tests)
 - **a11y**: `tests/components/a11y.test.ts` (3 tests)
 - **消费方调用**: `rong-admin-web/src/stories/DataTableStory.vue`
@@ -21,7 +21,7 @@
 
 - **文件**: `src/components/form-renderer/RFormRenderer.vue`
 - **契约**: `src/components/form-renderer/types.ts`
-- **规格文档**: `phase-2-components/form-renderer-spec.md`
+- **规格文档**: `components/spec-form-renderer.md`
 - **测试**: `tests/components/form-renderer.test.ts` (13 tests)
 - **a11y**: `tests/components/a11y.test.ts` (2 tests)
 - **消费方调用**: `rong-admin-web/src/stories/FormRendererStory.vue`

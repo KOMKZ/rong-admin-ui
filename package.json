@@ -55,8 +55,11 @@
     "./components/*": {
       "types": "./dist/components/*/index.d.ts",
       "import": "./dist/components/*/index.js"
-    }
+    },
+    "./style.css": "./dist/admin-ui.css",
+    "./dist/admin-ui.css": "./dist/admin-ui.css"
   },
+  "style": "./dist/admin-ui.css",
   "files": [
     "dist"
   ],

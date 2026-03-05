@@ -28,7 +28,7 @@
 - 已执行：`npx vitest run`
 - 结果：6 files, 24 tests, 0 failures
 - 覆盖模块：app-core (6), app-permission (6), app-router (3), app-request (4), app-auth (5)
-- 证据：质量门禁报告 `docs/admin-ui-framework/quality-gates/phase-1-report.md`
+- 证据：质量门禁报告 `docs/admin-ui-framework/delivery/quality-gates/phase-1-report.md`
 
 ## 4. 风险与回滚
 

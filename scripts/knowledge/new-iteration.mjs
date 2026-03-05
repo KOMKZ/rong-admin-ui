@@ -23,10 +23,10 @@ const templatePath = path.join(
   repoRoot,
   '.cursor/skills/rong-admin-ui-memory/templates/ITERATION-KNOWLEDGE.md',
 )
-const snapshotDir = path.join(repoRoot, 'docs/admin-ui-framework/knowledge/iterations')
+const snapshotDir = path.join(repoRoot, 'docs/admin-ui-framework/delivery/knowledge/iterations')
 const snapshotPath = path.join(snapshotDir, fileName)
-const ledgerPath = path.join(repoRoot, 'docs/admin-ui-framework/knowledge/L4-iteration-ledger.md')
-const indexPath = path.join(repoRoot, 'docs/admin-ui-framework/knowledge/INDEX.md')
+const ledgerPath = path.join(repoRoot, 'docs/admin-ui-framework/delivery/knowledge/L4-iteration-ledger.md')
+const indexPath = path.join(repoRoot, 'docs/admin-ui-framework/delivery/knowledge/INDEX.md')
 
 if (existsSync(snapshotPath)) {
   console.error(`Snapshot already exists: ${snapshotPath}`)
@@ -53,7 +53,7 @@ const hydrated = template
 
 writeFileSync(snapshotPath, hydrated, 'utf8')
 
-const snapshotRef = `docs/admin-ui-framework/knowledge/iterations/${fileName}`
+const snapshotRef = `docs/admin-ui-framework/delivery/knowledge/iterations/${fileName}`
 
 const ledger = readFileSync(ledgerPath, 'utf8')
 const row = `| ${iterationId} | ${month} | TODO | pending | \`${snapshotRef}\` |\n`

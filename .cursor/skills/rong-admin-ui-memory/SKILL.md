@@ -27,14 +27,14 @@ Step 0: Load layered knowledge index
 
 Read first:
 
-- `docs/admin-ui-framework/knowledge/INDEX.md`
+- `docs/admin-ui-framework/delivery/knowledge/INDEX.md`
 
 Then load by level:
 
-- L1 hard rules: `docs/admin-ui-framework/knowledge/L1-hard-rules.md`
-- L2 component playbook: `docs/admin-ui-framework/knowledge/L2-component-playbook.md`
-- L3 failure patterns: `docs/admin-ui-framework/knowledge/L3-failure-patterns.md`
-- L4 iteration ledger: `docs/admin-ui-framework/knowledge/L4-iteration-ledger.md`
+- L1 hard rules: `docs/admin-ui-framework/delivery/knowledge/L1-hard-rules.md`
+- L2 component playbook: `docs/admin-ui-framework/delivery/knowledge/L2-component-playbook.md`
+- L3 failure patterns: `docs/admin-ui-framework/delivery/knowledge/L3-failure-patterns.md`
+- L4 iteration ledger: `docs/admin-ui-framework/delivery/knowledge/L4-iteration-ledger.md`
 
 ### Step 1: Classify request by level
 
@@ -59,10 +59,10 @@ Then load by level:
 
 For every completed iteration, update ALL of:
 
-1. `docs/admin-ui-framework/knowledge/iterations/<iteration-id>.md`
-2. `docs/admin-ui-framework/knowledge/L3-failure-patterns.md` (if new failure pattern)
-3. `docs/admin-ui-framework/knowledge/L4-iteration-ledger.md`
-4. `docs/admin-ui-framework/knowledge/INDEX.md` (latest pointer)
+1. `docs/admin-ui-framework/delivery/knowledge/iterations/<iteration-id>.md`
+2. `docs/admin-ui-framework/delivery/knowledge/L3-failure-patterns.md` (if new failure pattern)
+3. `docs/admin-ui-framework/delivery/knowledge/L4-iteration-ledger.md`
+4. `docs/admin-ui-framework/delivery/knowledge/INDEX.md` (latest pointer)
 
 Use template:
 

@@ -12,7 +12,7 @@ Scope:
 
 Storage:
 
-- `docs/admin-ui-framework/knowledge/L1-hard-rules.md`
+- `docs/admin-ui-framework/delivery/knowledge/L1-hard-rules.md`
 
 ## L2: component playbook
 
@@ -24,7 +24,7 @@ Scope:
 
 Storage:
 
-- `docs/admin-ui-framework/knowledge/L2-component-playbook.md`
+- `docs/admin-ui-framework/delivery/knowledge/L2-component-playbook.md`
 
 ## L3: failure patterns
 
@@ -36,7 +36,7 @@ Scope:
 
 Storage:
 
-- `docs/admin-ui-framework/knowledge/L3-failure-patterns.md`
+- `docs/admin-ui-framework/delivery/knowledge/L3-failure-patterns.md`
 
 ## L4: iteration ledger
 
@@ -48,8 +48,8 @@ Scope:
 
 Storage:
 
-- `docs/admin-ui-framework/knowledge/L4-iteration-ledger.md`
-- `docs/admin-ui-framework/knowledge/iterations/*.md`
+- `docs/admin-ui-framework/delivery/knowledge/L4-iteration-ledger.md`
+- `docs/admin-ui-framework/delivery/knowledge/iterations/*.md`
 
 ## Update policy
 
