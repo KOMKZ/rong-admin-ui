@@ -41,8 +41,8 @@
   --ra-color-brand-primary: var(--ra-primitive-blue-6);
   --ra-color-brand-hover: var(--ra-primitive-blue-7);
   --ra-color-brand-active: var(--ra-primitive-blue-8);
-  --ra-color-brand-light: var(--ra-primitive-blue-1);
-  --ra-color-brand-subtle: rgba(32, 128, 240, 0.08);
+  --ra-color-brand-subtle: var(--ra-primitive-blue-1);
+  --ra-color-brand-light: var(--ra-primitive-blue-3);
 
   /* ───── Semantic Status — success / warning / danger / info ───── */
   --ra-color-success: var(--ra-primitive-green-6);

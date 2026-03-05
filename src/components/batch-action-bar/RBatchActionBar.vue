@@ -107,11 +107,11 @@ defineExpose(expose)
   align-items: center;
   justify-content: space-between;
   gap: var(--ra-spacing-4);
-  padding: var(--ra-spacing-3) var(--ra-spacing-4);
-  background: var(--ra-color-brand-primary);
-  color: #fff;
-  border-radius: var(--ra-radius-lg);
-  box-shadow: var(--ra-shadow-md);
+  padding: var(--ra-spacing-2) var(--ra-spacing-4);
+  background: var(--ra-color-brand-subtle, #f0f6ff);
+  color: var(--ra-color-text-primary);
+  border-radius: var(--ra-radius-md);
+  border: 1px solid var(--ra-color-brand-light, #d6e4ff);
 }
 .r-batch-action-bar__info {
   display: flex;
@@ -121,6 +121,7 @@ defineExpose(expose)
 .r-batch-action-bar__count {
   font-size: var(--ra-font-size-sm);
   font-weight: var(--ra-font-weight-medium);
+  color: var(--ra-color-brand-primary, #2080f0);
 }
 .r-batch-action-bar__actions {
   display: flex;
@@ -134,6 +135,6 @@ defineExpose(expose)
 .r-batch-bar-enter-from,
 .r-batch-bar-leave-to {
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(-4px);
 }
 </style>
