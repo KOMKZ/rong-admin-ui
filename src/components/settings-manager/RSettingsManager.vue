@@ -1,6 +1,23 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { NButton, NSpin, NInput, NInputNumber, NSelect, NSwitch, NRadioGroup, NRadio, NColorPicker, NCard, NSpace, NText, NAlert, NImage } from 'naive-ui'
+import { ref, computed, onMounted, nextTick } from 'vue'
+import {
+  NButton,
+  NSpin,
+  NInput,
+  NInputNumber,
+  NSelect,
+  NSwitch,
+  NRadioGroup,
+  NRadio,
+  NColorPicker,
+  NDatePicker,
+  NTimePicker,
+  NCard,
+  NSpace,
+  NText,
+  NAlert,
+  NBadge,
+} from 'naive-ui'
 import type { SettingsManagerProps, SettingsManagerExpose, SettingsGroup } from './types'
 import type { ProUploadFileItem } from '../pro-upload/types'
 import RIcon from '../icon/RIcon.vue'
@@ -34,6 +51,7 @@ const originalValues = ref<Record<string, string>>({})
 const currentValues = ref<Record<string, string>>({})
 const searchQuery = ref('')
 const activeGroupKey = ref<string>('')
+const contentEl = ref<HTMLElement | null>(null)
 
 const filteredGroups = computed(() => {
   if (!searchQuery.value) return groups.value
@@ -62,6 +80,16 @@ const dirtyFields = computed(() => {
 })
 
 const hasDirty = computed(() => dirtyFields.value.length > 0)
+
+const groupDirtyCounts = computed(() => {
+  const counts: Record<string, number> = {}
+  for (const g of groups.value) {
+    counts[g.key] = g.fields.filter(
+      (f) => currentValues.value[f.key] !== originalValues.value[f.key],
+    ).length
+  }
+  return counts
+})
 
 async function loadData() {
   loading.value = true
@@ -142,30 +170,74 @@ function getDirtyFields() {
 
 function scrollToGroup(key: string) {
   activeGroupKey.value = key
-  const el = document.getElementById(`settings-group-${key}`)
-  el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  nextTick(() => {
+    const el = document.getElementById(`settings-group-${key}`)
+    if (el && contentEl.value) {
+      const top = el.offsetTop - contentEl.value.offsetTop
+      contentEl.value.scrollTo({ top, behavior: 'smooth' })
+    }
+  })
+}
+
+function handleContentScroll() {
+  if (!contentEl.value) return
+  const scrollTop = contentEl.value.scrollTop + 20
+  for (const g of groups.value) {
+    const el = document.getElementById(`settings-group-${g.key}`)
+    if (el) {
+      const top = el.offsetTop - contentEl.value.offsetTop
+      if (top <= scrollTop) {
+        activeGroupKey.value = g.key
+      }
+    }
+  }
 }
 
 function urlToFileList(url: string): ProUploadFileItem[] {
   if (!url) return []
-  return url.split(',').filter(Boolean).map((u, i) => ({
-    uid: `existing-${i}`,
-    name: u.split('/').pop() || 'image',
-    size: 0,
-    type: 'image/*',
-    status: 'success' as const,
-    progress: 100,
-    url: u,
-    thumbUrl: u,
-  }))
+  return url
+    .split(',')
+    .filter(Boolean)
+    .map((u, i) => ({
+      uid: `existing-${i}`,
+      name: u.split('/').pop() || 'image',
+      size: 0,
+      type: 'image/*',
+      status: 'success' as const,
+      progress: 100,
+      url: u,
+      thumbUrl: u,
+    }))
 }
 
 function handleImageChange(fieldKey: string, files: ProUploadFileItem[]) {
   const urls = files
-    .filter(f => f.status === 'success' && f.url)
-    .map(f => f.url!)
+    .filter((f) => f.status === 'success' && f.url)
+    .map((f) => f.url!)
     .join(',')
   currentValues.value[fieldKey] = urls
+}
+
+function tsToDate(val: string): number | null {
+  if (!val) return null
+  const ts = Date.parse(val)
+  return isNaN(ts) ? null : ts
+}
+
+function dateToStr(ts: number | null): string {
+  if (!ts) return ''
+  return new Date(ts).toISOString().split('T')[0]
+}
+
+function datetimeToStr(ts: number | null): string {
+  if (!ts) return ''
+  return new Date(ts).toISOString().replace('T', ' ').replace(/\.\d+Z$/, '')
+}
+
+function timeToStr(ts: number | null): string {
+  if (!ts) return ''
+  const d = new Date(ts)
+  return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`
 }
 
 onMounted(loadData)
@@ -180,209 +252,269 @@ defineExpose<SettingsManagerExpose>({
 </script>
 
 <template>
-  <div class="r-settings-manager" :class="[`r-settings-manager--${layout}`]">
+  <div class="rsm" :class="[`rsm--${layout}`]">
     <!-- Header -->
-    <div class="r-settings-manager__header">
-      <div class="r-settings-manager__title-area">
-        <h2 class="r-settings-manager__title">{{ title }}</h2>
-        <p v-if="description" class="r-settings-manager__description">{{ description }}</p>
+    <div class="rsm__header">
+      <div>
+        <h2 class="rsm__title">{{ title }}</h2>
+        <p v-if="description" class="rsm__desc">{{ description }}</p>
       </div>
-      <div v-if="saveMode === 'batch' && hasDirty" class="r-settings-manager__actions">
-        <NSpace>
-          <NButton size="small" @click="resetDirty">
-            <template #icon><RIcon name="rotate-ccw" :size="14" /></template>
-            重置
-          </NButton>
-          <NButton type="primary" size="small" :loading="saving" @click="saveAll">
-            <template #icon><RIcon name="save" :size="14" /></template>
-            保存 {{ dirtyFields.length }} 项更改
-          </NButton>
-        </NSpace>
-      </div>
-    </div>
-
-    <!-- Search -->
-    <div v-if="showSearch" class="r-settings-manager__search">
-      <NInput
-        v-model:value="searchQuery"
-        placeholder="搜索设置项..."
-        clearable
-        size="small"
-      >
-        <template #prefix><RIcon name="search" :size="14" /></template>
-      </NInput>
     </div>
 
     <!-- Loading -->
-    <div v-if="loading" class="r-settings-manager__loading">
+    <div v-if="loading" class="rsm__center">
       <NSpin size="large" />
     </div>
 
     <!-- Error -->
-    <NAlert v-else-if="errorMessage" type="error" :title="errorMessage" class="r-settings-manager__error">
-      <template #header>加载设置失败</template>
-      <NButton size="small" @click="loadData">重试</NButton>
+    <NAlert
+      v-else-if="errorMessage"
+      type="error"
+      title="加载设置失败"
+      class="rsm__alert"
+    >
+      {{ errorMessage }}
+      <br />
+      <NButton size="small" style="margin-top: 8px" @click="loadData">重试</NButton>
     </NAlert>
 
     <!-- Empty -->
-    <REmptyState v-else-if="filteredGroups.length === 0 && !loading" description="没有找到匹配的设置项" />
+    <REmptyState
+      v-else-if="filteredGroups.length === 0"
+      description="没有找到匹配的设置项"
+    />
 
-    <!-- Content -->
-    <div v-else class="r-settings-manager__content">
-      <!-- Group nav sidebar -->
-      <nav v-if="showGroupNav && groups.length > 1" class="r-settings-manager__nav">
-        <ul class="r-settings-manager__nav-list">
-          <li
+    <!-- Main Layout -->
+    <div v-else class="rsm__body">
+      <!-- Left sidebar -->
+      <aside v-if="showGroupNav && groups.length > 1" class="rsm__sidebar">
+        <!-- Search in sidebar -->
+        <div v-if="showSearch" class="rsm__search">
+          <NInput
+            v-model:value="searchQuery"
+            placeholder="搜索设置项…"
+            clearable
+            size="small"
+          >
+            <template #prefix><RIcon name="search" :size="14" /></template>
+          </NInput>
+        </div>
+
+        <nav class="rsm__nav">
+          <button
             v-for="g in groups"
             :key="g.key"
-            class="r-settings-manager__nav-item"
-            :class="{ 'r-settings-manager__nav-item--active': activeGroupKey === g.key }"
+            type="button"
+            class="rsm__nav-btn"
+            :class="{ 'rsm__nav-btn--active': activeGroupKey === g.key }"
             @click="scrollToGroup(g.key)"
           >
-            <RIcon v-if="g.icon" :name="g.icon" :size="16" />
-            <span>{{ g.label }}</span>
-          </li>
-        </ul>
-      </nav>
+            <RIcon v-if="g.icon" :name="g.icon" :size="16" class="rsm__nav-icon" />
+            <span class="rsm__nav-label">{{ g.label }}</span>
+            <NBadge
+              v-if="groupDirtyCounts[g.key] > 0"
+              :value="groupDirtyCounts[g.key]"
+              :max="9"
+              type="warning"
+              class="rsm__nav-badge"
+            />
+          </button>
+        </nav>
+      </aside>
 
-      <!-- Settings groups -->
-      <div class="r-settings-manager__groups">
+      <!-- Right content -->
+      <div
+        ref="contentEl"
+        class="rsm__content"
+        @scroll="handleContentScroll"
+      >
+        <!-- Inline search if no sidebar -->
+        <div v-if="showSearch && (!showGroupNav || groups.length <= 1)" class="rsm__search rsm__search--inline">
+          <NInput
+            v-model:value="searchQuery"
+            placeholder="搜索设置项…"
+            clearable
+            size="small"
+          >
+            <template #prefix><RIcon name="search" :size="14" /></template>
+          </NInput>
+        </div>
+
         <div
           v-for="group in filteredGroups"
           :key="group.key"
           :id="`settings-group-${group.key}`"
-          class="r-settings-manager__group"
+          class="rsm__group"
         >
-          <NCard :title="group.label" size="small" :bordered="layout === 'card'">
-            <template v-if="group.description" #header-extra>
-              <NText depth="3" style="font-size: 13px;">{{ group.description }}</NText>
-            </template>
+          <div class="rsm__group-header">
+            <div>
+              <h3 class="rsm__group-title">{{ group.label }}</h3>
+              <p v-if="group.description" class="rsm__group-desc">{{ group.description }}</p>
+            </div>
+          </div>
 
-            <div class="r-settings-manager__fields">
-              <div
-                v-for="field in group.fields"
-                :key="field.key"
-                class="r-settings-manager__field"
-              >
-                <div class="r-settings-manager__field-info">
-                  <label class="r-settings-manager__field-label">{{ field.label }}</label>
-                  <p v-if="field.description" class="r-settings-manager__field-desc">{{ field.description }}</p>
-                </div>
-                <div class="r-settings-manager__field-control">
-                  <!-- Input -->
-                  <NInput
-                    v-if="field.type === 'input'"
-                    :value="currentValues[field.key]"
-                    :placeholder="field.placeholder"
-                    :disabled="field.disabled"
-                    size="small"
-                    @update:value="(v: string) => (currentValues[field.key] = v)"
-                  />
-                  <!-- Textarea -->
-                  <NInput
-                    v-else-if="field.type === 'textarea'"
-                    type="textarea"
-                    :value="currentValues[field.key]"
-                    :placeholder="field.placeholder"
-                    :disabled="field.disabled"
-                    :rows="3"
-                    size="small"
-                    @update:value="(v: string) => (currentValues[field.key] = v)"
-                  />
-                  <!-- Number -->
-                  <NInputNumber
-                    v-else-if="field.type === 'number'"
-                    :value="Number(currentValues[field.key]) || 0"
-                    :disabled="field.disabled"
-                    size="small"
-                    @update:value="(v: number | null) => (currentValues[field.key] = String(v ?? 0))"
-                  />
-                  <!-- Select -->
-                  <NSelect
-                    v-else-if="field.type === 'select'"
-                    :value="currentValues[field.key]"
-                    :options="(field.options || []).map(o => ({ label: o.label, value: String(o.value) }))"
-                    :placeholder="field.placeholder"
-                    :disabled="field.disabled"
-                    size="small"
-                    @update:value="(v: string) => (currentValues[field.key] = v)"
-                  />
-                  <!-- Switch -->
-                  <NSwitch
-                    v-else-if="field.type === 'switch'"
-                    :value="currentValues[field.key] === 'true' || currentValues[field.key] === '1'"
-                    :disabled="field.disabled"
-                    @update:value="(v: boolean) => (currentValues[field.key] = v ? 'true' : 'false')"
-                  />
-                  <!-- Radio -->
-                  <NRadioGroup
-                    v-else-if="field.type === 'radio'"
-                    :value="currentValues[field.key]"
-                    :disabled="field.disabled"
-                    size="small"
-                    @update:value="(v: string) => (currentValues[field.key] = v)"
-                  >
-                    <NRadio
-                      v-for="opt in field.options"
-                      :key="String(opt.value)"
-                      :value="String(opt.value)"
-                      :disabled="opt.disabled"
-                    >{{ opt.label }}</NRadio>
-                  </NRadioGroup>
-                  <!-- Color -->
-                  <NColorPicker
-                    v-else-if="field.type === 'color'"
-                    :value="currentValues[field.key] || '#000000'"
-                    :disabled="field.disabled"
-                    size="small"
-                    @update:value="(v: string) => (currentValues[field.key] = v)"
-                  />
-                  <!-- Image (pro-upload) -->
-                  <div v-else-if="field.type === 'image'" class="r-settings-manager__field-image">
-                    <RProUpload
-                      :value="urlToFileList(currentValues[field.key])"
-                      :accept="field.accept || 'image/*'"
-                      :max-count="field.maxCount || 1"
-                      :max-size-m-b="field.maxSizeMB || 5"
-                      :disabled="field.disabled"
-                      list-type="picture-card"
-                      :custom-request="customUploadRequest"
-                      :parse-response="parseUploadResponse ? (raw: unknown) => {
-                        const parsed = parseUploadResponse!(raw)
-                        return { url: parsed.url, thumbUrl: parsed.url, storageId: parsed.storageId }
-                      } : undefined"
-                      @change="(files: ProUploadFileItem[]) => handleImageChange(field.key, files)"
-                    />
-                    <NImage
-                      v-if="currentValues[field.key] && !currentValues[field.key].includes(',')"
-                      :src="currentValues[field.key]"
-                      :width="80"
-                      :preview-disabled="false"
-                      class="r-settings-manager__field-image-preview"
-                    />
-                  </div>
-                  <!-- Fallback input -->
-                  <NInput
-                    v-else
-                    :value="currentValues[field.key]"
-                    :placeholder="field.placeholder"
-                    :disabled="field.disabled"
-                    size="small"
-                    @update:value="(v: string) => (currentValues[field.key] = v)"
-                  />
+          <NCard size="small" class="rsm__group-card">
+            <div
+              v-for="(field, idx) in group.fields"
+              :key="field.key"
+              class="rsm__field"
+              :class="{ 'rsm__field--last': idx === group.fields.length - 1 }"
+            >
+              <div class="rsm__field-meta">
+                <label class="rsm__field-label">
+                  {{ field.label }}
+                  <span
+                    v-if="currentValues[field.key] !== originalValues[field.key]"
+                    class="rsm__field-dirty"
+                  >已修改</span>
+                </label>
+                <p v-if="field.description" class="rsm__field-help">{{ field.description }}</p>
+              </div>
 
-                  <!-- Per-field save button (field mode) -->
-                  <NButton
-                    v-if="saveMode === 'field' && currentValues[field.key] !== originalValues[field.key]"
-                    size="tiny"
-                    type="primary"
-                    :loading="savingField === field.key"
-                    class="r-settings-manager__field-save"
-                    @click="saveField(field.key)"
-                  >
-                    保存
-                  </NButton>
+              <div class="rsm__field-ctrl">
+                <!-- Input -->
+                <NInput
+                  v-if="field.type === 'input'"
+                  :value="currentValues[field.key]"
+                  :placeholder="field.placeholder"
+                  :disabled="field.disabled"
+                  size="small"
+                  @update:value="(v: string) => (currentValues[field.key] = v)"
+                />
+                <!-- Textarea -->
+                <NInput
+                  v-else-if="field.type === 'textarea'"
+                  type="textarea"
+                  :value="currentValues[field.key]"
+                  :placeholder="field.placeholder"
+                  :disabled="field.disabled"
+                  :rows="3"
+                  size="small"
+                  @update:value="(v: string) => (currentValues[field.key] = v)"
+                />
+                <!-- Number -->
+                <NInputNumber
+                  v-else-if="field.type === 'number'"
+                  :value="Number(currentValues[field.key]) || 0"
+                  :disabled="field.disabled"
+                  size="small"
+                  style="width: 100%"
+                  @update:value="(v: number | null) => (currentValues[field.key] = String(v ?? 0))"
+                />
+                <!-- Select -->
+                <NSelect
+                  v-else-if="field.type === 'select'"
+                  :value="currentValues[field.key]"
+                  :options="(field.options || []).map((o) => ({ label: o.label, value: String(o.value) }))"
+                  :placeholder="field.placeholder"
+                  :disabled="field.disabled"
+                  size="small"
+                  @update:value="(v: string) => (currentValues[field.key] = v)"
+                />
+                <!-- Switch -->
+                <NSwitch
+                  v-else-if="field.type === 'switch'"
+                  :value="currentValues[field.key] === 'true' || currentValues[field.key] === '1'"
+                  :disabled="field.disabled"
+                  @update:value="(v: boolean) => (currentValues[field.key] = v ? 'true' : 'false')"
+                />
+                <!-- Radio -->
+                <NRadioGroup
+                  v-else-if="field.type === 'radio'"
+                  :value="currentValues[field.key]"
+                  :disabled="field.disabled"
+                  size="small"
+                  @update:value="(v: string) => (currentValues[field.key] = v)"
+                >
+                  <NRadio
+                    v-for="opt in field.options"
+                    :key="String(opt.value)"
+                    :value="String(opt.value)"
+                    :disabled="opt.disabled"
+                  >{{ opt.label }}</NRadio>
+                </NRadioGroup>
+                <!-- Color -->
+                <NColorPicker
+                  v-else-if="field.type === 'color'"
+                  :value="currentValues[field.key] || '#000000'"
+                  :disabled="field.disabled"
+                  size="small"
+                  @update:value="(v: string) => (currentValues[field.key] = v)"
+                />
+                <!-- Date -->
+                <NDatePicker
+                  v-else-if="field.type === 'date'"
+                  type="date"
+                  :value="tsToDate(currentValues[field.key])"
+                  :disabled="field.disabled"
+                  size="small"
+                  clearable
+                  style="width: 100%"
+                  @update:value="(v: number | null) => (currentValues[field.key] = dateToStr(v))"
+                />
+                <!-- Time -->
+                <NTimePicker
+                  v-else-if="field.type === 'time'"
+                  :value="tsToDate(currentValues[field.key] ? `1970-01-01T${currentValues[field.key]}` : '')"
+                  :disabled="field.disabled"
+                  size="small"
+                  clearable
+                  style="width: 100%"
+                  @update:value="(v: number | null) => (currentValues[field.key] = timeToStr(v))"
+                />
+                <!-- DateTime -->
+                <NDatePicker
+                  v-else-if="field.type === 'datetime'"
+                  type="datetime"
+                  :value="tsToDate(currentValues[field.key])"
+                  :disabled="field.disabled"
+                  size="small"
+                  clearable
+                  style="width: 100%"
+                  @update:value="(v: number | null) => (currentValues[field.key] = datetimeToStr(v))"
+                />
+                <!-- Image -->
+                <div v-else-if="field.type === 'image'" class="rsm__field-image">
+                  <RProUpload
+                    :value="urlToFileList(currentValues[field.key])"
+                    :accept="field.accept || 'image/*'"
+                    :max-count="field.maxCount || 1"
+                    :max-size-m-b="field.maxSizeMB || 5"
+                    :disabled="field.disabled"
+                    list-type="picture-card"
+                    :custom-request="customUploadRequest"
+                    :parse-response="
+                      parseUploadResponse
+                        ? (raw: unknown) => {
+                            const parsed = parseUploadResponse!(raw)
+                            return { url: parsed.url, thumbUrl: parsed.url, storageId: parsed.storageId }
+                          }
+                        : undefined
+                    "
+                    @change="(files: ProUploadFileItem[]) => handleImageChange(field.key, files)"
+                  />
                 </div>
+                <!-- Fallback -->
+                <NInput
+                  v-else
+                  :value="currentValues[field.key]"
+                  :placeholder="field.placeholder"
+                  :disabled="field.disabled"
+                  size="small"
+                  @update:value="(v: string) => (currentValues[field.key] = v)"
+                />
+
+                <!-- Per-field save -->
+                <NButton
+                  v-if="saveMode === 'field' && currentValues[field.key] !== originalValues[field.key]"
+                  size="tiny"
+                  type="primary"
+                  :loading="savingField === field.key"
+                  class="rsm__field-save"
+                  @click="saveField(field.key)"
+                >
+                  保存
+                </NButton>
               </div>
             </div>
           </NCard>
@@ -390,223 +522,323 @@ defineExpose<SettingsManagerExpose>({
       </div>
     </div>
 
-    <!-- Sticky batch save bar -->
-    <Transition name="r-settings-manager-bar">
-      <div v-if="saveMode === 'batch' && hasDirty && !loading" class="r-settings-manager__save-bar">
-        <NSpace align="center" justify="space-between" style="width: 100%;">
-          <NText>{{ dirtyFields.length }} 项未保存的更改</NText>
-          <NSpace>
+    <!-- Sticky save bar -->
+    <Transition name="rsm-bar">
+      <div v-if="saveMode === 'batch' && hasDirty && !loading" class="rsm__bar">
+        <div class="rsm__bar-inner">
+          <NText class="rsm__bar-text">
+            <RIcon name="alert-circle" :size="16" />
+            {{ dirtyFields.length }} 项未保存的更改
+          </NText>
+          <NSpace :size="8">
             <NButton size="small" @click="resetDirty">放弃更改</NButton>
-            <NButton type="primary" size="small" :loading="saving" @click="saveAll">保存全部</NButton>
+            <NButton type="primary" size="small" :loading="saving" @click="saveAll">
+              <template #icon><RIcon name="save" :size="14" /></template>
+              保存全部
+            </NButton>
           </NSpace>
-        </NSpace>
+        </div>
       </div>
     </Transition>
   </div>
 </template>
 
 <style scoped>
-.r-settings-manager {
+.rsm {
   display: flex;
   flex-direction: column;
-  gap: var(--r-space-4, 16px);
-  max-width: 960px;
+  height: 100%;
+  min-height: 0;
 }
 
-.r-settings-manager__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--r-space-4, 16px);
+.rsm__header {
+  flex-shrink: 0;
+  padding: 0 0 20px;
 }
 
-.r-settings-manager__title {
+.rsm__title {
   margin: 0;
-  font-size: var(--r-font-size-xl, 20px);
-  font-weight: 600;
-  color: var(--r-text-primary, var(--n-text-color));
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--n-text-color);
+  letter-spacing: -0.02em;
 }
 
-.r-settings-manager__description {
-  margin: 4px 0 0;
-  font-size: var(--r-font-size-sm, 13px);
-  color: var(--r-text-secondary, var(--n-text-color-3));
+.rsm__desc {
+  margin: 6px 0 0;
+  font-size: 14px;
+  color: var(--n-text-color-3);
 }
 
-.r-settings-manager__search {
-  max-width: 320px;
-}
-
-.r-settings-manager__loading {
+.rsm__center {
   display: flex;
   justify-content: center;
-  padding: 64px 0;
+  padding: 80px 0;
 }
 
-.r-settings-manager__error {
-  margin: var(--r-space-4, 16px) 0;
+.rsm__alert {
+  margin-bottom: 16px;
 }
 
-.r-settings-manager__content {
+/* === Main Body: sidebar + content === */
+.rsm__body {
   display: flex;
-  gap: var(--r-space-6, 24px);
+  gap: 0;
+  flex: 1;
+  min-height: 0;
+  border: 1px solid var(--n-divider-color);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--n-card-color);
 }
 
-.r-settings-manager__nav {
+/* === Sidebar === */
+.rsm__sidebar {
   flex-shrink: 0;
-  width: 180px;
-  position: sticky;
-  top: var(--r-space-4, 16px);
-  align-self: flex-start;
-}
-
-.r-settings-manager__nav-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  width: 220px;
+  border-right: 1px solid var(--n-divider-color);
+  background: var(--n-color);
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+}
+
+.rsm__search {
+  padding: 16px 16px 8px;
+}
+
+.rsm__search--inline {
+  padding: 0 0 16px;
+}
+
+.rsm__nav {
+  display: flex;
+  flex-direction: column;
+  padding: 0 8px 16px;
   gap: 2px;
 }
 
-.r-settings-manager__nav-item {
+.rsm__nav-btn {
   display: flex;
   align-items: center;
-  gap: var(--r-space-2, 8px);
-  padding: 8px 12px;
-  border-radius: var(--r-radius-md, 6px);
+  gap: 10px;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
   cursor: pointer;
-  font-size: var(--r-font-size-sm, 13px);
-  color: var(--r-text-secondary, var(--n-text-color-3));
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--n-text-color-3);
   transition: all 0.15s ease;
+  text-align: left;
+  width: 100%;
+  position: relative;
 }
 
-.r-settings-manager__nav-item:hover {
-  background: var(--r-bg-hover, var(--n-color-hover));
-  color: var(--r-text-primary, var(--n-text-color));
+.rsm__nav-btn:hover {
+  background: var(--n-color-hover, rgba(0, 0, 0, 0.04));
+  color: var(--n-text-color);
 }
 
-.r-settings-manager__nav-item--active {
-  background: var(--r-bg-active, var(--n-primary-color-hover));
-  color: var(--r-color-primary, var(--n-primary-color));
-  font-weight: 500;
+.rsm__nav-btn--active {
+  background: var(--n-primary-color-hover, rgba(99, 147, 245, 0.08));
+  color: var(--n-primary-color);
+  font-weight: 600;
 }
 
-.r-settings-manager__groups {
+.rsm__nav-btn--active .rsm__nav-icon {
+  color: var(--n-primary-color);
+}
+
+.rsm__nav-icon {
+  flex-shrink: 0;
+  color: var(--n-text-color-3);
+  transition: color 0.15s ease;
+}
+
+.rsm__nav-label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rsm__nav-badge {
+  flex-shrink: 0;
+}
+
+/* === Content === */
+.rsm__content {
   flex: 1;
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: var(--r-space-4, 16px);
+  overflow-y: auto;
+  padding: 24px 32px;
 }
 
-.r-settings-manager__fields {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
+.rsm__group {
+  margin-bottom: 32px;
 }
 
-.r-settings-manager__field {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--r-space-6, 24px);
-  padding: 16px 0;
-  border-bottom: 1px solid var(--r-border-light, var(--n-divider-color));
+.rsm__group:last-child {
+  margin-bottom: 0;
 }
 
-.r-settings-manager__field:last-child {
+.rsm__group-header {
+  margin-bottom: 12px;
+}
+
+.rsm__group-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--n-text-color);
+}
+
+.rsm__group-desc {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--n-text-color-3);
+}
+
+.rsm__group-card {
+  border-radius: 10px;
+}
+
+/* === Field === */
+.rsm__field {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 24px;
+  align-items: start;
+  padding: 18px 0;
+  border-bottom: 1px solid var(--n-divider-color);
+}
+
+.rsm__field--last {
   border-bottom: none;
   padding-bottom: 0;
 }
 
-.r-settings-manager__field:first-child {
+.rsm__field:first-child {
   padding-top: 0;
 }
 
-.r-settings-manager__field-info {
-  flex: 1;
+.rsm__field-meta {
   min-width: 0;
 }
 
-.r-settings-manager__field-label {
-  display: block;
-  font-size: var(--r-font-size-base, 14px);
+.rsm__field-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
   font-weight: 500;
-  color: var(--r-text-primary, var(--n-text-color));
+  color: var(--n-text-color);
 }
 
-.r-settings-manager__field-desc {
+.rsm__field-dirty {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--n-warning-color, #f0a020);
+  background: var(--n-warning-color-hover, rgba(240, 160, 32, 0.1));
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.rsm__field-help {
   margin: 4px 0 0;
-  font-size: var(--r-font-size-xs, 12px);
-  color: var(--r-text-tertiary, var(--n-text-color-3));
+  font-size: 13px;
+  color: var(--n-text-color-3);
   line-height: 1.5;
 }
 
-.r-settings-manager__field-control {
-  flex-shrink: 0;
-  width: 280px;
+.rsm__field-ctrl {
   display: flex;
   align-items: center;
-  gap: var(--r-space-2, 8px);
+  gap: 8px;
+  min-width: 0;
 }
 
-.r-settings-manager__field-save {
+.rsm__field-save {
   flex-shrink: 0;
 }
 
-.r-settings-manager__field-image {
-  display: flex;
-  flex-direction: column;
-  gap: var(--r-space-2, 8px);
+.rsm__field-image {
   width: 100%;
 }
 
-.r-settings-manager__field-image-preview {
-  border-radius: var(--r-radius-md, 6px);
-  border: 1px solid var(--r-border-light, var(--n-divider-color));
-}
-
-.r-settings-manager__save-bar {
+/* === Save Bar === */
+.rsm__bar {
   position: sticky;
   bottom: 0;
-  padding: 12px 16px;
-  background: var(--r-bg-surface, var(--n-card-color));
-  border: 1px solid var(--r-border-light, var(--n-divider-color));
-  border-radius: var(--r-radius-lg, 8px);
-  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
   z-index: 10;
+  padding: 0 0 0;
+  margin-top: 16px;
 }
 
-.r-settings-manager-bar-enter-active,
-.r-settings-manager-bar-leave-active {
+.rsm__bar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: var(--n-card-color);
+  border: 1px solid var(--n-divider-color);
+  border-radius: 10px;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+}
+
+.rsm__bar-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Transition */
+.rsm-bar-enter-active,
+.rsm-bar-leave-active {
   transition: all 0.2s ease;
 }
 
-.r-settings-manager-bar-enter-from,
-.r-settings-manager-bar-leave-to {
+.rsm-bar-enter-from,
+.rsm-bar-leave-to {
   opacity: 0;
   transform: translateY(8px);
 }
 
-@media (max-width: 768px) {
-  .r-settings-manager__content {
+/* === Responsive === */
+@media (max-width: 900px) {
+  .rsm__body {
     flex-direction: column;
   }
-  .r-settings-manager__nav {
+
+  .rsm__sidebar {
     width: 100%;
-    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--n-divider-color);
   }
-  .r-settings-manager__nav-list {
+
+  .rsm__nav {
     flex-direction: row;
     overflow-x: auto;
+    flex-wrap: nowrap;
+    padding: 8px;
   }
-  .r-settings-manager__field {
-    flex-direction: column;
-    gap: var(--r-space-2, 8px);
+
+  .rsm__nav-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
   }
-  .r-settings-manager__field-control {
-    width: 100%;
+
+  .rsm__content {
+    padding: 20px 16px;
+  }
+
+  .rsm__field {
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 }
 </style>
