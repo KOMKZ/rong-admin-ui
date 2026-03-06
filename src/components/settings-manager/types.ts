@@ -1,4 +1,5 @@
 import type { Component } from 'vue'
+import type { ProUploadRequestOptions } from '../pro-upload/types'
 
 export type SettingsFieldType =
   | 'input'
@@ -9,6 +10,7 @@ export type SettingsFieldType =
   | 'color'
   | 'date-picker'
   | 'radio'
+  | 'image'
   | 'custom'
 
 export interface SettingsFieldOption {
@@ -29,6 +31,12 @@ export interface SettingsField {
   placeholder?: string
   disabled?: boolean
   rules?: SettingsFieldRule[]
+  /** image type: accepted file types (default "image/*") */
+  accept?: string
+  /** image type: max file size in MB */
+  maxSizeMB?: number
+  /** image type: max number of files (default 1) */
+  maxCount?: number
   customComponent?: Component
   customComponentProps?: Record<string, unknown>
 }
@@ -64,6 +72,10 @@ export interface SettingsManagerProps {
   showGroupNav?: boolean
   saveMode?: 'field' | 'batch'
   layout?: 'vertical' | 'card'
+  /** Custom upload request for image fields (passed to RProUpload) */
+  customUploadRequest?: (options: ProUploadRequestOptions) => void
+  /** Parse upload response to extract URL */
+  parseUploadResponse?: (raw: unknown) => { url: string; storageId?: string }
 }
 
 export interface SettingsManagerEmits {

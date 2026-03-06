@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { NButton, NSpin, NInput, NInputNumber, NSelect, NSwitch, NRadioGroup, NRadio, NColorPicker, NCard, NSpace, NText, NAlert } from 'naive-ui'
+import { NButton, NSpin, NInput, NInputNumber, NSelect, NSwitch, NRadioGroup, NRadio, NColorPicker, NCard, NSpace, NText, NAlert, NImage } from 'naive-ui'
 import type { SettingsManagerProps, SettingsManagerExpose, SettingsGroup } from './types'
+import type { ProUploadFileItem } from '../pro-upload/types'
 import RIcon from '../icon/RIcon.vue'
 import REmptyState from '../empty-state/REmptyState.vue'
+import RProUpload from '../pro-upload/RProUpload.vue'
 
 const props = withDefaults(defineProps<SettingsManagerProps>(), {
   title: '系统设置',
@@ -12,6 +14,8 @@ const props = withDefaults(defineProps<SettingsManagerProps>(), {
   showGroupNav: true,
   saveMode: 'batch',
   layout: 'card',
+  customUploadRequest: undefined,
+  parseUploadResponse: undefined,
 })
 
 const emit = defineEmits<{
@@ -140,6 +144,28 @@ function scrollToGroup(key: string) {
   activeGroupKey.value = key
   const el = document.getElementById(`settings-group-${key}`)
   el?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+}
+
+function urlToFileList(url: string): ProUploadFileItem[] {
+  if (!url) return []
+  return url.split(',').filter(Boolean).map((u, i) => ({
+    uid: `existing-${i}`,
+    name: u.split('/').pop() || 'image',
+    size: 0,
+    type: 'image/*',
+    status: 'success' as const,
+    progress: 100,
+    url: u,
+    thumbUrl: u,
+  }))
+}
+
+function handleImageChange(fieldKey: string, files: ProUploadFileItem[]) {
+  const urls = files
+    .filter(f => f.status === 'success' && f.url)
+    .map(f => f.url!)
+    .join(',')
+  currentValues.value[fieldKey] = urls
 }
 
 onMounted(loadData)
@@ -311,6 +337,30 @@ defineExpose<SettingsManagerExpose>({
                     size="small"
                     @update:value="(v: string) => (currentValues[field.key] = v)"
                   />
+                  <!-- Image (pro-upload) -->
+                  <div v-else-if="field.type === 'image'" class="r-settings-manager__field-image">
+                    <RProUpload
+                      :value="urlToFileList(currentValues[field.key])"
+                      :accept="field.accept || 'image/*'"
+                      :max-count="field.maxCount || 1"
+                      :max-size-m-b="field.maxSizeMB || 5"
+                      :disabled="field.disabled"
+                      list-type="picture-card"
+                      :custom-request="customUploadRequest"
+                      :parse-response="parseUploadResponse ? (raw: unknown) => {
+                        const parsed = parseUploadResponse!(raw)
+                        return { url: parsed.url, thumbUrl: parsed.url, storageId: parsed.storageId }
+                      } : undefined"
+                      @change="(files: ProUploadFileItem[]) => handleImageChange(field.key, files)"
+                    />
+                    <NImage
+                      v-if="currentValues[field.key] && !currentValues[field.key].includes(',')"
+                      :src="currentValues[field.key]"
+                      :width="80"
+                      :preview-disabled="false"
+                      class="r-settings-manager__field-image-preview"
+                    />
+                  </div>
                   <!-- Fallback input -->
                   <NInput
                     v-else
@@ -503,6 +553,18 @@ defineExpose<SettingsManagerExpose>({
 
 .r-settings-manager__field-save {
   flex-shrink: 0;
+}
+
+.r-settings-manager__field-image {
+  display: flex;
+  flex-direction: column;
+  gap: var(--r-space-2, 8px);
+  width: 100%;
+}
+
+.r-settings-manager__field-image-preview {
+  border-radius: var(--r-radius-md, 6px);
+  border: 1px solid var(--r-border-light, var(--n-divider-color));
 }
 
 .r-settings-manager__save-bar {
