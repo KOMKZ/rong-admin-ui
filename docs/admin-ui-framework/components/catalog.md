@@ -4,7 +4,7 @@
 
 | 层级 | 定位 | 组件 |
 |------|------|------|
-| business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RFileUpload |
+| business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RFileUpload, RProTreeEditor |
 
 ## 组件清单
 
@@ -41,6 +41,14 @@
 - **测试**: `tests/components/file-upload.test.ts` (11 tests)
 - **a11y**: `tests/components/a11y.test.ts` (2 tests)
 - **消费方调用**: `rong-admin-webdemo/src/stories/FileUploadStory.vue`
+
+### RProTreeEditor
+
+- **文件**: `src/components/pro-tree-editor/RProTreeEditor.vue`
+- **契约**: `src/components/pro-tree-editor/types.ts`
+- **规格文档**: `components/spec-pro-tree-editor.md`
+- **测试**: `tests/components/pro-tree-editor/useTreeData.test.ts` (12 tests), `useTreeDnd.test.ts` (7 tests), `useTreeSearch.test.ts` (7 tests), `articleFolderAdapter.test.ts` (7 tests)
+- **消费方调用**: `rong-admin-web/src/views/article-folders/ArticleFoldersView.vue`
 
 ## 组件依赖
 

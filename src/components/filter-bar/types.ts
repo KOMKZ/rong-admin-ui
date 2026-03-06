@@ -24,6 +24,7 @@ export interface FilterBarProProps {
   storageKey?: string
   savedSchemes?: FilterScheme[]
   maxVisibleFields?: number
+  cols?: number
   resetLabel?: string
   searchLabel?: string
   advancedLabel?: string

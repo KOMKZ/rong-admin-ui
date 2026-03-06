@@ -20,6 +20,7 @@
 | 表单引擎 | components/form-renderer (RFormRenderer) | ✅ 已实现 |
 | 对话框 | components/modal-dialog (RModalDialog) | ✅ 已实现 |
 | 文件上传 | components/file-upload (RFileUpload) | ✅ 已实现 |
+| 树编辑器 | components/pro-tree-editor (RProTreeEditor) | ✅ 已实现 |
 
 ## 技术栈
 
@@ -36,4 +37,5 @@ import { bootstrapApp, createTokenManager, createHttpClient } from '@rong/admin-
 
 // 组件
 import { RDataTable, RFormRenderer, RModalDialog, RFileUpload } from '@rong/admin-ui'
+import { RProTreeEditor, createArticleFolderAdapter } from '@rong/admin-ui/components/pro-tree-editor'
 ```

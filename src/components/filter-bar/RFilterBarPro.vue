@@ -15,6 +15,7 @@ const props = defineProps({
   storageKey: { type: String, default: undefined },
   savedSchemes: { type: Array as PropType<FilterScheme[]>, default: () => [] },
   maxVisibleFields: { type: Number, default: 3 },
+  cols: { type: Number, default: 4 },
   resetLabel: { type: String, default: '重置' },
   searchLabel: { type: String, default: '搜索' },
   advancedLabel: { type: String, default: '高级筛选' },
@@ -183,7 +184,7 @@ defineExpose(expose)
       <RFormRenderer
         :schema="visibleSchema"
         :model="localModel"
-        :inline="true"
+        :cols="cols"
         :label-width="80"
         @update:model="handleModelUpdate"
       />

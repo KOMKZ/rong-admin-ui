@@ -45,3 +45,30 @@
 | FileUploadEmits | components/file-upload/types.ts | 组件事件定义 |
 | FileUploadSlots | components/file-upload/types.ts | 组件插槽定义 |
 | FileUploadExpose | components/file-upload/types.ts | 组件暴露方法 |
+
+## ProTreeEditor
+
+| 接口 | 路径 | 说明 |
+|------|------|------|
+| TreeNodeData | components/pro-tree-editor/types.ts | 树节点数据结构（id/label/parentId/sortOrder/depth/children） |
+| TreeDensity | components/pro-tree-editor/types.ts | 视觉密度：compact \| default \| comfortable |
+| TreeRequestMode | components/pro-tree-editor/types.ts | 请求模式：auto \| manual |
+| TreeNodeState | components/pro-tree-editor/types.ts | 节点状态联合类型（10 种状态） |
+| TreeErrorCode | components/pro-tree-editor/types.ts | 领域错误码（DUPLICATE_NAME/CIRCULAR_REFERENCE 等） |
+| TreeError | components/pro-tree-editor/types.ts | 错误对象（code/message/nodeId/raw） |
+| TreeRequestHooks | components/pro-tree-editor/types.ts | 后端请求钩子（loadTree/create/update/delete/move/reorder） |
+| CheckDeleteFn | components/pro-tree-editor/types.ts | 删除前约束检查函数 |
+| DeleteConstraint | components/pro-tree-editor/types.ts | 删除约束结果（canDelete/reason/childCount/articleCount） |
+| TreeRequestEvent | components/pro-tree-editor/types.ts | 请求生命周期事件 |
+| TreeDataChangeEvent | components/pro-tree-editor/types.ts | 数据变更事件（type/node/nodes） |
+| TreeNodeIcons | components/pro-tree-editor/types.ts | 自定义图标配置 |
+| TreeBatchConfig | components/pro-tree-editor/types.ts | 批量操作配置 |
+| TreeI18n | components/pro-tree-editor/types.ts | 国际化文案覆盖（45 个字段） |
+| ProTreeEditorProps | components/pro-tree-editor/types.ts | 组件 Props 完整定义（16 个属性） |
+| ProTreeEditorEmits | components/pro-tree-editor/types.ts | 组件事件定义（7 个事件） |
+| ProTreeEditorExpose | components/pro-tree-editor/types.ts | 组件暴露方法（10 个方法） |
+| ProTreeEditorSlots | components/pro-tree-editor/types.ts | 组件插槽定义（8 个插槽） |
+| DropPosition | components/pro-tree-editor/types.ts | 拖放位置：before \| inside \| after |
+| DropInfo | components/pro-tree-editor/types.ts | 拖放信息（dragNodeId/targetNodeId/position/isLegal） |
+| TreeHttpClient | components/pro-tree-editor/adapters/articleFolderAdapter.ts | 适配器 HTTP 客户端接口 |
+| ArticleFolderAdapterOptions | components/pro-tree-editor/adapters/articleFolderAdapter.ts | 文章分类适配器配置 |

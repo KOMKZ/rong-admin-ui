@@ -1,0 +1,18 @@
+.r-markdown-preview--github-dark {
+  --rmd-bg: #0d1117;
+  --rmd-text: #e6edf3;
+  --rmd-link: #58a6ff;
+  --rmd-border: #30363d;
+  --rmd-code-bg: #161b22;
+  --rmd-blockquote-border: #30363d;
+  --rmd-blockquote-text: #8b949e;
+  --rmd-table-stripe-bg: #161b22;
+  --rmd-table-border-top: #21262d;
+  --rmd-kbd-border-bottom: #21262d;
+  --rmd-kbd-shadow: #010409;
+  --rmd-pre-dark-bg: #161b22;
+  --rmd-pre-dark-text: #e6edf3;
+  --rmd-mermaid-container-bg: #161b22;
+  --rmd-fullscreen-bg: #0d1117;
+  --rmd-fullscreen-toolbar-bg: #161b22;
+}

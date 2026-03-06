@@ -185,8 +185,8 @@ defineExpose<ProUploadExpose>({
       <template v-for="file in fileList" :key="file.uid">
         <slot name="fileItem" :file="file">
           <component
-            :is="renderItem ? () => renderItem!({ file }) : RProUploadItem"
-            v-bind="renderItem ? {} : { file, listType, disabled, readonly, locale }"
+            :is="renderItem != null ? () => renderItem!({ file }) : RProUploadItem"
+            v-bind="renderItem != null ? {} : { file, listType, disabled, readonly, locale }"
             @remove="removeFile"
             @retry="retryFile"
             @preview="handlePreview"

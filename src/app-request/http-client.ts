@@ -148,11 +148,18 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
       clearTimeout(timeoutId)
 
       if (!response.ok) {
+        let responseBody: unknown
+        try {
+          responseBody = await response.json()
+        } catch {
+          /* body may not be JSON — safe to ignore */
+        }
         const error: RequestError = {
           kind: 'HTTP_ERROR',
           code: response.status,
           message: response.statusText,
           status: response.status,
+          responseBody,
         }
         return handleError(config, error)
       }

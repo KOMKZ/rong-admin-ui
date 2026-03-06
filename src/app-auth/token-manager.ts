@@ -45,7 +45,14 @@ export function createTokenManager(config: AuthConfig): TokenManagerInstance {
   }
 
   function isAuthenticated(): boolean {
-    return !!getToken()
+    const token = getToken()
+    if (!token) return false
+    const expiresAtStr = storage.get(keys.expiresAt)
+    if (expiresAtStr) {
+      const expiresAt = parseInt(expiresAtStr, 10)
+      if (!isNaN(expiresAt) && Date.now() >= expiresAt) return false
+    }
+    return true
   }
 
   function saveTokenPair(pair: TokenPair): void {

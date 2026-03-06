@@ -37,6 +37,8 @@ export interface RequestError {
   code: string | number
   message: string
   status?: number
+  /** Parsed JSON body from non-ok HTTP responses (best-effort) */
+  responseBody?: unknown
   originalError?: Error
 }
 

@@ -1,0 +1,18 @@
+.r-markdown-preview--github {
+  --rmd-bg: var(--ra-color-bg-surface, #ffffff);
+  --rmd-text: var(--ra-color-text-primary, #24292f);
+  --rmd-link: var(--ra-color-brand-primary, #0969da);
+  --rmd-border: var(--ra-color-border-default, #d0d7de);
+  --rmd-code-bg: var(--ra-color-bg-muted, #f6f8fa);
+  --rmd-blockquote-border: var(--ra-color-border-default, #d0d7de);
+  --rmd-blockquote-text: var(--ra-color-text-tertiary, #656d76);
+  --rmd-table-stripe-bg: var(--ra-color-bg-muted, #f6f8fa);
+  --rmd-table-border-top: hsla(210, 18%, 87%, 1);
+  --rmd-kbd-border-bottom: #c6cbd1;
+  --rmd-kbd-shadow: #c6cbd1;
+  --rmd-pre-dark-bg: #24292e;
+  --rmd-pre-dark-text: #e1e4e8;
+  --rmd-mermaid-container-bg: #f8fafc;
+  --rmd-fullscreen-bg: #1a1a2e;
+  --rmd-fullscreen-toolbar-bg: #16213e;
+}

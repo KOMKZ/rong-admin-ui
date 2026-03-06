@@ -60,11 +60,27 @@ export default defineConfig({
         'components/result-state/index': resolve(__dirname, 'src/components/result-state/index.ts'),
         'components/command-palette/index': resolve(__dirname, 'src/components/command-palette/index.ts'),
         'components/notification-center/index': resolve(__dirname, 'src/components/notification-center/index.ts'),
+        'components/pro-tree-editor/index': resolve(__dirname, 'src/components/pro-tree-editor/index.ts'),
+        'components/markdown-preview/index': resolve(__dirname, 'src/components/markdown-preview/index.ts'),
+        'components/markdown-editor/index': resolve(__dirname, 'src/components/markdown-editor/index.ts'),
+        'components/rich-text-editor/index': resolve(__dirname, 'src/components/rich-text-editor/index.ts'),
+        'components/data-grid/index': resolve(__dirname, 'src/components/data-grid/index.ts'),
       },
       formats: ['es', 'cjs'],
     },
     rollupOptions: {
-      external: ['vue', 'vue-router', 'pinia', 'naive-ui'],
+      external: [
+          'vue',
+          'vue-router',
+          'pinia',
+          'naive-ui',
+          'markdown-it',
+          'highlight.js',
+          'mermaid',
+          /^@tiptap\//,
+          'ag-grid-vue3',
+          'ag-grid-community',
+        ],
       output: {
         globals: {
           vue: 'Vue',
