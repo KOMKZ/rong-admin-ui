@@ -6,6 +6,7 @@ export type ThemePresetName =
   | 'graphite-pro'
   | 'cloud-ops'
   | 'slate-pro'
+  | 'hirezy-soft'
 export type ThemeMode = 'light' | 'dark'
 
 export interface ThemePreset {

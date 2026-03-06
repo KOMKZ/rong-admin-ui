@@ -15,7 +15,7 @@
 - **规格文档**: `components/spec-data-table.md`
 - **测试**: `tests/components/data-table.test.ts` (12 tests)
 - **a11y**: `tests/components/a11y.test.ts` (3 tests)
-- **消费方调用**: `rong-admin-web/src/stories/DataTableStory.vue`
+- **消费方调用**: `rong-admin-webdemo/src/stories/DataTableStory.vue`
 
 ### RFormRenderer
 
@@ -24,7 +24,7 @@
 - **规格文档**: `components/spec-form-renderer.md`
 - **测试**: `tests/components/form-renderer.test.ts` (13 tests)
 - **a11y**: `tests/components/a11y.test.ts` (2 tests)
-- **消费方调用**: `rong-admin-web/src/stories/FormRendererStory.vue`
+- **消费方调用**: `rong-admin-webdemo/src/stories/FormRendererStory.vue`
 
 ### RModalDialog
 
@@ -32,7 +32,7 @@
 - **契约**: `src/components/modal-dialog/types.ts`
 - **测试**: `tests/components/modal-dialog.test.ts` (12 tests)
 - **a11y**: `tests/components/a11y.test.ts` (2 tests)
-- **消费方调用**: `rong-admin-web/src/stories/ModalDialogStory.vue`
+- **消费方调用**: `rong-admin-webdemo/src/stories/ModalDialogStory.vue`
 
 ### RFileUpload
 
@@ -40,7 +40,7 @@
 - **契约**: `src/components/file-upload/types.ts`
 - **测试**: `tests/components/file-upload.test.ts` (11 tests)
 - **a11y**: `tests/components/a11y.test.ts` (2 tests)
-- **消费方调用**: `rong-admin-web/src/stories/FileUploadStory.vue`
+- **消费方调用**: `rong-admin-webdemo/src/stories/FileUploadStory.vue`
 
 ## 组件依赖
 

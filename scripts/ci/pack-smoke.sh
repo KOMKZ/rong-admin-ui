@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# pack-smoke.sh — Verify that npm-packed tarball can be consumed by rong-admin-web
+# pack-smoke.sh — Verify that npm-packed tarball can be consumed by rong-admin-webdemo
 set -euo pipefail
 
 UI_DIR="${UI_DIR:-$(cd "$(dirname "$0")/../.." && pwd)}"
-WEB_DIR="${WEB_DIR:-$UI_DIR/../rong-admin-web}"
+WEB_DIR="${WEB_DIR:-$UI_DIR/../rong-admin-webdemo}"
 TMPDIR_ROOT="${TMPDIR:-/tmp}"
 WORK_DIR="$TMPDIR_ROOT/rong-pack-smoke-$$"
 

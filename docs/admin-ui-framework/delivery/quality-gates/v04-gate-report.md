@@ -31,7 +31,7 @@
 
 ---
 
-## rong-admin-web 质量验证
+## rong-admin-webdemo 质量验证
 
 | Gate | Command | Result |
 |------|---------|--------|
@@ -60,7 +60,7 @@
 | `components/primitives` | `index.ts` | Naive UI 重导出 |
 | `tests/app-preset` | `preset.test.ts` | 6 测试用例 |
 
-### rong-admin-web
+### rong-admin-webdemo
 
 | 文件 | 类型 |
 |------|------|

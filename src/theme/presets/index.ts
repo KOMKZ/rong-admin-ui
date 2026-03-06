@@ -227,6 +227,52 @@ function slateProNaiveDark(): GlobalThemeOverrides {
   }
 }
 
+function hirezySoftNaiveLight(): GlobalThemeOverrides {
+  return {
+    common: {
+      primaryColor: '#6b93f5',
+      primaryColorHover: '#5a82e8',
+      primaryColorPressed: '#4b72da',
+      primaryColorSuppl: '#8fa8f8',
+      successColor: '#4bb889',
+      warningColor: '#e2a040',
+      errorColor: '#e45c6e',
+      bodyColor: '#f4f6fa',
+      cardColor: '#ffffff',
+      borderColor: '#e2e6f0',
+      textColorBase: '#1e2235',
+      textColor1: '#1e2235',
+      textColor2: '#4a5068',
+      textColor3: '#6e7389',
+      borderRadius: '12px',
+      fontFamily:
+        "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif",
+    },
+  }
+}
+
+function hirezySoftNaiveDark(): GlobalThemeOverrides {
+  return {
+    common: {
+      primaryColor: '#8fa8f8',
+      primaryColorHover: '#a8bcf9',
+      primaryColorPressed: '#7b93f0',
+      primaryColorSuppl: '#b8c8fa',
+      successColor: '#5fd4a0',
+      warningColor: '#f0b856',
+      errorColor: '#f07580',
+      bodyColor: '#14162a',
+      cardColor: '#1b1d32',
+      borderColor: '#2a2d48',
+      textColorBase: '#f0f1f7',
+      textColor1: '#f0f1f7',
+      textColor2: '#b8bbcc',
+      textColor3: '#8589a0',
+      borderRadius: '12px',
+    },
+  }
+}
+
 export const themePresets: Record<ThemePresetName, { light: ThemePreset; dark: ThemePreset }> = {
   'enterprise-blue': {
     light: {
@@ -306,6 +352,22 @@ export const themePresets: Record<ThemePresetName, { light: ThemePreset; dark: T
       mode: 'dark',
       cssClass: 'ra-theme-slate-pro ra-dark',
       naiveOverrides: slateProNaiveDark(),
+    },
+  },
+  'hirezy-soft': {
+    light: {
+      name: 'hirezy-soft',
+      label: 'Hirezy Soft',
+      mode: 'light',
+      cssClass: 'ra-theme-hirezy-soft',
+      naiveOverrides: hirezySoftNaiveLight(),
+    },
+    dark: {
+      name: 'hirezy-soft',
+      label: 'Hirezy Soft',
+      mode: 'dark',
+      cssClass: 'ra-theme-hirezy-soft ra-dark',
+      naiveOverrides: hirezySoftNaiveDark(),
     },
   },
 }

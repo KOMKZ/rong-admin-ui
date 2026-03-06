@@ -410,7 +410,7 @@
 └─────────────────────────────────────┘
 ```
 
-对应实例：`rong-admin-web/src/views/UserManagement.vue`
+对应实例：`rong-admin-webdemo/src/views/UserManagement.vue`
 
 ### Dashboard 页模板
 
@@ -427,7 +427,7 @@
 └─────────────────────────────────────┘
 ```
 
-对应实例：`rong-admin-web/src/views/DashboardPage.vue`
+对应实例：`rong-admin-webdemo/src/views/DashboardPage.vue`
 
 ### 详情页模板
 

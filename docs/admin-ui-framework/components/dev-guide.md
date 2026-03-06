@@ -40,7 +40,7 @@ export * from './<component-name>'
 
 如需子入口，在 `package.json` exports 和 `vite.config.ts` lib entry 中添加。
 
-## 5. 在 rong-admin-web 中验证
+## 5. 在 rong-admin-webdemo 中验证
 
 - 创建至少 1 个真实业务使用场景
 - 创建 Story 页面用于独立演示
@@ -58,7 +58,7 @@ export * from './<component-name>'
 
 ## 7. E2E 覆盖
 
-在 `rong-admin-web/e2e/` 添加组件的 E2E 测试：
+在 `rong-admin-webdemo/e2e/` 添加组件的 E2E 测试：
 - 使用 `data-testid` 选择器
 - 覆盖基础渲染 + 交互 + a11y
 - 禁止依赖易变文案

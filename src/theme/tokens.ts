@@ -159,6 +159,7 @@ export type SemanticColorToken =
   | 'info-text'
   | 'info-border'
   | 'focus-ring'
+  | 'text-on-brand'
 
 export type SpacingToken =
   | '0'
@@ -181,7 +182,7 @@ export type SpacingToken =
 
 export type RadiusToken = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full'
 
-export type ShadowToken = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'inner'
+export type ShadowToken = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'card' | 'inner'
 
 export type FontSizeToken =
   | '2xs'

@@ -1,6 +1,6 @@
 # 消费方调用映射
 
-> 记录 @rong/admin-ui 每项能力在 rong-admin-web 中的调用位置。
+> 记录 @rong/admin-ui 每项能力在 rong-admin-webdemo 中的调用位置。
 
 ## 框架能力
 
@@ -29,5 +29,5 @@
 | 类型 | 命令 | 状态 |
 |------|------|------|
 | TypeCheck | `npx vue-tsc --noEmit` | ✅ PASS |
-| Unit Tests | `npx vitest run` (rong-admin-web) | ✅ PASS |
-| E2E Tests | `npx playwright test` (rong-admin-web) | ✅ 已配置 |
+| Unit Tests | `npx vitest run` (rong-admin-webdemo) | ✅ PASS |
+| E2E Tests | `npx playwright test` (rong-admin-webdemo) | ✅ 已配置 |

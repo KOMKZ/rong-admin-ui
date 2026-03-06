@@ -51,7 +51,7 @@
   - [x] 4.1.2 验证完整登录 → 设置权限 → 生成路由 → 渲染流程
   - [x] 4.1.3 验证完整登出 → 清除权限 → 销毁流程
 
-## 5. rong-admin-web 接入
+## 5. rong-admin-webdemo 接入
 
 - [x] 5.1 项目初始化
   - [x] 5.1.1 package.json + tsconfig.json + vite.config.ts
@@ -70,4 +70,4 @@
 - [x] 6.3 Prettier: PASS
 - [x] 6.4 Unit Tests: 68/68 PASS
 - [x] 6.5 Coverage: lines=92.56%, branches=86.57% — 超过阈值
-- [x] 6.6 web-consumption: rong-admin-web TypeCheck PASS
+- [x] 6.6 web-consumption: rong-admin-webdemo TypeCheck PASS

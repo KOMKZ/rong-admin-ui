@@ -65,6 +65,9 @@
   --ra-color-info-text: var(--ra-primitive-blue-8);
   --ra-color-info-border: var(--ra-primitive-blue-3);
 
+  /* ───── Text on Brand Surface ───── */
+  --ra-color-text-on-brand: #ffffff;
+
   /* ───── Focus ───── */
   --ra-color-focus-ring: rgba(32, 128, 240, 0.35);
 
@@ -136,6 +139,7 @@
   --ra-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.06), 0 4px 6px -4px rgb(0 0 0 / 0.04);
   --ra-shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.07), 0 8px 10px -6px rgb(0 0 0 / 0.04);
   --ra-shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.15);
+  --ra-shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.03);
   --ra-shadow-inner: inset 0 2px 4px 0 rgb(0 0 0 / 0.04);
 
   /* ───── Ring (for focus states) ───── */

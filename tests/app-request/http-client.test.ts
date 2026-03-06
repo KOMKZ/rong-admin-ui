@@ -278,4 +278,76 @@ describe('createHttpClient', () => {
 
     expect(fetch).toHaveBeenCalledWith('https://other.com/data', expect.anything())
   })
+
+  describe('FormData support', () => {
+    it('should send FormData body without JSON.stringify', async () => {
+      const config: HttpClientConfig = {
+        requestConfig: { baseURL: 'https://api.test.com' },
+      }
+      const client = createHttpClient(config)
+      const formData = new FormData()
+      formData.append('file', new Blob(['content'], { type: 'image/jpeg' }), 'photo.jpg')
+      formData.append('type', 'avatar')
+
+      await client.request({
+        url: '/files/upload',
+        method: 'POST',
+        data: formData,
+      })
+
+      const [, fetchOpts] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]
+      expect(fetchOpts.body).toBe(formData)
+      expect(fetchOpts.body).toBeInstanceOf(FormData)
+    })
+
+    it('should NOT set Content-Type header for FormData (let browser set boundary)', async () => {
+      const config: HttpClientConfig = {
+        requestConfig: { baseURL: 'https://api.test.com' },
+      }
+      const client = createHttpClient(config)
+      const formData = new FormData()
+      formData.append('file', new Blob(['x']), 'test.txt')
+
+      await client.request({
+        url: '/upload',
+        method: 'POST',
+        data: formData,
+      })
+
+      const [, fetchOpts] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]
+      expect(fetchOpts.headers['Content-Type']).toBeUndefined()
+    })
+
+    it('should still set Content-Type: application/json for plain object POST', async () => {
+      const config: HttpClientConfig = {
+        requestConfig: { baseURL: 'https://api.test.com' },
+      }
+      const client = createHttpClient(config)
+      await client.post('/users', { name: 'Alice' })
+
+      const [, fetchOpts] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]
+      expect(fetchOpts.headers['Content-Type']).toBe('application/json')
+      expect(fetchOpts.body).toBe(JSON.stringify({ name: 'Alice' }))
+    })
+
+    it('should inject auth header with FormData', async () => {
+      const config: HttpClientConfig = {
+        requestConfig: { baseURL: 'https://api.test.com' },
+        tokenProvider: { getToken: () => 'my-token' },
+      }
+      const client = createHttpClient(config)
+      const formData = new FormData()
+      formData.append('file', new Blob(['data']), 'file.png')
+
+      await client.request({
+        url: '/upload',
+        method: 'POST',
+        data: formData,
+      })
+
+      const [, fetchOpts] = (fetch as ReturnType<typeof vi.fn>).mock.calls[0]
+      expect(fetchOpts.headers['Authorization']).toBe('Bearer my-token')
+      expect(fetchOpts.headers['Content-Type']).toBeUndefined()
+    })
+  })
 })

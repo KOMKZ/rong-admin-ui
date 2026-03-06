@@ -1,0 +1,182 @@
+/*
+ * Hirezy Soft — Modern HR SaaS Preset
+ * Soft macaron palette with lime-green / periwinkle-blue / lavender accents.
+ * Card-based layout, large radius (16 px), ultra-light shadows, 8 px grid, 0.2 s transitions.
+ * Light-first design; dark variant keeps the same gentle tone — no dramatic shift.
+ */
+
+/* ── Light mode ─────────────────────────────────────── */
+.ra-theme-hirezy-soft {
+  /* Background layers — soft gray base */
+  --ra-color-bg-page: #f4f6fa;
+  --ra-color-bg-surface: #ffffff;
+  --ra-color-bg-surface-secondary: #f8f9fc;
+  --ra-color-bg-surface-tertiary: #f0f2f7;
+  --ra-color-bg-elevated: #ffffff;
+  --ra-color-bg-elevated-soft: rgba(255, 255, 255, 0.96);
+  --ra-color-bg-overlay: rgba(30, 34, 53, 0.35);
+  --ra-color-bg-muted: #ebeef5;
+  --ra-color-bg-code: #eef0f6;
+  --ra-color-bg-hover: #e6e9f2;
+  --ra-color-bg-active: #dcdfe9;
+
+  /* Text hierarchy — warm-neutral */
+  --ra-color-text-primary: #1e2235;
+  --ra-color-text-secondary: #4a5068;
+  --ra-color-text-tertiary: #6e7389;
+  --ra-color-text-quaternary: #9ba0b4;
+  --ra-color-text-inverse: #ffffff;
+  --ra-color-text-code: #5a6acf;
+  --ra-color-text-link: #6b93f5;
+  --ra-color-text-link-hover: #5a82e8;
+
+  /* Border — deliberately light, no heavy strokes */
+  --ra-color-border-default: #e2e6f0;
+  --ra-color-border-light: #eef0f6;
+  --ra-color-border-strong: #cdd1de;
+  --ra-color-border-interactive: #a5a9bc;
+  --ra-color-border-focus: #6b93f5;
+
+  /* Brand — soft macaron periwinkle blue */
+  --ra-color-brand-primary: #6b93f5;
+  --ra-color-brand-hover: #5a82e8;
+  --ra-color-brand-active: #4b72da;
+  --ra-color-brand-light: #edf1fe;
+  --ra-color-brand-subtle: rgba(107, 147, 245, 0.07);
+
+  /* Text on brand surface */
+  --ra-color-text-on-brand: #ffffff;
+
+  /* Focus */
+  --ra-color-focus-ring: rgba(107, 147, 245, 0.32);
+
+  /* Status — softer, macaron-tinted */
+  --ra-color-success: #4bb889;
+  --ra-color-success-bg: #edfaf3;
+  --ra-color-success-text: #2d8a63;
+  --ra-color-success-border: #a8e6ca;
+
+  --ra-color-warning: #e2a040;
+  --ra-color-warning-bg: #fef7ec;
+  --ra-color-warning-text: #b8791f;
+  --ra-color-warning-border: #f5d99a;
+
+  --ra-color-danger: #e45c6e;
+  --ra-color-danger-bg: #fdf0f2;
+  --ra-color-danger-text: #b8374a;
+  --ra-color-danger-border: #f5b0ba;
+
+  --ra-color-info: #5a9ce5;
+  --ra-color-info-bg: #edf5fe;
+  --ra-color-info-text: #3878bf;
+  --ra-color-info-border: #aed2f5;
+
+  /* Radius — large, card-friendly */
+  --ra-radius-sm: 8px;
+  --ra-radius-md: 12px;
+  --ra-radius-lg: 16px;
+  --ra-radius-xl: 20px;
+  --ra-radius-2xl: 24px;
+
+  /* Shadows — ultra-light, airy */
+  --ra-shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.02);
+  --ra-shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.03), 0 1px 2px -1px rgb(0 0 0 / 0.02);
+  --ra-shadow-card: 0 1px 4px 0 rgb(0 0 0 / 0.03), 0 1px 2px -1px rgb(0 0 0 / 0.015);
+  --ra-shadow-md: 0 4px 8px -2px rgb(0 0 0 / 0.04), 0 2px 4px -2px rgb(0 0 0 / 0.02);
+  --ra-shadow-lg: 0 12px 20px -4px rgb(0 0 0 / 0.05), 0 4px 8px -4px rgb(0 0 0 / 0.03);
+  --ra-shadow-xl: 0 20px 30px -6px rgb(0 0 0 / 0.06), 0 8px 12px -6px rgb(0 0 0 / 0.03);
+  --ra-shadow-2xl: 0 28px 50px -12px rgb(0 0 0 / 0.10);
+
+  /* Transitions — unified 0.2 s */
+  --ra-transition-fast: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --ra-transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --ra-transition-slow: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Dark mode ──────────────────────────────────────── */
+.ra-theme-hirezy-soft.ra-dark {
+  /* Background layers — deep blue-gray, same gentle tone */
+  --ra-color-bg-page: #14162a;
+  --ra-color-bg-surface: #1b1d32;
+  --ra-color-bg-surface-secondary: #21243b;
+  --ra-color-bg-surface-tertiary: #282b44;
+  --ra-color-bg-elevated: #21243b;
+  --ra-color-bg-elevated-soft: rgba(33, 36, 59, 0.96);
+  --ra-color-bg-overlay: rgba(0, 0, 0, 0.55);
+  --ra-color-bg-muted: #21243b;
+  --ra-color-bg-code: #252842;
+  --ra-color-bg-hover: #2e3150;
+  --ra-color-bg-active: #373a58;
+
+  /* Text hierarchy */
+  --ra-color-text-primary: #f0f1f7;
+  --ra-color-text-secondary: #b8bbcc;
+  --ra-color-text-tertiary: #8589a0;
+  --ra-color-text-quaternary: #5c6078;
+  --ra-color-text-inverse: #14162a;
+  --ra-color-text-code: #a8bcf9;
+  --ra-color-text-link: #8fa8f8;
+  --ra-color-text-link-hover: #a8bcf9;
+
+  /* Border */
+  --ra-color-border-default: #2a2d48;
+  --ra-color-border-light: #21243b;
+  --ra-color-border-strong: #383b58;
+  --ra-color-border-interactive: #4c5070;
+  --ra-color-border-focus: #8fa8f8;
+
+  /* Brand — lighter periwinkle glow */
+  --ra-color-brand-primary: #8fa8f8;
+  --ra-color-brand-hover: #a8bcf9;
+  --ra-color-brand-active: #7b93f0;
+  --ra-color-brand-light: rgba(143, 168, 248, 0.12);
+  --ra-color-brand-subtle: rgba(143, 168, 248, 0.06);
+
+  /* Text on brand surface — dark brand is lighter, still needs white text */
+  --ra-color-text-on-brand: #ffffff;
+
+  /* Focus */
+  --ra-color-focus-ring: rgba(143, 168, 248, 0.38);
+
+  /* Status — luminous pastels */
+  --ra-color-success: #5fd4a0;
+  --ra-color-success-bg: rgba(95, 212, 160, 0.10);
+  --ra-color-success-text: #88e8bd;
+  --ra-color-success-border: rgba(95, 212, 160, 0.22);
+
+  --ra-color-warning: #f0b856;
+  --ra-color-warning-bg: rgba(240, 184, 86, 0.10);
+  --ra-color-warning-text: #f5d08a;
+  --ra-color-warning-border: rgba(240, 184, 86, 0.22);
+
+  --ra-color-danger: #f07580;
+  --ra-color-danger-bg: rgba(240, 117, 128, 0.10);
+  --ra-color-danger-text: #f5a0a8;
+  --ra-color-danger-border: rgba(240, 117, 128, 0.22);
+
+  --ra-color-info: #70b5f0;
+  --ra-color-info-bg: rgba(112, 181, 240, 0.10);
+  --ra-color-info-text: #98ccf5;
+  --ra-color-info-border: rgba(112, 181, 240, 0.22);
+
+  /* Radius — same large scale */
+  --ra-radius-sm: 8px;
+  --ra-radius-md: 12px;
+  --ra-radius-lg: 16px;
+  --ra-radius-xl: 20px;
+  --ra-radius-2xl: 24px;
+
+  /* Shadows — dark-mode softened */
+  --ra-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.15);
+  --ra-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.22), 0 1px 2px -1px rgba(0, 0, 0, 0.15);
+  --ra-shadow-card: 0 1px 4px 0 rgba(0, 0, 0, 0.20), 0 1px 2px -1px rgba(0, 0, 0, 0.12);
+  --ra-shadow-md: 0 4px 8px -2px rgba(0, 0, 0, 0.30), 0 2px 4px -2px rgba(0, 0, 0, 0.18);
+  --ra-shadow-lg: 0 12px 20px -4px rgba(0, 0, 0, 0.35), 0 4px 8px -4px rgba(0, 0, 0, 0.22);
+  --ra-shadow-xl: 0 20px 30px -6px rgba(0, 0, 0, 0.40), 0 8px 12px -6px rgba(0, 0, 0, 0.28);
+  --ra-shadow-2xl: 0 28px 50px -12px rgba(0, 0, 0, 0.50);
+
+  /* Transitions — unified 0.2 s */
+  --ra-transition-fast: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --ra-transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --ra-transition-slow: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}

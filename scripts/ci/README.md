@@ -14,5 +14,5 @@ Risk level controls enabled gates:
 You can override paths when repositories are not in sibling layout:
 
 ```bash
-UI_DIR=/path/to/rong-admin-ui WEB_DIR=/path/to/rong-admin-web bash scripts/ci/run-ci.sh
+UI_DIR=/path/to/rong-admin-ui WEB_DIR=/path/to/rong-admin-webdemo bash scripts/ci/run-ci.sh
 ```

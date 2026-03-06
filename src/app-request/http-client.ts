@@ -23,11 +23,21 @@ function buildUrl(baseURL: string, url: string, params?: Record<string, unknown>
   return `${fullUrl}?${searchParams.toString()}`
 }
 
-function buildHeaders(config: HttpClientConfig, options: RequestOptions): Record<string, string> {
+function isFormData(value: unknown): value is FormData {
+  return typeof FormData !== 'undefined' && value instanceof FormData
+}
+
+function buildHeaders(
+  config: HttpClientConfig,
+  options: RequestOptions,
+): Record<string, string> {
   const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
     ...config.requestConfig.headers,
     ...options.headers,
+  }
+
+  if (!isFormData(options.data) && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json'
   }
 
   if (config.tokenProvider) {
@@ -128,7 +138,9 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
     }
 
     if (processedOptions.data && method !== 'GET') {
-      fetchOptions.body = JSON.stringify(processedOptions.data)
+      fetchOptions.body = isFormData(processedOptions.data)
+        ? processedOptions.data
+        : JSON.stringify(processedOptions.data)
     }
 
     try {

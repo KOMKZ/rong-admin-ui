@@ -19,7 +19,7 @@
 | Contract Parity | 硬 | PASS | `npm run quality-gate` G8 | 契约与实现一致 |
 | quality-gate | 硬 | PASS | `npm run quality-gate` | PASS=8 FAIL=0 |
 
-## 消费方验证（rong-admin-web）
+## 消费方验证（rong-admin-webdemo）
 
 | 门禁 | 结果 | 命令 | 说明 |
 |------|------|------|------|
@@ -60,7 +60,7 @@
 | 3 | 质量报告与实际执行结果不一致 | P1 | FIXED | 本报告绑定当前运行结果，所有 PASS/FAIL 与命令输出一致 |
 | 4 | E2E 条件跳过式假阳性风险 | P1 | VERIFIED | 确认当前 E2E 全部使用 `expect(...).toBeVisible()` 强断言，无 `if (isVisible)` 条件跳过 |
 | 5 | warning-free-runtime 白名单过宽 | P2 | FIXED | 白名单从通配 `injection .* not found` 收紧为精确匹配 4 个已知 Naive UI injection key，移除 `Property accessed` 通配 |
-| 6 | Web lint 未纳入标准脚本 | P2 | VERIFIED | `rong-admin-web` 已有 lint/lint:fix 脚本，执行通过 |
+| 6 | Web lint 未纳入标准脚本 | P2 | VERIFIED | `rong-admin-webdemo` 已有 lint/lint:fix 脚本，执行通过 |
 | 7 | data-table 单测条件跳过（if dataRow） | P2 | FIXED | 改为 `expect(dataRow).toBeTruthy()` + `dataRow!.trigger('click')` 强断言 |
 
 ## 待改进项（P3，纳入后续迭代）

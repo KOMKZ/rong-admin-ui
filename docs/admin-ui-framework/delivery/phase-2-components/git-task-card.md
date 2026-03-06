@@ -6,7 +6,7 @@
 - 目标仓库：`rong-admin-ui`
 - 分支：`feature/phase1-hardening-v0.2`
 - 基准分支：`main`（含 v0.1 全部内容）
-- 关联仓库：`rong-admin-web` → `feature/framework-integration-v0.2`
+- 关联仓库：`rong-admin-webdemo` → `feature/framework-integration-v0.2`
 
 ## 任务边界
 
@@ -36,7 +36,7 @@
 - [x] 68/68 tests PASS
 - [x] Coverage lines >= 85% (actual: 92.56%)
 - [x] Coverage branches >= 70% (actual: 86.57%)
-- [x] rong-admin-web TypeCheck PASS
+- [x] rong-admin-webdemo TypeCheck PASS
 - [x] web-consumption 证据：FrameworkDemo + Story 页面
 
 ## 风险与回滚

@@ -23,7 +23,7 @@ done
 
 ROOT_DIR="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
 UI_DIR="${UI_DIR:-$ROOT_DIR}"
-WEB_DIR="${WEB_DIR:-$ROOT_DIR/../rong-admin-web}"
+WEB_DIR="${WEB_DIR:-$ROOT_DIR/../rong-admin-webdemo}"
 
 if [[ ! -d "$UI_DIR" ]]; then
   echo "UI_DIR does not exist: $UI_DIR" >&2

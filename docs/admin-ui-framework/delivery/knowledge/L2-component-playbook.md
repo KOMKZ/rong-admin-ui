@@ -15,7 +15,7 @@ At least two items should move each iteration:
 - Contract first: props/emits/slots/states.
 - Provide stable test ids for key interactions.
 - Build demo matrix: basic, advanced, loading-empty-error, disabled-readonly, theme-variant.
-- Ensure real usage path in `rong-admin-web`.
+- Ensure real usage path in `rong-admin-webdemo`.
 
 ## Documentation playbook
 

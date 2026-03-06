@@ -18,8 +18,8 @@ jobs:
       - name: Checkout Web repository (monorepo workspace sibling)
         uses: actions/checkout@v4
         with:
-          repository: KOMKZ/rong-admin-web
-          path: ../rong-admin-web
+          repository: KOMKZ/rong-admin-webdemo
+          path: ../rong-admin-webdemo
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -28,19 +28,19 @@ jobs:
           cache: npm
           cache-dependency-path: |
             package-lock.json
-            ../rong-admin-web/package-lock.json
+            ../rong-admin-webdemo/package-lock.json
 
       - name: Install UI dependencies
         run: bash -c "npm ci"
 
       - name: Install Web dependencies
-        run: bash -c "cd ../rong-admin-web && npm ci"
+        run: bash -c "cd ../rong-admin-webdemo && npm ci"
 
       - name: Run single-source quality gate
         env:
           RISK_LEVEL: R3
           UI_DIR: ${{ github.workspace }}
-          WEB_DIR: ${{ github.workspace }}/../rong-admin-web
+          WEB_DIR: ${{ github.workspace }}/../rong-admin-webdemo
         run: bash -c "bash scripts/ci/run-ci.sh"
 
       - name: Upload gate artifacts

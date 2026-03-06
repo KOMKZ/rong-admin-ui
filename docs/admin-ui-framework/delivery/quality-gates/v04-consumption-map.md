@@ -1,6 +1,6 @@
 # v0.4 Consumption Map
 
-> UI 框架每项能力在 rong-admin-web 中的消费证据
+> UI 框架每项能力在 rong-admin-webdemo 中的消费证据
 
 ---
 
