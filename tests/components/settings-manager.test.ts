@@ -37,14 +37,14 @@ describe('RSettingsManager', () => {
   it('renders loading state initially', () => {
     const adapter = createMockAdapter()
     const wrapper = mount(RSettingsManager, { props: { adapter } })
-    expect(wrapper.find('.r-settings-manager__loading').exists()).toBe(true)
+    expect(wrapper.find('.rsm__loading').exists()).toBe(true)
   })
 
   it('renders groups after loading', async () => {
     const adapter = createMockAdapter()
     const wrapper = mount(RSettingsManager, { props: { adapter } })
     await flushPromises()
-    expect(wrapper.findAll('.r-settings-manager__group').length).toBe(2)
+    expect(wrapper.findAll('.rsm__section').length).toBe(2)
   })
 
   it('emits loaded event after fetch', async () => {
@@ -62,6 +62,7 @@ describe('RSettingsManager', () => {
     const wrapper = mount(RSettingsManager, { props: { adapter } })
     await flushPromises()
     expect(wrapper.emitted('error')).toBeTruthy()
+    expect(wrapper.find('.rsm__error').exists()).toBe(true)
   })
 
   it('exposes getValues', async () => {
@@ -93,7 +94,7 @@ describe('RSettingsManager', () => {
     const adapter = createMockAdapter()
     const wrapper = mount(RSettingsManager, { props: { adapter } })
     await flushPromises()
-    const fields = wrapper.findAll('.r-settings-manager__field')
+    const fields = wrapper.findAll('.rsm__row')
     expect(fields.length).toBe(5)
   })
 
@@ -101,22 +102,22 @@ describe('RSettingsManager', () => {
     const adapter = createMockAdapter()
     const wrapper = mount(RSettingsManager, { props: { adapter, showGroupNav: true } })
     await flushPromises()
-    expect(wrapper.find('.r-settings-manager__nav').exists()).toBe(true)
-    expect(wrapper.findAll('.r-settings-manager__nav-item').length).toBe(2)
+    expect(wrapper.find('.rsm__nav').exists()).toBe(true)
+    expect(wrapper.findAll('.rsm__nav-item').length).toBe(2)
   })
 
   it('hides group nav with showGroupNav=false', async () => {
     const adapter = createMockAdapter()
     const wrapper = mount(RSettingsManager, { props: { adapter, showGroupNav: false } })
     await flushPromises()
-    expect(wrapper.find('.r-settings-manager__nav').exists()).toBe(false)
+    expect(wrapper.find('.rsm__nav').exists()).toBe(false)
   })
 
   it('renders search input when showSearch=true', async () => {
     const adapter = createMockAdapter()
     const wrapper = mount(RSettingsManager, { props: { adapter, showSearch: true } })
     await flushPromises()
-    expect(wrapper.find('.r-settings-manager__search').exists()).toBe(true)
+    expect(wrapper.find('.rsm__search').exists()).toBe(true)
   })
 
   it('renders empty state when no groups', async () => {
@@ -125,6 +126,6 @@ describe('RSettingsManager', () => {
     })
     const wrapper = mount(RSettingsManager, { props: { adapter } })
     await flushPromises()
-    expect(wrapper.findAll('.r-settings-manager__group').length).toBe(0)
+    expect(wrapper.findAll('.rsm__section').length).toBe(0)
   })
 })

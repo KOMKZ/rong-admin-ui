@@ -21,6 +21,9 @@ export {
   fontWeightVar,
   lineHeightVar,
   zIndexVar,
+  heightVar,
+  durationVar,
+  easeVar,
   resolveToken,
 } from './tokens'
 
@@ -34,6 +37,9 @@ export type {
   LineHeightToken,
   TransitionToken,
   ZIndexToken,
+  HeightToken,
+  DurationToken,
+  EaseToken,
 } from './tokens'
 
 import './primitives.css'

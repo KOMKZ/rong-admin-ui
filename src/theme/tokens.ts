@@ -259,6 +259,30 @@ export function zIndexVar(token: ZIndexToken): string {
   return `var(--ra-z-${token})`
 }
 
+/* ──────────────────────── Component Height Tokens ──────────────────────── */
+
+export type HeightToken = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+
+export function heightVar(token: HeightToken): string {
+  return `var(--ra-height-${token})`
+}
+
+/* ──────────────────────── Duration Tokens ──────────────────────── */
+
+export type DurationToken = 'instant' | 'fast' | 'normal' | 'slow' | 'slower'
+
+export function durationVar(token: DurationToken): string {
+  return `var(--ra-duration-${token})`
+}
+
+/* ──────────────────────── Ease Tokens ──────────────────────── */
+
+export type EaseToken = 'default' | 'in' | 'out' | 'bounce'
+
+export function easeVar(token: EaseToken): string {
+  return `var(--ra-ease-${token})`
+}
+
 /* ──────────────────────── Runtime Computed Value ──────────────────────── */
 
 /**

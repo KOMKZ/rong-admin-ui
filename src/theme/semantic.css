@@ -170,4 +170,40 @@
   --ra-topbar-height-compact: 48px;
   --ra-page-header-height: 72px;
   --ra-content-max-width: 1440px;
+
+  /* ───── Component Heights (Uniform Scale) ───── */
+  --ra-height-xs: 24px;
+  --ra-height-sm: 28px;
+  --ra-height-md: 32px;
+  --ra-height-lg: 36px;
+  --ra-height-xl: 40px;
+
+  /* ───── Animation / Motion Tokens ───── */
+  --ra-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --ra-ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ra-ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ra-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ra-duration-instant: 100ms;
+  --ra-duration-fast: 150ms;
+  --ra-duration-normal: 200ms;
+  --ra-duration-slow: 300ms;
+  --ra-duration-slower: 500ms;
+
+  /* ───── Overlay & Backdrop ───── */
+  --ra-backdrop-blur: 8px;
+}
+
+/* ───── Reduced Motion ───── */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ra-duration-instant: 0ms;
+    --ra-duration-fast: 0ms;
+    --ra-duration-normal: 0ms;
+    --ra-duration-slow: 0ms;
+    --ra-duration-slower: 0ms;
+    --ra-transition-fast: 0ms;
+    --ra-transition-base: 0ms;
+    --ra-transition-slow: 0ms;
+    --ra-transition-slower: 0ms;
+  }
 }
