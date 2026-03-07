@@ -66,6 +66,7 @@ export default defineConfig({
         'components/rich-text-editor/index': resolve(__dirname, 'src/components/rich-text-editor/index.ts'),
         'components/data-grid/index': resolve(__dirname, 'src/components/data-grid/index.ts'),
         'components/settings-manager/index': resolve(__dirname, 'src/components/settings-manager/index.ts'),
+        'app-captcha/index': resolve(__dirname, 'src/app-captcha/index.ts'),
       },
       formats: ['es', 'cjs'],
     },

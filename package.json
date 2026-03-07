@@ -56,6 +56,10 @@
       "types": "./dist/components/*/index.d.ts",
       "import": "./dist/components/*/index.js"
     },
+    "./app-captcha": {
+      "types": "./dist/app-captcha/index.d.ts",
+      "import": "./dist/app-captcha/index.js"
+    },
     "./style.css": "./dist/admin-ui.css",
     "./dist/admin-ui.css": "./dist/admin-ui.css"
   },
