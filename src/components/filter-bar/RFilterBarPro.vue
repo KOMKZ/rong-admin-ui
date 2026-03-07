@@ -301,7 +301,7 @@ defineExpose(expose)
   display: flex;
   flex-direction: column;
   gap: var(--ra-spacing-3);
-  padding: var(--ra-spacing-4);
+  padding: var(--ra-card-padding-y) var(--ra-card-padding-x);
   background: var(--ra-color-bg-surface);
   border: 1px solid var(--ra-color-border-default);
   border-radius: var(--ra-radius-lg);

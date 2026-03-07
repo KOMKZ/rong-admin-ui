@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import {
   NButton,
   NSpin,
@@ -182,27 +182,6 @@ function getDirtyFields() {
 
 function scrollToGroup(key: string) {
   activeGroupKey.value = key
-  nextTick(() => {
-    const el = document.getElementById(`settings-group-${key}`)
-    if (el && contentEl.value) {
-      const top = el.offsetTop - contentEl.value.offsetTop
-      contentEl.value.scrollTo({ top, behavior: 'smooth' })
-    }
-  })
-}
-
-function handleContentScroll() {
-  if (!contentEl.value) return
-  const scrollTop = contentEl.value.scrollTop + 20
-  for (const g of groups.value) {
-    const el = document.getElementById(`settings-group-${g.key}`)
-    if (el) {
-      const top = el.offsetTop - contentEl.value.offsetTop
-      if (top <= scrollTop) {
-        activeGroupKey.value = g.key
-      }
-    }
-  }
 }
 
 function urlToFileList(url: string): ProUploadFileItem[] {
@@ -345,7 +324,7 @@ defineExpose<SettingsManagerExpose>({
       </aside>
 
       <!-- Content -->
-      <div ref="contentEl" class="rsm__content" @scroll="handleContentScroll">
+      <div ref="contentEl" class="rsm__content">
         <!-- Inline search (no sidebar) -->
         <div v-if="showSearch && (!showGroupNav || groups.length <= 1)" class="rsm__search rsm__search--inline">
           <NInput v-model:value="searchQuery" placeholder="搜索设置项…" clearable size="small">
@@ -355,6 +334,7 @@ defineExpose<SettingsManagerExpose>({
 
         <div
           v-for="group in filteredGroups"
+          v-show="activeGroupKey === group.key || !showGroupNav || groups.length <= 1"
           :key="group.key"
           :id="`settings-group-${group.key}`"
           class="rsm__section"
@@ -578,6 +558,7 @@ defineExpose<SettingsManagerExpose>({
 .rsm {
   display: flex;
   flex-direction: column;
+  gap: var(--ra-spacing-6, 24px);
   height: 100%;
   min-height: 0;
   font-family: var(--ra-font-family-body);
@@ -590,15 +571,17 @@ defineExpose<SettingsManagerExpose>({
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--ra-spacing-4);
-  padding-bottom: var(--ra-spacing-5);
-  border-bottom: 1px solid var(--ra-color-border-light);
-  margin-bottom: var(--ra-spacing-5);
+  padding: var(--ra-spacing-3) var(--ra-card-padding-x);
+  background: var(--ra-color-bg-surface);
+  border: 1px solid var(--ra-color-border-light);
+  border-radius: var(--ra-radius-lg);
+  box-shadow: var(--ra-shadow-card);
 }
 
 .rsm__title {
   margin: 0;
-  font-size: var(--ra-font-size-3xl);
-  font-weight: var(--ra-font-weight-bold);
+  font-size: var(--ra-font-size-xl);
+  font-weight: var(--ra-font-weight-semibold);
   color: var(--ra-color-text-primary);
   letter-spacing: var(--ra-letter-spacing-tight);
   line-height: var(--ra-line-height-tight);
@@ -665,22 +648,19 @@ defineExpose<SettingsManagerExpose>({
 /* ═══ Main Body: sidebar + content ═══ */
 .rsm__body {
   display: flex;
-  gap: 0;
+  gap: var(--ra-spacing-6, 24px);
   flex: 1;
   min-height: 0;
-  border: 1px solid var(--ra-color-border-light);
-  border-radius: var(--ra-radius-lg);
-  overflow: hidden;
-  background: var(--ra-color-bg-surface);
-  box-shadow: var(--ra-shadow-card);
 }
 
 /* ═══ Sidebar ═══ */
 .rsm__sidebar {
   flex-shrink: 0;
   width: 230px;
-  border-right: 1px solid var(--ra-color-border-light);
-  background: var(--ra-color-bg-surface-secondary);
+  background: var(--ra-color-bg-surface);
+  border: 1px solid var(--ra-color-border-light);
+  border-radius: var(--ra-radius-lg);
+  box-shadow: var(--ra-shadow-card);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -782,7 +762,11 @@ defineExpose<SettingsManagerExpose>({
   flex: 1;
   min-width: 0;
   overflow-y: auto;
-  padding: var(--ra-spacing-6) var(--ra-spacing-8);
+  padding: var(--ra-card-padding-y) var(--ra-card-padding-x);
+  background: var(--ra-color-bg-surface);
+  border: 1px solid var(--ra-color-border-light);
+  border-radius: var(--ra-radius-lg);
+  box-shadow: var(--ra-shadow-card);
 }
 
 /* ═══ Section ═══ */
@@ -826,8 +810,6 @@ defineExpose<SettingsManagerExpose>({
 
 /* ═══ Fields Card ═══ */
 .rsm__fields-card {
-  background: var(--ra-color-bg-surface);
-  border: 1px solid var(--ra-color-border-light);
   border-radius: var(--ra-radius-md);
   overflow: hidden;
 }
@@ -838,7 +820,7 @@ defineExpose<SettingsManagerExpose>({
   grid-template-columns: 1fr 340px;
   gap: var(--ra-spacing-6);
   align-items: start;
-  padding: var(--ra-spacing-4) var(--ra-spacing-5);
+  padding: var(--ra-spacing-4) var(--ra-card-padding-x);
   border-bottom: 1px solid var(--ra-color-border-light);
   transition: background var(--ra-duration-fast) var(--ra-ease-default);
 }
@@ -934,7 +916,7 @@ defineExpose<SettingsManagerExpose>({
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--ra-spacing-3) var(--ra-spacing-5);
+  padding: var(--ra-spacing-3) var(--ra-card-padding-x);
   background: var(--ra-color-bg-elevated);
   border: 1px solid var(--ra-color-border-default);
   border-radius: var(--ra-radius-lg);
@@ -992,12 +974,11 @@ defineExpose<SettingsManagerExpose>({
 @media (max-width: 900px) {
   .rsm__body {
     flex-direction: column;
+    gap: var(--ra-spacing-4);
   }
 
   .rsm__sidebar {
     width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--ra-color-border-light);
     position: static;
   }
 
