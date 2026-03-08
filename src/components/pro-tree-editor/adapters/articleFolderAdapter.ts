@@ -57,6 +57,14 @@ export interface CanDeleteResponse {
   reason?: string
 }
 
+export interface FolderTreeResponse {
+  items: FolderNodeDTO[]
+}
+
+export interface FolderListResponse {
+  items: FolderDTO[]
+}
+
 export interface ApiErrorResponse {
   error: string
   message: string
@@ -85,8 +93,37 @@ const ERROR_PATTERN_MAP: Array<[RegExp, TreeErrorCode]> = [
   [/folder not found/i, 'NOT_FOUND'],
 ]
 
+function extractErrorMessage(err: unknown): string {
+  if (err === null || err === undefined) {
+    return '未知错误'
+  }
+
+  if (typeof err === 'string') {
+    return err || '未知错误'
+  }
+
+  if (err instanceof Error) {
+    return err.message || '未知错误'
+  }
+
+  if (typeof err === 'object') {
+    const e = err as Record<string, unknown>
+    if (e.responseBody && typeof e.responseBody === 'object') {
+      const rb = e.responseBody as Record<string, unknown>
+      if (typeof rb.msg === 'string' && rb.msg) return rb.msg
+      if (typeof rb.message === 'string' && rb.message) return rb.message
+      if (typeof rb.error === 'string' && rb.error) return rb.error
+    }
+    if (typeof e.message === 'string' && e.message) return e.message
+    if (typeof e.msg === 'string' && e.msg) return e.msg
+    if (typeof e.error === 'string' && e.error) return e.error
+  }
+
+  return '未知错误'
+}
+
 function mapApiError(err: unknown): TreeError {
-  const msg = err instanceof Error ? err.message : String(err)
+  const msg = extractErrorMessage(err)
   let code: TreeErrorCode = 'UNKNOWN'
 
   for (const [pattern, errorCode] of ERROR_PATTERN_MAP) {
@@ -151,8 +188,9 @@ export function createArticleFolderAdapter(
   const requestHooks: TreeRequestHooks = {
     async loadTree(): Promise<TreeNodeData[]> {
       try {
-        const data = await httpClient.get<FolderNodeDTO[]>(url('/tree'))
-        return data.map(mapFolderNode)
+        const resp = await httpClient.get<FolderTreeResponse>(url('/tree'))
+        const items = resp.items ?? []
+        return items.map(mapFolderNode)
       } catch (err) {
         throw mapApiError(err)
       }
@@ -160,10 +198,11 @@ export function createArticleFolderAdapter(
 
     async loadChildren(parentId: string | number): Promise<TreeNodeData[]> {
       try {
-        const data = await httpClient.get<FolderDTO[]>(
+        const resp = await httpClient.get<FolderListResponse>(
           url(`/${parentId}/children`),
         )
-        return data.map(mapFolderDTO)
+        const items = resp.items ?? []
+        return items.map(mapFolderDTO)
       } catch (err) {
         throw mapApiError(err)
       }

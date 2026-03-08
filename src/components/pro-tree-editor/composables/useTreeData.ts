@@ -133,8 +133,37 @@ export function useTreeData(options: UseTreeDataOptions) {
     })
   }
 
+  function extractErrorMessage(err: unknown): string {
+    if (err === null || err === undefined) {
+      return '未知错误'
+    }
+
+    if (typeof err === 'string') {
+      return err || '未知错误'
+    }
+
+    if (err instanceof Error) {
+      return err.message || '未知错误'
+    }
+
+    if (typeof err === 'object') {
+      const e = err as Record<string, unknown>
+      if (e.responseBody && typeof e.responseBody === 'object') {
+        const rb = e.responseBody as Record<string, unknown>
+        if (typeof rb.msg === 'string' && rb.msg) return rb.msg
+        if (typeof rb.message === 'string' && rb.message) return rb.message
+        if (typeof rb.error === 'string' && rb.error) return rb.error
+      }
+      if (typeof e.message === 'string' && e.message) return e.message
+      if (typeof e.msg === 'string' && e.msg) return e.msg
+      if (typeof e.error === 'string' && e.error) return e.error
+    }
+
+    return '未知错误'
+  }
+
   function parseError(err: unknown): TreeError {
-    const msg = err instanceof Error ? err.message : String(err)
+    const msg = extractErrorMessage(err)
     const codeMap: Record<string, TreeErrorCode> = {
       'folder name already exists': 'DUPLICATE_NAME',
       'invalid folder name': 'INVALID_NAME',

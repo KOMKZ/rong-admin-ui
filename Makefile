@@ -13,7 +13,7 @@ DEV_PORT ?= 5173
 PREVIEW_PORT ?= 4173
 PORTS ?= $(DEV_PORT) $(PREVIEW_PORT)
 
-.PHONY: help install dev dev-bg preview preview-bg stop stop-dev stop-preview kill-ports status ports logs typecheck lint test build clean-runtime clean
+.PHONY: help install dev dev-bg preview preview-bg stop stop-dev stop-preview kill-ports status ports logs typecheck lint test build clean-runtime clean git-commit-merge-main
 
 help:
 	@printf "\n"
@@ -31,86 +31,48 @@ help:
 	@printf "  make test         Run unit tests\n"
 	@printf "  make build        Build library\n"
 	@printf "  make clean        Stop services and remove runtime files\n"
+	@printf "  make git-commit-merge-main  Commit workspace changes then merge current branch into main (local only)\n"
+
+git-commit-merge-main:
+	@./scripts/git-commit-merge-main.sh
 
 install:
 	pnpm install
 
 $(RUNTIME_DIR):
-	@mkdir -p "$(RUNTIME_DIR)"
+	@RUNTIME_DIR="$(RUNTIME_DIR)" ./scripts/runtime-control.sh ensure-runtime-dir
 
 dev:
 	pnpm dev --port $(DEV_PORT)
 
 dev-bg: $(RUNTIME_DIR)
-	@$(MAKE) stop-dev >/dev/null
-	@nohup pnpm dev --port $(DEV_PORT) > "$(DEV_LOG_FILE)" 2>&1 & echo $$! > "$(DEV_PID_FILE)"
-	@sleep 1
-	@printf "Started dev server on :$(DEV_PORT) (pid: %s)\n" "$$(cat "$(DEV_PID_FILE)")"
+	@DEV_PORT="$(DEV_PORT)" DEV_PID_FILE="$(DEV_PID_FILE)" DEV_LOG_FILE="$(DEV_LOG_FILE)" ./scripts/runtime-control.sh start-dev-bg
 
 preview:
 	pnpm preview --port $(PREVIEW_PORT)
 
 preview-bg: $(RUNTIME_DIR)
-	@$(MAKE) stop-preview >/dev/null
-	@nohup pnpm preview --port $(PREVIEW_PORT) > "$(PREVIEW_LOG_FILE)" 2>&1 & echo $$! > "$(PREVIEW_PID_FILE)"
-	@sleep 1
-	@printf "Started preview server on :$(PREVIEW_PORT) (pid: %s)\n" "$$(cat "$(PREVIEW_PID_FILE)")"
+	@PREVIEW_PORT="$(PREVIEW_PORT)" PREVIEW_PID_FILE="$(PREVIEW_PID_FILE)" PREVIEW_LOG_FILE="$(PREVIEW_LOG_FILE)" ./scripts/runtime-control.sh start-preview-bg
 
 stop: stop-dev stop-preview kill-ports
 
 stop-dev:
-	@if [ -f "$(DEV_PID_FILE)" ]; then \
-		PID=$$(cat "$(DEV_PID_FILE)"); \
-		if kill -0 $$PID >/dev/null 2>&1; then \
-			kill $$PID >/dev/null 2>&1 || true; \
-			sleep 1; \
-			kill -9 $$PID >/dev/null 2>&1 || true; \
-		fi; \
-		rm -f "$(DEV_PID_FILE)"; \
-	fi
+	@DEV_PID_FILE="$(DEV_PID_FILE)" ./scripts/runtime-control.sh stop-dev
 
 stop-preview:
-	@if [ -f "$(PREVIEW_PID_FILE)" ]; then \
-		PID=$$(cat "$(PREVIEW_PID_FILE)"); \
-		if kill -0 $$PID >/dev/null 2>&1; then \
-			kill $$PID >/dev/null 2>&1 || true; \
-			sleep 1; \
-			kill -9 $$PID >/dev/null 2>&1 || true; \
-		fi; \
-		rm -f "$(PREVIEW_PID_FILE)"; \
-	fi
+	@PREVIEW_PID_FILE="$(PREVIEW_PID_FILE)" ./scripts/runtime-control.sh stop-preview
 
 kill-ports:
-	@for port in $(PORTS); do \
-		PIDS=$$(lsof -ti tcp:$$port 2>/dev/null || true); \
-		for pid in $$PIDS; do \
-			CMD=$$(ps -o command= -p $$pid 2>/dev/null || true); \
-			if [[ "$$CMD" == *"vite"* ]] || [[ "$$CMD" == *"$(CURDIR)"* ]]; then \
-				printf "Reclaiming port %s (pid: %s)\n" "$$port" "$$pid"; \
-				kill $$pid >/dev/null 2>&1 || true; \
-			else \
-				printf "Skip port %s pid %s (non-vite process)\n" "$$port" "$$pid"; \
-			fi; \
-		done; \
-	done
+	@PORTS="$(PORTS)" PROJECT_ROOT="$(CURDIR)" ./scripts/runtime-control.sh kill-ports
 
 status: ports
-	@if [ -f "$(DEV_PID_FILE)" ]; then printf "dev pid: %s\n" "$$(cat "$(DEV_PID_FILE)")"; else printf "dev pid: none\n"; fi
-	@if [ -f "$(PREVIEW_PID_FILE)" ]; then printf "preview pid: %s\n" "$$(cat "$(PREVIEW_PID_FILE)")"; else printf "preview pid: none\n"; fi
+	@DEV_PID_FILE="$(DEV_PID_FILE)" PREVIEW_PID_FILE="$(PREVIEW_PID_FILE)" ./scripts/runtime-control.sh status
 
 ports:
-	@for port in $(PORTS); do \
-		PIDS=$$(lsof -ti tcp:$$port 2>/dev/null || true); \
-		if [ -n "$$PIDS" ]; then \
-			printf "port %s in use by pids: %s\n" "$$port" "$$PIDS"; \
-		else \
-			printf "port %s free\n" "$$port"; \
-		fi; \
-	done
+	@PORTS="$(PORTS)" ./scripts/runtime-control.sh ports
 
 logs:
-	@if [ -f "$(DEV_LOG_FILE)" ]; then tail -n 120 "$(DEV_LOG_FILE)"; else printf "No dev log file\n"; fi
-	@if [ -f "$(PREVIEW_LOG_FILE)" ]; then tail -n 120 "$(PREVIEW_LOG_FILE)"; else printf "No preview log file\n"; fi
+	@DEV_LOG_FILE="$(DEV_LOG_FILE)" PREVIEW_LOG_FILE="$(PREVIEW_LOG_FILE)" ./scripts/runtime-control.sh logs
 
 typecheck:
 	pnpm typecheck
@@ -125,6 +87,6 @@ build:
 	pnpm build
 
 clean-runtime:
-	rm -rf "$(RUNTIME_DIR)"
+	@RUNTIME_DIR="$(RUNTIME_DIR)" ./scripts/runtime-control.sh clean-runtime
 
 clean: stop clean-runtime
