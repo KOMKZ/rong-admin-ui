@@ -71,7 +71,7 @@ if [ "${current_branch}" = "main" ]; then
 fi
 
 git checkout main
-git merge --no-ff "${current_branch}"
+git merge --no-ff --no-edit "${current_branch}"
 
 merge_result="merged ${current_branch} into main at $(git rev-parse --short HEAD)"
 final_branch="$(git branch --show-current)"
