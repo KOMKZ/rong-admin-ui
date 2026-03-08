@@ -13,7 +13,7 @@ DEV_PORT ?= 5173
 PREVIEW_PORT ?= 4173
 PORTS ?= $(DEV_PORT) $(PREVIEW_PORT)
 
-.PHONY: help install dev dev-bg preview preview-bg stop stop-dev stop-preview kill-ports status ports logs typecheck lint test build clean-runtime clean git-commit-merge-main
+.PHONY: help install dev dev-bg preview preview-bg stop stop-dev stop-preview kill-ports status ports logs typecheck lint test build clean-runtime clean git-commit-merge-main git-commit-merge-main-push
 
 help:
 	@printf "\n"
@@ -32,9 +32,13 @@ help:
 	@printf "  make build        Build library\n"
 	@printf "  make clean        Stop services and remove runtime files\n"
 	@printf "  make git-commit-merge-main  Commit workspace changes then merge current branch into main (local only)\n"
+	@printf "  make git-commit-merge-main-push  Commit/merge to main then push after upstream safety checks\n"
 
 git-commit-merge-main:
 	@./scripts/git-commit-merge-main.sh
+
+git-commit-merge-main-push:
+	@./scripts/git-commit-merge-main-push.sh
 
 install:
 	pnpm install
