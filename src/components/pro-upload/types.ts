@@ -2,12 +2,7 @@ import type { VNode } from 'vue'
 
 /* ─── File Item ─── */
 
-export type ProUploadFileStatus =
-  | 'pending'
-  | 'queued'
-  | 'uploading'
-  | 'success'
-  | 'error'
+export type ProUploadFileStatus = 'pending' | 'queued' | 'uploading' | 'success' | 'error'
 
 export interface ProUploadFileItem {
   uid: string
@@ -151,7 +146,10 @@ export interface ProUploadEmits {
   (e: 'error', file: ProUploadFileItem, error: Error): void
   (e: 'preview', file: ProUploadFileItem): void
   (e: 'remove', file: ProUploadFileItem): void
-  (e: 'exceed', info: { type: 'count' | 'size' | 'accept'; file: File; limit: number | string }): void
+  (
+    e: 'exceed',
+    info: { type: 'count' | 'size' | 'accept'; file: File; limit: number | string },
+  ): void
 }
 
 /* ─── Slots ─── */

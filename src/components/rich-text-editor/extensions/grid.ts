@@ -58,10 +58,7 @@ export const GridBlockExtension = Node.create({
       insertGridBlock:
         () =>
         ({ chain }: { chain: any }) => {
-          return chain()
-            .insertContent({ type: this.name })
-            .scrollIntoView()
-            .run()
+          return chain().insertContent({ type: this.name }).scrollIntoView().run()
         },
     }
   },
@@ -74,7 +71,9 @@ export function extractGridBlocks(doc: any) {
     let tableData = defaultGridTableData
     try {
       tableData = JSON.parse(node.attrs?.tableData || '{}')
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
     return { pos, title: node.attrs?.title || '', tableData }
   })
 }

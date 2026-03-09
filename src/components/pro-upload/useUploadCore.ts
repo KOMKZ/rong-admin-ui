@@ -13,7 +13,10 @@ export function generateUid(): string {
   return `pu_${Date.now()}_${++_uid}`
 }
 
-export function createFileItem(file: File, status: ProUploadFileStatus = 'pending'): ProUploadFileItem {
+export function createFileItem(
+  file: File,
+  status: ProUploadFileStatus = 'pending',
+): ProUploadFileItem {
   return {
     uid: generateUid(),
     name: file.name,
@@ -42,7 +45,11 @@ interface UploadCoreOptions {
     updateValue: (list: ProUploadFileItem[]) => void
     success: (file: ProUploadFileItem, response: unknown) => void
     error: (file: ProUploadFileItem, err: Error) => void
-    exceed: (info: { type: 'count' | 'size' | 'accept'; file: File; limit: number | string }) => void
+    exceed: (info: {
+      type: 'count' | 'size' | 'accept'
+      file: File
+      limit: number | string
+    }) => void
     remove: (file: ProUploadFileItem) => void
   }
 }
@@ -105,7 +112,10 @@ export function useUploadCore(options: UploadCoreOptions) {
     if (props.parseResponse) return props.parseResponse(raw)
     if (!raw || typeof raw !== 'object') return {}
     const r = raw as Record<string, unknown>
-    const data = (typeof r.data === 'object' && r.data !== null ? r.data : r) as Record<string, unknown>
+    const data = (typeof r.data === 'object' && r.data !== null ? r.data : r) as Record<
+      string,
+      unknown
+    >
     return {
       fileId: (data.id ?? data.file_id) as number | undefined,
       storageId: (data.storage_id ?? data.storageId) as string | undefined,
@@ -237,7 +247,10 @@ export function useUploadCore(options: UploadCoreOptions) {
     return dot >= 0 ? filename.slice(dot).toLowerCase() : ''
   }
 
-  function validateFile(file: File, isReplacement: boolean): { valid: boolean; type?: 'count' | 'size' | 'accept'; limit?: number | string } {
+  function validateFile(
+    file: File,
+    isReplacement: boolean,
+  ): { valid: boolean; type?: 'count' | 'size' | 'accept'; limit?: number | string } {
     if (!isReplacement && props.maxCount !== undefined) {
       const currentCount = fileList.value.filter((f) => f.status !== 'error').length
       if (currentCount >= props.maxCount) {

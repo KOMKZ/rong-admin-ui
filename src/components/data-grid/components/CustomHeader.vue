@@ -16,7 +16,9 @@ function init(params: any) {
   }
 }
 
-onMounted(() => { if (props.params) init(props.params) })
+onMounted(() => {
+  if (props.params) init(props.params)
+})
 
 function handleEdit() {
   const p = agParams || props.params
@@ -37,7 +39,9 @@ function refresh(params: any) {
   return true
 }
 
-function destroy() { agParams = null }
+function destroy() {
+  agParams = null
+}
 onBeforeUnmount(destroy)
 
 defineExpose({ init, refresh, destroy })
@@ -50,7 +54,11 @@ defineExpose({ init, refresh, destroy })
       <button class="rdg-custom-header__btn" title="编辑列" @click.stop="handleEdit">
         <Pencil :size="13" />
       </button>
-      <button class="rdg-custom-header__btn rdg-custom-header__btn--danger" title="删除列" @click.stop="handleDelete">
+      <button
+        class="rdg-custom-header__btn rdg-custom-header__btn--danger"
+        title="删除列"
+        @click.stop="handleDelete"
+      >
         <Trash2 :size="13" />
       </button>
     </div>

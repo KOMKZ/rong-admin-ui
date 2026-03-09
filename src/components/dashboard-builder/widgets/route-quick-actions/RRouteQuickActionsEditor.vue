@@ -18,15 +18,29 @@ const emit = defineEmits<{
   'update:modelValue': [value: Record<string, unknown>]
 }>()
 
-const config = computed<RouteQuickActionsWidgetConfig>(() => normalizeRouteQuickActionsConfig(props.modelValue))
+const config = computed<RouteQuickActionsWidgetConfig>(() =>
+  normalizeRouteQuickActionsConfig(props.modelValue),
+)
 
-const routeOptions = computed(() => {
-  const editorOptions = props.definition?.editorOptions as RouteQuickActionsEditorOptions | undefined
-  return editorOptions?.routeOptions?.map((item) => ({
-    label: item.description ? `${item.label} (${item.description})` : item.label,
-    value: item.value,
-  })) || []
+const routeOptions = computed<
+  Array<{ label: string; value: string; openMode: 'in_app' | 'new_tab' }>
+>(() => {
+  const editorOptions = props.definition?.editorOptions as
+    | RouteQuickActionsEditorOptions
+    | undefined
+  return (
+    editorOptions?.routeOptions?.map((item) => ({
+      openMode: item.openMode === 'new_tab' ? 'new_tab' : 'in_app',
+      label: item.description ? `${item.label} (${item.description})` : item.label,
+      value: item.value,
+    })) || []
+  )
 })
+
+const openModeOptions = [
+  { label: '应用内', value: 'in_app' },
+  { label: '新标签', value: 'new_tab' },
+]
 
 function emitConfig(next: RouteQuickActionsWidgetConfig): void {
   emit('update:modelValue', {
@@ -56,12 +70,13 @@ function updateAction(index: number, patch: Partial<RouteQuickActionItem>): void
 }
 
 function addAction(): void {
-  const firstRoute = routeOptions.value[0]?.value || ''
-    const next: RouteQuickActionItem = {
-      id: `action-${Date.now()}`,
-      label: '新按钮',
-      route: firstRoute || '/dashboard',
-    }
+  const firstRoute = routeOptions.value[0]
+  const next: RouteQuickActionItem = {
+    id: `action-${Date.now()}`,
+    label: '新按钮',
+    route: firstRoute?.value || '/dashboard',
+    openMode: firstRoute?.openMode || 'in_app',
+  }
   emitConfig({
     ...config.value,
     actions: [...config.value.actions, next],
@@ -77,7 +92,11 @@ function removeAction(index: number): void {
 
 function fillActionRoute(index: number, value: string | null): void {
   if (!value) return
-  updateAction(index, { route: value })
+  const matched = routeOptions.value.find((item) => item.value === value)
+  updateAction(index, {
+    route: value,
+    openMode: matched?.openMode || 'in_app',
+  })
 }
 </script>
 
@@ -107,11 +126,17 @@ function fillActionRoute(index: number, value: string | null): void {
 
     <div class="route-quick-actions-editor__section-header">
       <span>按钮编排</span>
-      <NButton size="tiny" tertiary data-testid="route-widget-action-add" @click="addAction">添加按钮</NButton>
+      <NButton size="tiny" tertiary data-testid="route-widget-action-add" @click="addAction"
+        >添加按钮</NButton
+      >
     </div>
 
     <div v-if="config.actions.length" class="route-quick-actions-editor__actions">
-      <div v-for="(item, index) in config.actions" :key="item.id" class="route-quick-actions-editor__action-row">
+      <div
+        v-for="(item, index) in config.actions"
+        :key="item.id"
+        class="route-quick-actions-editor__action-row"
+      >
         <NInput
           :value="item.label"
           size="small"
@@ -125,6 +150,16 @@ function fillActionRoute(index: number, value: string | null): void {
           placeholder="请输入路径或完整 URL，例如 /admin/list?status=active"
           data-testid="route-widget-action-route"
           @update:value="(value) => updateAction(index, { route: value })"
+        />
+        <NSelect
+          :value="item.openMode || 'in_app'"
+          size="small"
+          :options="openModeOptions"
+          placeholder="打开方式"
+          data-testid="route-widget-action-open-mode"
+          @update:value="
+            (value) => updateAction(index, { openMode: value === 'new_tab' ? 'new_tab' : 'in_app' })
+          "
         />
         <NSelect
           :value="null"
@@ -188,7 +223,7 @@ function fillActionRoute(index: number, value: string | null): void {
 
 .route-quick-actions-editor__action-row {
   display: grid;
-  grid-template-columns: 1fr 1.5fr 1.2fr auto;
+  grid-template-columns: 1fr 1.4fr 0.9fr 1.1fr auto;
   gap: var(--ra-spacing-2);
 }
 

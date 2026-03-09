@@ -12,18 +12,36 @@ const props = defineProps<{
 
 const router = useRouter()
 
-const resolved = computed<RouteQuickActionsWidgetConfig>(() => normalizeRouteQuickActionsConfig(props.config))
+const resolved = computed<RouteQuickActionsWidgetConfig>(() =>
+  normalizeRouteQuickActionsConfig(props.config),
+)
 
 const title = computed(() => resolved.value.title || props.fallbackTitle || '快捷入口')
-const description = computed(() => resolved.value.description || props.fallbackDescription || '常用路由直达')
+const description = computed(
+  () => resolved.value.description || props.fallbackDescription || '常用路由直达',
+)
 
-async function navigate(path: string): Promise<void> {
-  if (!path) return
-  if (/^https?:\/\//i.test(path)) {
-    window.open(path, '_blank', 'noopener')
+async function navigate(action: RouteQuickActionsWidgetConfig['actions'][number]): Promise<void> {
+  if (!action.route) return
+
+  const isExternal = /^https?:\/\//i.test(action.route)
+  const openMode = action.openMode === 'new_tab' ? 'new_tab' : 'in_app'
+
+  if (openMode === 'new_tab') {
+    if (isExternal) {
+      window.open(action.route, '_blank', 'noopener')
+      return
+    }
+    const target = router.resolve(action.route)
+    window.open(target.href, '_blank', 'noopener')
     return
   }
-  await router.push(path)
+
+  if (isExternal) {
+    window.location.assign(action.route)
+    return
+  }
+  await router.push(action.route)
 }
 </script>
 
@@ -41,9 +59,12 @@ async function navigate(path: string): Promise<void> {
         class="route-quick-actions__btn"
         type="button"
         data-testid="route-quick-actions-button"
-        @click="navigate(action.route)"
+        @click="navigate(action)"
       >
-        <RIcon name="arrow-up-right" :size="14" />
+        <RIcon
+          :name="action.openMode === 'new_tab' ? 'arrow-up-right' : 'arrow-right'"
+          :size="14"
+        />
         <span>{{ action.label }}</span>
       </button>
     </div>
@@ -94,7 +115,11 @@ async function navigate(path: string): Promise<void> {
   min-height: 38px;
   border: 1px solid var(--ra-color-border-default);
   border-radius: var(--ra-radius-md);
-  background: linear-gradient(180deg, var(--ra-color-bg-surface) 0%, var(--ra-color-bg-surface-secondary) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--ra-color-bg-surface) 0%,
+    var(--ra-color-bg-surface-secondary) 100%
+  );
   color: var(--ra-color-text-primary);
   font-size: var(--ra-font-size-xs);
   font-weight: var(--ra-font-weight-medium);

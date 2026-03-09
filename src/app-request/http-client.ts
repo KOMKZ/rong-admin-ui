@@ -27,10 +27,7 @@ function isFormData(value: unknown): value is FormData {
   return typeof FormData !== 'undefined' && value instanceof FormData
 }
 
-function buildHeaders(
-  config: HttpClientConfig,
-  options: RequestOptions,
-): Record<string, string> {
+function buildHeaders(config: HttpClientConfig, options: RequestOptions): Record<string, string> {
   const headers: Record<string, string> = {
     ...config.requestConfig.headers,
     ...options.headers,

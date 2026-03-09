@@ -76,7 +76,10 @@ onBeforeUnmount(() => {
     :class="{ 'image-node-view--selected': selected }"
     :style="containerStyle"
   >
-    <div class="image-node-view__container" :class="{ 'image-node-view__container--selected': selected }">
+    <div
+      class="image-node-view__container"
+      :class="{ 'image-node-view__container--selected': selected }"
+    >
       <img
         ref="imageRef"
         :src="imgSrc"

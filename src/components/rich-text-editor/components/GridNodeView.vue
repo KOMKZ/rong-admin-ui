@@ -10,12 +10,22 @@ function getDataGridComponent(): Component | null {
   if (!_dataGridComponent) {
     try {
       _dataGridComponent = defineAsyncComponent(() => import('../../data-grid/RDataGrid.vue'))
-    } catch { _dataGridComponent = null }
+    } catch {
+      _dataGridComponent = null
+    }
   }
   return _dataGridComponent
 }
 
-type ColumnType = 'text' | 'number' | 'date' | 'datetime' | 'year' | 'select' | 'multiselect' | 'boolean'
+type ColumnType =
+  | 'text'
+  | 'number'
+  | 'date'
+  | 'datetime'
+  | 'year'
+  | 'select'
+  | 'multiselect'
+  | 'boolean'
 
 interface GridTableStructure {
   field: string
@@ -36,8 +46,16 @@ interface GridTableData {
 }
 
 function safeClone<T>(value: T): T {
-  try { return structuredClone(value) } catch { /* ignore */ }
-  try { return JSON.parse(JSON.stringify(value)) } catch { return value }
+  try {
+    return structuredClone(value)
+  } catch {
+    /* ignore */
+  }
+  try {
+    return JSON.parse(JSON.stringify(value))
+  } catch {
+    return value
+  }
 }
 
 const props = defineProps(nodeViewProps)
@@ -62,20 +80,24 @@ function parseTableData(value?: string | null): GridTableData {
         meta: typeof parsed.meta === 'object' && parsed.meta !== null ? parsed.meta : {},
       }
     }
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
   return safeClone(defaultGridTableData as unknown as GridTableData)
 }
 
 function normalizeOptions(options?: any[]) {
   if (!Array.isArray(options)) return []
-  return options.map((o) => {
-    if (typeof o === 'string') return { label: o, value: o }
-    if (typeof o === 'object' && o !== null) {
-      const v = o.value ?? o.label ?? ''
-      return { label: String(o.label ?? v), value: String(v) }
-    }
-    return { label: String(o), value: String(o) }
-  }).filter((o) => o.value !== '')
+  return options
+    .map((o) => {
+      if (typeof o === 'string') return { label: o, value: o }
+      if (typeof o === 'object' && o !== null) {
+        const v = o.value ?? o.label ?? ''
+        return { label: String(o.label ?? v), value: String(v) }
+      }
+      return { label: String(o), value: String(o) }
+    })
+    .filter((o) => o.value !== '')
 }
 
 function loadTableData() {
@@ -117,7 +139,9 @@ function handleSaveTable() {
 const displayColumns = computed(() => tableData.value.structure || [])
 const displayRows = computed(() => tableData.value.data || [])
 const hasColumns = computed(() => displayColumns.value.length > 0)
-const metaText = computed(() => `${displayRows.value.length} 行 · ${displayColumns.value.length} 列`)
+const metaText = computed(
+  () => `${displayRows.value.length} 行 · ${displayColumns.value.length} 列`,
+)
 
 function getSelectLabel(value: any, col: GridTableStructure) {
   if (value == null || value === '') return ''
@@ -128,11 +152,21 @@ function getSelectLabel(value: any, col: GridTableStructure) {
 }
 
 function getMultiSelectTags(value: any, col: GridTableStructure): string[] {
-  const vals = Array.isArray(value) ? value.map(String) : typeof value === 'string' && value ? value.split(',').map((s: string) => s.trim()).filter(Boolean) : []
+  const vals = Array.isArray(value)
+    ? value.map(String)
+    : typeof value === 'string' && value
+      ? value
+          .split(',')
+          .map((s: string) => s.trim())
+          .filter(Boolean)
+      : []
   if (!vals.length) return []
   const opts = normalizeOptions(col.options)
   if (!opts.length) return vals
-  return vals.map((v) => { const m = opts.find((o) => o.value === v || o.label === v); return m ? m.label : v })
+  return vals.map((v) => {
+    const m = opts.find((o) => o.value === v || o.label === v)
+    return m ? m.label : v
+  })
 }
 
 function formatCell(value: any) {
@@ -140,20 +174,38 @@ function formatCell(value: any) {
   return typeof value === 'object' ? JSON.stringify(value) : String(value)
 }
 
-const editorColumns = computed(() => displayColumns.value.map((c) => ({
-  field: c.field,
-  headerName: c.headerName || c.field,
-  type: c.type || 'text',
-  width: c.width,
-  editable: c.editable !== false,
-  sortable: c.sortable !== false,
-  filterable: c.filterable !== false,
-  options: c.options?.map((o: any) => typeof o === 'string' ? o : o.label || o.value || String(o)),
-})))
+const editorColumns = computed(() =>
+  displayColumns.value.map((c) => ({
+    field: c.field,
+    headerName: c.headerName || c.field,
+    type: c.type || 'text',
+    width: c.width,
+    editable: c.editable !== false,
+    sortable: c.sortable !== false,
+    filterable: c.filterable !== false,
+    options: c.options?.map((o: any) =>
+      typeof o === 'string' ? o : o.label || o.value || String(o),
+    ),
+  })),
+)
 
-watch(() => props.node.attrs.tableData, () => loadTableData())
-watch(() => props.node.attrs.title, (v) => { if (v !== undefined) title.value = v })
-watch(isEditable, (v) => { if (!v) drawerVisible.value = false }, { immediate: true })
+watch(
+  () => props.node.attrs.tableData,
+  () => loadTableData(),
+)
+watch(
+  () => props.node.attrs.title,
+  (v) => {
+    if (v !== undefined) title.value = v
+  },
+)
+watch(
+  isEditable,
+  (v) => {
+    if (!v) drawerVisible.value = false
+  },
+  { immediate: true },
+)
 
 loadTableData()
 </script>
@@ -186,14 +238,20 @@ loadTableData()
 
       <div v-if="!hasColumns" class="rte-grid-empty">
         <p>尚未配置表格</p>
-        <button v-if="isEditable" class="rte-grid-card__btn" @click="drawerVisible = true">立即配置</button>
+        <button v-if="isEditable" class="rte-grid-card__btn" @click="drawerVisible = true">
+          立即配置
+        </button>
       </div>
 
       <div v-else class="rte-grid-table-wrap">
         <table class="rte-grid-preview-table">
           <thead>
             <tr>
-              <th v-for="col in displayColumns" :key="col.field" :style="{ minWidth: (col.width || 120) + 'px' }">
+              <th
+                v-for="col in displayColumns"
+                :key="col.field"
+                :style="{ minWidth: (col.width || 120) + 'px' }"
+              >
                 {{ col.headerName || col.field }}
               </th>
             </tr>
@@ -206,10 +264,13 @@ loadTableData()
                     v-for="(tag, ti) in getMultiSelectTags(row[col.field], col)"
                     :key="ti"
                     class="rte-grid-tag"
-                  >{{ tag }}</span>
+                    >{{ tag }}</span
+                  >
                 </template>
                 <template v-else-if="col.type === 'select'">
-                  <span v-if="getSelectLabel(row[col.field], col)" class="rte-grid-tag">{{ getSelectLabel(row[col.field], col) }}</span>
+                  <span v-if="getSelectLabel(row[col.field], col)" class="rte-grid-tag">{{
+                    getSelectLabel(row[col.field], col)
+                  }}</span>
                   <span v-else>-</span>
                 </template>
                 <template v-else>{{ formatCell(row[col.field]) }}</template>
@@ -224,7 +285,11 @@ loadTableData()
 
     <Teleport to="body">
       <Transition name="rte-drawer">
-        <div v-if="drawerVisible && isEditable" class="rte-grid-drawer-backdrop" @click.self="drawerVisible = false">
+        <div
+          v-if="drawerVisible && isEditable"
+          class="rte-grid-drawer-backdrop"
+          @click.self="drawerVisible = false"
+        >
           <div class="rte-grid-drawer">
             <div class="rte-grid-drawer__header">
               <div class="rte-grid-drawer__title">
@@ -232,7 +297,11 @@ loadTableData()
                 <span class="rte-grid-drawer__badge">{{ displayRows.length }} 行</span>
               </div>
               <div class="rte-grid-drawer__header-actions">
-                <button class="rte-grid-drawer__btn rte-grid-drawer__btn--primary" :disabled="saving" @click="handleSaveTable">
+                <button
+                  class="rte-grid-drawer__btn rte-grid-drawer__btn--primary"
+                  :disabled="saving"
+                  @click="handleSaveTable"
+                >
                   <Save :size="14" />
                   <span>保存</span>
                 </button>
@@ -258,7 +327,6 @@ loadTableData()
     </Teleport>
   </NodeViewWrapper>
 </template>
-
 
 <style>
 .rte-grid-node {

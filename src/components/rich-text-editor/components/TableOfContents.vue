@@ -27,7 +27,12 @@ function updateToc() {
 function scrollToHeading(pos: number) {
   const editor = props.editor
   if (!editor) return
-  editor.chain().focus().setTextSelection({ from: pos + 1, to: pos + 1 }).scrollIntoView().run()
+  editor
+    .chain()
+    .focus()
+    .setTextSelection({ from: pos + 1, to: pos + 1 })
+    .scrollIntoView()
+    .run()
   const domNode = editor.view.nodeDOM(pos) as HTMLElement | null
   domNode?.scrollIntoView?.({ behavior: 'smooth', block: 'start' })
 }

@@ -7,18 +7,20 @@ const props = defineProps<{ params: ICellRendererParams }>()
 const displayValues = computed(() => {
   const v = props.params.value
   if (Array.isArray(v)) return v.filter((s: any) => s != null && s !== '')
-  if (typeof v === 'string' && v) return v.split(',').map((s: string) => s.trim()).filter(Boolean)
+  if (typeof v === 'string' && v)
+    return v
+      .split(',')
+      .map((s: string) => s.trim())
+      .filter(Boolean)
   return []
 })
 </script>
 
 <template>
   <div class="rdg-multiselect-renderer">
-    <span
-      v-for="(val, idx) in displayValues"
-      :key="idx"
-      class="rdg-multiselect-renderer__tag"
-    >{{ val }}</span>
+    <span v-for="(val, idx) in displayValues" :key="idx" class="rdg-multiselect-renderer__tag">{{
+      val
+    }}</span>
   </div>
 </template>
 

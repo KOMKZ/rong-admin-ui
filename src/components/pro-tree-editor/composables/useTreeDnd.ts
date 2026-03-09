@@ -1,10 +1,5 @@
 import { ref, type Ref } from 'vue'
-import type {
-  TreeNodeData,
-  DropPosition,
-  DropInfo,
-  TreeErrorCode,
-} from '../types'
+import type { TreeNodeData, DropPosition, DropInfo, TreeErrorCode } from '../types'
 
 interface UseTreeDndOptions {
   treeData: Ref<TreeNodeData[]>
@@ -88,12 +83,7 @@ export function useTreeDnd(options: UseTreeDndOptions) {
   }
 
   function onDragEnd(): void {
-    if (
-      dragNodeId.value &&
-      dropTargetId.value &&
-      dropPosition.value &&
-      dropLegal.value
-    ) {
+    if (dragNodeId.value && dropTargetId.value && dropPosition.value && dropLegal.value) {
       const info: DropInfo = {
         dragNodeId: dragNodeId.value,
         targetNodeId: dropTargetId.value,

@@ -11,13 +11,20 @@ onMounted(() => {
   const v = props.params.value
   if (v) {
     try {
-      const d = typeof v === 'string'
-        ? (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(v) ? new Date(v.replace(' ', 'T')) : new Date(v))
-        : typeof v === 'number' ? new Date(v) : null
+      const d =
+        typeof v === 'string'
+          ? /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(v)
+            ? new Date(v.replace(' ', 'T'))
+            : new Date(v)
+          : typeof v === 'number'
+            ? new Date(v)
+            : null
       if (d && !isNaN(d.getTime())) {
         value.value = d.toISOString().slice(0, 19)
       }
-    } catch { /* ignore */ }
+    } catch {
+      /* ignore */
+    }
   }
   setTimeout(() => inputRef.value?.focus(), 0)
 })
@@ -29,12 +36,18 @@ function getValue(): string {
     if (!isNaN(d.getTime())) {
       return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`
     }
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
   return ''
 }
 
-function isCancelBeforeStart() { return false }
-function isCancelAfterEnd() { return false }
+function isCancelBeforeStart() {
+  return false
+}
+function isCancelAfterEnd() {
+  return false
+}
 
 defineExpose({ getValue, isCancelBeforeStart, isCancelAfterEnd })
 </script>

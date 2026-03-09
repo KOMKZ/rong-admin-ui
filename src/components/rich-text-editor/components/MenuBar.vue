@@ -4,12 +4,30 @@ import type { ToolbarConfig } from '../types'
 import ToolbarButton from './ToolbarButton.vue'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import {
-  Bold, Italic, Underline, Strikethrough, Code, Highlighter,
-  Heading1, Heading2, Heading3,
-  List, ListOrdered, ListChecks,
-  Quote, Braces, Minus,
-  Table, Link, Image, Paperclip, GitBranch, LayoutGrid, TableOfContents,
-  Undo2, Redo2,
+  Bold,
+  Italic,
+  Underline,
+  Strikethrough,
+  Code,
+  Highlighter,
+  Heading1,
+  Heading2,
+  Heading3,
+  List,
+  ListOrdered,
+  ListChecks,
+  Quote,
+  Braces,
+  Minus,
+  Table,
+  Link,
+  Image,
+  Paperclip,
+  GitBranch,
+  LayoutGrid,
+  TableOfContents,
+  Undo2,
+  Redo2,
   X,
 } from 'lucide-vue-next'
 
@@ -41,10 +59,14 @@ function closeAllMenus() {
 }
 
 function toggleMenu(menu: 'table' | 'codeBlock' | 'highlight' | 'link') {
-  const isOpen = menu === 'table' ? showTableMenu.value
-    : menu === 'codeBlock' ? showCodeBlockMenu.value
-    : menu === 'highlight' ? showHighlightMenu.value
-    : showLinkInput.value
+  const isOpen =
+    menu === 'table'
+      ? showTableMenu.value
+      : menu === 'codeBlock'
+        ? showCodeBlockMenu.value
+        : menu === 'highlight'
+          ? showHighlightMenu.value
+          : showLinkInput.value
   closeAllMenus()
   if (!isOpen) {
     if (menu === 'table') showTableMenu.value = true
@@ -88,6 +110,61 @@ function insertTable() {
   closeAllMenus()
 }
 
+function addColumnBefore() {
+  props.editor.chain().focus().addColumnBefore().run()
+  closeAllMenus()
+}
+
+function addColumnAfter() {
+  props.editor.chain().focus().addColumnAfter().run()
+  closeAllMenus()
+}
+
+function deleteColumn() {
+  props.editor.chain().focus().deleteColumn().run()
+  closeAllMenus()
+}
+
+function addRowBefore() {
+  props.editor.chain().focus().addRowBefore().run()
+  closeAllMenus()
+}
+
+function addRowAfter() {
+  props.editor.chain().focus().addRowAfter().run()
+  closeAllMenus()
+}
+
+function deleteRow() {
+  props.editor.chain().focus().deleteRow().run()
+  closeAllMenus()
+}
+
+function mergeCells() {
+  props.editor.chain().focus().mergeCells().run()
+  closeAllMenus()
+}
+
+function splitCell() {
+  props.editor.chain().focus().splitCell().run()
+  closeAllMenus()
+}
+
+function toggleHeaderRow() {
+  props.editor.chain().focus().toggleHeaderRow().run()
+  closeAllMenus()
+}
+
+function deleteTable() {
+  props.editor.chain().focus().deleteTable().run()
+  closeAllMenus()
+}
+
+function removeLink() {
+  props.editor.chain().focus().unsetLink().run()
+  closeAllMenus()
+}
+
 function confirmLink() {
   if (linkUrl.value) {
     props.editor.chain().focus().extendMarkRange('link').setLink({ href: linkUrl.value }).run()
@@ -99,7 +176,8 @@ function confirmLink() {
 }
 
 function insertMermaid() {
-  const template = 'graph TD;\n  A[开始] --> B{条件?};\n  B -- 是 --> C[执行任务];\n  B -- 否 --> D[结束];'
+  const template =
+    'graph TD;\n  A[开始] --> B{条件?};\n  B -- 是 --> C[执行任务];\n  B -- 否 --> D[结束];'
   props.editor.chain().focus().insertMermaidBlock(template).run()
 }
 
@@ -135,25 +213,53 @@ const CODE_LANGUAGES = [
   >
     <!-- Basic Formatting -->
     <div class="rrte-menubar__group">
-      <ToolbarButton v-if="is('bold')" :active="editor.isActive('bold')" title="加粗" @click="editor.chain().focus().toggleBold().run()">
+      <ToolbarButton
+        v-if="is('bold')"
+        :active="editor.isActive('bold')"
+        title="加粗"
+        @click="editor.chain().focus().toggleBold().run()"
+      >
         <Bold :size="16" />
       </ToolbarButton>
-      <ToolbarButton v-if="is('italic')" :active="editor.isActive('italic')" title="斜体" @click="editor.chain().focus().toggleItalic().run()">
+      <ToolbarButton
+        v-if="is('italic')"
+        :active="editor.isActive('italic')"
+        title="斜体"
+        @click="editor.chain().focus().toggleItalic().run()"
+      >
         <Italic :size="16" />
       </ToolbarButton>
-      <ToolbarButton v-if="is('underline')" :active="editor.isActive('underline')" title="下划线" @click="editor.chain().focus().toggleUnderline().run()">
+      <ToolbarButton
+        v-if="is('underline')"
+        :active="editor.isActive('underline')"
+        title="下划线"
+        @click="editor.chain().focus().toggleUnderline().run()"
+      >
         <Underline :size="16" />
       </ToolbarButton>
-      <ToolbarButton v-if="is('strike')" :active="editor.isActive('strike')" title="删除线" @click="editor.chain().focus().toggleStrike().run()">
+      <ToolbarButton
+        v-if="is('strike')"
+        :active="editor.isActive('strike')"
+        title="删除线"
+        @click="editor.chain().focus().toggleStrike().run()"
+      >
         <Strikethrough :size="16" />
       </ToolbarButton>
-      <ToolbarButton :active="editor.isActive('code')" title="行内代码" @click="editor.chain().focus().toggleCode().run()">
+      <ToolbarButton
+        :active="editor.isActive('code')"
+        title="行内代码"
+        @click="editor.chain().focus().toggleCode().run()"
+      >
         <Code :size="16" />
       </ToolbarButton>
 
       <!-- Highlight Dropdown -->
       <div v-if="is('highlight')" class="rrte-menubar__dropdown-wrap">
-        <ToolbarButton :active="editor.isActive('highlight')" title="高亮" @click.stop="toggleMenu('highlight')">
+        <ToolbarButton
+          :active="editor.isActive('highlight')"
+          title="高亮"
+          @click.stop="toggleMenu('highlight')"
+        >
           <Highlighter :size="16" />
         </ToolbarButton>
         <div v-if="showHighlightMenu" class="rrte-menubar__dropdown rrte-menubar__dropdown--colors">
@@ -175,13 +281,28 @@ const CODE_LANGUAGES = [
 
     <!-- Headings -->
     <div class="rrte-menubar__group">
-      <ToolbarButton v-if="is('heading')" :active="editor.isActive('heading', { level: 1 })" title="标题 1" @click="editor.chain().focus().toggleHeading({ level: 1 }).run()">
+      <ToolbarButton
+        v-if="is('heading')"
+        :active="editor.isActive('heading', { level: 1 })"
+        title="标题 1"
+        @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+      >
         <Heading1 :size="16" />
       </ToolbarButton>
-      <ToolbarButton v-if="is('heading')" :active="editor.isActive('heading', { level: 2 })" title="标题 2" @click="editor.chain().focus().toggleHeading({ level: 2 }).run()">
+      <ToolbarButton
+        v-if="is('heading')"
+        :active="editor.isActive('heading', { level: 2 })"
+        title="标题 2"
+        @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+      >
         <Heading2 :size="16" />
       </ToolbarButton>
-      <ToolbarButton v-if="is('heading')" :active="editor.isActive('heading', { level: 3 })" title="标题 3" @click="editor.chain().focus().toggleHeading({ level: 3 }).run()">
+      <ToolbarButton
+        v-if="is('heading')"
+        :active="editor.isActive('heading', { level: 3 })"
+        title="标题 3"
+        @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
+      >
         <Heading3 :size="16" />
       </ToolbarButton>
     </div>
@@ -190,13 +311,28 @@ const CODE_LANGUAGES = [
 
     <!-- Lists -->
     <div class="rrte-menubar__group">
-      <ToolbarButton v-if="is('bulletList')" :active="editor.isActive('bulletList')" title="无序列表" @click="editor.chain().focus().toggleBulletList().run()">
+      <ToolbarButton
+        v-if="is('bulletList')"
+        :active="editor.isActive('bulletList')"
+        title="无序列表"
+        @click="editor.chain().focus().toggleBulletList().run()"
+      >
         <List :size="16" />
       </ToolbarButton>
-      <ToolbarButton v-if="is('orderedList')" :active="editor.isActive('orderedList')" title="有序列表" @click="editor.chain().focus().toggleOrderedList().run()">
+      <ToolbarButton
+        v-if="is('orderedList')"
+        :active="editor.isActive('orderedList')"
+        title="有序列表"
+        @click="editor.chain().focus().toggleOrderedList().run()"
+      >
         <ListOrdered :size="16" />
       </ToolbarButton>
-      <ToolbarButton v-if="is('taskList')" :active="editor.isActive('taskList')" title="任务列表" @click="editor.chain().focus().toggleTaskList().run()">
+      <ToolbarButton
+        v-if="is('taskList')"
+        :active="editor.isActive('taskList')"
+        title="任务列表"
+        @click="editor.chain().focus().toggleTaskList().run()"
+      >
         <ListChecks :size="16" />
       </ToolbarButton>
     </div>
@@ -205,13 +341,22 @@ const CODE_LANGUAGES = [
 
     <!-- Block Elements -->
     <div class="rrte-menubar__group">
-      <ToolbarButton v-if="is('blockquote')" :active="editor.isActive('blockquote')" title="引用" @click="editor.chain().focus().toggleBlockquote().run()">
+      <ToolbarButton
+        v-if="is('blockquote')"
+        :active="editor.isActive('blockquote')"
+        title="引用"
+        @click="editor.chain().focus().toggleBlockquote().run()"
+      >
         <Quote :size="16" />
       </ToolbarButton>
 
       <!-- Code Block Dropdown -->
       <div v-if="is('codeBlock')" class="rrte-menubar__dropdown-wrap">
-        <ToolbarButton :active="editor.isActive('codeBlock')" title="代码块" @click.stop="toggleMenu('codeBlock')">
+        <ToolbarButton
+          :active="editor.isActive('codeBlock')"
+          title="代码块"
+          @click.stop="toggleMenu('codeBlock')"
+        >
           <Braces :size="16" />
         </ToolbarButton>
         <div v-if="showCodeBlockMenu" class="rrte-menubar__dropdown">
@@ -220,13 +365,21 @@ const CODE_LANGUAGES = [
             :key="lang.value"
             class="rrte-menubar__dropdown-item"
             @click="insertCodeBlock(lang.value)"
-          >{{ lang.label }}</button>
+          >
+            {{ lang.label }}
+          </button>
           <div class="rrte-menubar__dropdown-sep" />
-          <button class="rrte-menubar__dropdown-item" @click="insertCodeBlock(null)">普通代码块</button>
+          <button class="rrte-menubar__dropdown-item" @click="insertCodeBlock(null)">
+            普通代码块
+          </button>
         </div>
       </div>
 
-      <ToolbarButton v-if="is('horizontalRule')" title="分割线" @click="editor.chain().focus().setHorizontalRule().run()">
+      <ToolbarButton
+        v-if="is('horizontalRule')"
+        title="分割线"
+        @click="editor.chain().focus().setHorizontalRule().run()"
+      >
         <Minus :size="16" />
       </ToolbarButton>
     </div>
@@ -235,26 +388,45 @@ const CODE_LANGUAGES = [
 
     <!-- Table Dropdown -->
     <div v-if="is('table')" class="rrte-menubar__dropdown-wrap">
-      <ToolbarButton :active="editor.isActive('table')" title="表格" @click.stop="toggleMenu('table')">
+      <ToolbarButton
+        :active="editor.isActive('table')"
+        title="表格"
+        @click.stop="toggleMenu('table')"
+      >
         <Table :size="16" />
       </ToolbarButton>
       <div v-if="showTableMenu" class="rrte-menubar__dropdown">
         <button class="rrte-menubar__dropdown-item" @click="insertTable">插入表格 (3×3)</button>
         <template v-if="editor.isActive('table')">
           <div class="rrte-menubar__dropdown-sep" />
-          <button class="rrte-menubar__dropdown-item" @click="editor.chain().focus().addColumnBefore().run(); closeAllMenus()">前插列</button>
-          <button class="rrte-menubar__dropdown-item" @click="editor.chain().focus().addColumnAfter().run(); closeAllMenus()">后插列</button>
-          <button class="rrte-menubar__dropdown-item rrte-menubar__dropdown-item--danger" @click="editor.chain().focus().deleteColumn().run(); closeAllMenus()">删除列</button>
+          <button class="rrte-menubar__dropdown-item" @click="addColumnBefore">前插列</button>
+          <button class="rrte-menubar__dropdown-item" @click="addColumnAfter">后插列</button>
+          <button
+            class="rrte-menubar__dropdown-item rrte-menubar__dropdown-item--danger"
+            @click="deleteColumn"
+          >
+            删除列
+          </button>
           <div class="rrte-menubar__dropdown-sep" />
-          <button class="rrte-menubar__dropdown-item" @click="editor.chain().focus().addRowBefore().run(); closeAllMenus()">前插行</button>
-          <button class="rrte-menubar__dropdown-item" @click="editor.chain().focus().addRowAfter().run(); closeAllMenus()">后插行</button>
-          <button class="rrte-menubar__dropdown-item rrte-menubar__dropdown-item--danger" @click="editor.chain().focus().deleteRow().run(); closeAllMenus()">删除行</button>
+          <button class="rrte-menubar__dropdown-item" @click="addRowBefore">前插行</button>
+          <button class="rrte-menubar__dropdown-item" @click="addRowAfter">后插行</button>
+          <button
+            class="rrte-menubar__dropdown-item rrte-menubar__dropdown-item--danger"
+            @click="deleteRow"
+          >
+            删除行
+          </button>
           <div class="rrte-menubar__dropdown-sep" />
-          <button class="rrte-menubar__dropdown-item" @click="editor.chain().focus().mergeCells().run(); closeAllMenus()">合并单元格</button>
-          <button class="rrte-menubar__dropdown-item" @click="editor.chain().focus().splitCell().run(); closeAllMenus()">拆分单元格</button>
-          <button class="rrte-menubar__dropdown-item" @click="editor.chain().focus().toggleHeaderRow().run(); closeAllMenus()">切换表头</button>
+          <button class="rrte-menubar__dropdown-item" @click="mergeCells">合并单元格</button>
+          <button class="rrte-menubar__dropdown-item" @click="splitCell">拆分单元格</button>
+          <button class="rrte-menubar__dropdown-item" @click="toggleHeaderRow">切换表头</button>
           <div class="rrte-menubar__dropdown-sep" />
-          <button class="rrte-menubar__dropdown-item rrte-menubar__dropdown-item--danger" @click="editor.chain().focus().deleteTable().run(); closeAllMenus()">删除表格</button>
+          <button
+            class="rrte-menubar__dropdown-item rrte-menubar__dropdown-item--danger"
+            @click="deleteTable"
+          >
+            删除表格
+          </button>
         </template>
       </div>
     </div>
@@ -265,7 +437,11 @@ const CODE_LANGUAGES = [
     <div class="rrte-menubar__group">
       <!-- Link -->
       <div v-if="is('link')" class="rrte-menubar__dropdown-wrap">
-        <ToolbarButton :active="editor.isActive('link')" title="链接" @click.stop="toggleMenu('link')">
+        <ToolbarButton
+          :active="editor.isActive('link')"
+          title="链接"
+          @click.stop="toggleMenu('link')"
+        >
           <Link :size="16" />
         </ToolbarButton>
         <div v-if="showLinkInput" class="rrte-menubar__dropdown rrte-menubar__dropdown--link">
@@ -276,7 +452,7 @@ const CODE_LANGUAGES = [
             @keyup.enter="confirmLink"
           />
           <button class="rrte-link-confirm" @click="confirmLink">确定</button>
-          <button v-if="editor.isActive('link')" class="rrte-link-remove" @click="editor.chain().focus().unsetLink().run(); closeAllMenus()">
+          <button v-if="editor.isActive('link')" class="rrte-link-remove" @click="removeLink">
             <X :size="12" /> 移除
           </button>
         </div>
@@ -307,10 +483,20 @@ const CODE_LANGUAGES = [
 
     <!-- History -->
     <div class="rrte-menubar__group">
-      <ToolbarButton v-if="is('undo')" :disabled="!editor.can().undo()" title="撤销" @click="editor.chain().focus().undo().run()">
+      <ToolbarButton
+        v-if="is('undo')"
+        :disabled="!editor.can().undo()"
+        title="撤销"
+        @click="editor.chain().focus().undo().run()"
+      >
         <Undo2 :size="16" />
       </ToolbarButton>
-      <ToolbarButton v-if="is('redo')" :disabled="!editor.can().redo()" title="重做" @click="editor.chain().focus().redo().run()">
+      <ToolbarButton
+        v-if="is('redo')"
+        :disabled="!editor.can().redo()"
+        title="重做"
+        @click="editor.chain().focus().redo().run()"
+      >
         <Redo2 :size="16" />
       </ToolbarButton>
     </div>

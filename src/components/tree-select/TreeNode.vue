@@ -19,11 +19,7 @@
       <span class="r-tree-node__indent" :style="{ width: `${depth * 20}px` }" />
 
       <!-- Expand toggle -->
-      <span
-        v-if="hasChildren"
-        class="r-tree-node__toggle"
-        @click.stop="emit('toggle', node.id)"
-      >
+      <span v-if="hasChildren" class="r-tree-node__toggle" @click.stop="emit('toggle', node.id)">
         <svg
           width="14"
           height="14"
@@ -104,10 +100,16 @@
           @select="emit('select', $event)"
           @toggle="emit('toggle', $event)"
         >
-          <template v-if="$slots.label" #label="labelProps: { node: TreeSelectNode; depth: number }">
+          <template
+            v-if="$slots.label"
+            #label="labelProps: { node: TreeSelectNode; depth: number }"
+          >
             <slot name="label" v-bind="labelProps" />
           </template>
-          <template v-if="$slots.icon" #icon="iconProps: { node: TreeSelectNode; expanded: boolean }">
+          <template
+            v-if="$slots.icon"
+            #icon="iconProps: { node: TreeSelectNode; expanded: boolean }"
+          >
             <slot name="icon" v-bind="iconProps" />
           </template>
         </TreeNode>
@@ -169,7 +171,13 @@ function highlightLabel(label: string, kw: string): string {
 
 function escapeHtml(str: string): string {
   return str.replace(/[&<>"']/g, (m) => {
-    const map: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
+    const map: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+    }
     return map[m] ?? m
   })
 }

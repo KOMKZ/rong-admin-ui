@@ -78,9 +78,12 @@ watch(
 
 const densityPadding = computed(() => {
   switch (props.density) {
-    case 'compact': return { py: '1px', height: '28px' }
-    case 'comfortable': return { py: '6px', height: '40px' }
-    default: return { py: '3px', height: '34px' }
+    case 'compact':
+      return { py: '1px', height: '28px' }
+    case 'comfortable':
+      return { py: '6px', height: '40px' }
+    default:
+      return { py: '3px', height: '34px' }
   }
 })
 
@@ -167,7 +170,13 @@ function renderHighlightedLabel(): string {
 
 function escapeHtml(str: string): string {
   return str.replace(/[&<>"']/g, (c) => {
-    const map: Record<string, string> = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }
+    const map: Record<string, string> = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;',
+    }
     return map[c] ?? c
   })
 }
@@ -199,17 +208,8 @@ function escapeHtml(str: string): string {
       data-testid="tree-node-toggle"
       @click.stop="emit('toggle')"
     >
-      <RIcon
-        v-if="loading"
-        name="loader"
-        :size="14"
-        class="rpte-node__spinner"
-      />
-      <RIcon
-        v-else
-        :name="expanded ? 'chevron-down' : 'chevron-right'"
-        :size="14"
-      />
+      <RIcon v-if="loading" name="loader" :size="14" class="rpte-node__spinner" />
+      <RIcon v-else :name="expanded ? 'chevron-down' : 'chevron-right'" :size="14" />
     </button>
     <span v-else class="rpte-node__toggle-spacer" />
 
@@ -254,7 +254,10 @@ function escapeHtml(str: string): string {
         </span>
 
         <!-- Count badges -->
-        <span v-if="showCounts && (node.itemCount || node.totalItemCount)" class="rpte-node__counts">
+        <span
+          v-if="showCounts && (node.itemCount || node.totalItemCount)"
+          class="rpte-node__counts"
+        >
           <NTooltip v-if="node.itemCount">
             <template #trigger>
               <NBadge
@@ -444,7 +447,9 @@ function escapeHtml(str: string): string {
   animation: rpte-spin 1s linear infinite;
 }
 @keyframes rpte-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .rpte-node__checkbox {

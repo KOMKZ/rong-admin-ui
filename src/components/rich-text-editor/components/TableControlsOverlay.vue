@@ -50,7 +50,10 @@ function scheduleHide() {
 
 function onClusterEnter() {
   isHoveringCluster.value = true
-  if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
+  if (hideTimer) {
+    clearTimeout(hideTimer)
+    hideTimer = null
+  }
 }
 function onClusterLeave() {
   isHoveringCluster.value = false
@@ -71,7 +74,11 @@ function updatePosition() {
     if (el.nodeName === 'TD' || el.nodeName === 'TH') break
     el = el.parentElement
   }
-  if (!el) { hide(); refreshAbilities(); return }
+  if (!el) {
+    hide()
+    refreshAbilities()
+    return
+  }
 
   const cellRect = el.getBoundingClientRect()
   const containerRect = props.container.getBoundingClientRect()
@@ -110,8 +117,17 @@ function attachScroll(el: HTMLElement | null) {
   scrollEl?.addEventListener('scroll', updatePosition, true)
 }
 
-watch(() => props.container, (v) => { attachScroll(v); updatePosition() })
-onMounted(() => { registerEvents(); updatePosition() })
+watch(
+  () => props.container,
+  (v) => {
+    attachScroll(v)
+    updatePosition()
+  },
+)
+onMounted(() => {
+  registerEvents()
+  updatePosition()
+})
 onBeforeUnmount(() => {
   unregisterEvents()
   attachScroll(null)
@@ -128,18 +144,38 @@ onBeforeUnmount(() => {
       @mouseleave="onClusterLeave"
     >
       <div class="rte-table-cluster__section">
-        <button class="rte-table-cluster__btn" :disabled="!canAddRowBefore" @click="addRowBefore">+行上</button>
-        <button class="rte-table-cluster__btn" :disabled="!canAddRowAfter" @click="addRowAfter">+行下</button>
+        <button class="rte-table-cluster__btn" :disabled="!canAddRowBefore" @click="addRowBefore">
+          +行上
+        </button>
+        <button class="rte-table-cluster__btn" :disabled="!canAddRowAfter" @click="addRowAfter">
+          +行下
+        </button>
       </div>
       <span class="rte-table-cluster__sep" />
       <div class="rte-table-cluster__section">
-        <button class="rte-table-cluster__btn" :disabled="!canAddColBefore" @click="addColBefore">+列前</button>
-        <button class="rte-table-cluster__btn" :disabled="!canAddColAfter" @click="addColAfter">+列后</button>
+        <button class="rte-table-cluster__btn" :disabled="!canAddColBefore" @click="addColBefore">
+          +列前
+        </button>
+        <button class="rte-table-cluster__btn" :disabled="!canAddColAfter" @click="addColAfter">
+          +列后
+        </button>
       </div>
       <span class="rte-table-cluster__sep" />
       <div class="rte-table-cluster__section">
-        <button class="rte-table-cluster__btn rte-table-cluster__btn--danger" :disabled="!canDeleteRow" @click="deleteRow">删行</button>
-        <button class="rte-table-cluster__btn rte-table-cluster__btn--danger" :disabled="!canDeleteCol" @click="deleteCol">删列</button>
+        <button
+          class="rte-table-cluster__btn rte-table-cluster__btn--danger"
+          :disabled="!canDeleteRow"
+          @click="deleteRow"
+        >
+          删行
+        </button>
+        <button
+          class="rte-table-cluster__btn rte-table-cluster__btn--danger"
+          :disabled="!canDeleteCol"
+          @click="deleteCol"
+        >
+          删列
+        </button>
       </div>
     </div>
   </div>
@@ -169,7 +205,9 @@ onBeforeUnmount(() => {
   box-shadow: var(--ra-shadow-lg, 0 8px 24px rgba(15, 23, 42, 0.12));
   pointer-events: auto;
   opacity: 0.6;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .rte-table-cluster:hover {

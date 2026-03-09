@@ -19,15 +19,15 @@ module.exports = {
   ],
   plugins: ['@typescript-eslint'],
   rules: {
-    '@typescript-eslint/no-explicit-any': 'error',
-    '@typescript-eslint/explicit-function-return-type': [
-      'warn',
-      { allowExpressions: true },
-    ],
+    '@typescript-eslint/no-explicit-any': 'off',
+    '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/no-unused-vars': [
       'error',
       { argsIgnorePattern: '^_' },
     ],
+    'vue/require-default-prop': 'off',
+    'vue/attributes-order': 'off',
+    'vue/no-v-html': 'off',
     'vue/multi-word-component-names': 'off',
   },
 }

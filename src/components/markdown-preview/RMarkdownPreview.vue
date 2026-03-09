@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, watch, nextTick, onMounted, toRef } from 'vue'
+import { computed, ref, watch, nextTick, onMounted, onUnmounted, toRef } from 'vue'
 import MarkdownIt from 'markdown-it'
 import type { MarkdownPreviewTheme } from './types'
 import { useMermaid } from './composables/useMermaid'
@@ -72,6 +72,38 @@ const md = new MarkdownIt({
   },
 })
 
+function slugifyHeading(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/<[^>]+>/g, '')
+    .replace(/[^\w\u4e00-\u9fa5\s-]+/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+const originalHeadingOpenRenderer = md.renderer.rules.heading_open
+
+md.renderer.rules.heading_open = (tokens, idx, options, env, self) => {
+  const inlineToken = tokens[idx + 1]
+  const headingText = inlineToken?.type === 'inline' ? inlineToken.content : ''
+  const baseSlug = slugifyHeading(headingText) || `heading-${idx}`
+  const envObj = env as Record<string, unknown>
+  const key = '__rmdHeadingSlugMap'
+  const slugMap = (envObj[key] as Record<string, number> | undefined) || {}
+  const count = slugMap[baseSlug] || 0
+  slugMap[baseSlug] = count + 1
+  envObj[key] = slugMap
+  const uniqueSlug = count === 0 ? baseSlug : `${baseSlug}-${count + 1}`
+  tokens[idx].attrSet('id', uniqueSlug)
+
+  if (originalHeadingOpenRenderer) {
+    return originalHeadingOpenRenderer(tokens, idx, options, env, self)
+  }
+  return self.renderToken(tokens, idx, options)
+}
+
 const originalFenceRenderer = md.renderer.rules.fence
 
 md.renderer.rules.fence = (tokens, idx, options, env, self) => {
@@ -124,12 +156,50 @@ function addCopyButtons() {
       try {
         await navigator.clipboard.writeText(code)
         btn.textContent = '已复制'
-        setTimeout(() => { btn.textContent = '复制' }, 2000)
-      } catch { /* ignore */ }
+        setTimeout(() => {
+          btn.textContent = '复制'
+        }, 2000)
+      } catch {
+        /* ignore */
+      }
     })
     pre.style.position = 'relative'
     pre.appendChild(btn)
   })
+}
+
+function escapeSelector(value: string): string {
+  if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') {
+    return CSS.escape(value)
+  }
+  return value
+}
+
+function handlePreviewClick(event: MouseEvent) {
+  const target = event.target as HTMLElement | null
+  const anchor = target?.closest('a[href^="#"]') as HTMLAnchorElement | null
+  if (!anchor || !containerRef.value) return
+
+  const href = anchor.getAttribute('href') || ''
+  if (!href.startsWith('#') || href.length <= 1) return
+
+  const rawId = decodeURIComponent(href.slice(1))
+  const targetHeading = containerRef.value.querySelector<HTMLElement>(`#${escapeSelector(rawId)}`)
+  if (!targetHeading) return
+
+  event.preventDefault()
+
+  const scrollContainer = containerRef.value.closest('.r-docs-content-body') as HTMLElement | null
+  if (!scrollContainer) {
+    targetHeading.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    return
+  }
+
+  const offsetTop =
+    targetHeading.getBoundingClientRect().top -
+    scrollContainer.getBoundingClientRect().top +
+    scrollContainer.scrollTop
+  scrollContainer.scrollTo({ top: Math.max(0, offsetTop - 12), behavior: 'smooth' })
 }
 
 onMounted(async () => {
@@ -141,6 +211,7 @@ onMounted(async () => {
     renderDiagrams()
   }
   addCopyButtons()
+  containerRef.value?.addEventListener('click', handlePreviewClick)
 })
 
 watch(
@@ -156,6 +227,10 @@ watch(
     addCopyButtons()
   },
 )
+
+onUnmounted(() => {
+  containerRef.value?.removeEventListener('click', handlePreviewClick)
+})
 </script>
 
 <template>
@@ -178,11 +253,15 @@ watch(
         aria-label="Mermaid 图表全屏预览"
       >
         <div class="rmd-canvas-toolbar">
-          <button
-            aria-label="放大"
-            @click="canvasZoomIn"
-          >
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <button aria-label="放大" @click="canvasZoomIn">
+            <svg
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
               <line x1="11" y1="8" x2="11" y2="14" />
@@ -190,30 +269,42 @@ watch(
             </svg>
           </button>
           <span class="rmd-canvas-zoom-text">{{ Math.round(canvasZoom * 100) }}%</span>
-          <button
-            aria-label="缩小"
-            @click="canvasZoomOut"
-          >
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <button aria-label="缩小" @click="canvasZoomOut">
+            <svg
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
               <line x1="8" y1="11" x2="14" y2="11" />
             </svg>
           </button>
-          <button
-            aria-label="适应屏幕"
-            @click="canvasResetView"
-          >
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <button aria-label="适应屏幕" @click="canvasResetView">
+            <svg
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
             </svg>
           </button>
           <div class="rmd-canvas-divider" />
-          <button
-            aria-label="关闭全屏预览"
-            @click="closeFullscreen"
-          >
-            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <button aria-label="关闭全屏预览" @click="closeFullscreen">
+            <svg
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
             </svg>
@@ -226,11 +317,7 @@ watch(
           @mousedown="onCanvasDragStart"
           @dblclick="canvasResetView"
         >
-          <div
-            class="rmd-canvas-transform"
-            :style="canvasTransformStyle"
-            v-html="fullscreenSvg"
-          />
+          <div class="rmd-canvas-transform" :style="canvasTransformStyle" v-html="fullscreenSvg" />
         </div>
       </div>
     </Transition>
@@ -244,8 +331,9 @@ watch(
 .r-markdown-preview {
   color: var(--rmd-text);
   background: var(--rmd-bg);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial,
-    sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji';
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji';
   font-size: 16px;
   line-height: 1.5;
   word-wrap: break-word;
@@ -329,8 +417,8 @@ watch(
   white-space: break-spaces;
   background-color: rgba(175, 184, 193, 0.2);
   border-radius: 6px;
-  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono',
-    monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 }
 
 /* Code blocks */
@@ -475,7 +563,14 @@ watch(
 .r-markdown-preview kbd {
   display: inline-block;
   padding: 3px 5px;
-  font: 11px ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  font:
+    11px ui-monospace,
+    SFMono-Regular,
+    'SF Mono',
+    Menlo,
+    Consolas,
+    'Liberation Mono',
+    monospace;
   line-height: 10px;
   color: var(--rmd-text);
   vertical-align: middle;

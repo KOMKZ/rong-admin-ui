@@ -55,6 +55,7 @@ export interface DashboardRouteOption {
   label: string
   value: string
   description?: string
+  openMode?: 'in_app' | 'new_tab'
 }
 
 export interface DashboardDefinition {
@@ -88,7 +89,11 @@ export interface DashboardBuilderAdapter {
 export interface DashboardWorkspaceAdapter {
   listDashboards: () => Promise<DashboardDefinition[]>
   createDashboard: (input: { name: string; description?: string }) => Promise<DashboardDefinition>
-  updateDashboard?: (input: { dashboardId: string; name: string; description?: string }) => Promise<DashboardDefinition>
+  updateDashboard?: (input: {
+    dashboardId: string
+    name: string
+    description?: string
+  }) => Promise<DashboardDefinition>
   deleteDashboard: (dashboardId: string) => Promise<void>
   loadLayout: (dashboardId: string) => Promise<DashboardLayoutItem[]>
   saveLayout: (dashboardId: string, layout: DashboardLayoutItem[]) => Promise<void>

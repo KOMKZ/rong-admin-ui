@@ -1,10 +1,7 @@
 import type { Editor } from '@tiptap/vue-3'
 import type { ImageUploadAdapter } from '../types'
 
-export function useImageUpload(
-  getEditor: () => Editor | undefined,
-  adapter?: ImageUploadAdapter,
-) {
+export function useImageUpload(getEditor: () => Editor | undefined, adapter?: ImageUploadAdapter) {
   function triggerUpload() {
     const input = document.createElement('input')
     input.type = 'file'

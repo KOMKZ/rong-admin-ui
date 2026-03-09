@@ -46,10 +46,12 @@ export interface RDocsBrowserProps {
   enableToc?: boolean
   enableCache?: boolean
   enableFullscreen?: boolean
+  activeFileTag?: string
 }
 
 export interface RDocsBrowserEmits {
   (e: 'file-select', file: DocFileItem): void
+  (e: 'file-tag-change', tag: string): void
   (e: 'directory-change', dir: string): void
   (e: 'refresh'): void
   (e: 'cache-clear'): void

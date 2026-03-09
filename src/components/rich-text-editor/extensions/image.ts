@@ -27,9 +27,8 @@ export const CustomImage = Image.extend<CustomImageOptions>({
         parseHTML: (element) => element.getAttribute('width') || element.style.width || null,
         renderHTML: (attributes) => {
           if (!attributes.width) return {}
-          const width = typeof attributes.width === 'number'
-            ? `${attributes.width}px`
-            : attributes.width
+          const width =
+            typeof attributes.width === 'number' ? `${attributes.width}px` : attributes.width
           return { style: `width: ${width}` }
         },
       },

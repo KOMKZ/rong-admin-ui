@@ -38,32 +38,36 @@ const COLUMN_TYPES = [
   { label: '布尔值', value: 'boolean' },
 ]
 
-watch([() => props.visible, () => props.column, () => props.field], ([vis]) => {
-  if (!vis) return
-  const col = props.column
-  form.headerName = col?.headerName || ''
-  form.field = props.field || col?.field || ''
-  form.options = ''
+watch(
+  [() => props.visible, () => props.column, () => props.field],
+  ([vis]) => {
+    if (!vis) return
+    const col = props.column
+    form.headerName = col?.headerName || ''
+    form.field = props.field || col?.field || ''
+    form.options = ''
 
-  const ctx = (col as any)?.context || {}
-  if (col?.cellDataType === 'number' || col?.filter === 'agNumberColumnFilter') {
-    form.type = 'number'
-  } else if (ctx.__columnType === 'datetime') {
-    form.type = 'datetime'
-  } else if (ctx.__columnType === 'year') {
-    form.type = 'year'
-  } else if (ctx.__columnType === 'multiselect') {
-    form.type = 'multiselect'
-    form.options = (col?.cellEditorParams?.values || []).join(',')
-  } else if (ctx.__columnType === 'select') {
-    form.type = 'select'
-    form.options = (col?.cellEditorParams?.values || []).join(',')
-  } else if (col?.cellEditor === 'agCheckboxCellEditor') {
-    form.type = 'boolean'
-  } else {
-    form.type = 'text'
-  }
-}, { immediate: true })
+    const ctx = (col as any)?.context || {}
+    if (col?.cellDataType === 'number' || col?.filter === 'agNumberColumnFilter') {
+      form.type = 'number'
+    } else if (ctx.__columnType === 'datetime') {
+      form.type = 'datetime'
+    } else if (ctx.__columnType === 'year') {
+      form.type = 'year'
+    } else if (ctx.__columnType === 'multiselect') {
+      form.type = 'multiselect'
+      form.options = (col?.cellEditorParams?.values || []).join(',')
+    } else if (ctx.__columnType === 'select') {
+      form.type = 'select'
+      form.options = (col?.cellEditorParams?.values || []).join(',')
+    } else if (col?.cellEditor === 'agCheckboxCellEditor') {
+      form.type = 'boolean'
+    } else {
+      form.type = 'text'
+    }
+  },
+  { immediate: true },
+)
 
 function handleSave() {
   if (!form.headerName.trim()) return
@@ -71,7 +75,9 @@ function handleSave() {
   emit('update:visible', false)
 }
 
-function handleClose() { emit('update:visible', false) }
+function handleClose() {
+  emit('update:visible', false)
+}
 </script>
 
 <template>
@@ -95,12 +101,22 @@ function handleClose() { emit('update:visible', false) }
             <label class="rdg-form-item">
               <span class="rdg-form-label">列类型 <span class="rdg-required">*</span></span>
               <select v-model="form.type" class="rdg-select">
-                <option v-for="t in COLUMN_TYPES" :key="t.value" :value="t.value">{{ t.label }}</option>
+                <option v-for="t in COLUMN_TYPES" :key="t.value" :value="t.value">
+                  {{ t.label }}
+                </option>
               </select>
             </label>
-            <label v-if="form.type === 'select' || form.type === 'multiselect'" class="rdg-form-item">
+            <label
+              v-if="form.type === 'select' || form.type === 'multiselect'"
+              class="rdg-form-item"
+            >
               <span class="rdg-form-label">选项（逗号分隔）</span>
-              <textarea v-model="form.options" class="rdg-textarea" rows="3" placeholder="选项1,选项2,选项3" />
+              <textarea
+                v-model="form.options"
+                class="rdg-textarea"
+                rows="3"
+                placeholder="选项1,选项2,选项3"
+              />
             </label>
           </div>
           <div class="rdg-drawer__footer">
@@ -155,7 +171,9 @@ function handleClose() { emit('update:visible', false) }
   padding: 0 4px;
 }
 
-.rdg-drawer__close:hover { color: var(--ra-color-text-primary, #24292f); }
+.rdg-drawer__close:hover {
+  color: var(--ra-color-text-primary, #24292f);
+}
 
 .rdg-drawer__body {
   flex: 1;
@@ -174,11 +192,23 @@ function handleClose() { emit('update:visible', false) }
   gap: 8px;
 }
 
-.rdg-form-item { display: flex; flex-direction: column; gap: 4px; }
-.rdg-form-label { font-size: 13px; font-weight: 500; color: var(--ra-color-text-secondary, #57606a); }
-.rdg-required { color: var(--ra-color-danger, #cf222e); }
+.rdg-form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.rdg-form-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ra-color-text-secondary, #57606a);
+}
+.rdg-required {
+  color: var(--ra-color-danger, #cf222e);
+}
 
-.rdg-input, .rdg-select, .rdg-textarea {
+.rdg-input,
+.rdg-select,
+.rdg-textarea {
   padding: 6px 10px;
   border: 1px solid var(--ra-color-border-default, #d0d7de);
   border-radius: var(--ra-radius-md, 6px);
@@ -189,7 +219,9 @@ function handleClose() { emit('update:visible', false) }
   transition: border-color 0.15s;
 }
 
-.rdg-input:focus, .rdg-select:focus, .rdg-textarea:focus {
+.rdg-input:focus,
+.rdg-select:focus,
+.rdg-textarea:focus {
   border-color: var(--ra-color-brand-primary, #0969da);
   box-shadow: 0 0 0 3px var(--ra-color-brand-subtle, rgba(9, 105, 218, 0.15));
 }
@@ -200,7 +232,10 @@ function handleClose() { emit('update:visible', false) }
   cursor: not-allowed;
 }
 
-.rdg-textarea { resize: vertical; min-height: 60px; }
+.rdg-textarea {
+  resize: vertical;
+  min-height: 60px;
+}
 
 .rdg-btn {
   padding: 6px 16px;
@@ -213,7 +248,9 @@ function handleClose() { emit('update:visible', false) }
   transition: all 0.15s;
 }
 
-.rdg-btn:hover { background: var(--ra-color-bg-muted, #f6f8fa); }
+.rdg-btn:hover {
+  background: var(--ra-color-bg-muted, #f6f8fa);
+}
 
 .rdg-btn--primary {
   background: var(--ra-color-brand-primary, #0969da);
@@ -221,14 +258,26 @@ function handleClose() { emit('update:visible', false) }
   border-color: var(--ra-color-brand-primary, #0969da);
 }
 
-.rdg-btn--primary:hover { opacity: 0.9; }
+.rdg-btn--primary:hover {
+  opacity: 0.9;
+}
 
 .rdg-drawer-enter-active,
-.rdg-drawer-leave-active { transition: opacity 0.2s; }
+.rdg-drawer-leave-active {
+  transition: opacity 0.2s;
+}
 .rdg-drawer-enter-active .rdg-drawer,
-.rdg-drawer-leave-active .rdg-drawer { transition: transform 0.25s ease; }
+.rdg-drawer-leave-active .rdg-drawer {
+  transition: transform 0.25s ease;
+}
 .rdg-drawer-enter-from,
-.rdg-drawer-leave-to { opacity: 0; }
-.rdg-drawer-enter-from .rdg-drawer { transform: translateX(100%); }
-.rdg-drawer-leave-to .rdg-drawer { transform: translateX(100%); }
+.rdg-drawer-leave-to {
+  opacity: 0;
+}
+.rdg-drawer-enter-from .rdg-drawer {
+  transform: translateX(100%);
+}
+.rdg-drawer-leave-to .rdg-drawer {
+  transform: translateX(100%);
+}
 </style>

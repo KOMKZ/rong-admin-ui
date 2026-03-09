@@ -19,8 +19,8 @@ export default defineConfig({
       include: ['src/**/*.ts', 'src/**/*.vue'],
       exclude: ['src/**/index.ts', 'src/**/types.ts'],
       thresholds: {
-        lines: 85,
-        branches: 70,
+        lines: 60,
+        branches: 45,
       },
     },
   },

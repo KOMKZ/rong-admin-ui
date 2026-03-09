@@ -14,7 +14,11 @@
 
     <!-- 左侧目录导航（全屏时隐藏） -->
     <template v-if="!isFullscreen">
-      <div v-show="!dirCollapsed" class="r-docs-panel r-docs-panel--dir" :style="{ width: dirWidth + 'px' }">
+      <div
+        v-show="!dirCollapsed"
+        class="r-docs-panel r-docs-panel--dir"
+        :style="{ width: dirWidth + 'px' }"
+      >
         <DirectorySidebar
           :directories="directories"
           :active-dir="activeDir"
@@ -39,20 +43,51 @@
         data-testid="docs-expand-dir"
         @click="dirCollapsed = false"
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
       </button>
     </template>
 
     <!-- 错误态（全屏时隐藏） -->
-    <div v-if="loadError && !isFullscreen" class="r-docs-error-banner" data-testid="docs-error" role="alert">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+    <div
+      v-if="loadError && !isFullscreen"
+      class="r-docs-error-banner"
+      data-testid="docs-error"
+      role="alert"
+    >
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <line x1="15" y1="9" x2="9" y2="15" />
+        <line x1="9" y1="9" x2="15" y2="15" />
+      </svg>
       <span>{{ loadError }}</span>
-      <button class="r-docs-error-retry" @click="handleRefresh" data-testid="docs-error-retry">重试</button>
+      <button class="r-docs-error-retry" @click="handleRefresh" data-testid="docs-error-retry">
+        重试
+      </button>
     </div>
 
     <!-- 文件列表（全屏时隐藏） -->
     <template v-if="!isFullscreen">
-      <div v-show="!fileListCollapsed" class="r-docs-panel r-docs-panel--files" :style="{ width: fileListWidth + 'px' }">
+      <div
+        v-show="!fileListCollapsed"
+        class="r-docs-panel r-docs-panel--files"
+        :style="{ width: fileListWidth + 'px' }"
+      >
         <FileList
           :files="filteredFiles"
           :selected-file="selectedFile"
@@ -78,7 +113,16 @@
         data-testid="docs-expand-files"
         @click="fileListCollapsed = false"
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
       </button>
     </template>
 
@@ -94,8 +138,31 @@
             data-testid="docs-toggle-dir"
             @click="dirCollapsed = !dirCollapsed"
           >
-            <svg v-if="!dirCollapsed" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-            <svg v-else width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><polyline points="14 9 17 12 14 15"/></svg>
+            <svg
+              v-if="!dirCollapsed"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <line x1="9" y1="3" x2="9" y2="21" />
+            </svg>
+            <svg
+              v-else
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <line x1="9" y1="3" x2="9" y2="21" />
+              <polyline points="14 9 17 12 14 15" />
+            </svg>
           </button>
           <button
             class="r-docs-toolbar-btn"
@@ -103,8 +170,31 @@
             data-testid="docs-toggle-files"
             @click="fileListCollapsed = !fileListCollapsed"
           >
-            <svg v-if="!fileListCollapsed" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="15" y1="3" x2="15" y2="21"/></svg>
-            <svg v-else width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="15" y1="3" x2="15" y2="21"/><polyline points="10 9 7 12 10 15"/></svg>
+            <svg
+              v-if="!fileListCollapsed"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <line x1="15" y1="3" x2="15" y2="21" />
+            </svg>
+            <svg
+              v-else
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <line x1="15" y1="3" x2="15" y2="21" />
+              <polyline points="10 9 7 12 10 15" />
+            </svg>
           </button>
           <div class="r-docs-toolbar-divider"></div>
         </div>
@@ -116,7 +206,17 @@
           @click="handleRefresh"
           :disabled="fileListLoading"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <polyline points="23 4 23 10 17 10" />
+            <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+          </svg>
           <span>刷新</span>
         </button>
         <button
@@ -126,7 +226,19 @@
           data-testid="docs-clear-cache"
           @click="handleClearCache"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <polyline points="3 6 5 6 21 6" />
+            <path
+              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+            />
+          </svg>
           <span>清除缓存</span>
         </button>
 
@@ -138,7 +250,16 @@
           data-testid="docs-exit-fullscreen"
           @click="isFullscreen = false"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14h6v6m10-10h-6V4M14 10l7-7M3 21l7-7"/></svg>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M4 14h6v6m10-10h-6V4M14 10l7-7M3 21l7-7" />
+          </svg>
           <span>退出全屏</span>
         </button>
       </div>
@@ -158,11 +279,25 @@
     </div>
 
     <!-- TOC 侧边栏 -->
-    <div v-if="tocVisible && isMarkdown && fileContent" class="r-docs-toc-panel" data-testid="docs-toc-panel">
+    <div
+      v-if="tocVisible && isMarkdown && fileContent"
+      class="r-docs-toc-panel"
+      data-testid="docs-toc-panel"
+    >
       <div class="r-docs-toc-header">
         <span>目录大纲</span>
         <button class="r-docs-toc-close" @click="tocVisible = false" data-testid="docs-toc-close">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
         </button>
       </div>
       <MarkdownToc :content="fileContent.content" />
@@ -171,7 +306,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { MarkdownToc } from '../markdown-preview'
 import DirectorySidebar from './components/DirectorySidebar.vue'
 import FileList from './components/FileList.vue'
@@ -184,23 +319,29 @@ import type {
   DocSortOrder,
 } from './types'
 
-const props = withDefaults(defineProps<{
-  api: DocsApiAdapter
-  cacheKey?: string
-  height?: string
-  enableToc?: boolean
-  enableCache?: boolean
-  enableFullscreen?: boolean
-}>(), {
-  cacheKey: 'r-docs-cache-v1',
-  height: 'calc(100vh - 64px)',
-  enableToc: true,
-  enableCache: true,
-  enableFullscreen: true,
-})
+const props = withDefaults(
+  defineProps<{
+    api: DocsApiAdapter
+    cacheKey?: string
+    height?: string
+    enableToc?: boolean
+    enableCache?: boolean
+    enableFullscreen?: boolean
+    activeFileTag?: string
+  }>(),
+  {
+    cacheKey: 'r-docs-cache-v1',
+    height: 'calc(100vh - 64px)',
+    enableToc: true,
+    enableCache: true,
+    enableFullscreen: true,
+    activeFileTag: '',
+  },
+)
 
 const emit = defineEmits<{
   (e: 'file-select', file: DocFileItem): void
+  (e: 'file-tag-change', tag: string): void
   (e: 'directory-change', dir: string): void
   (e: 'refresh'): void
   (e: 'cache-clear'): void
@@ -271,7 +412,9 @@ function showToast(msg: string, type: 'success' | 'info' = 'success') {
   toastMsg.value = msg
   toastType.value = type
   if (toastTimer) clearTimeout(toastTimer)
-  toastTimer = setTimeout(() => { toastMsg.value = '' }, 2000)
+  toastTimer = setTimeout(() => {
+    toastMsg.value = ''
+  }, 2000)
 }
 
 // --- 计算 ---
@@ -285,7 +428,7 @@ const dirFileCounts = computed(() => {
 
 const filteredFiles = computed(() => {
   if (!activeDir.value) return files.value
-  return files.value.filter(f => f.directory === activeDir.value)
+  return files.value.filter((f) => f.directory === activeDir.value)
 })
 
 const isMarkdown = computed(() => fileContent.value?.name.endsWith('.md'))
@@ -328,6 +471,17 @@ async function loadFiles() {
     loadError.value = null
     const res = await props.api.getFileList(sortOrder.value)
     files.value = res.files || []
+    if (selectedFile.value) {
+      const synced = files.value.find(
+        (item) =>
+          item.directory === selectedFile.value?.directory &&
+          item.path === selectedFile.value?.path,
+      )
+      if (synced) {
+        selectedFile.value = synced
+      }
+    }
+    await syncFromActiveFileTag()
   } catch (e: any) {
     loadError.value = e?.message || '加载文件列表失败'
   } finally {
@@ -335,10 +489,55 @@ async function loadFiles() {
   }
 }
 
-async function handleFileClick(file: DocFileItem) {
+function buildFileTag(file: DocFileItem): string {
+  return `${file.directory}::${file.path}`
+}
+
+function parseFileTag(tag: string): { directory?: string; path: string } | null {
+  if (!tag) return null
+  const sepIndex = tag.indexOf('::')
+  if (sepIndex < 0) {
+    return { path: tag }
+  }
+  if (sepIndex === 0 || sepIndex >= tag.length - 2) return null
+  return {
+    directory: tag.slice(0, sepIndex),
+    path: tag.slice(sepIndex + 2),
+  }
+}
+
+async function handleFileClick(file: DocFileItem, emitTagChange = true) {
+  const sameFile =
+    selectedFile.value?.directory === file.directory && selectedFile.value?.path === file.path
+
   selectedFile.value = file
   emit('file-select', file)
+
+  if (emitTagChange) {
+    emit('file-tag-change', buildFileTag(file))
+  }
+
+  if (sameFile && fileContent.value) {
+    return
+  }
+
   await loadFileContent(file.directory, file.path)
+}
+
+async function syncFromActiveFileTag(): Promise<void> {
+  const parsed = parseFileTag(props.activeFileTag || '')
+  if (!parsed || !files.value.length) return
+
+  const matched = files.value.find((item) => {
+    if (parsed.directory) {
+      return item.directory === parsed.directory && item.path === parsed.path
+    }
+    return item.path === parsed.path
+  })
+  if (!matched) return
+
+  activeDir.value = matched.directory
+  await handleFileClick(matched, false)
 }
 
 async function loadFileContent(dir: string, path: string) {
@@ -369,7 +568,9 @@ async function loadFileContent(dir: string, path: string) {
 function persistCache() {
   try {
     localStorage.setItem(props.cacheKey, JSON.stringify(fileCache.value))
-  } catch { /* quota exceeded */ }
+  } catch {
+    /* quota exceeded */
+  }
 }
 
 function loadCacheFromStorage() {
@@ -377,7 +578,9 @@ function loadCacheFromStorage() {
   try {
     const cached = localStorage.getItem(props.cacheKey)
     if (cached) fileCache.value = JSON.parse(cached)
-  } catch { /* corrupted cache */ }
+  } catch {
+    /* corrupted cache */
+  }
 }
 
 // --- 刷新 / 清缓存（带反馈） ---
@@ -410,6 +613,13 @@ onMounted(async () => {
   await loadFiles()
 })
 
+watch(
+  () => props.activeFileTag,
+  () => {
+    void syncFromActiveFileTag()
+  },
+)
+
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeydown)
   document.removeEventListener('mousemove', onResizeMove)
@@ -420,6 +630,7 @@ onUnmounted(() => {
 defineExpose({
   refresh: handleRefresh,
   clearCache: handleClearCache,
+  openByTag: syncFromActiveFileTag,
 })
 </script>
 
@@ -453,7 +664,7 @@ defineExpose({
   border-radius: var(--ra-radius-md, 6px);
   font-size: 13px;
   font-weight: 500;
-  box-shadow: var(--ra-shadow-md, 0 4px 12px rgba(0,0,0,0.1));
+  box-shadow: var(--ra-shadow-md, 0 4px 12px rgba(0, 0, 0, 0.1));
   pointer-events: none;
 }
 
@@ -469,7 +680,9 @@ defineExpose({
 
 .r-docs-toast-enter-active,
 .r-docs-toast-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .r-docs-toast-enter-from {

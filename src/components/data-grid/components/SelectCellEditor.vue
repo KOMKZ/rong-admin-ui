@@ -40,9 +40,15 @@ function handleKeydown(e: KeyboardEvent) {
   }
 }
 
-function getValue(): string | null { return selected.value || null }
-function isCancelBeforeStart() { return false }
-function isCancelAfterEnd() { return false }
+function getValue(): string | null {
+  return selected.value || null
+}
+function isCancelBeforeStart() {
+  return false
+}
+function isCancelAfterEnd() {
+  return false
+}
 
 defineExpose({ getValue, isCancelBeforeStart, isCancelAfterEnd })
 </script>

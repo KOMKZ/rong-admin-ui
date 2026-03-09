@@ -165,7 +165,9 @@ async function saveAll() {
 function showSavedFeedback(key: string) {
   savedField.value = key
   if (savedTimer) clearTimeout(savedTimer)
-  savedTimer = setTimeout(() => { savedField.value = null }, 2000)
+  savedTimer = setTimeout(() => {
+    savedField.value = null
+  }, 2000)
 }
 
 function resetDirty() {
@@ -186,16 +188,19 @@ function scrollToGroup(key: string) {
 
 function urlToFileList(url: string): ProUploadFileItem[] {
   if (!url) return []
-  return url.split(',').filter(Boolean).map((u, i) => ({
-    uid: `existing-${i}`,
-    name: u.split('/').pop() || 'image',
-    size: 0,
-    type: 'image/*',
-    status: 'success' as const,
-    progress: 100,
-    url: u,
-    thumbUrl: u,
-  }))
+  return url
+    .split(',')
+    .filter(Boolean)
+    .map((u, i) => ({
+      uid: `existing-${i}`,
+      name: u.split('/').pop() || 'image',
+      size: 0,
+      type: 'image/*',
+      status: 'success' as const,
+      progress: 100,
+      url: u,
+      thumbUrl: u,
+    }))
 }
 
 function handleImageChange(fieldKey: string, files: ProUploadFileItem[]) {
@@ -219,7 +224,10 @@ function dateToStr(ts: number | null): string {
 
 function datetimeToStr(ts: number | null): string {
   if (!ts) return ''
-  return new Date(ts).toISOString().replace('T', ' ').replace(/\.\d+Z$/, '')
+  return new Date(ts)
+    .toISOString()
+    .replace('T', ' ')
+    .replace(/\.\d+Z$/, '')
 }
 
 function timeToStr(ts: number | null): string {
@@ -248,9 +256,7 @@ defineExpose<SettingsManagerExpose>({
         <p v-if="description" class="rsm__desc">{{ description }}</p>
       </div>
       <div v-if="saveMode === 'batch' && hasDirty && !loading" class="rsm__header-actions">
-        <NButton size="small" quaternary @click="resetDirty">
-          放弃更改
-        </NButton>
+        <NButton size="small" quaternary @click="resetDirty"> 放弃更改 </NButton>
         <NButton type="primary" size="small" :loading="saving" @click="saveAll">
           <template #icon><RIcon name="save" :size="14" /></template>
           保存 {{ dirtyFields.length }} 项更改
@@ -326,7 +332,10 @@ defineExpose<SettingsManagerExpose>({
       <!-- Content -->
       <div ref="contentEl" class="rsm__content">
         <!-- Inline search (no sidebar) -->
-        <div v-if="showSearch && (!showGroupNav || groups.length <= 1)" class="rsm__search rsm__search--inline">
+        <div
+          v-if="showSearch && (!showGroupNav || groups.length <= 1)"
+          class="rsm__search rsm__search--inline"
+        >
           <NInput v-model:value="searchQuery" placeholder="搜索设置项…" clearable size="small">
             <template #prefix><RIcon name="search" :size="14" /></template>
           </NInput>
@@ -401,13 +410,17 @@ defineExpose<SettingsManagerExpose>({
                     :disabled="field.disabled"
                     size="small"
                     style="width: 100%"
-                    @update:value="(v: number | null) => (currentValues[field.key] = String(v ?? 0))"
+                    @update:value="
+                      (v: number | null) => (currentValues[field.key] = String(v ?? 0))
+                    "
                   />
                   <!-- Select -->
                   <NSelect
                     v-else-if="field.type === 'select'"
                     :value="currentValues[field.key]"
-                    :options="(field.options || []).map((o) => ({ label: o.label, value: String(o.value) }))"
+                    :options="
+                      (field.options || []).map((o) => ({ label: o.label, value: String(o.value) }))
+                    "
                     :placeholder="field.placeholder"
                     :disabled="field.disabled"
                     size="small"
@@ -418,7 +431,9 @@ defineExpose<SettingsManagerExpose>({
                     v-else-if="field.type === 'switch'"
                     :value="currentValues[field.key] === 'true' || currentValues[field.key] === '1'"
                     :disabled="field.disabled"
-                    @update:value="(v: boolean) => (currentValues[field.key] = v ? 'true' : 'false')"
+                    @update:value="
+                      (v: boolean) => (currentValues[field.key] = v ? 'true' : 'false')
+                    "
                   />
                   <!-- Radio -->
                   <NRadioGroup
@@ -433,7 +448,8 @@ defineExpose<SettingsManagerExpose>({
                       :key="String(opt.value)"
                       :value="String(opt.value)"
                       :disabled="opt.disabled"
-                    >{{ opt.label }}</NRadio>
+                      >{{ opt.label }}</NRadio
+                    >
                   </NRadioGroup>
                   <!-- Color -->
                   <NColorPicker
@@ -457,7 +473,11 @@ defineExpose<SettingsManagerExpose>({
                   <!-- Time -->
                   <NTimePicker
                     v-else-if="field.type === 'time'"
-                    :value="tsToDate(currentValues[field.key] ? `1970-01-01T${currentValues[field.key]}` : '')"
+                    :value="
+                      tsToDate(
+                        currentValues[field.key] ? `1970-01-01T${currentValues[field.key]}` : '',
+                      )
+                    "
                     :disabled="field.disabled"
                     size="small"
                     clearable
@@ -473,7 +493,9 @@ defineExpose<SettingsManagerExpose>({
                     size="small"
                     clearable
                     style="width: 100%"
-                    @update:value="(v: number | null) => (currentValues[field.key] = datetimeToStr(v))"
+                    @update:value="
+                      (v: number | null) => (currentValues[field.key] = datetimeToStr(v))
+                    "
                   />
                   <!-- Image -->
                   <div v-else-if="field.type === 'image'" class="rsm__image-wrap">
@@ -485,7 +507,14 @@ defineExpose<SettingsManagerExpose>({
                       :disabled="field.disabled"
                       list-type="picture-card"
                       :custom-request="customUploadRequest"
-                      :parse-response="parseUploadResponse ? (raw: unknown) => { const p = parseUploadResponse!(raw); return { url: p.url, thumbUrl: p.url, storageId: p.storageId } } : undefined"
+                      :parse-response="
+                        parseUploadResponse
+                          ? (raw: unknown) => {
+                              const p = parseUploadResponse!(raw)
+                              return { url: p.url, thumbUrl: p.url, storageId: p.storageId }
+                            }
+                          : undefined
+                      "
                       @change="(files: ProUploadFileItem[]) => handleImageChange(field.key, files)"
                     />
                   </div>
@@ -532,9 +561,7 @@ defineExpose<SettingsManagerExpose>({
         <div class="rsm__save-bar-inner">
           <div class="rsm__save-bar-info">
             <span class="rsm__save-bar-dot" />
-            <NText class="rsm__save-bar-text">
-              {{ dirtyFields.length }} 项未保存的更改
-            </NText>
+            <NText class="rsm__save-bar-text"> {{ dirtyFields.length }} 项未保存的更改 </NText>
           </div>
           <NSpace :size="8">
             <NButton size="small" @click="resetDirty">放弃</NButton>
@@ -944,8 +971,13 @@ defineExpose<SettingsManagerExpose>({
 }
 
 @keyframes rsm-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
 /* ═══ Transitions ═══ */

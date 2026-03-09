@@ -1,5 +1,10 @@
 <template>
-  <nav class="r-docs-dir-sidebar" data-testid="docs-dir-sidebar" role="navigation" aria-label="文档目录">
+  <nav
+    class="r-docs-dir-sidebar"
+    data-testid="docs-dir-sidebar"
+    role="navigation"
+    aria-label="文档目录"
+  >
     <div class="r-docs-dir-header">
       <span class="r-docs-dir-title">{{ title }}</span>
       <span class="r-docs-dir-count">{{ totalCount }}</span>
@@ -15,7 +20,16 @@
         @keydown.enter="$emit('select', dir.name)"
       >
         <span class="r-docs-dir-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
             <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
           </svg>
         </span>
@@ -30,8 +44,20 @@
         @keydown.enter="$emit('select', '')"
       >
         <span class="r-docs-dir-icon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="3" width="7" height="7" /><rect x="14" y="3" width="7" height="7" /><rect x="3" y="14" width="7" height="7" /><rect x="14" y="14" width="7" height="7" />
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
           </svg>
         </span>
         <span class="r-docs-dir-name">全部</span>

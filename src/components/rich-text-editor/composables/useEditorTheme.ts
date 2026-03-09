@@ -9,18 +9,36 @@ interface ThemeDef {
 }
 
 const THEMES: ThemeDef[] = [
-  { id: 'classic', name: '经典', wrapperClass: 'rrte-theme-classic', editorClass: 'rrte-editor-classic' },
-  { id: 'minimal', name: '雾灰', wrapperClass: 'rrte-theme-minimal', editorClass: 'rrte-editor-minimal' },
-  { id: 'midnight', name: '午夜', wrapperClass: 'rrte-theme-midnight', editorClass: 'rrte-editor-midnight' },
-  { id: 'aurora', name: '极光', wrapperClass: 'rrte-theme-aurora', editorClass: 'rrte-editor-aurora' },
+  {
+    id: 'classic',
+    name: '经典',
+    wrapperClass: 'rrte-theme-classic',
+    editorClass: 'rrte-editor-classic',
+  },
+  {
+    id: 'minimal',
+    name: '雾灰',
+    wrapperClass: 'rrte-theme-minimal',
+    editorClass: 'rrte-editor-minimal',
+  },
+  {
+    id: 'midnight',
+    name: '午夜',
+    wrapperClass: 'rrte-theme-midnight',
+    editorClass: 'rrte-editor-midnight',
+  },
+  {
+    id: 'aurora',
+    name: '极光',
+    wrapperClass: 'rrte-theme-aurora',
+    editorClass: 'rrte-editor-aurora',
+  },
 ]
 
 export function useEditorTheme(initialTheme: RichTextEditorTheme = 'classic') {
   const activeTheme = ref<RichTextEditorTheme>(initialTheme)
 
-  const currentTheme = computed(
-    () => THEMES.find((t) => t.id === activeTheme.value) ?? THEMES[0],
-  )
+  const currentTheme = computed(() => THEMES.find((t) => t.id === activeTheme.value) ?? THEMES[0])
 
   const themes = THEMES
 

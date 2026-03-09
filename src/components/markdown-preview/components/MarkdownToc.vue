@@ -25,13 +25,19 @@ const tocList = computed<TocItem[]>(() => {
   let inCodeBlock = false
 
   lines.forEach((line, index) => {
-    if (line.trim().startsWith('```')) { inCodeBlock = !inCodeBlock; return }
+    if (line.trim().startsWith('```')) {
+      inCodeBlock = !inCodeBlock
+      return
+    }
     if (inCodeBlock) return
     const match = line.match(/^(#{1,6})\s+(.+)$/)
     if (match) {
       const level = match[1].length
       const text = match[2].trim()
-      const id = `heading-${index}-${text.toLowerCase().replace(/[^\w\u4e00-\u9fa5]+/g, '-').replace(/^-|-$/g, '')}`
+      const id = `heading-${index}-${text
+        .toLowerCase()
+        .replace(/[^\w\u4e00-\u9fa5]+/g, '-')
+        .replace(/^-|-$/g, '')}`
       toc.push({ level, text, id })
     }
   })
@@ -46,19 +52,33 @@ function scrollToHeading(item: TocItem) {
   activeId.value = item.id
   emit('scroll-to', item.id)
   setTimeout(() => {
-    const body = document.querySelector('.markdown-body')
-    if (!body) return
-    const headings = body.querySelectorAll('h1, h2, h3, h4, h5, h6')
+    const docsBody = document.querySelector('.r-docs-content-body') as HTMLElement | null
+    const scope = (docsBody || document) as Document | HTMLElement
+    const headings = scope.querySelectorAll(
+      '.r-markdown-preview h1, .r-markdown-preview h2, .r-markdown-preview h3, .r-markdown-preview h4, .r-markdown-preview h5, .r-markdown-preview h6, .markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6',
+    )
+    if (!headings.length) return
     for (const h of headings) {
       if (h.textContent?.trim() === item.text) {
-        h.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        if (docsBody) {
+          const offsetTop =
+            h.getBoundingClientRect().top - docsBody.getBoundingClientRect().top + docsBody.scrollTop
+          docsBody.scrollTo({ top: Math.max(0, offsetTop - 12), behavior: 'smooth' })
+        } else {
+          h.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
         break
       }
     }
   }, 100)
 }
 
-watch(() => props.content, () => { activeId.value = '' })
+watch(
+  () => props.content,
+  () => {
+    activeId.value = ''
+  },
+)
 </script>
 
 <template>
@@ -83,7 +103,10 @@ watch(() => props.content, () => { activeId.value = '' })
         v-for="(item, index) in filteredToc"
         :key="index"
         class="rmd-toc__item"
-        :class="[`rmd-toc__item--level-${item.level}`, { 'rmd-toc__item--active': activeId === item.id }]"
+        :class="[
+          `rmd-toc__item--level-${item.level}`,
+          { 'rmd-toc__item--active': activeId === item.id },
+        ]"
         :style="{ paddingLeft: `${(item.level - 1) * 16}px` }"
         @click="scrollToHeading(item)"
       >
@@ -96,7 +119,9 @@ watch(() => props.content, () => { activeId.value = '' })
 </template>
 
 <style>
-.rmd-toc { padding: 16px; }
+.rmd-toc {
+  padding: 16px;
+}
 
 .rmd-toc__controls {
   display: flex;
@@ -173,12 +198,22 @@ watch(() => props.content, () => { activeId.value = '' })
   -webkit-box-orient: vertical;
 }
 
-.rmd-toc__item--level-1 { font-weight: 600; font-size: 15px; }
-.rmd-toc__item--level-2 { font-weight: 500; }
-.rmd-toc__item--level-3 { color: var(--ra-color-text-secondary, #666); }
+.rmd-toc__item--level-1 {
+  font-weight: 600;
+  font-size: 15px;
+}
+.rmd-toc__item--level-2 {
+  font-weight: 500;
+}
+.rmd-toc__item--level-3 {
+  color: var(--ra-color-text-secondary, #666);
+}
 .rmd-toc__item--level-4,
 .rmd-toc__item--level-5,
-.rmd-toc__item--level-6 { color: var(--ra-color-text-tertiary, #888); font-size: 13px; }
+.rmd-toc__item--level-6 {
+  color: var(--ra-color-text-tertiary, #888);
+  font-size: 13px;
+}
 
 .rmd-toc__empty {
   color: var(--ra-color-text-quaternary, #8c959f);

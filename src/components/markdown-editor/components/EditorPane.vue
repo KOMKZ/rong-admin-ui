@@ -66,8 +66,8 @@ function handleKeydown(e: KeyboardEvent) {
   border: none;
   outline: none;
   padding: 16px;
-  font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono',
-    monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   font-size: 14px;
   line-height: 1.6;
   color: var(--ra-color-text-primary, #24292f);

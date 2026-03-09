@@ -15,8 +15,15 @@
             :aria-label="mergedLocale.addRow"
             @click="handleAddRow"
           >
-            <svg class="rdg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+            <svg
+              class="rdg-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
             {{ mergedLocale.addRow }}
           </button>
@@ -26,8 +33,15 @@
               :aria-label="mergedLocale.addColumn"
               @click="columnMenuOpen = !columnMenuOpen"
             >
-              <svg class="rdg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+              <svg
+                class="rdg-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
               </svg>
               列操作
               <svg class="rdg-icon rdg-icon--caret" viewBox="0 0 16 16" fill="currentColor">
@@ -35,7 +49,11 @@
               </svg>
             </button>
             <Teleport to="body">
-              <div v-if="columnMenuOpen" class="rdg-dropdown-backdrop" @click="columnMenuOpen = false" />
+              <div
+                v-if="columnMenuOpen"
+                class="rdg-dropdown-backdrop"
+                @click="columnMenuOpen = false"
+              />
               <div
                 v-if="columnMenuOpen"
                 ref="columnMenuRef"
@@ -59,7 +77,10 @@
                   <span class="rdg-dropdown-item__icon">✏</span> 编辑列配置
                 </button>
                 <div class="rdg-dropdown-divider" />
-                <button class="rdg-dropdown-item rdg-dropdown-item--danger" @click="handleColumnMenuSelect('delete')">
+                <button
+                  class="rdg-dropdown-item rdg-dropdown-item--danger"
+                  @click="handleColumnMenuSelect('delete')"
+                >
                   <span class="rdg-dropdown-item__icon">🗑</span> 删除指定列
                 </button>
               </div>
@@ -71,8 +92,15 @@
             :aria-label="mergedLocale.deleteRow"
             @click="handleDeleteSelectedRows"
           >
-            <svg class="rdg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+            <svg
+              class="rdg-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
             </svg>
             {{ mergedLocale.deleteRow }}
           </button>
@@ -81,8 +109,15 @@
       </div>
       <div class="rdg-toolbar__right">
         <div class="rdg-search-wrap">
-          <svg class="rdg-search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+          <svg
+            class="rdg-search-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
           <input
             v-model="searchText"
@@ -99,11 +134,19 @@
           :aria-label="mergedLocale.filter"
           @click="filterVisible = true"
         >
-          <svg class="rdg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg
+            class="rdg-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
             <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
           </svg>
           {{ mergedLocale.filter }}
-          <span v-if="filterConditions.length > 0" class="rdg-badge">{{ filterConditions.length }}</span>
+          <span v-if="filterConditions.length > 0" class="rdg-badge">{{
+            filterConditions.length
+          }}</span>
         </button>
         <button
           v-if="allowExport"
@@ -111,8 +154,16 @@
           :aria-label="mergedLocale.export"
           @click="handleExport"
         >
-          <svg class="rdg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" y1="15" x2="12" y2="3" />
+          <svg
+            class="rdg-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
           </svg>
           {{ mergedLocale.export }}
         </button>
@@ -154,7 +205,11 @@
     <!-- Column Select Dialog -->
     <Teleport to="body">
       <Transition name="rdg-fade">
-        <div v-if="columnSelectVisible" class="rdg-modal-overlay" @click.self="columnSelectVisible = false">
+        <div
+          v-if="columnSelectVisible"
+          class="rdg-modal-overlay"
+          @click.self="columnSelectVisible = false"
+        >
           <div class="rdg-modal" style="max-width: 360px">
             <div class="rdg-modal__header">
               <span class="rdg-modal__title">{{ columnSelectTitle }}</span>
@@ -162,14 +217,17 @@
             </div>
             <div class="rdg-modal__body">
               <button
-                v-for="col in localColumns.filter(c => c.field !== 'id')"
+                v-for="col in localColumns.filter((c) => c.field !== 'id')"
                 :key="col.field"
                 class="rdg-column-select-item"
                 @click="handleColumnSelect(col.field)"
               >
                 {{ col.headerName || col.field }}
               </button>
-              <div v-if="localColumns.filter(c => c.field !== 'id').length === 0" class="rdg-empty-text">
+              <div
+                v-if="localColumns.filter((c) => c.field !== 'id').length === 0"
+                class="rdg-empty-text"
+              >
                 暂无可操作的列
               </div>
             </div>
@@ -258,10 +316,13 @@ const emit = defineEmits<RDataGridEmits>()
 
 const { toAgColDef, getDefaultValue } = useColumnTypes()
 
-const mergedLocale = computed<Required<DataGridLocale>>(() => ({
-  ...DEFAULT_LOCALE,
-  ...props.locale,
-} as Required<DataGridLocale>))
+const mergedLocale = computed<Required<DataGridLocale>>(
+  () =>
+    ({
+      ...DEFAULT_LOCALE,
+      ...props.locale,
+    }) as Required<DataGridLocale>,
+)
 
 const gridApi = ref<GridApi | null>(null)
 const searchText = ref('')
@@ -383,10 +444,7 @@ function onRowDragEnd() {
 
 function handleAddRow() {
   if (!props.allowAddRow) return
-  const maxId = localRows.value.reduce(
-    (max, row) => Math.max(max, Number(row.id) || 0),
-    0,
-  )
+  const maxId = localRows.value.reduce((max, row) => Math.max(max, Number(row.id) || 0), 0)
   const newRow: Record<string, unknown> = { id: maxId + 1 }
   for (const col of localColumns.value) {
     if (col.field !== 'id') {
@@ -515,12 +573,24 @@ function handleColumnSelect(field: string) {
 function handleColumnMenuSelect(key: string) {
   columnMenuOpen.value = false
   switch (key) {
-    case 'add': handleAddColumn(); break
-    case 'batch-add': handleBatchAddColumns(); break
-    case 'insert-before': selectColumnAndInsert('before'); break
-    case 'insert-after': selectColumnAndInsert('after'); break
-    case 'edit': selectColumnAndEdit(); break
-    case 'delete': selectColumnAndDelete(); break
+    case 'add':
+      handleAddColumn()
+      break
+    case 'batch-add':
+      handleBatchAddColumns()
+      break
+    case 'insert-before':
+      selectColumnAndInsert('before')
+      break
+    case 'insert-after':
+      selectColumnAndInsert('after')
+      break
+    case 'edit':
+      selectColumnAndEdit()
+      break
+    case 'delete':
+      selectColumnAndDelete()
+      break
   }
 }
 
@@ -560,11 +630,15 @@ function handleColumnEditSave(form: ColumnEditForm) {
     ...localColumns.value[idx],
     headerName: form.headerName,
     type: form.type as DataGridColumnType,
-    options: (form.type === 'select' || form.type === 'multiselect')
-      ? form.options.split(',').map((s) => s.trim()).filter(Boolean)
-      : undefined,
+    options:
+      form.type === 'select' || form.type === 'multiselect'
+        ? form.options
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean)
+        : undefined,
   }
-  localColumns.value = localColumns.value.map((c, i) => i === idx ? updated : c)
+  localColumns.value = localColumns.value.map((c, i) => (i === idx ? updated : c))
   gridApi.value?.setGridOption('columnDefs', agColumnDefs.value)
   emit('update:columns', localColumns.value)
 }
@@ -610,19 +684,32 @@ function applyFilters(conditions: FilterCondition[]) {
       const strVal = val != null ? String(val).toLowerCase() : ''
       const filterVal = c.value != null ? String(c.value).toLowerCase() : ''
       switch (c.operator) {
-        case 'equals': return strVal === filterVal
-        case 'notEqual': return strVal !== filterVal
-        case 'contains': return strVal.includes(filterVal)
-        case 'notContains': return !strVal.includes(filterVal)
-        case 'startsWith': return strVal.startsWith(filterVal)
-        case 'endsWith': return strVal.endsWith(filterVal)
-        case 'greaterThan': return Number(val) > Number(c.value)
-        case 'lessThan': return Number(val) < Number(c.value)
-        case 'greaterThanOrEqual': return Number(val) >= Number(c.value)
-        case 'lessThanOrEqual': return Number(val) <= Number(c.value)
-        case 'blank': return val == null || val === ''
-        case 'notBlank': return val != null && val !== ''
-        default: return true
+        case 'equals':
+          return strVal === filterVal
+        case 'notEqual':
+          return strVal !== filterVal
+        case 'contains':
+          return strVal.includes(filterVal)
+        case 'notContains':
+          return !strVal.includes(filterVal)
+        case 'startsWith':
+          return strVal.startsWith(filterVal)
+        case 'endsWith':
+          return strVal.endsWith(filterVal)
+        case 'greaterThan':
+          return Number(val) > Number(c.value)
+        case 'lessThan':
+          return Number(val) < Number(c.value)
+        case 'greaterThanOrEqual':
+          return Number(val) >= Number(c.value)
+        case 'lessThanOrEqual':
+          return Number(val) <= Number(c.value)
+        case 'blank':
+          return val == null || val === ''
+        case 'notBlank':
+          return val != null && val !== ''
+        default:
+          return true
       }
     })
   })
@@ -930,7 +1017,9 @@ defineExpose({
   padding: 0 4px;
 }
 
-.rdg-modal__close:hover { color: var(--ra-color-text, #374151); }
+.rdg-modal__close:hover {
+  color: var(--ra-color-text, #374151);
+}
 
 .rdg-modal__body {
   padding: 16px 20px;
@@ -974,10 +1063,19 @@ defineExpose({
   text-align: center;
 }
 
-.rdg-form-item { display: flex; flex-direction: column; gap: 4px; }
-.rdg-form-label { font-size: 13px; font-weight: 500; color: var(--ra-color-text-muted, #6b7280); }
+.rdg-form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.rdg-form-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ra-color-text-muted, #6b7280);
+}
 
-.rdg-select, .rdg-textarea {
+.rdg-select,
+.rdg-textarea {
   padding: 6px 10px;
   border: 1px solid var(--ra-color-border, #d1d5db);
   border-radius: var(--ra-radius-md, 6px);
@@ -988,13 +1086,24 @@ defineExpose({
   transition: border-color 0.15s;
 }
 
-.rdg-select:focus, .rdg-textarea:focus {
+.rdg-select:focus,
+.rdg-textarea:focus {
   border-color: var(--ra-color-primary, #6366f1);
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
 }
 
-.rdg-textarea { resize: vertical; min-height: 60px; font-family: monospace; }
+.rdg-textarea {
+  resize: vertical;
+  min-height: 60px;
+  font-family: monospace;
+}
 
-.rdg-fade-enter-active, .rdg-fade-leave-active { transition: opacity 0.15s; }
-.rdg-fade-enter-from, .rdg-fade-leave-to { opacity: 0; }
+.rdg-fade-enter-active,
+.rdg-fade-leave-active {
+  transition: opacity 0.15s;
+}
+.rdg-fade-enter-from,
+.rdg-fade-leave-to {
+  opacity: 0;
+}
 </style>

@@ -127,15 +127,17 @@ const editor = useEditor({
 function markdownToBasicHtml(md: string): string | null {
   const lines = md.split('\n')
   let hasMarkdown = false
-  const html = lines.map((line) => {
-    const headingMatch = line.match(/^(#{1,6})\s+(.+)/)
-    if (headingMatch) {
-      hasMarkdown = true
-      const level = headingMatch[1].length
-      return `<h${level}>${headingMatch[2]}</h${level}>`
-    }
-    return `<p>${line}</p>`
-  }).join('')
+  const html = lines
+    .map((line) => {
+      const headingMatch = line.match(/^(#{1,6})\s+(.+)/)
+      if (headingMatch) {
+        hasMarkdown = true
+        const level = headingMatch[1].length
+        return `<h${level}>${headingMatch[2]}</h${level}>`
+      }
+      return `<p>${line}</p>`
+    })
+    .join('')
   return hasMarkdown ? html : null
 }
 
@@ -154,7 +156,9 @@ function triggerFileUpload() {
     if (!file || !props.fileUploadAdapter || !editor.value) return
     try {
       const result = await props.fileUploadAdapter.upload(file)
-      editor.value.chain().focus()
+      editor.value
+        .chain()
+        .focus()
         .extendMarkRange('link')
         .setLink({ href: result.url })
         .insertContent(result.name || file.name)
@@ -178,7 +182,9 @@ const normalizedMaxHeight = computed(() => {
 
 watch(
   () => isReadonly.value,
-  (val) => { editor.value?.setEditable(!val) },
+  (val) => {
+    editor.value?.setEditable(!val)
+  },
 )
 
 watch(
@@ -190,7 +196,10 @@ watch(
   },
 )
 
-watch(() => props.theme, (v) => setTheme(v))
+watch(
+  () => props.theme,
+  (v) => setTheme(v),
+)
 
 function handleScroll() {
   const container = editorScrollRef.value
@@ -301,10 +310,19 @@ defineExpose({
   border: 1px solid var(--ra-color-border-default, #d0d7de);
 }
 
-.rrte-theme-classic { background: #fff; }
-.rrte-theme-minimal { background: linear-gradient(135deg, #f7f8fa, #eceff4); }
-.rrte-theme-midnight { background: radial-gradient(circle at top, #1f2a44, #0f172a); color: #e2e8f0; }
-.rrte-theme-aurora { background: linear-gradient(120deg, #4facfe 0%, #00f2fe 100%); }
+.rrte-theme-classic {
+  background: #fff;
+}
+.rrte-theme-minimal {
+  background: linear-gradient(135deg, #f7f8fa, #eceff4);
+}
+.rrte-theme-midnight {
+  background: radial-gradient(circle at top, #1f2a44, #0f172a);
+  color: #e2e8f0;
+}
+.rrte-theme-aurora {
+  background: linear-gradient(120deg, #4facfe 0%, #00f2fe 100%);
+}
 
 .rrte-theme-switcher {
   position: absolute;
@@ -358,32 +376,89 @@ defineExpose({
   min-height: 100%;
 }
 
-.rrte-editor-classic { background: transparent; }
-.rrte-editor-minimal { background: rgba(255, 255, 255, 0.85); }
-.rrte-editor-midnight { background: rgba(15, 23, 42, 0.85); color: #f8fafc; }
-.rrte-editor-midnight .ProseMirror { color: #f8fafc; }
-.rrte-editor-aurora { background: rgba(255, 255, 255, 0.9); }
+.rrte-editor-classic {
+  background: transparent;
+}
+.rrte-editor-minimal {
+  background: rgba(255, 255, 255, 0.85);
+}
+.rrte-editor-midnight {
+  background: rgba(15, 23, 42, 0.85);
+  color: #f8fafc;
+}
+.rrte-editor-midnight .ProseMirror {
+  color: #f8fafc;
+}
+.rrte-editor-aurora {
+  background: rgba(255, 255, 255, 0.9);
+}
 
 .r-rich-text-editor .ProseMirror {
   outline: none;
   min-height: 300px;
   padding: 16px 24px;
-  font-family: 'Helvetica Neue', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft Yahei', sans-serif;
+  font-family:
+    'Helvetica Neue',
+    'Segoe UI',
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'PingFang SC',
+    'Microsoft Yahei',
+    sans-serif;
   font-size: 16px;
   line-height: 1.72;
   color: var(--ra-color-text-primary, #091e42);
 }
 
-.r-rich-text-editor .ProseMirror p { margin: 12px 0; }
-.r-rich-text-editor .ProseMirror strong { font-weight: 600; }
-.r-rich-text-editor .ProseMirror h1 { font-size: 28px; font-weight: 600; margin: 40px 0 12px; line-height: 1.3; }
-.r-rich-text-editor .ProseMirror h2 { font-size: 24px; font-weight: 600; margin: 32px 0 12px; line-height: 1.35; }
-.r-rich-text-editor .ProseMirror h3 { font-size: 20px; font-weight: 600; margin: 24px 0 10px; line-height: 1.4; }
-.r-rich-text-editor .ProseMirror h4 { font-size: 18px; font-weight: 600; margin: 20px 0 10px; }
-.r-rich-text-editor .ProseMirror h5 { font-size: 16px; font-weight: 600; margin: 18px 0 8px; }
-.r-rich-text-editor .ProseMirror h6 { font-size: 14px; font-weight: 600; margin: 16px 0 8px; color: var(--ra-color-text-tertiary, #5e6c84); }
-.r-rich-text-editor .ProseMirror img { max-width: 100%; height: auto; border-radius: 4px; }
-.r-rich-text-editor .ProseMirror img.ProseMirror-selectednode { outline: 3px solid var(--ra-color-brand-primary, #68cef8); }
+.r-rich-text-editor .ProseMirror p {
+  margin: 12px 0;
+}
+.r-rich-text-editor .ProseMirror strong {
+  font-weight: 600;
+}
+.r-rich-text-editor .ProseMirror h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 40px 0 12px;
+  line-height: 1.3;
+}
+.r-rich-text-editor .ProseMirror h2 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 32px 0 12px;
+  line-height: 1.35;
+}
+.r-rich-text-editor .ProseMirror h3 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 24px 0 10px;
+  line-height: 1.4;
+}
+.r-rich-text-editor .ProseMirror h4 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 20px 0 10px;
+}
+.r-rich-text-editor .ProseMirror h5 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 18px 0 8px;
+}
+.r-rich-text-editor .ProseMirror h6 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 16px 0 8px;
+  color: var(--ra-color-text-tertiary, #5e6c84);
+}
+.r-rich-text-editor .ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+.r-rich-text-editor .ProseMirror img.ProseMirror-selectednode {
+  outline: 3px solid var(--ra-color-brand-primary, #68cef8);
+}
 
 .r-rich-text-editor .ProseMirror code:not(pre code) {
   background-color: rgba(9, 30, 66, 0.08);
@@ -409,22 +484,84 @@ defineExpose({
   font-size: 0.8rem;
 }
 
-.r-rich-text-editor .ProseMirror mark { background-color: #ffe066; padding: 0.1em 0.3em; border-radius: 0.2em; }
+.r-rich-text-editor .ProseMirror mark {
+  background-color: #ffe066;
+  padding: 0.1em 0.3em;
+  border-radius: 0.2em;
+}
 
-.r-rich-text-editor .ProseMirror table { border-collapse: collapse; table-layout: fixed; width: 100%; margin: 16px 0; overflow: hidden; }
+.r-rich-text-editor .ProseMirror table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin: 16px 0;
+  overflow: hidden;
+}
 .r-rich-text-editor .ProseMirror table td,
-.r-rich-text-editor .ProseMirror table th { min-width: 1em; border: 1px solid var(--ra-color-border-default, #ced4da); padding: 6px 8px; vertical-align: top; box-sizing: border-box; position: relative; }
-.r-rich-text-editor .ProseMirror table th { font-weight: bold; text-align: left; background-color: var(--ra-color-bg-muted, #f8f9fa); }
-.r-rich-text-editor .ProseMirror table .selectedCell::after { z-index: 2; position: absolute; content: ''; inset: 0; background: rgba(200, 200, 255, 0.4); pointer-events: none; }
-.r-rich-text-editor .ProseMirror table .column-resize-handle { position: absolute; right: -2px; top: 0; bottom: -2px; width: 4px; background-color: #adf; pointer-events: none; }
+.r-rich-text-editor .ProseMirror table th {
+  min-width: 1em;
+  border: 1px solid var(--ra-color-border-default, #ced4da);
+  padding: 6px 8px;
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
+}
+.r-rich-text-editor .ProseMirror table th {
+  font-weight: bold;
+  text-align: left;
+  background-color: var(--ra-color-bg-muted, #f8f9fa);
+}
+.r-rich-text-editor .ProseMirror table .selectedCell::after {
+  z-index: 2;
+  position: absolute;
+  content: '';
+  inset: 0;
+  background: rgba(200, 200, 255, 0.4);
+  pointer-events: none;
+}
+.r-rich-text-editor .ProseMirror table .column-resize-handle {
+  position: absolute;
+  right: -2px;
+  top: 0;
+  bottom: -2px;
+  width: 4px;
+  background-color: #adf;
+  pointer-events: none;
+}
 
-.r-rich-text-editor .ProseMirror ul { list-style-type: disc; padding-left: 1.5rem; margin: 0.5rem 0; }
-.r-rich-text-editor .ProseMirror ol { list-style-type: decimal; padding-left: 1.5rem; margin: 0.5rem 0; }
-.r-rich-text-editor .ProseMirror ul[data-type='taskList'] { list-style: none; padding: 0; }
-.r-rich-text-editor .ProseMirror ul[data-type='taskList'] li { display: flex; align-items: flex-start; }
-.r-rich-text-editor .ProseMirror ul[data-type='taskList'] li > label { flex: 0 0 auto; margin-right: 0.5rem; user-select: none; }
-.r-rich-text-editor .ProseMirror ul[data-type='taskList'] li > div { flex: 1 1 auto; }
-.r-rich-text-editor .ProseMirror p.is-editor-empty:first-child::before { content: attr(data-placeholder); float: left; color: var(--ra-color-text-quaternary, #adb5bd); pointer-events: none; height: 0; }
+.r-rich-text-editor .ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+.r-rich-text-editor .ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin: 0.5rem 0;
+}
+.r-rich-text-editor .ProseMirror ul[data-type='taskList'] {
+  list-style: none;
+  padding: 0;
+}
+.r-rich-text-editor .ProseMirror ul[data-type='taskList'] li {
+  display: flex;
+  align-items: flex-start;
+}
+.r-rich-text-editor .ProseMirror ul[data-type='taskList'] li > label {
+  flex: 0 0 auto;
+  margin-right: 0.5rem;
+  user-select: none;
+}
+.r-rich-text-editor .ProseMirror ul[data-type='taskList'] li > div {
+  flex: 1 1 auto;
+}
+.r-rich-text-editor .ProseMirror p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  color: var(--ra-color-text-quaternary, #adb5bd);
+  pointer-events: none;
+  height: 0;
+}
 
 .rrte-scroll-top {
   position: absolute;
@@ -446,7 +583,15 @@ defineExpose({
   transition: all 0.2s ease;
 }
 
-.rrte-scroll-top:hover { transform: translateY(-2px); }
-.rrte-fade-enter-active, .rrte-fade-leave-active { transition: opacity 0.2s; }
-.rrte-fade-enter-from, .rrte-fade-leave-to { opacity: 0; }
+.rrte-scroll-top:hover {
+  transform: translateY(-2px);
+}
+.rrte-fade-enter-active,
+.rrte-fade-leave-active {
+  transition: opacity 0.2s;
+}
+.rrte-fade-enter-from,
+.rrte-fade-leave-to {
+  opacity: 0;
+}
 </style>

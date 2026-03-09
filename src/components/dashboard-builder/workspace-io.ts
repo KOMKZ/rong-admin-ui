@@ -29,7 +29,9 @@ export function parseDashboardImportPayload(text: string): DashboardExportPayloa
   const normalizedLayout = data.layout.filter((item) => {
     if (!item || typeof item !== 'object') return false
     const typed = item as DashboardLayoutItem
-    return Boolean(typed.id && typed.type && typeof typed.w === 'number' && typeof typed.h === 'number')
+    return Boolean(
+      typed.id && typed.type && typeof typed.w === 'number' && typeof typed.h === 'number',
+    )
   })
 
   return {

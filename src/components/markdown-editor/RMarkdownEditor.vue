@@ -84,7 +84,11 @@ function handleContentUpdate(value: string) {
 const SPLIT_RATIO_KEY = 'rme-split-ratio'
 
 function persistRatio() {
-  try { localStorage.setItem(SPLIT_RATIO_KEY, String(splitRatio.value)) } catch { /* ignore */ }
+  try {
+    localStorage.setItem(SPLIT_RATIO_KEY, String(splitRatio.value))
+  } catch {
+    /* ignore */
+  }
 }
 
 function loadPersistedRatio() {
@@ -94,7 +98,9 @@ function loadPersistedRatio() {
       const v = parseFloat(saved)
       if (!isNaN(v) && v >= 0.2 && v <= 0.8) splitRatio.value = v
     }
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 }
 
 function onSplitDragStart(e: MouseEvent | TouchEvent) {

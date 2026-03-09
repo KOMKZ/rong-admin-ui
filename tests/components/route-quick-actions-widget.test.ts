@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createRouter, createMemoryHistory } from 'vue-router'
 import { RRouteQuickActionsWidget, RRouteQuickActionsEditor } from '../../src/components/dashboard-builder'
@@ -49,5 +49,35 @@ describe('route quick actions widget', () => {
 
     await wrapper.find('[data-testid="route-widget-action-add"]').trigger('click')
     expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+  })
+
+  it('opens in new tab when action openMode is new_tab', async () => {
+    const router = createRouter({
+      history: createMemoryHistory(),
+      routes: [
+        { path: '/', component: { template: '<div />' } },
+        { path: '/admin/list', component: { template: '<div />' } },
+      ],
+    })
+
+    const windowOpen = vi.spyOn(window, 'open').mockImplementation(() => null)
+
+    const wrapper = mount(RRouteQuickActionsWidget, {
+      props: {
+        config: {
+          actions: [{ id: 'a1', label: '管理员列表', route: '/admin/list', openMode: 'new_tab' }],
+        },
+      },
+      global: {
+        plugins: [router],
+      },
+    })
+
+    await router.isReady()
+    await wrapper.find('[data-testid="route-quick-actions-button"]').trigger('click')
+
+    expect(windowOpen).toHaveBeenCalledTimes(1)
+    expect(windowOpen).toHaveBeenCalledWith('/admin/list', '_blank', 'noopener')
+    windowOpen.mockRestore()
   })
 })

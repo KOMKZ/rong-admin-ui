@@ -67,8 +67,18 @@ const localCheckedKeys = ref<(string | number)[]>([...props.checkedKeys])
 const batchMode = ref(false)
 const treeContainerRef = ref<HTMLElement | null>(null)
 
-watch(() => props.selectedKey, (v) => { localSelectedKey.value = v })
-watch(() => props.checkedKeys, (v) => { localCheckedKeys.value = [...v] })
+watch(
+  () => props.selectedKey,
+  (v) => {
+    localSelectedKey.value = v
+  },
+)
+watch(
+  () => props.checkedKeys,
+  (v) => {
+    localCheckedKeys.value = [...v]
+  },
+)
 
 const treeOps = useTreeData({
   requestMode: toRef(props, 'requestMode'),
@@ -186,9 +196,8 @@ function startCreateChild(parentId: string | number): void {
 
 function startCreateSibling(node: TreeNodeData): void {
   pendingCreateParentId.value = node.parentId
-  const siblings = node.parentId === null
-    ? treeOps.treeData.value
-    : treeOps.findNode(node.parentId)?.children
+  const siblings =
+    node.parentId === null ? treeOps.treeData.value : treeOps.findNode(node.parentId)?.children
   if (!siblings) return
   const tempId = `__new_${Date.now()}`
   siblings.push({
@@ -245,7 +254,10 @@ function handleEditCancel(nodeId: string | number): void {
 function removeTempNode(id: string | number): void {
   const walk = (nodes: TreeNodeData[]): boolean => {
     const idx = nodes.findIndex((n) => n.id === id)
-    if (idx >= 0) { nodes.splice(idx, 1); return true }
+    if (idx >= 0) {
+      nodes.splice(idx, 1)
+      return true
+    }
     for (const n of nodes) {
       if (n.children && walk(n.children)) return true
     }
@@ -418,12 +430,7 @@ watch(
     >
       <RIcon name="alert-triangle" :size="32" class="rpte__error-icon" />
       <span class="rpte__error-message">{{ treeOps.errorState.value.message }}</span>
-      <NButton
-        size="small"
-        type="primary"
-        data-testid="tree-retry-btn"
-        @click="treeOps.loadTree"
-      >
+      <NButton size="small" type="primary" data-testid="tree-retry-btn" @click="treeOps.loadTree">
         <template #icon><RIcon name="refresh-cw" :size="14" /></template>
         {{ t.retry }}
       </NButton>
@@ -438,11 +445,7 @@ watch(
       <slot name="empty">
         <NEmpty :description="t.noData">
           <template #extra>
-            <NButton
-              size="small"
-              type="primary"
-              @click="startCreateRoot"
-            >
+            <NButton size="small" type="primary" @click="startCreateRoot">
               <template #icon><RIcon name="plus" :size="14" /></template>
               {{ t.newFolder }}
             </NButton>
@@ -506,7 +509,14 @@ watch(
 <!-- eslint-disable vue/one-component-per-file -->
 <script lang="ts">
 import { defineComponent, h, type PropType as PT } from 'vue'
-import type { TreeNodeData as TND, TreeDensity as TD, TreeNodeIcons as TNI, TreeI18n as TI, TreeError as TE, DropPosition as DP } from './types'
+import type {
+  TreeNodeData as TND,
+  TreeDensity as TD,
+  TreeNodeIcons as TNI,
+  TreeI18n as TI,
+  TreeError as TE,
+  DropPosition as DP,
+} from './types'
 
 /**
  * Recursive tree node wrapper — renders a node and its children.
@@ -535,12 +545,32 @@ const RTreeNodeRecursive = defineComponent({
     dndOps: { type: Object, required: true },
   },
   emits: [
-    'select', 'toggle', 'startEdit', 'submitEdit', 'cancelEdit',
-    'delete', 'check', 'contextmenu', 'dragstart', 'dragover', 'dragend', 'clearError',
+    'select',
+    'toggle',
+    'startEdit',
+    'submitEdit',
+    'cancelEdit',
+    'delete',
+    'check',
+    'contextmenu',
+    'dragstart',
+    'dragover',
+    'dragend',
+    'clearError',
   ],
   setup(props, { emit }) {
     return () => {
-      const { node, depth, expandedKeys, editingNodeId, loadingNodeIds, operationErrors, dragNodeId, searchOps, dndOps } = props
+      const {
+        node,
+        depth,
+        expandedKeys,
+        editingNodeId,
+        loadingNodeIds,
+        operationErrors,
+        dragNodeId,
+        searchOps,
+        dndOps,
+      } = props
       const expanded = expandedKeys.has(node.id)
       const isEditing = editingNodeId === node.id
       const isLoading = loadingNodeIds.has(node.id)
@@ -663,9 +693,15 @@ export default { RTreeNodeRecursive }
 }
 
 /* Density */
-.rpte--compact { font-size: var(--ra-font-size-xs); }
-.rpte--default { font-size: var(--ra-font-size-sm); }
-.rpte--comfortable { font-size: var(--ra-font-size-base); }
+.rpte--compact {
+  font-size: var(--ra-font-size-xs);
+}
+.rpte--default {
+  font-size: var(--ra-font-size-sm);
+}
+.rpte--comfortable {
+  font-size: var(--ra-font-size-base);
+}
 
 .rpte__tree {
   display: flex;
@@ -685,7 +721,9 @@ export default { RTreeNodeRecursive }
   color: var(--ra-color-text-tertiary);
 }
 @keyframes rpte-main-spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 .rpte__loading-text {
   color: var(--ra-color-text-tertiary);

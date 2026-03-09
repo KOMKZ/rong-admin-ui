@@ -51,10 +51,33 @@
           @click.stop="handleClear"
           @keydown.enter.stop="handleClear"
         >
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
         </span>
         <span class="r-tree-select__arrow" :class="{ 'r-tree-select__arrow--open': isOpen }">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
         </span>
       </span>
     </div>
@@ -85,7 +108,20 @@
               @keydown.esc="close"
               @keydown.down.prevent="focusFirstNode"
             />
-            <svg class="r-tree-select__search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <svg
+              class="r-tree-select__search-icon"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
           </div>
 
           <!-- Tree content -->
@@ -93,11 +129,19 @@
             <div v-if="isLoading" class="r-tree-select__status" data-testid="r-tree-select-loading">
               {{ mergedI18n.loading }}
             </div>
-            <div v-else-if="loadError" class="r-tree-select__status r-tree-select__status--error" data-testid="r-tree-select-error">
+            <div
+              v-else-if="loadError"
+              class="r-tree-select__status r-tree-select__status--error"
+              data-testid="r-tree-select-error"
+            >
               {{ loadError }}
               <button class="r-tree-select__retry" @click="loadRemoteData">↻</button>
             </div>
-            <div v-else-if="filteredNodes.length === 0" class="r-tree-select__status" data-testid="r-tree-select-empty">
+            <div
+              v-else-if="filteredNodes.length === 0"
+              class="r-tree-select__status"
+              data-testid="r-tree-select-empty"
+            >
               <slot name="empty">{{ mergedI18n.noData }}</slot>
             </div>
             <template v-else>
@@ -128,15 +172,7 @@
 </template>
 
 <script setup lang="ts">
-import {
-  ref,
-  computed,
-  watch,
-  onMounted,
-  onBeforeUnmount,
-  nextTick,
-  type CSSProperties,
-} from 'vue'
+import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, type CSSProperties } from 'vue'
 import TreeNode from './TreeNode.vue'
 import {
   DEFAULT_TREE_SELECT_I18N,
@@ -172,10 +208,13 @@ const keyword = ref('')
 const expandedKeys = ref<Set<string | number>>(new Set())
 const treeData = ref<TreeSelectNode[]>([])
 
-const mergedI18n = computed<Required<TreeSelectI18n>>(() => ({
-  ...DEFAULT_TREE_SELECT_I18N,
-  ...props.i18n,
-}) as Required<TreeSelectI18n>)
+const mergedI18n = computed<Required<TreeSelectI18n>>(
+  () =>
+    ({
+      ...DEFAULT_TREE_SELECT_I18N,
+      ...props.i18n,
+    }) as Required<TreeSelectI18n>,
+)
 
 const mergedSize = computed(() => props.size)
 

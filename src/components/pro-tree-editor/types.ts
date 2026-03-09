@@ -65,10 +65,7 @@ export interface TreeRequestHooks {
   create?: (params: { parentId: string | number | null; name: string }) => Promise<TreeNodeData>
   update?: (params: { id: string | number; name: string }) => Promise<TreeNodeData>
   delete?: (id: string | number) => Promise<void>
-  move?: (params: {
-    id: string | number
-    newParentId: string | number | null
-  }) => Promise<void>
+  move?: (params: { id: string | number; newParentId: string | number | null }) => Promise<void>
   reorder?: (params: { id: string | number; newOrder: number }) => Promise<void>
 }
 

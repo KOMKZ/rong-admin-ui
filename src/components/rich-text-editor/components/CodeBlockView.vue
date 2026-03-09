@@ -14,7 +14,11 @@ const selectedLanguage = ref<string | null>(language.value)
 let _hljs: any = null
 async function loadHljs() {
   if (!_hljs) {
-    try { _hljs = (await import('highlight.js')).default } catch { /* optional */ }
+    try {
+      _hljs = (await import('highlight.js')).default
+    } catch {
+      /* optional */
+    }
   }
   return _hljs
 }
@@ -22,9 +26,15 @@ async function loadHljs() {
 const renderedHtml = ref('')
 async function renderHighlight() {
   const text = code.value
-  if (!text) { renderedHtml.value = ''; return }
+  if (!text) {
+    renderedHtml.value = ''
+    return
+  }
   const hljs = await loadHljs()
-  if (!hljs) { renderedHtml.value = escapeHtml(text); return }
+  if (!hljs) {
+    renderedHtml.value = escapeHtml(text)
+    return
+  }
   try {
     renderedHtml.value = language.value
       ? hljs.highlight(text, { language: language.value, ignoreIllegals: true }).value
@@ -68,7 +78,11 @@ function handleLanguageChange(e: Event) {
 }
 
 async function copyCode() {
-  try { await navigator.clipboard.writeText(code.value) } catch { /* ignore */ }
+  try {
+    await navigator.clipboard.writeText(code.value)
+  } catch {
+    /* ignore */
+  }
 }
 
 function toggleCollapse() {
@@ -81,8 +95,20 @@ function escapeHtml(text: string) {
   return d.innerHTML
 }
 
-watch(() => props.node.attrs.language, (v) => { selectedLanguage.value = v || null }, { immediate: true })
-watch(isEditable, (v) => { if (v) collapsed.value = false }, { immediate: true })
+watch(
+  () => props.node.attrs.language,
+  (v) => {
+    selectedLanguage.value = v || null
+  },
+  { immediate: true },
+)
+watch(
+  isEditable,
+  (v) => {
+    if (v) collapsed.value = false
+  },
+  { immediate: true },
+)
 </script>
 
 <template>
@@ -120,7 +146,10 @@ watch(isEditable, (v) => { if (v) collapsed.value = false }, { immediate: true }
       </div>
     </div>
 
-    <div class="rte-code-block__content" :class="{ 'rte-code-block__content--collapsed': collapsed && !isEditable }">
+    <div
+      class="rte-code-block__content"
+      :class="{ 'rte-code-block__content--collapsed': collapsed && !isEditable }"
+    >
       <div v-if="isEditable" class="rte-code-block__editor">
         <NodeViewContent class="rte-code-block__editor-content" spellcheck="false" />
       </div>

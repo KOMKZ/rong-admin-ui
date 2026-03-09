@@ -65,6 +65,16 @@ export interface FolderListResponse {
   items: FolderDTO[]
 }
 
+function normalizeTreeItems(payload: FolderTreeResponse | FolderNodeDTO[]): FolderNodeDTO[] {
+  if (Array.isArray(payload)) return payload
+  return Array.isArray(payload.items) ? payload.items : []
+}
+
+function normalizeListItems(payload: FolderListResponse | FolderDTO[]): FolderDTO[] {
+  if (Array.isArray(payload)) return payload
+  return Array.isArray(payload.items) ? payload.items : []
+}
+
 export interface ApiErrorResponse {
   error: string
   message: string
@@ -133,7 +143,10 @@ function mapApiError(err: unknown): TreeError {
     }
   }
 
-  if (code === 'UNKNOWN' && (msg.includes('network') || msg.includes('fetch') || msg.includes('timeout'))) {
+  if (
+    code === 'UNKNOWN' &&
+    (msg.includes('network') || msg.includes('fetch') || msg.includes('timeout'))
+  ) {
     code = 'NETWORK_ERROR'
   }
 
@@ -176,9 +189,7 @@ export interface ArticleFolderAdapterOptions {
   baseUrl: string
 }
 
-export function createArticleFolderAdapter(
-  options: ArticleFolderAdapterOptions,
-): {
+export function createArticleFolderAdapter(options: ArticleFolderAdapterOptions): {
   requestHooks: TreeRequestHooks
   checkDelete: CheckDeleteFn
 } {
@@ -188,8 +199,8 @@ export function createArticleFolderAdapter(
   const requestHooks: TreeRequestHooks = {
     async loadTree(): Promise<TreeNodeData[]> {
       try {
-        const resp = await httpClient.get<FolderTreeResponse>(url('/tree'))
-        const items = resp.items ?? []
+        const resp = await httpClient.get<FolderTreeResponse | FolderNodeDTO[]>(url('/tree'))
+        const items = normalizeTreeItems(resp)
         return items.map(mapFolderNode)
       } catch (err) {
         throw mapApiError(err)
@@ -198,10 +209,10 @@ export function createArticleFolderAdapter(
 
     async loadChildren(parentId: string | number): Promise<TreeNodeData[]> {
       try {
-        const resp = await httpClient.get<FolderListResponse>(
+        const resp = await httpClient.get<FolderListResponse | FolderDTO[]>(
           url(`/${parentId}/children`),
         )
-        const items = resp.items ?? []
+        const items = normalizeListItems(resp)
         return items.map(mapFolderDTO)
       } catch (err) {
         throw mapApiError(err)
@@ -224,16 +235,10 @@ export function createArticleFolderAdapter(
       }
     },
 
-    async update(params: {
-      id: string | number
-      name: string
-    }): Promise<TreeNodeData> {
+    async update(params: { id: string | number; name: string }): Promise<TreeNodeData> {
       try {
         const body: UpdateFolderRequest = { name: params.name }
-        const data = await httpClient.put<FolderDTO>(
-          url(`/${params.id}`),
-          body,
-        )
+        const data = await httpClient.put<FolderDTO>(url(`/${params.id}`), body)
         return mapFolderDTO(data)
       } catch (err) {
         throw mapApiError(err)
@@ -262,10 +267,7 @@ export function createArticleFolderAdapter(
       }
     },
 
-    async reorder(params: {
-      id: string | number
-      newOrder: number
-    }): Promise<void> {
+    async reorder(params: { id: string | number; newOrder: number }): Promise<void> {
       try {
         const body: ReorderFolderRequest = { new_order: params.newOrder }
         await httpClient.put(url(`/${params.id}/reorder`), body)
@@ -275,9 +277,7 @@ export function createArticleFolderAdapter(
     },
   }
 
-  const checkDelete: CheckDeleteFn = async (
-    _id: string | number,
-  ): Promise<DeleteConstraint> => {
+  const checkDelete: CheckDeleteFn = async (_id: string | number): Promise<DeleteConstraint> => {
     // 后端在 DELETE handler 内直接检查约束并返回错误，
     // 无独立 can-delete 端点，前端始终允许发起删除请求。
     return { canDelete: true }

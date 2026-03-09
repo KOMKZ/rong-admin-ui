@@ -52,7 +52,9 @@ const editingMode = ref(props.defaultEditing && !props.readonly)
 const dashboardNameDraft = ref('')
 const dashboardDescriptionDraft = ref('')
 
-const activeDashboard = computed(() => dashboards.value.find((item) => item.id === currentDashboardId.value) || null)
+const activeDashboard = computed(
+  () => dashboards.value.find((item) => item.id === currentDashboardId.value) || null,
+)
 
 const builderAdapter = computed(() => ({
   loadLayout: async () => {
@@ -92,11 +94,17 @@ async function reloadDashboards(): Promise<void> {
     }
     dashboards.value = list
 
-    if (props.activeDashboardId && dashboards.value.some((item) => item.id === props.activeDashboardId)) {
+    if (
+      props.activeDashboardId &&
+      dashboards.value.some((item) => item.id === props.activeDashboardId)
+    ) {
       currentDashboardId.value = props.activeDashboardId
     }
 
-    if (!currentDashboardId.value || !dashboards.value.some((item) => item.id === currentDashboardId.value)) {
+    if (
+      !currentDashboardId.value ||
+      !dashboards.value.some((item) => item.id === currentDashboardId.value)
+    ) {
       currentDashboardId.value = dashboards.value[0].id
     }
 
@@ -314,7 +322,11 @@ async function saveDashboardMeta(): Promise<void> {
       </div>
 
       <div class="r-dashboard-workspace__actions">
-        <div v-if="!readonly" class="r-dashboard-workspace__mode-switch" data-testid="dashboard-mode-switch">
+        <div
+          v-if="!readonly"
+          class="r-dashboard-workspace__mode-switch"
+          data-testid="dashboard-mode-switch"
+        >
           <button
             class="r-dashboard-workspace__mode-btn"
             :class="{ 'r-dashboard-workspace__mode-btn--active': !editingMode }"
@@ -335,7 +347,12 @@ async function saveDashboardMeta(): Promise<void> {
 
         <template v-if="editingMode && !readonly">
           <NInput v-model:value="createName" size="small" placeholder="新仪表盘标题" />
-          <NButton size="small" type="primary" data-testid="dashboard-create" @click="createBlankDashboard">
+          <NButton
+            size="small"
+            type="primary"
+            data-testid="dashboard-create"
+            @click="createBlankDashboard"
+          >
             <template #icon><RIcon name="plus-circle" :size="14" /></template>
             新建
           </NButton>
@@ -360,7 +377,11 @@ async function saveDashboardMeta(): Promise<void> {
       </div>
     </div>
 
-    <div v-if="activeDashboard" class="r-dashboard-workspace__meta" data-testid="dashboard-meta-panel">
+    <div
+      v-if="activeDashboard"
+      class="r-dashboard-workspace__meta"
+      data-testid="dashboard-meta-panel"
+    >
       <NInput
         v-model:value="dashboardNameDraft"
         size="small"
@@ -384,11 +405,19 @@ async function saveDashboardMeta(): Promise<void> {
       </NButton>
     </div>
 
-    <div v-if="feedback" class="r-dashboard-workspace__feedback" data-testid="dashboard-workspace-feedback">
+    <div
+      v-if="feedback"
+      class="r-dashboard-workspace__feedback"
+      data-testid="dashboard-workspace-feedback"
+    >
       {{ feedback }}
     </div>
 
-    <div v-if="loading" class="r-dashboard-workspace__loading" data-testid="dashboard-workspace-loading">
+    <div
+      v-if="loading"
+      class="r-dashboard-workspace__loading"
+      data-testid="dashboard-workspace-loading"
+    >
       <RIcon name="loader" :size="16" />
       <span>正在加载仪表盘工作区...</span>
     </div>

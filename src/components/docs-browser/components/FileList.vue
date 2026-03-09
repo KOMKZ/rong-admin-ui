@@ -2,7 +2,18 @@
   <div class="r-docs-file-list" data-testid="docs-file-list">
     <div class="r-docs-file-toolbar">
       <div class="r-docs-file-search">
-        <svg class="r-docs-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <svg
+          class="r-docs-search-icon"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
         <input
           v-model="searchQuery"
           class="r-docs-search-input"
@@ -16,8 +27,28 @@
         data-testid="docs-sort-toggle"
         @click="$emit('toggle-sort')"
       >
-        <svg v-if="sortOrder === 'desc'" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h13M3 8h9M3 12h5M17 14V4M13 10l4 4 4-4"/></svg>
-        <svg v-else width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 4h13M3 8h9M3 12h5M17 4v10M13 10l4-4 4 4"/></svg>
+        <svg
+          v-if="sortOrder === 'desc'"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M3 4h13M3 8h9M3 12h5M17 14V4M13 10l4 4 4-4" />
+        </svg>
+        <svg
+          v-else
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M3 4h13M3 8h9M3 12h5M17 4v10M13 10l4-4 4 4" />
+        </svg>
       </button>
     </div>
 
@@ -30,9 +61,22 @@
         :data-testid="`docs-file-${file.name}`"
         @click="$emit('select', file)"
       >
-        <svg class="r-docs-file-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path v-if="file.name.endsWith('.md')" d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline v-if="file.name.endsWith('.md')" points="14 2 14 8 20 8" />
-          <path v-else d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" /><polyline v-if="!file.name.endsWith('.md')" points="13 2 13 9 20 9" />
+        <svg
+          class="r-docs-file-icon"
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path
+            v-if="file.name.endsWith('.md')"
+            d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
+          />
+          <polyline v-if="file.name.endsWith('.md')" points="14 2 14 8 20 8" />
+          <path v-else d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+          <polyline v-if="!file.name.endsWith('.md')" points="13 2 13 9 20 9" />
         </svg>
         <div class="r-docs-file-info">
           <span class="r-docs-file-name">{{ file.title || file.name }}</span>
@@ -49,7 +93,18 @@
     </div>
 
     <div v-else class="r-docs-file-empty" data-testid="docs-file-empty">
-      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.3"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/></svg>
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        opacity="0.3"
+      >
+        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+        <polyline points="13 2 13 9 20 9" />
+      </svg>
       <span>暂无文件</span>
     </div>
   </div>
@@ -77,9 +132,8 @@ const searchQuery = ref('')
 const filteredFiles = computed(() => {
   if (!searchQuery.value) return props.files
   const q = searchQuery.value.toLowerCase()
-  return props.files.filter(f =>
-    f.name.toLowerCase().includes(q) ||
-    (f.title && f.title.toLowerCase().includes(q))
+  return props.files.filter(
+    (f) => f.name.toLowerCase().includes(q) || (f.title && f.title.toLowerCase().includes(q)),
   )
 })
 
@@ -248,8 +302,13 @@ function formatSize(bytes: number): string {
 }
 
 @keyframes r-docs-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .r-docs-file-empty {

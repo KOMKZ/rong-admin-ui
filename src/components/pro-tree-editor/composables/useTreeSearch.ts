@@ -84,9 +84,7 @@ export function useTreeSearch(options: UseTreeSearchOptions) {
     return matchedNodeIds.value.has(nodeId)
   }
 
-  function getHighlightRanges(
-    text: string,
-  ): Array<{ start: number; end: number }> {
+  function getHighlightRanges(text: string): Array<{ start: number; end: number }> {
     const kw = keyword.value.trim().toLowerCase()
     if (!kw) return []
     const ranges: Array<{ start: number; end: number }> = []

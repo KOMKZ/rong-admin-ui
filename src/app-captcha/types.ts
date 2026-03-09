@@ -14,9 +14,7 @@ export interface CaptchaVerifyResult {
   bizResult?: boolean
 }
 
-export type CaptchaVerifyCallback = (
-  captchaVerifyParam: string,
-) => Promise<CaptchaVerifyResult>
+export type CaptchaVerifyCallback = (captchaVerifyParam: string) => Promise<CaptchaVerifyResult>
 
 export type CaptchaBizResultCallback = (bizResult: boolean) => void
 

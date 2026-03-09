@@ -56,9 +56,10 @@ export function useTreeKeyboard(options: UseTreeKeyboardOptions) {
 
     if (visibleList.length === 0) return
 
-    const currentIndex = options.selectedKey.value !== null
-      ? visibleList.findIndex((n) => n.id === options.selectedKey.value)
-      : -1
+    const currentIndex =
+      options.selectedKey.value !== null
+        ? visibleList.findIndex((n) => n.id === options.selectedKey.value)
+        : -1
 
     switch (key) {
       case 'ArrowDown': {

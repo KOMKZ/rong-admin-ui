@@ -12,7 +12,11 @@ onMounted(() => {
   options.value = props.params.colDef?.cellEditorParams?.values || []
   const v = props.params.value
   if (Array.isArray(v)) selected.value = v.filter((s: any) => s != null && s !== '')
-  else if (typeof v === 'string' && v) selected.value = v.split(',').map((s: string) => s.trim()).filter(Boolean)
+  else if (typeof v === 'string' && v)
+    selected.value = v
+      .split(',')
+      .map((s: string) => s.trim())
+      .filter(Boolean)
   nextTick(() => wrapRef.value?.focus())
 })
 
@@ -48,9 +52,15 @@ function handleKeydown(e: KeyboardEvent) {
   }
 }
 
-function getValue(): string[] { return selected.value }
-function isCancelBeforeStart() { return false }
-function isCancelAfterEnd() { return false }
+function getValue(): string[] {
+  return selected.value
+}
+function isCancelBeforeStart() {
+  return false
+}
+function isCancelAfterEnd() {
+  return false
+}
 
 defineExpose({ getValue, isCancelBeforeStart, isCancelAfterEnd })
 </script>
@@ -64,16 +74,14 @@ defineExpose({ getValue, isCancelBeforeStart, isCancelAfterEnd })
     @mousedown.stop
   >
     <div v-if="selected.length > 0" class="rdg-multiselect-editor__tags">
-      <span
-        v-for="val in selected"
-        :key="val"
-        class="rdg-multiselect-editor__tag"
-      >
+      <span v-for="val in selected" :key="val" class="rdg-multiselect-editor__tag">
         {{ val }}
         <button
           class="rdg-multiselect-editor__tag-remove"
           @mousedown.prevent.stop="removeTag(val, $event)"
-        >&times;</button>
+        >
+          &times;
+        </button>
       </span>
     </div>
     <input
@@ -94,11 +102,18 @@ defineExpose({ getValue, isCancelBeforeStart, isCancelAfterEnd })
         <span class="rdg-multiselect-editor__check">{{ selected.includes(opt) ? '✓' : '' }}</span>
         <span>{{ opt }}</span>
       </div>
-      <div v-if="filteredOptions.length === 0" class="rdg-multiselect-editor__empty">无匹配选项</div>
+      <div v-if="filteredOptions.length === 0" class="rdg-multiselect-editor__empty">
+        无匹配选项
+      </div>
     </div>
     <div class="rdg-multiselect-editor__footer">
       <span class="rdg-multiselect-editor__count">已选 {{ selected.length }} 项</span>
-      <button class="rdg-multiselect-editor__confirm" @mousedown.prevent.stop="params.stopEditing()">确定</button>
+      <button
+        class="rdg-multiselect-editor__confirm"
+        @mousedown.prevent.stop="params.stopEditing()"
+      >
+        确定
+      </button>
     </div>
   </div>
 </template>
@@ -152,7 +167,9 @@ defineExpose({ getValue, isCancelBeforeStart, isCancelAfterEnd })
   opacity: 0.7;
 }
 
-.rdg-multiselect-editor__tag-remove:hover { opacity: 1; }
+.rdg-multiselect-editor__tag-remove:hover {
+  opacity: 1;
+}
 
 .rdg-multiselect-editor__search {
   margin: 4px 8px;
@@ -230,5 +247,7 @@ defineExpose({ getValue, isCancelBeforeStart, isCancelAfterEnd })
   cursor: pointer;
 }
 
-.rdg-multiselect-editor__confirm:hover { opacity: 0.9; }
+.rdg-multiselect-editor__confirm:hover {
+  opacity: 0.9;
+}
 </style>

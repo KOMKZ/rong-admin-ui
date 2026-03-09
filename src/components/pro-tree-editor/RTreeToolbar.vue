@@ -101,12 +101,7 @@ function onSearchInput(value: string): void {
 
         <NTooltip>
           <template #trigger>
-            <NButton
-              quaternary
-              size="tiny"
-              data-testid="tree-create-btn"
-              @click="emit('create')"
-            >
+            <NButton quaternary size="tiny" data-testid="tree-create-btn" @click="emit('create')">
               <template #icon><RIcon name="plus" :size="14" /></template>
             </NButton>
           </template>

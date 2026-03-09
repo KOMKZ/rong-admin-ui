@@ -1,11 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onBeforeUnmount } from 'vue'
-import type {
-  ProUploadProps,
-  ProUploadFileItem,
-  ProUploadLocale,
-  ProUploadExpose,
-} from './types'
+import type { ProUploadProps, ProUploadFileItem, ProUploadLocale, ProUploadExpose } from './types'
 import { defaultLocale } from './types'
 import { useUploadCore, revokeThumbUrls } from './useUploadCore'
 import RProUploadItem from './RProUploadItem.vue'
@@ -41,22 +36,17 @@ const emit = defineEmits<{
   (e: 'error', file: ProUploadFileItem, error: Error): void
   (e: 'preview', file: ProUploadFileItem): void
   (e: 'remove', file: ProUploadFileItem): void
-  (e: 'exceed', info: { type: 'count' | 'size' | 'accept'; file: File; limit: number | string }): void
+  (
+    e: 'exceed',
+    info: { type: 'count' | 'size' | 'accept'; file: File; limit: number | string },
+  ): void
 }>()
 
 function t(key: keyof ProUploadLocale): string {
   return props.locale[key] ?? defaultLocale[key] ?? key
 }
 
-const {
-  fileList,
-  addFiles,
-  removeFile,
-  retryFile,
-  abortFile,
-  clear,
-  submit,
-} = useUploadCore({
+const { fileList, addFiles, removeFile, retryFile, abortFile, clear, submit } = useUploadCore({
   props,
   emit: {
     change: (list) => emit('change', list),
@@ -213,8 +203,17 @@ defineExpose<ProUploadExpose>({
       >
         <slot name="trigger">
           <div class="rpu__trigger-content">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="rpu__trigger-icon">
-              <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              class="rpu__trigger-icon"
+            >
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
             <span class="rpu__trigger-text">{{ t('clickHint') }}</span>
           </div>
@@ -242,12 +241,22 @@ defineExpose<ProUploadExpose>({
       >
         <slot name="trigger">
           <div class="rpu__drop-content">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="rpu__drop-icon">
+            <svg
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              class="rpu__drop-icon"
+            >
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="17 8 12 3 7 8" />
               <line x1="12" y1="3" x2="12" y2="15" />
             </svg>
-            <span class="rpu__drop-text">{{ t('dropHint') }}<span class="rpu__drop-link">{{ t('clickHint') }}</span></span>
+            <span class="rpu__drop-text"
+              >{{ t('dropHint') }}<span class="rpu__drop-link">{{ t('clickHint') }}</span></span
+            >
           </div>
         </slot>
       </div>
@@ -260,8 +269,16 @@ defineExpose<ProUploadExpose>({
         data-testid="pro-upload-trigger"
         @click="openFileDialog"
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <line x1="12" y1="5" x2="12" y2="19" />
+          <line x1="5" y1="12" x2="19" y2="12" />
         </svg>
         {{ t('clickHint') }}
       </button>
@@ -307,8 +324,16 @@ defineExpose<ProUploadExpose>({
               aria-label="关闭预览"
               @click="closePreview"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="18" y1="6" x2="6" y2="18" />
+                <line x1="6" y1="6" x2="18" y2="18" />
               </svg>
             </button>
           </div>
@@ -358,7 +383,9 @@ defineExpose<ProUploadExpose>({
   border: 1px dashed var(--ra-color-border-default);
   border-radius: var(--ra-radius-md);
   cursor: pointer;
-  transition: border-color var(--ra-transition-fast), background var(--ra-transition-fast);
+  transition:
+    border-color var(--ra-transition-fast),
+    background var(--ra-transition-fast);
 }
 .rpu__trigger-card:hover,
 .rpu__trigger-card--drag-over {
@@ -392,7 +419,9 @@ defineExpose<ProUploadExpose>({
   border: 1px dashed var(--ra-color-border-default);
   border-radius: var(--ra-radius-md);
   cursor: pointer;
-  transition: border-color var(--ra-transition-fast), background var(--ra-transition-fast);
+  transition:
+    border-color var(--ra-transition-fast),
+    background var(--ra-transition-fast);
 }
 .rpu__drop-zone:hover,
 .rpu__drop-zone--drag-over {
@@ -434,7 +463,9 @@ defineExpose<ProUploadExpose>({
   color: var(--ra-color-text-primary);
   font-size: var(--ra-font-size-sm);
   cursor: pointer;
-  transition: border-color var(--ra-transition-fast), background var(--ra-transition-fast);
+  transition:
+    border-color var(--ra-transition-fast),
+    background var(--ra-transition-fast);
 }
 .rpu__btn-trigger:hover:not(:disabled) {
   border-color: var(--ra-color-brand-primary);

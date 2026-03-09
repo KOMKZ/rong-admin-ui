@@ -173,7 +173,9 @@ const addableWidgets = computed(() => {
       layoutTypes.add(item.type)
     }
   }
-  return widgetCatalog.value.filter((definition) => definition.allowMultiple !== false || !layoutTypes.has(definition.type))
+  return widgetCatalog.value.filter(
+    (definition) => definition.allowMultiple !== false || !layoutTypes.has(definition.type),
+  )
 })
 
 const canUndo = computed(() => undoStack.value.length > 0)
@@ -199,7 +201,11 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value))
 }
 
-function normalizePlaced(item: DashboardLayoutItem, fallbackIndex: number, cols: number): PlacedLayoutItem | null {
+function normalizePlaced(
+  item: DashboardLayoutItem,
+  fallbackIndex: number,
+  cols: number,
+): PlacedLayoutItem | null {
   if (!item.id || !item.type) return null
   if (typeof item.w !== 'number' || typeof item.h !== 'number') return null
   const w = clamp(Math.round(item.w), MIN_W, cols)
@@ -221,11 +227,21 @@ function overlaps(a: PlacedLayoutItem, b: PlacedLayoutItem): boolean {
   return !(a.x + a.w <= b.x || b.x + b.w <= a.x || a.y + a.h <= b.y || b.y + b.h <= a.y)
 }
 
-function canPlace(candidate: PlacedLayoutItem, items: PlacedLayoutItem[], ignoreId?: string): boolean {
+function canPlace(
+  candidate: PlacedLayoutItem,
+  items: PlacedLayoutItem[],
+  ignoreId?: string,
+): boolean {
   return !items.some((item) => item.id !== ignoreId && overlaps(item, candidate))
 }
 
-function findFirstFit(w: number, h: number, items: PlacedLayoutItem[], cols: number, ignoreId?: string): { x: number; y: number } {
+function findFirstFit(
+  w: number,
+  h: number,
+  items: PlacedLayoutItem[],
+  cols: number,
+  ignoreId?: string,
+): { x: number; y: number } {
   const safeW = clamp(w, MIN_W, cols)
   for (let y = 1; y <= 300; y += 1) {
     for (let x = 1; x <= cols - safeW + 1; x += 1) {
@@ -245,7 +261,11 @@ function findFirstFit(w: number, h: number, items: PlacedLayoutItem[], cols: num
   return { x: 1, y: Math.max(1, items.length + 1) }
 }
 
-function compactLayout(items: PlacedLayoutItem[], cols: number, fixedId?: string): PlacedLayoutItem[] {
+function compactLayout(
+  items: PlacedLayoutItem[],
+  cols: number,
+  fixedId?: string,
+): PlacedLayoutItem[] {
   const sorted = [...items].sort((a, b) => a.y - b.y || a.x - b.x)
   const result: PlacedLayoutItem[] = []
   for (const raw of sorted) {
@@ -357,7 +377,8 @@ function serializeLayouts(source: LayoutByBreakpoint = layouts.value): Dashboard
       const target = idMap.get(item.id)
       if (!target) continue
       const lg = source.lg.find((entry) => entry.id === item.id)
-      const differsFromLg = !lg || lg.x !== item.x || lg.y !== item.y || lg.w !== item.w || lg.h !== item.h
+      const differsFromLg =
+        !lg || lg.x !== item.x || lg.y !== item.y || lg.w !== item.w || lg.h !== item.h
       if (differsFromLg) {
         if (!target.responsive) {
           target.responsive = {}
@@ -389,7 +410,10 @@ function setGuides(vertical: number[], horizontal: number[]): void {
   }
 }
 
-function findBestSnap(diffCandidates: Array<{ diff: number; line: number }>, threshold = 0.45): { diff: number; line: number } | null {
+function findBestSnap(
+  diffCandidates: Array<{ diff: number; line: number }>,
+  threshold = 0.45,
+): { diff: number; line: number } | null {
   let best: { diff: number; line: number } | null = null
   for (const candidate of diffCandidates) {
     if (Math.abs(candidate.diff) > threshold) continue
@@ -493,7 +517,11 @@ function snapForResize(
     const right = anchor.x + w
     const snap = findBestSnap(xLines.map((line) => ({ diff: line - right, line })))
     if (snap) {
-      w = clamp(snap.line - anchor.x, getMinWidth(anchor), Math.min(getMaxWidth(anchor), cols - anchor.x + 1))
+      w = clamp(
+        snap.line - anchor.x,
+        getMinWidth(anchor),
+        Math.min(getMaxWidth(anchor), cols - anchor.x + 1),
+      )
       vertical.push(snap.line)
     }
   }
@@ -517,7 +545,11 @@ function pushUndoSnapshot(snapshot: LayoutByBreakpoint): void {
   }
 }
 
-function applyLayouts(nextLayouts: LayoutByBreakpoint, pushHistory = true, shouldEmit = true): void {
+function applyLayouts(
+  nextLayouts: LayoutByBreakpoint,
+  pushHistory = true,
+  shouldEmit = true,
+): void {
   if (pushHistory) {
     pushUndoSnapshot(cloneLayoutMap(layouts.value))
     redoStack.value = []
@@ -554,7 +586,11 @@ function syncAllLayoutsFromActive(nextActiveLayout: PlacedLayoutItem[]): LayoutB
         y: Math.max(1, Math.round(item.y)),
         w: mappedW,
         h: mappedH,
-        config: existing?.config ? { ...existing.config } : item.config ? { ...item.config } : undefined,
+        config: existing?.config
+          ? { ...existing.config }
+          : item.config
+            ? { ...item.config }
+            : undefined,
       })
     }
     nextLayouts[bp] = rebalance(derived, cols)
@@ -563,7 +599,11 @@ function syncAllLayoutsFromActive(nextActiveLayout: PlacedLayoutItem[]): LayoutB
   return nextLayouts
 }
 
-function applyActiveLayout(nextLayout: PlacedLayoutItem[], pushHistory = true, shouldEmit = true): void {
+function applyActiveLayout(
+  nextLayout: PlacedLayoutItem[],
+  pushHistory = true,
+  shouldEmit = true,
+): void {
   const nextLayouts =
     editScope.value === 'all'
       ? syncAllLayoutsFromActive(nextLayout)
@@ -626,15 +666,24 @@ function normalizeFromSerialized(items: DashboardLayoutItem[]): LayoutByBreakpoi
   })
 
   normalized.lg = rebalance(normalized.lg, colsMap.lg)
-  normalized.md = normalized.md.length ? rebalance(normalized.md, colsMap.md) : deriveLayout(normalized.lg, colsMap.md)
-  normalized.sm = normalized.sm.length ? rebalance(normalized.sm, colsMap.sm) : deriveLayout(normalized.md, colsMap.sm)
+  normalized.md = normalized.md.length
+    ? rebalance(normalized.md, colsMap.md)
+    : deriveLayout(normalized.lg, colsMap.md)
+  normalized.sm = normalized.sm.length
+    ? rebalance(normalized.sm, colsMap.sm)
+    : deriveLayout(normalized.md, colsMap.sm)
 
   return normalized
 }
 
 function ensureBreakpointLayout(breakpoint: DashboardBreakpoint): void {
   if (layouts.value[breakpoint].length > 0) return
-  const source = breakpoint === 'lg' ? layouts.value.md : breakpoint === 'md' ? layouts.value.lg : layouts.value.md
+  const source =
+    breakpoint === 'lg'
+      ? layouts.value.md
+      : breakpoint === 'md'
+        ? layouts.value.lg
+        : layouts.value.md
   const fallback = source.length ? source : layouts.value.lg
   const cols = breakpointColumns.value[breakpoint]
   const nextLayouts = cloneLayoutMap(layouts.value)
@@ -697,13 +746,15 @@ function getWidgetEditor(type: string): Component | undefined {
 
 function getWidgetDisplayTitle(item: PlacedLayoutItem): string {
   const definition = definitionMap.value.get(item.type)
-  const custom = item.config && typeof item.config.title === 'string' ? item.config.title.trim() : ''
+  const custom =
+    item.config && typeof item.config.title === 'string' ? item.config.title.trim() : ''
   return custom || definition?.title || item.type
 }
 
 function getWidgetDisplayDescription(item: PlacedLayoutItem): string {
   const definition = definitionMap.value.get(item.type)
-  const custom = item.config && typeof item.config.description === 'string' ? item.config.description.trim() : ''
+  const custom =
+    item.config && typeof item.config.description === 'string' ? item.config.description.trim() : ''
   return custom || definition?.description || ''
 }
 
@@ -766,7 +817,8 @@ function addWidget(type: string): void {
   const nextLayouts = cloneLayoutMap(layouts.value)
   const id = `${type}-${Date.now()}`
 
-  const targets = editScope.value === 'all' ? (['lg', 'md', 'sm'] as const) : ([activeBreakpoint.value] as const)
+  const targets =
+    editScope.value === 'all' ? (['lg', 'md', 'sm'] as const) : ([activeBreakpoint.value] as const)
   for (const bp of targets) {
     const cols = breakpointColumns.value[bp]
     const w = clamp(size.w, getMinWidth({ id, type, x: 1, y: 1, w: size.w, h: size.h }), cols)
@@ -796,7 +848,8 @@ function addWidget(type: string): void {
 
 function removeWidget(id: string): void {
   const nextLayouts = cloneLayoutMap(layouts.value)
-  const targets = editScope.value === 'all' ? (['lg', 'md', 'sm'] as const) : ([activeBreakpoint.value] as const)
+  const targets =
+    editScope.value === 'all' ? (['lg', 'md', 'sm'] as const) : ([activeBreakpoint.value] as const)
   for (const bp of targets) {
     nextLayouts[bp] = rebalance(
       nextLayouts[bp].filter((item) => item.id !== id),
@@ -931,7 +984,11 @@ function handlePointerMove(event: PointerEvent): void {
 
     if (state.axis === 'x' || state.axis === 'both') {
       const maxW = Math.min(getMaxWidth(anchor), cols - anchor.x + 1)
-      nextW = clamp(state.originW + deltaCols, getMinWidth(anchor), Math.max(getMinWidth(anchor), maxW))
+      nextW = clamp(
+        state.originW + deltaCols,
+        getMinWidth(anchor),
+        Math.max(getMinWidth(anchor), maxW),
+      )
     }
 
     if (state.axis === 'y' || state.axis === 'both') {
@@ -1004,7 +1061,10 @@ async function loadData(): Promise<void> {
   loading.value = true
   feedback.value = ''
   try {
-    const [catalog, remoteLayout] = await Promise.all([props.adapter.listWidgets(), props.adapter.loadLayout()])
+    const [catalog, remoteLayout] = await Promise.all([
+      props.adapter.listWidgets(),
+      props.adapter.loadLayout(),
+    ])
     widgetCatalog.value = catalog
     const normalized = remoteLayout.length
       ? normalizeFromSerialized(remoteLayout)
@@ -1126,7 +1186,11 @@ onBeforeUnmount(() => {
           <template #icon><RIcon name="refresh-cw" :size="16" /></template>
           重做
         </NButton>
-        <div v-if="editing && !isReadonly" class="r-dashboard-builder__scope-switch" data-testid="dashboard-scope-switch">
+        <div
+          v-if="editing && !isReadonly"
+          class="r-dashboard-builder__scope-switch"
+          data-testid="dashboard-scope-switch"
+        >
           <button
             class="r-dashboard-builder__scope-btn"
             :class="{ 'r-dashboard-builder__scope-btn--active': editScope === 'current' }"
@@ -1180,7 +1244,11 @@ onBeforeUnmount(() => {
     </div>
 
     <template v-else>
-      <div v-if="editing && !isReadonly" class="r-dashboard-builder__palette" data-testid="dashboard-palette">
+      <div
+        v-if="editing && !isReadonly"
+        class="r-dashboard-builder__palette"
+        data-testid="dashboard-palette"
+      >
         <div class="r-dashboard-builder__palette-title">可用组件</div>
         <div class="r-dashboard-builder__palette-list">
           <button
@@ -1253,15 +1321,21 @@ onBeforeUnmount(() => {
               <RIcon :name="definitionMap.get(item.type)?.icon || 'layout-grid'" :size="16" />
               <div class="r-dashboard-builder__item-texts">
                 <span>{{ getWidgetDisplayTitle(item) }}</span>
-                <small v-if="getWidgetDisplayDescription(item)" class="r-dashboard-builder__item-description">
+                <small
+                  v-if="getWidgetDisplayDescription(item)"
+                  class="r-dashboard-builder__item-description"
+                >
                   {{ getWidgetDisplayDescription(item) }}
                 </small>
               </div>
             </div>
             <div class="r-dashboard-builder__item-actions" @pointerdown.stop>
-              <span v-if="editing && !isReadonly" class="r-dashboard-builder__size-chip" data-testid="dashboard-widget-size">{{
-                getCurrentSizeLabel(item)
-              }}</span>
+              <span
+                v-if="editing && !isReadonly"
+                class="r-dashboard-builder__size-chip"
+                data-testid="dashboard-widget-size"
+                >{{ getCurrentSizeLabel(item) }}</span
+              >
               <template v-if="editing && !isReadonly">
                 <button
                   v-if="getWidgetEditor(item.type)"
@@ -1373,7 +1447,11 @@ onBeforeUnmount(() => {
       :show="Boolean(editorWidgetId && editingWidget && editingWidgetDefinition)"
       width="460"
       placement="right"
-      @update:show="(value) => { if (!value) closeWidgetEditor() }"
+      @update:show="
+        (value) => {
+          if (!value) closeWidgetEditor()
+        }
+      "
     >
       <NDrawerContent title="编辑 Widget" closable>
         <component
@@ -1677,7 +1755,10 @@ onBeforeUnmount(() => {
   background: var(--ra-color-bg-surface);
   color: var(--ra-color-text-tertiary);
   opacity: 0;
-  transition: opacity var(--ra-transition-fast), color var(--ra-transition-fast), border-color var(--ra-transition-fast);
+  transition:
+    opacity var(--ra-transition-fast),
+    color var(--ra-transition-fast),
+    border-color var(--ra-transition-fast);
 }
 
 .r-dashboard-builder__item:hover .r-dashboard-builder__resize-handle {

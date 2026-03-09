@@ -57,7 +57,14 @@ const statusClass = computed(() => `rpu-item--${props.file.status}`)
         loading="lazy"
       />
       <div v-else class="rpu-item__thumb-placeholder">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
           <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z" />
           <polyline points="14 2 14 8 20 8" />
         </svg>
@@ -69,7 +76,11 @@ const statusClass = computed(() => `rpu-item--${props.file.status}`)
           <svg viewBox="0 0 36 36" class="rpu-item__ring-svg">
             <circle cx="18" cy="18" r="15" fill="none" stroke-width="3" class="rpu-item__ring-bg" />
             <circle
-              cx="18" cy="18" r="15" fill="none" stroke-width="3"
+              cx="18"
+              cy="18"
+              r="15"
+              fill="none"
+              stroke-width="3"
               class="rpu-item__ring-fill"
               :stroke-dasharray="`${file.progress * 0.94} 100`"
             />
@@ -83,11 +94,20 @@ const statusClass = computed(() => `rpu-item--${props.file.status}`)
     <div class="rpu-item__info">
       <span class="rpu-item__name" :title="file.name">{{ file.name }}</span>
       <span v-if="!isCard" class="rpu-item__size">{{ formatSize(file.size) }}</span>
-      <span v-if="file.status === 'error'" class="rpu-item__error">{{ file.error ?? t('uploadFailed') }}</span>
+      <span v-if="file.status === 'error'" class="rpu-item__error">{{
+        file.error ?? t('uploadFailed')
+      }}</span>
 
       <!-- Text-mode progress bar -->
       <div v-if="!isCard && file.status === 'uploading'" class="rpu-item__bar-wrap">
-        <div class="rpu-item__bar" :style="{ width: `${file.progress}%` }" role="progressbar" :aria-valuenow="file.progress" aria-valuemin="0" aria-valuemax="100" />
+        <div
+          class="rpu-item__bar"
+          :style="{ width: `${file.progress}%` }"
+          role="progressbar"
+          :aria-valuenow="file.progress"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        />
       </div>
     </div>
 
@@ -102,9 +122,18 @@ const statusClass = computed(() => `rpu-item--${props.file.status}`)
         :aria-label="`${t('retryLabel')} ${file.name}`"
         @click.stop="emit('retry', file.uid)"
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 2v6h-6" /><path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
-          <path d="M3 22v-6h6" /><path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M21 2v6h-6" />
+          <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+          <path d="M3 22v-6h6" />
+          <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
         </svg>
       </button>
       <button
@@ -115,8 +144,16 @@ const statusClass = computed(() => `rpu-item--${props.file.status}`)
         :aria-label="`${t('deleteLabel')} ${file.name}`"
         @click.stop="emit('remove', file.uid)"
       >
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
         </svg>
       </button>
     </div>
@@ -129,7 +166,9 @@ const statusClass = computed(() => `rpu-item--${props.file.status}`)
   display: flex;
   align-items: center;
   border-radius: var(--ra-radius-md);
-  transition: background var(--ra-transition-fast), border-color var(--ra-transition-fast);
+  transition:
+    background var(--ra-transition-fast),
+    border-color var(--ra-transition-fast);
 }
 
 /* ── Row mode (text / picture list) ── */
@@ -166,9 +205,15 @@ const statusClass = computed(() => `rpu-item--${props.file.status}`)
 }
 
 /* ── Status colors ── */
-.rpu-item--error { border-color: var(--ra-color-danger); }
-.rpu-item--success { border-color: var(--ra-color-success-border); }
-.rpu-item--uploading { border-color: var(--ra-color-brand-primary); }
+.rpu-item--error {
+  border-color: var(--ra-color-danger);
+}
+.rpu-item--success {
+  border-color: var(--ra-color-success-border);
+}
+.rpu-item--uploading {
+  border-color: var(--ra-color-brand-primary);
+}
 
 /* ── Thumbnail ── */
 .rpu-item__thumb {
@@ -210,10 +255,24 @@ const statusClass = computed(() => `rpu-item--${props.file.status}`)
   justify-content: center;
   background: rgba(0, 0, 0, 0.45);
 }
-.rpu-item__progress-ring { position: relative; width: 36px; height: 36px; }
-.rpu-item__ring-svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.rpu-item__ring-bg { stroke: rgba(255, 255, 255, 0.3); }
-.rpu-item__ring-fill { stroke: #fff; stroke-linecap: round; transition: stroke-dasharray 0.2s; }
+.rpu-item__progress-ring {
+  position: relative;
+  width: 36px;
+  height: 36px;
+}
+.rpu-item__ring-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+.rpu-item__ring-bg {
+  stroke: rgba(255, 255, 255, 0.3);
+}
+.rpu-item__ring-fill {
+  stroke: #fff;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.2s;
+}
 .rpu-item__progress-text {
   position: absolute;
   inset: 0;
@@ -279,7 +338,9 @@ const statusClass = computed(() => `rpu-item--${props.file.status}`)
   background: transparent;
   color: var(--ra-color-text-tertiary);
   cursor: pointer;
-  transition: color var(--ra-transition-fast), background var(--ra-transition-fast);
+  transition:
+    color var(--ra-transition-fast),
+    background var(--ra-transition-fast);
   padding: 0;
 }
 .rpu-item__action:hover:not(:disabled) {

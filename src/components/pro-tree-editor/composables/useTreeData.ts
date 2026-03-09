@@ -43,10 +43,7 @@ function flattenTree(nodes: TreeNodeData[]): TreeNodeData[] {
   return result
 }
 
-function findNode(
-  nodes: TreeNodeData[],
-  id: string | number,
-): TreeNodeData | null {
+function findNode(nodes: TreeNodeData[], id: string | number): TreeNodeData | null {
   for (const n of nodes) {
     if (n.id === id) return n
     if (n.children) {
@@ -57,10 +54,7 @@ function findNode(
   return null
 }
 
-function findParentList(
-  nodes: TreeNodeData[],
-  id: string | number,
-): TreeNodeData[] | null {
+function findParentList(nodes: TreeNodeData[], id: string | number): TreeNodeData[] | null {
   for (const n of nodes) {
     if (n.id === id) return nodes
     if (n.children) {
@@ -118,7 +112,12 @@ export function useTreeData(options: UseTreeDataOptions) {
 
   const flatNodes = computed(() => flattenTree(treeData.value))
 
-  function emitRequest(phase: 'start' | 'success' | 'error', action: string, nodeId?: string | number, error?: TreeError): void {
+  function emitRequest(
+    phase: 'start' | 'success' | 'error',
+    action: string,
+    nodeId?: string | number,
+    error?: TreeError,
+  ): void {
     const event: TreeRequestEvent = { action, nodeId }
     if (phase === 'start') options.onRequestStart?.(event)
     else if (phase === 'success') options.onRequestSuccess?.(event)
@@ -181,7 +180,10 @@ export function useTreeData(options: UseTreeDataOptions) {
         break
       }
     }
-    if (code === 'UNKNOWN' && (msg.toLowerCase().includes('network') || msg.toLowerCase().includes('fetch'))) {
+    if (
+      code === 'UNKNOWN' &&
+      (msg.toLowerCase().includes('network') || msg.toLowerCase().includes('fetch'))
+    ) {
       code = 'NETWORK_ERROR'
     }
     return { code, message: msg, raw: err }
@@ -299,10 +301,7 @@ export function useTreeData(options: UseTreeDataOptions) {
     }
   }
 
-  async function updateNode(
-    id: string | number,
-    name: string,
-  ): Promise<TreeNodeData | null> {
+  async function updateNode(id: string | number, name: string): Promise<TreeNodeData | null> {
     const hooks = options.requestHooks.value
     if (!hooks.update) return null
 
@@ -390,10 +389,7 @@ export function useTreeData(options: UseTreeDataOptions) {
     }
   }
 
-  async function moveNode(
-    id: string | number,
-    newParentId: string | number | null,
-  ): Promise<void> {
+  async function moveNode(id: string | number, newParentId: string | number | null): Promise<void> {
     const hooks = options.requestHooks.value
     if (!hooks.move) return
 

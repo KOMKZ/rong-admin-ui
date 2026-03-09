@@ -41,7 +41,9 @@ function toggleEdit() {
 async function copyCode() {
   try {
     await navigator.clipboard.writeText(code.value)
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 }
 
 watch(
@@ -92,7 +94,11 @@ onMounted(renderDiagram)
         <button class="rte-mermaid-btn rte-mermaid-btn--ghost" @click="copyCode" title="复制代码">
           <Copy :size="14" />
         </button>
-        <button class="rte-mermaid-btn rte-mermaid-btn--ghost rte-mermaid-btn--danger" @click="deleteNode" title="删除">
+        <button
+          class="rte-mermaid-btn rte-mermaid-btn--ghost rte-mermaid-btn--danger"
+          @click="deleteNode"
+          title="删除"
+        >
           <Trash2 :size="14" />
         </button>
       </div>

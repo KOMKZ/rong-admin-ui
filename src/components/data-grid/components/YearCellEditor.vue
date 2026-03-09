@@ -9,7 +9,10 @@ const yearValue = ref<string>('')
 onMounted(() => {
   const v = props.params.value
   if (v) yearValue.value = typeof v === 'number' ? String(v) : String(parseInt(v) || '')
-  setTimeout(() => { inputRef.value?.focus(); inputRef.value?.select() }, 0)
+  setTimeout(() => {
+    inputRef.value?.focus()
+    inputRef.value?.select()
+  }, 0)
 })
 
 function getValue(): string {
@@ -17,8 +20,12 @@ function getValue(): string {
   return !isNaN(y) && y >= 1900 && y <= 2100 ? String(y) : ''
 }
 
-function isCancelBeforeStart() { return false }
-function isCancelAfterEnd() { return false }
+function isCancelBeforeStart() {
+  return false
+}
+function isCancelAfterEnd() {
+  return false
+}
 
 defineExpose({ getValue, isCancelBeforeStart, isCancelAfterEnd })
 </script>
