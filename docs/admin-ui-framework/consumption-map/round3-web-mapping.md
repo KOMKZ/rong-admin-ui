@@ -8,6 +8,7 @@
 |------|------|---------|------|
 | BatchImportPage | `/system/batch-import` | RFormTable, RPasswordStrength, RCodeVerify, RIconButton, RPageHeader, RResultState | ✅ |
 | TemplateSelectPage | `/templates` | RCheckCardGroup, RCheckButtonGroup, RIconButton, RPageHeader | ✅ |
+| DashboardPage | `/dashboard` | RDashboardWorkspace, RDashboardBuilder | ✅ |
 
 ## 组件 → 消费方映射
 
@@ -19,6 +20,8 @@
 | RIconButton | BatchImportPage, TemplateSelectPage | 工具栏操作按钮（帮助/下载/刷新/视图切换） |
 | RCheckCardGroup | TemplateSelectPage | 项目模板选择（6 模板卡片，单选） |
 | RCheckButtonGroup | TemplateSelectPage | 功能模块多选 + 密度单选切换 |
+| RDashboardBuilder | DashboardPage | 可配置仪表盘（Widget 添加、拖拽/缩放、断点布局、撤销重做） |
+| RDashboardWorkspace | DashboardPage | 多 Dashboard 管理（新建空白、导入/导出 JSON、切换） |
 
 ## 路由变更
 

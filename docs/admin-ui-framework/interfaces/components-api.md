@@ -72,3 +72,31 @@
 | DropInfo | components/pro-tree-editor/types.ts | 拖放信息（dragNodeId/targetNodeId/position/isLegal） |
 | TreeHttpClient | components/pro-tree-editor/adapters/articleFolderAdapter.ts | 适配器 HTTP 客户端接口 |
 | ArticleFolderAdapterOptions | components/pro-tree-editor/adapters/articleFolderAdapter.ts | 文章分类适配器配置 |
+
+## DashboardBuilder
+
+| 接口 | 路径 | 说明 |
+|------|------|------|
+| DashboardSizePreset | components/dashboard-builder/types.ts | 组件尺寸预设（key/label/w/h） |
+| DashboardBreakpoint | components/dashboard-builder/types.ts | 断点类型（lg/md/sm） |
+| DashboardRect | components/dashboard-builder/types.ts | 断点布局坐标（x/y/w/h） |
+| DashboardResponsiveColumns | components/dashboard-builder/types.ts | 断点列数配置 |
+| DashboardWidgetDefinition | components/dashboard-builder/types.ts | Widget 定义（类型、标题、默认尺寸、可见性） |
+| DashboardWidgetRegistryEntry | components/dashboard-builder/types.ts | Widget 注册项（renderer/editor） |
+| DashboardRouteOption | components/dashboard-builder/types.ts | 路由选项定义（label/value/description） |
+| DashboardLayoutItem | components/dashboard-builder/types.ts | 布局项（id/type/x/y/w/h/config/responsive） |
+| DashboardDefinition | components/dashboard-builder/types.ts | Dashboard 元数据（id/name/description） |
+| DashboardBuilderAdapter | components/dashboard-builder/types.ts | 适配器接口（load/save/list） |
+| DashboardWorkspaceAdapter | components/dashboard-builder/types.ts | 工作区适配器（list/create/delete/load/save/listWidgets） |
+| DashboardBuilderProps | components/dashboard-builder/types.ts | 组件 Props 定义 |
+| DashboardBuilderEmits | components/dashboard-builder/types.ts | 组件事件定义（layout-change/saved/error） |
+| DashboardBuilderExpose | components/dashboard-builder/types.ts | 组件暴露方法（reload/save/toggle/getLayout） |
+| DashboardExportPayload | components/dashboard-builder/types.ts | 导入导出 JSON 结构 |
+
+## RouteQuickActionsWidget
+
+| 接口 | 路径 | 说明 |
+|------|------|------|
+| RouteQuickActionItem | components/dashboard-builder/widgets/route-quick-actions/types.ts | 快捷按钮项（id/label/route） |
+| RouteQuickActionsWidgetConfig | components/dashboard-builder/widgets/route-quick-actions/types.ts | Widget 配置（title/description/actions） |
+| RouteQuickActionsEditorOptions | components/dashboard-builder/widgets/route-quick-actions/types.ts | 编辑器选项（routeOptions） |
