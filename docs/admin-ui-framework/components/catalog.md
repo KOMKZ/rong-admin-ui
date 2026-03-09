@@ -4,7 +4,7 @@
 
 | 层级 | 定位 | 组件 |
 |------|------|------|
-| business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RFileUpload, RProTreeEditor |
+| business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RFileUpload, RProTreeEditor, RDashboardBuilder, RDashboardWorkspace |
 
 ## 组件清单
 
@@ -49,6 +49,27 @@
 - **规格文档**: `components/spec-pro-tree-editor.md`
 - **测试**: `tests/components/pro-tree-editor/useTreeData.test.ts` (12 tests), `useTreeDnd.test.ts` (7 tests), `useTreeSearch.test.ts` (7 tests), `articleFolderAdapter.test.ts` (7 tests)
 - **消费方调用**: `rong-admin-web/src/views/article-folders/ArticleFoldersView.vue`
+
+### RDashboardBuilder
+
+- **文件**: `src/components/dashboard-builder/RDashboardBuilder.vue`
+- **契约**: `src/components/dashboard-builder/types.ts`
+- **测试**: `tests/components/dashboard-builder.test.ts`
+- **消费方调用**: `rong-admin-web/src/views/dashboard/index.vue`
+
+### RDashboardWorkspace
+
+- **文件**: `src/components/dashboard-builder/RDashboardWorkspace.vue`
+- **契约**: `src/components/dashboard-builder/types.ts`
+- **测试**: `tests/components/dashboard-workspace.test.ts`
+- **消费方调用**: `rong-admin-web/src/views/dashboard/index.vue`
+
+### RRouteQuickActionsWidget / RRouteQuickActionsEditor
+
+- **文件**: `src/components/dashboard-builder/widgets/route-quick-actions/`
+- **契约**: `src/components/dashboard-builder/widgets/route-quick-actions/types.ts`
+- **测试**: `tests/components/route-quick-actions-widget.test.ts`
+- **消费方调用**: `rong-admin-web/src/views/dashboard/index.vue`
 
 ## 组件依赖
 
