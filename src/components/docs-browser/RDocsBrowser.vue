@@ -1,8 +1,16 @@
 <template>
   <div
     class="r-docs-browser"
-    :class="{ 'is-fullscreen': isFullscreen }"
-    :style="{ height: isFullscreen ? '100vh' : height }"
+    :class="[
+      { 'is-fullscreen': isFullscreen, 'is-printing': isPrinting },
+      `print-theme-${printSettings.theme}`,
+    ]"
+    :style="{
+      height: isFullscreen ? '100vh' : height,
+      '--r-docs-print-mermaid-max-width': printSettings.mermaidAutoFit
+        ? '100%'
+        : `calc(100% * ${printSettings.mermaidScale / 100})`,
+    }"
     data-testid="docs-browser"
   >
     <!-- Toast 反馈 -->
@@ -241,6 +249,27 @@
           </svg>
           <span>清除缓存</span>
         </button>
+        <button
+          class="r-docs-toolbar-btn"
+          title="导出 PDF"
+          data-testid="docs-print-open"
+          :disabled="!fileContent || contentLoading || isPrinting"
+          @click="openPrintDialog"
+        >
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <polyline points="6 9 6 2 18 2 18 9" />
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
+            <rect x="6" y="14" width="12" height="8" />
+          </svg>
+          <span>导出 PDF</span>
+        </button>
 
         <!-- 全屏时：退出全屏按钮 -->
         <button
@@ -302,11 +331,126 @@
       </div>
       <MarkdownToc :content="fileContent.content" />
     </div>
+
+    <Teleport to="body">
+      <div
+        v-if="printDialogVisible"
+        class="r-docs-print-mask"
+        data-testid="docs-print-dialog-mask"
+        @click.self="closePrintDialog"
+      >
+        <div class="r-docs-print-dialog" role="dialog" aria-modal="true" aria-label="导出 PDF 设置">
+          <div class="r-docs-print-dialog__header">
+            <h3>导出 PDF 设置</h3>
+            <button class="r-docs-print-close" aria-label="关闭" @click="closePrintDialog">×</button>
+          </div>
+
+          <div class="r-docs-print-section">
+            <p class="r-docs-print-section__title">纸张与方向</p>
+            <div class="r-docs-print-grid">
+              <label>
+                <input v-model="printSettings.orientation" type="radio" value="portrait" />
+                纵向 A4
+              </label>
+              <label>
+                <input v-model="printSettings.orientation" type="radio" value="landscape" />
+                横向 A4
+              </label>
+            </div>
+          </div>
+
+          <div class="r-docs-print-section">
+            <p class="r-docs-print-section__title">边距预设</p>
+            <div class="r-docs-print-grid">
+              <label>
+                <input v-model="printSettings.marginPreset" type="radio" value="narrow" />
+                窄边距 (8mm)
+              </label>
+              <label>
+                <input v-model="printSettings.marginPreset" type="radio" value="normal" />
+                标准 (12mm)
+              </label>
+              <label>
+                <input v-model="printSettings.marginPreset" type="radio" value="wide" />
+                宽边距 (18mm)
+              </label>
+            </div>
+          </div>
+
+          <div class="r-docs-print-section">
+            <p class="r-docs-print-section__title">打印主题</p>
+            <div class="r-docs-print-grid">
+              <label>
+                <input v-model="printSettings.theme" type="radio" value="paper" />
+                标准阅读
+              </label>
+              <label>
+                <input v-model="printSettings.theme" type="radio" value="ink" />
+                省墨
+              </label>
+              <label>
+                <input v-model="printSettings.theme" type="radio" value="github" />
+                GitHub 风格
+              </label>
+            </div>
+          </div>
+
+          <div class="r-docs-print-section">
+            <p class="r-docs-print-section__title">Mermaid 缩放</p>
+            <label class="r-docs-print-check">
+              <input v-model="printSettings.mermaidAutoFit" type="checkbox" />
+              自动适配页宽（推荐）
+            </label>
+            <div class="r-docs-print-grid">
+              <label>
+                <input
+                  v-model.number="printSettings.mermaidScale"
+                  type="radio"
+                  :value="100"
+                  :disabled="printSettings.mermaidAutoFit"
+                />
+                100%
+              </label>
+              <label>
+                <input
+                  v-model.number="printSettings.mermaidScale"
+                  type="radio"
+                  :value="90"
+                  :disabled="printSettings.mermaidAutoFit"
+                />
+                90%（推荐）
+              </label>
+              <label>
+                <input
+                  v-model.number="printSettings.mermaidScale"
+                  type="radio"
+                  :value="80"
+                  :disabled="printSettings.mermaidAutoFit"
+                />
+                80%
+              </label>
+            </div>
+          </div>
+
+          <div class="r-docs-print-footer">
+            <button class="r-docs-print-btn" @click="closePrintDialog">取消</button>
+            <button
+              class="r-docs-print-btn r-docs-print-btn--primary"
+              data-testid="docs-print-confirm"
+              :disabled="isPrinting"
+              @click="handlePrintConfirm"
+            >
+              {{ isPrinting ? '准备中...' : '打开系统打印' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { MarkdownToc } from '../markdown-preview'
 import DirectorySidebar from './components/DirectorySidebar.vue'
 import FileList from './components/FileList.vue'
@@ -339,6 +483,21 @@ const props = withDefaults(
   },
 )
 
+type PrintOrientation = 'portrait' | 'landscape'
+type PrintMarginPreset = 'narrow' | 'normal' | 'wide'
+type PrintThemePreset = 'paper' | 'ink' | 'github'
+type PrintMermaidScale = 100 | 90 | 80
+
+type PrintSettings = {
+  orientation: PrintOrientation
+  marginPreset: PrintMarginPreset
+  theme: PrintThemePreset
+  mermaidScale: PrintMermaidScale
+  mermaidAutoFit: boolean
+}
+
+const PRINT_SETTINGS_STORAGE_KEY = 'r-docs-print-settings-v1'
+
 const emit = defineEmits<{
   (e: 'file-select', file: DocFileItem): void
   (e: 'file-tag-change', tag: string): void
@@ -361,6 +520,16 @@ const isFullscreen = ref(false)
 const sortOrder = ref<DocSortOrder>('desc')
 const tocVisible = ref(false)
 const fileCache = ref<Record<string, DocFileContent>>({})
+const printDialogVisible = ref(false)
+const isPrinting = ref(false)
+const printSettings = ref<PrintSettings>({
+  orientation: 'portrait',
+  marginPreset: 'narrow',
+  theme: 'paper',
+  mermaidScale: 90,
+  mermaidAutoFit: true,
+})
+let printStyleEl: HTMLStyleElement | null = null
 
 // --- 折叠状态 ---
 const dirCollapsed = ref(false)
@@ -448,7 +617,70 @@ function toggleFullscreen() {
   isFullscreen.value = !isFullscreen.value
 }
 
+function openPrintDialog() {
+  if (!fileContent.value || contentLoading.value) return
+  printDialogVisible.value = true
+}
+
+function closePrintDialog() {
+  printDialogVisible.value = false
+}
+
+function getPrintMarginMm(preset: PrintMarginPreset): number {
+  if (preset === 'narrow') return 8
+  if (preset === 'wide') return 18
+  return 12
+}
+
+function updatePrintStyleTag() {
+  const margin = getPrintMarginMm(printSettings.value.marginPreset)
+  const orientation = printSettings.value.orientation
+  const css = `@page { size: A4 ${orientation}; margin: ${margin}mm; }`
+
+  if (!printStyleEl) {
+    printStyleEl = document.createElement('style')
+    printStyleEl.setAttribute('data-r-docs-print-style', 'true')
+    document.head.appendChild(printStyleEl)
+  }
+  printStyleEl.textContent = css
+}
+
+async function waitForPrintAssets() {
+  await nextTick()
+  await new Promise<void>((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+  })
+
+  const images = Array.from(document.querySelectorAll('.r-docs-content-body img')) as HTMLImageElement[]
+  await Promise.all(
+    images.map((img) => {
+      if (img.complete) return Promise.resolve()
+      return new Promise<void>((resolve) => {
+        img.addEventListener('load', () => resolve(), { once: true })
+        img.addEventListener('error', () => resolve(), { once: true })
+      })
+    }),
+  )
+}
+
+function handleAfterPrint() {
+  isPrinting.value = false
+}
+
+async function handlePrintConfirm() {
+  if (!fileContent.value || isPrinting.value) return
+  isPrinting.value = true
+  printDialogVisible.value = false
+  updatePrintStyleTag()
+  await waitForPrintAssets()
+  window.print()
+}
+
 function handleKeydown(e: KeyboardEvent) {
+  if (e.key === 'Escape' && printDialogVisible.value) {
+    printDialogVisible.value = false
+    return
+  }
   if (e.key === 'Escape' && isFullscreen.value) {
     isFullscreen.value = false
   }
@@ -583,6 +815,31 @@ function loadCacheFromStorage() {
   }
 }
 
+function loadPrintSettings() {
+  try {
+    const raw = localStorage.getItem(PRINT_SETTINGS_STORAGE_KEY)
+    if (!raw) return
+    const parsed = JSON.parse(raw) as Partial<PrintSettings>
+    if (parsed.orientation === 'portrait' || parsed.orientation === 'landscape') {
+      printSettings.value.orientation = parsed.orientation
+    }
+    if (parsed.marginPreset === 'narrow' || parsed.marginPreset === 'normal' || parsed.marginPreset === 'wide') {
+      printSettings.value.marginPreset = parsed.marginPreset
+    }
+    if (parsed.theme === 'paper' || parsed.theme === 'ink' || parsed.theme === 'github') {
+      printSettings.value.theme = parsed.theme
+    }
+    if (parsed.mermaidScale === 100 || parsed.mermaidScale === 90 || parsed.mermaidScale === 80) {
+      printSettings.value.mermaidScale = parsed.mermaidScale
+    }
+    if (typeof parsed.mermaidAutoFit === 'boolean') {
+      printSettings.value.mermaidAutoFit = parsed.mermaidAutoFit
+    }
+  } catch {
+    /* ignore corrupted settings */
+  }
+}
+
 // --- 刷新 / 清缓存（带反馈） ---
 async function handleRefresh() {
   await loadFiles()
@@ -608,10 +865,20 @@ function handleClearCache() {
 // --- 生命周期 ---
 onMounted(async () => {
   loadCacheFromStorage()
+  loadPrintSettings()
   document.addEventListener('keydown', handleKeydown)
+  window.addEventListener('afterprint', handleAfterPrint)
   await loadDirectories()
   await loadFiles()
 })
+
+watch(
+  () => printSettings.value,
+  (value) => {
+    localStorage.setItem(PRINT_SETTINGS_STORAGE_KEY, JSON.stringify(value))
+  },
+  { deep: true },
+)
 
 watch(
   () => props.activeFileTag,
@@ -622,9 +889,14 @@ watch(
 
 onUnmounted(() => {
   document.removeEventListener('keydown', handleKeydown)
+  window.removeEventListener('afterprint', handleAfterPrint)
   document.removeEventListener('mousemove', onResizeMove)
   document.removeEventListener('mouseup', onResizeEnd)
   if (toastTimer) clearTimeout(toastTimer)
+  if (printStyleEl?.parentNode) {
+    printStyleEl.parentNode.removeChild(printStyleEl)
+    printStyleEl = null
+  }
 })
 
 defineExpose({
@@ -651,6 +923,111 @@ defineExpose({
   z-index: 9999;
   border-radius: 0;
   border: none;
+}
+
+.r-docs-print-mask {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(17, 24, 39, 0.48);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--ra-spacing-5, 24px);
+}
+
+.r-docs-print-dialog {
+  width: min(560px, 100%);
+  background: var(--ra-color-surface, #ffffff);
+  border: 1px solid var(--ra-color-border, #e5e7eb);
+  border-radius: var(--ra-radius-lg, 10px);
+  box-shadow: var(--ra-shadow-lg, 0 12px 28px rgba(0, 0, 0, 0.18));
+  overflow: hidden;
+}
+
+.r-docs-print-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--ra-spacing-4, 16px) var(--ra-spacing-5, 24px);
+  border-bottom: 1px solid var(--ra-color-border, #e5e7eb);
+}
+
+.r-docs-print-dialog__header h3 {
+  margin: 0;
+  font-size: var(--ra-font-size-lg, 16px);
+  font-weight: 600;
+  color: var(--ra-color-text-primary, #111827);
+}
+
+.r-docs-print-close {
+  border: 1px solid var(--ra-color-border, #e5e7eb);
+  background: var(--ra-color-surface, #fff);
+  color: var(--ra-color-text-secondary, #6b7280);
+  border-radius: var(--ra-radius-sm, 6px);
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+}
+
+.r-docs-print-section {
+  padding: var(--ra-spacing-4, 16px) var(--ra-spacing-5, 24px);
+  border-bottom: 1px solid var(--ra-color-border, #e5e7eb);
+}
+
+.r-docs-print-section__title {
+  margin: 0 0 var(--ra-spacing-3, 12px);
+  font-size: var(--ra-font-size-sm, 13px);
+  color: var(--ra-color-text-secondary, #6b7280);
+}
+
+.r-docs-print-grid {
+  display: grid;
+  gap: var(--ra-spacing-2, 8px);
+}
+
+.r-docs-print-grid label {
+  display: flex;
+  align-items: center;
+  gap: var(--ra-spacing-2, 8px);
+  font-size: var(--ra-font-size-sm, 13px);
+  color: var(--ra-color-text-primary, #111827);
+}
+
+.r-docs-print-check {
+  display: flex;
+  align-items: center;
+  gap: var(--ra-spacing-2, 8px);
+  margin-bottom: var(--ra-spacing-2, 8px);
+  font-size: var(--ra-font-size-sm, 13px);
+  color: var(--ra-color-text-primary, #111827);
+}
+
+.r-docs-print-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--ra-spacing-2, 8px);
+  padding: var(--ra-spacing-4, 16px) var(--ra-spacing-5, 24px);
+}
+
+.r-docs-print-btn {
+  border: 1px solid var(--ra-color-border, #e5e7eb);
+  background: var(--ra-color-surface, #fff);
+  color: var(--ra-color-text-secondary, #6b7280);
+  border-radius: var(--ra-radius-md, 6px);
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.r-docs-print-btn--primary {
+  background: var(--ra-color-primary, #2563eb);
+  border-color: var(--ra-color-primary, #2563eb);
+  color: #fff;
+}
+
+.r-docs-print-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* --- Toast --- */
@@ -923,6 +1300,116 @@ defineExpose({
 
   .r-docs-resize-handle {
     display: none;
+  }
+}
+
+@media print {
+  .r-docs-browser,
+  .r-docs-main-area,
+  .r-docs-content,
+  .r-docs-content-body {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .r-docs-browser {
+    display: block !important;
+    position: static !important;
+    inset: auto !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: #fff !important;
+  }
+
+  .r-docs-panel,
+  .r-docs-resize-handle,
+  .r-docs-collapse-btn,
+  .r-docs-global-toolbar,
+  .r-docs-content-header,
+  .r-docs-toc-panel,
+  .r-docs-toast,
+  .r-docs-print-mask,
+  .rmd-canvas-overlay {
+    display: none !important;
+  }
+
+  .r-docs-main-area,
+  .r-docs-content {
+    width: 100% !important;
+  }
+
+  .r-docs-content-body {
+    padding: 0 !important;
+  }
+
+  .r-markdown-preview {
+    padding: 0 !important;
+    max-width: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .r-markdown-preview h1,
+  .r-markdown-preview h2,
+  .r-markdown-preview h3,
+  .r-markdown-preview pre,
+  .r-markdown-preview table,
+  .r-markdown-preview blockquote,
+  .r-markdown-preview img {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .r-markdown-preview img,
+  .r-markdown-preview svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  .r-markdown-preview .rmd-mermaid-fullscreen-btn {
+    display: none !important;
+  }
+
+  .r-markdown-preview .rmd-mermaid-container {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+    overflow: visible !important;
+    max-width: 100% !important;
+  }
+
+  .r-markdown-preview .rmd-mermaid-container svg {
+    display: block !important;
+    width: auto !important;
+    max-width: var(--r-docs-print-mermaid-max-width, 100%) !important;
+    max-height: 220mm !important;
+    height: auto !important;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .r-docs-browser.print-theme-ink .r-markdown-preview {
+    color: #111 !important;
+    background: #fff !important;
+  }
+
+  .r-docs-browser.print-theme-ink .r-markdown-preview pre,
+  .r-docs-browser.print-theme-ink .r-markdown-preview code,
+  .r-docs-browser.print-theme-ink .r-markdown-preview table tr:nth-child(2n) {
+    background: #fff !important;
+  }
+
+  .r-docs-browser.print-theme-ink .r-markdown-preview pre,
+  .r-docs-browser.print-theme-ink .r-markdown-preview table,
+  .r-docs-browser.print-theme-ink .r-markdown-preview table td,
+  .r-docs-browser.print-theme-ink .r-markdown-preview table th,
+  .r-docs-browser.print-theme-ink .r-markdown-preview blockquote {
+    border-color: #d1d5db !important;
+  }
+
+  .r-docs-browser.print-theme-github .r-markdown-preview {
+    font-size: 15px !important;
+    line-height: 1.6 !important;
   }
 }
 </style>

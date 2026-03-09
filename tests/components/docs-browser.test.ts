@@ -61,4 +61,35 @@ describe('RDocsBrowser', () => {
 
     expect(wrapper.emitted('file-tag-change')?.[0]).toEqual(['docs::intro.txt'])
   })
+
+  it('opens print dialog and calls window.print', async () => {
+    const api = createApiMock()
+    const printSpy = vi.spyOn(window, 'print').mockImplementation(() => undefined)
+    const rafSpy = vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+      cb(0)
+      return 0
+    })
+
+    const wrapper = mount(RDocsBrowser, {
+      props: {
+        api,
+        enableCache: false,
+        activeFileTag: 'docs::intro.txt',
+      },
+      attachTo: document.body,
+    })
+
+    await flushPromises()
+    await wrapper.get('[data-testid="docs-print-open"]').trigger('click')
+    const confirmBtn = document.querySelector('[data-testid="docs-print-confirm"]') as HTMLButtonElement
+    expect(confirmBtn).toBeTruthy()
+    confirmBtn.click()
+    await flushPromises()
+
+    expect(printSpy).toHaveBeenCalledTimes(1)
+
+    wrapper.unmount()
+    printSpy.mockRestore()
+    rafSpy.mockRestore()
+  })
 })
