@@ -1,5 +1,6 @@
 import type {
   ApiResponse,
+  ErrorStrategy,
   HttpClient,
   HttpClientConfig,
   RequestError,
@@ -20,7 +21,8 @@ function buildUrl(baseURL: string, url: string, params?: Record<string, unknown>
       searchParams.append(key, String(value))
     }
   }
-  return `${fullUrl}?${searchParams.toString()}`
+  const queryString = searchParams.toString()
+  return queryString ? `${fullUrl}?${queryString}` : fullUrl
 }
 
 function isFormData(value: unknown): value is FormData {
@@ -86,6 +88,7 @@ async function handleError(config: HttpClientConfig, error: RequestError): Promi
       }
     }
   }
+  applyErrorStrategy(config, error)
   throw error
 }
 
@@ -108,6 +111,100 @@ function classifyAbortError(
   if (timeoutController.signal.aborted) return 'TIMEOUT'
   if (externalSignal?.aborted) return 'CANCELLED'
   return 'CANCELLED'
+}
+
+function getHeader(response: Response, name: string): string {
+  return response.headers?.get?.(name) ?? ''
+}
+
+function hasEmptyBody(response: Response): boolean {
+  if (response.status === 204 || response.status === 205 || response.status === 304) {
+    return true
+  }
+  return getHeader(response, 'content-length') === '0'
+}
+
+function buildFallbackResponse<T>(response: Response, data?: unknown): ApiResponse<T> {
+  return {
+    code: response.status,
+    message: response.statusText || 'OK',
+    data: (data as T) ?? (undefined as T),
+  }
+}
+
+async function parseErrorBody(response: Response): Promise<unknown> {
+  const contentType = getHeader(response, 'content-type')
+
+  if (!contentType || contentType.includes('json')) {
+    try {
+      return await response.json()
+    } catch {
+      /* fallback to text */
+    }
+  }
+
+  if (typeof response.text === 'function') {
+    try {
+      const text = await response.text()
+      return text || undefined
+    } catch {
+      /* ignore text parse errors */
+    }
+  }
+
+  return undefined
+}
+
+async function parseSuccessBody<T>(response: Response): Promise<ApiResponse<T>> {
+  if (hasEmptyBody(response)) {
+    return buildFallbackResponse<T>(response)
+  }
+
+  const contentType = getHeader(response, 'content-type')
+  const shouldTryJson = !contentType || contentType.includes('json')
+
+  if (shouldTryJson) {
+    try {
+      return (await response.json()) as ApiResponse<T>
+    } catch {
+      /* fallback to text */
+    }
+  }
+
+  if (typeof response.text === 'function') {
+    const text = await response.text()
+    if (!text.trim()) {
+      return buildFallbackResponse<T>(response)
+    }
+    try {
+      return JSON.parse(text) as ApiResponse<T>
+    } catch {
+      return buildFallbackResponse<T>(response, text)
+    }
+  }
+
+  return buildFallbackResponse<T>(response)
+}
+
+function resolveErrorStrategy(config: HttpClientConfig, error: RequestError): ErrorStrategy {
+  if (!config.errorStrategy) return 'throw'
+  if (typeof error.code === 'number' && config.errorStrategy.codeMapping?.[error.code]) {
+    return config.errorStrategy.codeMapping[error.code]
+  }
+  return config.errorStrategy.default
+}
+
+function applyErrorStrategy(config: HttpClientConfig, error: RequestError): void {
+  const strategy = resolveErrorStrategy(config, error)
+
+  if (strategy === 'toast') {
+    console.error(`[app-request] ${error.message}`, error)
+    return
+  }
+
+  if (strategy === 'custom') {
+    config.errorStrategy?.onCustom?.(error)
+  }
 }
 
 export function createHttpClient(config: HttpClientConfig): HttpClient {
@@ -145,12 +242,7 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
       clearTimeout(timeoutId)
 
       if (!response.ok) {
-        let responseBody: unknown
-        try {
-          responseBody = await response.json()
-        } catch {
-          /* body may not be JSON — safe to ignore */
-        }
+        const responseBody = await parseErrorBody(response)
         const error: RequestError = {
           kind: 'HTTP_ERROR',
           code: response.status,
@@ -161,8 +253,8 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
         return handleError(config, error)
       }
 
-      const json = (await response.json()) as ApiResponse<T>
-      return applyResponseInterceptors(config, json)
+      const parsedResponse = await parseSuccessBody<T>(response)
+      return applyResponseInterceptors(config, parsedResponse)
     } catch (err) {
       clearTimeout(timeoutId)
 

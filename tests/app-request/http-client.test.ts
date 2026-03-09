@@ -269,6 +269,57 @@ describe('createHttpClient', () => {
     )
   })
 
+  it('should not append trailing ? when query params are empty', async () => {
+    const config: HttpClientConfig = {
+      requestConfig: { baseURL: 'https://api.test.com' },
+    }
+    const client = createHttpClient(config)
+    await client.get('/search', { q: undefined, page: null })
+
+    expect(fetch).toHaveBeenCalledWith('https://api.test.com/search', expect.anything())
+  })
+
+  it('should handle 204 success response without parsing JSON', async () => {
+    const jsonSpy = vi.fn()
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({ ok: true, status: 204, statusText: 'No Content', json: jsonSpy }),
+    )
+
+    const config: HttpClientConfig = {
+      requestConfig: { baseURL: 'https://api.test.com' },
+    }
+    const client = createHttpClient(config)
+    const result = await client.get('/empty')
+
+    expect(result.code).toBe(204)
+    expect(result.data).toBeUndefined()
+    expect(jsonSpy).not.toHaveBeenCalled()
+  })
+
+  it('should execute custom error strategy callback', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({ ok: false, status: 503, statusText: 'Service Unavailable' }),
+    )
+
+    const onCustom = vi.fn()
+    const config: HttpClientConfig = {
+      requestConfig: { baseURL: 'https://api.test.com' },
+      errorStrategy: {
+        default: 'custom',
+        onCustom,
+      },
+    }
+    const client = createHttpClient(config)
+
+    await expect(client.get('/health')).rejects.toMatchObject({
+      kind: 'HTTP_ERROR',
+      status: 503,
+    })
+    expect(onCustom).toHaveBeenCalled()
+  })
+
   it('should handle absolute URLs', async () => {
     const config: HttpClientConfig = {
       requestConfig: { baseURL: 'https://api.test.com' },

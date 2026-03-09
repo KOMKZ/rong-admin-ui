@@ -91,6 +91,10 @@ export function createAdminRouterPipeline(options: RouterPipelineOptions): Route
     return whiteList.some((p) => path === p || path.startsWith(`${p}/`))
   }
 
+  function isPublicRoute(to: RouteLocationNormalized): boolean {
+    return Boolean(to.meta?.public)
+  }
+
   function hasPermission(to: RouteLocationNormalized): boolean {
     const requiredPermissions = to.meta?.permissions as string[] | undefined
     if (!requiredPermissions || requiredPermissions.length === 0) return true
@@ -114,7 +118,7 @@ export function createAdminRouterPipeline(options: RouterPipelineOptions): Route
       if (typeof result === 'string') return result
     }
 
-    if (isWhiteListed(toPath)) return true
+    if (isWhiteListed(toPath) || isPublicRoute(to)) return true
 
     if (!token) {
       return `${loginPath}?redirect=${encodeURIComponent(toPath)}`
