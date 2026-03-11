@@ -41,6 +41,20 @@ async function navigate(action: RouteQuickActionsWidgetConfig['actions'][number]
     window.location.assign(action.route)
     return
   }
+  const resolved = router.resolve(action.route)
+  const tabSeed = `${String(action.id || '').trim()}::${resolved.fullPath}`
+  const tabId = tabSeed.trim()
+  if (tabId) {
+    await router.push({
+      path: resolved.path,
+      hash: resolved.hash,
+      query: {
+        ...resolved.query,
+        tabId,
+      },
+    })
+    return
+  }
   await router.push(action.route)
 }
 </script>
