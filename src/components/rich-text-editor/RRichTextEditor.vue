@@ -470,8 +470,8 @@ defineExpose({
 }
 
 .r-rich-text-editor .ProseMirror pre {
-  background: #0d1117;
-  color: #fff;
+  background: var(--ra-color-bg-muted);
+  color: var(--ra-color-text-primary);
   font-family: 'JetBrains Mono', monospace;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
@@ -485,7 +485,7 @@ defineExpose({
 }
 
 .r-rich-text-editor .ProseMirror mark {
-  background-color: #ffe066;
+  background-color: var(--ra-color-warning-bg);
   padding: 0.1em 0.3em;
   border-radius: 0.2em;
 }
@@ -525,7 +525,7 @@ defineExpose({
   top: 0;
   bottom: -2px;
   width: 4px;
-  background-color: #adf;
+  background-color: var(--ra-color-info-border);
   pointer-events: none;
 }
 

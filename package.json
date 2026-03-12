@@ -60,6 +60,11 @@
       "types": "./dist/app-captcha/index.d.ts",
       "import": "./dist/app-captcha/index.js"
     },
+    "./naive": {
+      "types": "./dist/naive/index.d.ts",
+      "import": "./dist/naive/index.js",
+      "require": "./dist/naive/index.cjs"
+    },
     "./style.css": "./dist/admin-ui.css",
     "./dist/admin-ui.css": "./dist/admin-ui.css"
   },

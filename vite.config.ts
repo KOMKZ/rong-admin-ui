@@ -71,6 +71,7 @@ export default defineConfig({
         'components/settings-manager/index': resolve(__dirname, 'src/components/settings-manager/index.ts'),
         'components/dashboard-builder/index': resolve(__dirname, 'src/components/dashboard-builder/index.ts'),
         'app-captcha/index': resolve(__dirname, 'src/app-captcha/index.ts'),
+        'naive/index': resolve(__dirname, 'src/naive/index.ts'),
       },
       formats: ['es', 'cjs'],
     },
