@@ -279,6 +279,7 @@ describe('RDataTable — Pro features', () => {
       })
 
       const naiveTable = wrapper.findComponent(NDataTable)
+      expect(naiveTable.props('remote')).toBe(true)
       const paginationProp = naiveTable.props('pagination') as Record<string, unknown> | false
       expect(paginationProp).not.toBe(false)
       expect(typeof paginationProp).toBe('object')
@@ -291,6 +292,14 @@ describe('RDataTable — Pro features', () => {
       const serverParams = wrapper.emitted('server-params-change')
       expect(serverParams).toBeTruthy()
       expect(serverParams!.length).toBeGreaterThan(0)
+    })
+
+    it('should default to local mode when pagination disabled', () => {
+      const wrapper = mount(RDataTable, {
+        props: { columns, data, pagination: false },
+      })
+      const naiveTable = wrapper.findComponent(NDataTable)
+      expect(naiveTable.props('remote')).toBe(false)
     })
   })
 

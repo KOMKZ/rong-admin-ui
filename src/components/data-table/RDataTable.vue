@@ -34,6 +34,7 @@ const props = defineProps({
   checkedRowKeys: { type: Array as PropType<DataTableRowKey[]>, default: () => [] },
   defaultSort: { type: Object as PropType<DataTableSortState>, default: undefined },
   emptyText: { type: String, default: '暂无数据' },
+  remote: { type: Boolean, default: undefined },
   columnConfigurable: { type: Boolean, default: false },
   columnStorageKey: { type: String, default: undefined },
 })
@@ -166,6 +167,13 @@ const naivePagination = computed(() => {
       emitServerParams()
     },
   }
+})
+
+const isRemote = computed(() => {
+  if (props.remote !== undefined) {
+    return props.remote
+  }
+  return props.pagination !== false
 })
 
 const rowKeyFn = computed(() => {
@@ -305,6 +313,7 @@ defineExpose(expose)
       :scroll-x="scrollX"
       :row-key="rowKeyFn"
       :checked-row-keys="selectable ? checkedRowKeys : undefined"
+      :remote="isRemote"
       :pagination="naivePagination"
       :row-props="handleRowProps"
       @update:sorter="handleSorterChange"

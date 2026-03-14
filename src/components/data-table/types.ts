@@ -76,6 +76,8 @@ export interface DataTableProps<T = Record<string, unknown>> {
   checkedRowKeys?: DataTableRowKey[]
   defaultSort?: DataTableSortState
   emptyText?: string
+  /** Whether table pagination/filtering/sorting works in remote mode */
+  remote?: boolean
   /** Enable column visibility/order configuration panel */
   columnConfigurable?: boolean
   /** localStorage key for persisting column configuration */
