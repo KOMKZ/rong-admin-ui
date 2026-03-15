@@ -21,35 +21,57 @@
           data-testid="docs-search"
         />
       </div>
-      <button
-        class="r-docs-sort-btn"
-        :title="sortOrder === 'desc' ? '最新在前' : '最旧在前'"
-        data-testid="docs-sort-toggle"
-        @click="$emit('toggle-sort')"
-      >
-        <svg
-          v-if="sortOrder === 'desc'"
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
+      <div ref="sortPopoverRef" class="r-docs-sort-popover">
+        <button
+          class="r-docs-sort-btn"
+          title="选择排序模式"
+          data-testid="docs-sort-mode-toggle"
+          @click="handleSortModeToggle"
         >
-          <path d="M3 4h13M3 8h9M3 12h5M17 14V4M13 10l4 4 4-4" />
-        </svg>
-        <svg
-          v-else
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
+          <span class="r-docs-sort-btn__label">{{ sortModeLabel }}</span>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </button>
+
+        <div
+          v-if="sortMenuOpen"
+          class="r-docs-sort-menu"
+          role="menu"
+          data-testid="docs-sort-menu"
         >
-          <path d="M3 4h13M3 8h9M3 12h5M17 4v10M13 10l4-4 4 4" />
-        </svg>
-      </button>
+          <button
+            v-for="option in sortModeOptions"
+            :key="option.key"
+            class="r-docs-sort-option"
+            :class="{ 'is-active': option.key === currentSortModeKey }"
+            :data-testid="`docs-sort-option-${option.key.replace(':', '-')}`"
+            role="menuitemradio"
+            :aria-checked="option.key === currentSortModeKey"
+            @click="selectSortMode(option.sortBy, option.sortOrder)"
+          >
+            <span>{{ option.label }}</span>
+            <svg
+              v-if="option.key === currentSortModeKey"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
 
     <div class="r-docs-file-items" v-if="filteredFiles.length > 0">
@@ -111,23 +133,26 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed } from 'vue'
-import type { DocFileItem, DocSortOrder } from '../types'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import type { DocFileItem, DocSortBy, DocSortOrder } from '../types'
 
 const props = defineProps<{
   files: DocFileItem[]
   selectedFile: DocFileItem | null
+  sortBy: DocSortBy
   sortOrder: DocSortOrder
   activeDir: string
   loading: boolean
 }>()
 
-defineEmits<{
+const emit = defineEmits<{
   (e: 'select', file: DocFileItem): void
-  (e: 'toggle-sort'): void
+  (e: 'change-sort-mode', mode: { sortBy: DocSortBy; sortOrder: DocSortOrder }): void
 }>()
 
 const searchQuery = ref('')
+const sortMenuOpen = ref(false)
+const sortPopoverRef = ref<HTMLElement | null>(null)
 
 const filteredFiles = computed(() => {
   if (!searchQuery.value) return props.files
@@ -137,10 +162,57 @@ const filteredFiles = computed(() => {
   )
 })
 
+const sortModeOptions: Array<{ key: string; label: string; sortBy: DocSortBy; sortOrder: DocSortOrder }> = [
+  { key: 'mod_time:desc', label: '按更新时间（新-旧）', sortBy: 'mod_time', sortOrder: 'desc' },
+  { key: 'mod_time:asc', label: '按更新时间（旧-新）', sortBy: 'mod_time', sortOrder: 'asc' },
+  { key: 'name:asc', label: '按文件名（A-Z）', sortBy: 'name', sortOrder: 'asc' },
+  { key: 'name:desc', label: '按文件名（Z-A）', sortBy: 'name', sortOrder: 'desc' },
+]
+
+const currentSortModeKey = computed(() => `${props.sortBy}:${props.sortOrder}`)
+
+const sortModeLabel = computed(() => {
+  return sortModeOptions.find((option) => option.key === currentSortModeKey.value)?.label || '按更新时间（新-旧）'
+})
+
 function isSelected(file: DocFileItem): boolean {
   if (!props.selectedFile) return false
   return props.selectedFile.path === file.path && props.selectedFile.directory === file.directory
 }
+
+function handleSortModeToggle(): void {
+  sortMenuOpen.value = !sortMenuOpen.value
+}
+
+function selectSortMode(sortBy: DocSortBy, sortOrder: DocSortOrder): void {
+  sortMenuOpen.value = false
+  if (props.sortBy === sortBy && props.sortOrder === sortOrder) return
+  emit('change-sort-mode', { sortBy, sortOrder })
+}
+
+function handleDocumentClick(event: MouseEvent): void {
+  if (!sortMenuOpen.value) return
+  const target = event.target as Node | null
+  if (!target) return
+  if (sortPopoverRef.value?.contains(target)) return
+  sortMenuOpen.value = false
+}
+
+function handleDocumentKeydown(event: KeyboardEvent): void {
+  if (event.key === 'Escape') {
+    sortMenuOpen.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener('mousedown', handleDocumentClick)
+  document.addEventListener('keydown', handleDocumentKeydown)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener('mousedown', handleDocumentClick)
+  document.removeEventListener('keydown', handleDocumentKeydown)
+})
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return bytes + ' B'
@@ -200,18 +272,69 @@ function formatSize(bytes: number): string {
   color: var(--ra-color-text-tertiary, #9ca3af);
 }
 
+.r-docs-sort-popover {
+  position: relative;
+}
+
 .r-docs-sort-btn {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 32px;
+  justify-content: space-between;
+  gap: 6px;
+  min-width: 132px;
   height: 32px;
+  padding: 0 10px;
   border: 1px solid var(--ra-color-border, #e5e7eb);
   border-radius: var(--ra-radius-md, 6px);
   background: var(--ra-color-surface, #ffffff);
   color: var(--ra-color-text-secondary, #6b7280);
+  font-size: var(--ra-font-size-sm, 13px);
   cursor: pointer;
   transition: all 0.15s ease;
+}
+
+.r-docs-sort-btn__label {
+  white-space: nowrap;
+}
+
+.r-docs-sort-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 190px;
+  padding: 6px;
+  border: 1px solid var(--ra-color-border, #e5e7eb);
+  border-radius: var(--ra-radius-md, 6px);
+  background: var(--ra-color-surface, #ffffff);
+  box-shadow: 0 8px 20px rgba(17, 24, 39, 0.12);
+  z-index: 12;
+}
+
+.r-docs-sort-option {
+  width: 100%;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--ra-color-text-secondary, #6b7280);
+  font-size: var(--ra-font-size-sm, 13px);
+  text-align: left;
+  cursor: pointer;
+}
+
+.r-docs-sort-option:hover {
+  background: var(--ra-color-surface-hover, #f3f4f6);
+  color: var(--ra-color-text-primary, #111827);
+}
+
+.r-docs-sort-option.is-active {
+  background: var(--ra-color-primary-subtle, #eff6ff);
+  color: var(--ra-color-primary, #2563eb);
 }
 
 .r-docs-sort-btn:hover {

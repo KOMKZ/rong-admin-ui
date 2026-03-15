@@ -4,6 +4,7 @@ export type {
   DocDirectory,
   DocFileItem,
   DocFileContent,
+  DocSortBy,
   DocSortOrder,
   DocListFilesResponse,
   DocListDirectoriesResponse,

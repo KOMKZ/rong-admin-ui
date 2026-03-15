@@ -99,11 +99,12 @@
         <FileList
           :files="filteredFiles"
           :selected-file="selectedFile"
+          :sort-by="sortBy"
           :sort-order="sortOrder"
           :active-dir="activeDir"
           :loading="fileListLoading"
           @select="handleFileClick"
-          @toggle-sort="toggleSortOrder"
+          @change-sort-mode="handleSortModeChange"
         />
       </div>
       <!-- 文件列表 resize handle -->
@@ -460,6 +461,7 @@ import type {
   DocDirectory,
   DocFileItem,
   DocFileContent,
+  DocSortBy,
   DocSortOrder,
 } from './types'
 
@@ -517,6 +519,7 @@ const selectedFile = ref<DocFileItem | null>(null)
 const fileContent = ref<DocFileContent | null>(null)
 const isCached = ref(false)
 const isFullscreen = ref(false)
+const sortBy = ref<DocSortBy>('mod_time')
 const sortOrder = ref<DocSortOrder>('desc')
 const tocVisible = ref(false)
 const fileCache = ref<Record<string, DocFileContent>>({})
@@ -608,8 +611,10 @@ function handleDirSelect(dir: string) {
   emit('directory-change', dir)
 }
 
-function toggleSortOrder() {
-  sortOrder.value = sortOrder.value === 'desc' ? 'asc' : 'desc'
+function handleSortModeChange(mode: { sortBy: DocSortBy; sortOrder: DocSortOrder }) {
+  if (sortBy.value === mode.sortBy && sortOrder.value === mode.sortOrder) return
+  sortBy.value = mode.sortBy
+  sortOrder.value = mode.sortOrder
   loadFiles()
 }
 
@@ -701,7 +706,7 @@ async function loadFiles() {
   fileListLoading.value = true
   try {
     loadError.value = null
-    const res = await props.api.getFileList(sortOrder.value)
+    const res = await props.api.getFileList(sortOrder.value, sortBy.value)
     files.value = res.files || []
     if (selectedFile.value) {
       const synced = files.value.find(

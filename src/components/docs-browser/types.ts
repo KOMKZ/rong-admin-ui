@@ -21,11 +21,13 @@ export interface DocFileContent {
 }
 
 export type DocSortOrder = 'desc' | 'asc'
+export type DocSortBy = 'mod_time' | 'name'
 
 export interface DocListFilesResponse {
   files: DocFileItem[]
   total: number
   order: DocSortOrder
+  sort_by?: DocSortBy
   directories: Record<string, number>
 }
 
@@ -34,7 +36,7 @@ export interface DocListDirectoriesResponse {
 }
 
 export interface DocsApiAdapter {
-  getFileList: (order: DocSortOrder) => Promise<DocListFilesResponse>
+  getFileList: (order: DocSortOrder, sortBy?: DocSortBy) => Promise<DocListFilesResponse>
   getDirectories: () => Promise<DocListDirectoriesResponse>
   getFileContent: (dir: string, path: string) => Promise<DocFileContent>
 }

@@ -1,27 +1,51 @@
 import { describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
-import { RDocsBrowser, type DocsApiAdapter } from '../../src/components/docs-browser'
+import {
+  RDocsBrowser,
+  type DocFileItem,
+  type DocSortBy,
+  type DocSortOrder,
+  type DocsApiAdapter,
+} from '../../src/components/docs-browser'
 
-function createApiMock(): DocsApiAdapter {
+function sortFiles(files: DocFileItem[], order: DocSortOrder, sortBy: DocSortBy): DocFileItem[] {
+  const direction = order === 'asc' ? 1 : -1
+  return [...files].sort((a, b) => {
+    if (sortBy === 'name') {
+      const nameResult = a.name.localeCompare(b.name)
+      if (nameResult !== 0) return nameResult * direction
+      return a.path.localeCompare(b.path) * direction
+    }
+    const timeResult = (a.mod_time - b.mod_time) * direction
+    if (timeResult !== 0) return timeResult
+    return a.path.localeCompare(b.path) * direction
+  })
+}
+
+function createApiMock(fileList?: DocFileItem[]): DocsApiAdapter {
+  const files =
+    fileList ??
+    [
+      {
+        name: 'intro.txt',
+        path: 'intro.txt',
+        size: 120,
+        is_dir: false,
+        mod_time: Date.now(),
+        directory: 'docs',
+      },
+    ]
+
   return {
     getDirectories: vi.fn().mockResolvedValue({
       directories: [{ name: 'docs', path: 'docs' }],
     }),
-    getFileList: vi.fn().mockResolvedValue({
-      files: [
-        {
-          name: 'intro.txt',
-          path: 'intro.txt',
-          size: 120,
-          is_dir: false,
-          mod_time: Date.now(),
-          directory: 'docs',
-        },
-      ],
-      total: 1,
-      order: 'desc',
-      directories: { docs: 1 },
-    }),
+    getFileList: vi.fn().mockImplementation(async (order: DocSortOrder = 'desc', sortBy: DocSortBy = 'mod_time') => ({
+      files: sortFiles(files, order, sortBy),
+      total: files.length,
+      order,
+      directories: { docs: files.length },
+    })),
     getFileContent: vi.fn().mockResolvedValue({
       name: 'intro.txt',
       path: 'intro.txt',
@@ -91,5 +115,54 @@ describe('RDocsBrowser', () => {
     wrapper.unmount()
     printSpy.mockRestore()
     rafSpy.mockRestore()
+  })
+
+  it('supports sorting by filename', async () => {
+    const api = createApiMock([
+      {
+        name: 'zeta.md',
+        path: 'zeta.md',
+        size: 320,
+        is_dir: false,
+        mod_time: 200,
+        directory: 'docs',
+      },
+      {
+        name: 'alpha.md',
+        path: 'alpha.md',
+        size: 180,
+        is_dir: false,
+        mod_time: 100,
+        directory: 'docs',
+      },
+    ])
+
+    const wrapper = mount(RDocsBrowser, {
+      props: {
+        api,
+        enableCache: false,
+      },
+    })
+
+    await flushPromises()
+    await wrapper.get('[data-testid="docs-sort-mode-toggle"]').trigger('click')
+    await flushPromises()
+    expect(wrapper.find('[data-testid="docs-sort-menu"]').exists()).toBe(true)
+
+    await wrapper.get('[data-testid="docs-sort-option-name-asc"]').trigger('click')
+    await flushPromises()
+    expect(api.getFileList).toHaveBeenLastCalledWith('asc', 'name')
+
+    let order = wrapper.findAll('.r-docs-file-item').map((node) => node.attributes('data-testid'))
+    expect(order).toEqual(['docs-file-alpha.md', 'docs-file-zeta.md'])
+
+    await wrapper.get('[data-testid="docs-sort-mode-toggle"]').trigger('click')
+    await flushPromises()
+    await wrapper.get('[data-testid="docs-sort-option-name-desc"]').trigger('click')
+    await flushPromises()
+    expect(api.getFileList).toHaveBeenLastCalledWith('desc', 'name')
+
+    order = wrapper.findAll('.r-docs-file-item').map((node) => node.attributes('data-testid'))
+    expect(order).toEqual(['docs-file-zeta.md', 'docs-file-alpha.md'])
   })
 })
