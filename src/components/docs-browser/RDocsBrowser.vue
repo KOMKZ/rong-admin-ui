@@ -1366,6 +1366,21 @@ defineExpose({
     page-break-inside: avoid;
   }
 
+  .r-markdown-preview table {
+    display: table !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+    table-layout: auto !important;
+    word-break: break-word;
+  }
+
+  .r-markdown-preview table th,
+  .r-markdown-preview table td {
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
   .r-markdown-preview img,
   .r-markdown-preview svg {
     max-width: 100% !important;
