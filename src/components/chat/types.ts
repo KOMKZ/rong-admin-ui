@@ -6,6 +6,7 @@ export interface ChatConversation {
   model: string
   system_prompt: string
   status: 'active' | 'archived' | 'deleted'
+  pinned?: boolean
   summary: string
   message_count: number
   token_usage: number

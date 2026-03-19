@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { User, Bot, Copy } from 'lucide-vue-next'
-import { NButton, NTag } from 'naive-ui'
+import { User, Bot, Copy, Pencil } from 'lucide-vue-next'
+import { NButton, NTag, NInput } from 'naive-ui'
 import type { ChatMessage } from './types'
 
 interface Props {
@@ -9,8 +9,15 @@ interface Props {
   showAvatar?: boolean
 }
 
+interface Emits {
+  (e: 'edit-resend', payload: { messageId: number; newContent: string }): void
+}
+
 const props = withDefaults(defineProps<Props>(), { showAvatar: true })
+const emit = defineEmits<Emits>()
 const copied = ref(false)
+const isEditing = ref(false)
+const editContent = ref('')
 
 function getRoleLabel(role: string): string {
   const map: Record<string, string> = {
@@ -33,6 +40,23 @@ async function handleCopy() {
     /* ignore */
   }
 }
+
+function startEdit() {
+  editContent.value = props.message.content
+  isEditing.value = true
+}
+
+function cancelEdit() {
+  isEditing.value = false
+}
+
+function confirmEdit() {
+  const trimmed = editContent.value.trim()
+  if (trimmed && trimmed !== props.message.content) {
+    emit('edit-resend', { messageId: props.message.id, newContent: trimmed })
+  }
+  isEditing.value = false
+}
 </script>
 
 <template>
@@ -53,13 +77,40 @@ async function handleCopy() {
           {{ message.token_count }} tokens
         </NTag>
       </div>
-      <div class="r-chat-message__content">
+      <div v-if="message.role === 'user' && isEditing" class="r-chat-message__edit">
+        <NInput
+          v-model:value="editContent"
+          type="textarea"
+          :autosize="{ minRows: 2, maxRows: 8 }"
+          placeholder="编辑消息"
+        />
+        <div class="r-chat-message__edit-actions">
+          <NButton size="small" @click="cancelEdit">取消</NButton>
+          <NButton size="small" type="primary" @click="confirmEdit">确认发送</NButton>
+        </div>
+      </div>
+      <div v-else class="r-chat-message__content">
         <slot>{{ message.content }}</slot>
       </div>
-      <div class="r-chat-message__actions">
-        <NButton size="tiny" quaternary @click="handleCopy">
+      <div v-if="!isEditing" class="r-chat-message__actions">
+        <NButton
+          v-if="message.role === 'user'"
+          size="tiny"
+          quaternary
+          @click="startEdit"
+          aria-label="编辑"
+        >
+          <Pencil :size="14" />
+          编辑
+        </NButton>
+        <NButton
+          v-if="message.role === 'assistant'"
+          size="tiny"
+          quaternary
+          @click="handleCopy"
+        >
           <Copy :size="14" />
-          {{ copied ? '已复制' : '复制' }}
+          {{ copied ? '已复制' : '复制全文' }}
         </NButton>
       </div>
     </div>
@@ -130,6 +181,26 @@ async function handleCopy() {
 }
 .r-chat-message__content :deep(pre) {
   white-space: pre-wrap;
+}
+.r-chat-message__edit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ra-spacing-2, 8px);
+}
+.r-chat-message__edit-actions {
+  display: flex;
+  gap: var(--ra-spacing-2, 8px);
+  justify-content: flex-end;
+}
+.r-chat-message__edit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ra-spacing-2, 8px);
+}
+.r-chat-message__edit-actions {
+  display: flex;
+  gap: var(--ra-spacing-2, 8px);
+  justify-content: flex-end;
 }
 .r-chat-message__actions {
   margin-top: var(--ra-spacing-1, 4px);

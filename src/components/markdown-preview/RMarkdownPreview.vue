@@ -116,10 +116,13 @@ md.renderer.rules.fence = (tokens, idx, options, env, self) => {
     return `<div class="rmd-mermaid-container"><pre class="mermaid">${escaped}</pre></div>`
   }
 
-  if (originalFenceRenderer) {
-    return originalFenceRenderer(tokens, idx, options, env, self)
+  const inner = originalFenceRenderer
+    ? originalFenceRenderer(tokens, idx, options, env, self)
+    : self.renderToken(tokens, idx, options)
+  if (lang) {
+    return `<div class="rmd-code-block"><span class="rmd-code-lang">${md.utils.escapeHtml(lang)}</span>${inner}</div>`
   }
-  return self.renderToken(tokens, idx, options)
+  return inner
 }
 
 const renderedContent = computed(() => {
@@ -421,6 +424,27 @@ onUnmounted(() => {
     ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 }
 
+/* Code block with language label */
+.r-markdown-preview .rmd-code-block {
+  margin-bottom: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--rmd-code-bg);
+}
+.r-markdown-preview .rmd-code-lang {
+  display: block;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--rmd-blockquote-text);
+  background: rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid var(--rmd-border);
+  font-family:
+    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+}
+.r-markdown-preview--github-dark .rmd-code-lang {
+  background: rgba(255, 255, 255, 0.06);
+}
+
 /* Code blocks */
 .r-markdown-preview pre {
   padding: 16px;
@@ -454,6 +478,31 @@ onUnmounted(() => {
 .r-markdown-preview pre.hljs code {
   color: inherit;
   background-color: transparent;
+}
+
+/* Code block with language label */
+.r-markdown-preview .rmd-code-block {
+  margin-bottom: 16px;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: var(--rmd-code-bg);
+}
+.r-markdown-preview .rmd-code-block pre.hljs {
+  border-radius: 0;
+  margin: 0;
+}
+.r-markdown-preview .rmd-code-lang {
+  display: block;
+  padding: 6px 16px;
+  font-size: 12px;
+  color: var(--rmd-blockquote-text, #6e7781);
+  background: rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid var(--rmd-border, rgba(0, 0, 0, 0.06));
+  font-family: ui-monospace, monospace;
+}
+.r-markdown-preview--github-dark .rmd-code-lang {
+  background: rgba(255, 255, 255, 0.05);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
 /* Blockquotes */

@@ -16,12 +16,24 @@ interface Emits {
   (e: 'delete', id: number): void
   (e: 'rename', id: number, title: string): void
   (e: 'archive', id: number): void
+  (e: 'pin', id: number): void
+  (e: 'unpin', id: number): void
+  (e: 'search', keyword: string): void
 }
 
 const props = withDefaults(defineProps<Props>(), { loading: false })
 const emit = defineEmits<Emits>()
 
 const searchKeyword = ref('')
+const searchDebounceTimer = ref<ReturnType<typeof setTimeout> | null>(null)
+
+function emitSearch() {
+  if (searchDebounceTimer.value) clearTimeout(searchDebounceTimer.value)
+  searchDebounceTimer.value = setTimeout(() => {
+    emit('search', searchKeyword.value.trim())
+    searchDebounceTimer.value = null
+  }, 300)
+}
 
 function formatRelativeTime(iso: string): string {
   const d = new Date(iso)
@@ -52,30 +64,39 @@ function getGroupKey(iso: string): string {
   const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
   const yesterday = new Date(today)
   yesterday.setDate(yesterday.getDate() - 1)
+  const sevenDaysAgo = new Date(today)
+  sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
   const dDay = new Date(d.getFullYear(), d.getMonth(), d.getDate())
 
   if (dDay.getTime() >= today.getTime()) return 'today'
   if (dDay.getTime() >= yesterday.getTime()) return 'yesterday'
+  if (dDay.getTime() >= sevenDaysAgo.getTime()) return 'within7days'
   return 'older'
 }
 
 const groupLabels: Record<string, string> = {
   today: '今天',
   yesterday: '昨天',
+  within7days: '7天内',
   older: '更早',
 }
 
-const filteredConversations = computed(() =>
-  props.conversations.filter((c) => !searchKeyword.value || c.title.includes(searchKeyword.value)),
+const filteredConversations = computed(() => props.conversations)
+
+const pinnedConversations = computed(() =>
+  filteredConversations.value
+    .filter((c) => c.pinned)
+    .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()),
 )
 
 const groupedConversations = computed(() => {
+  const unpinned = filteredConversations.value.filter((c) => !c.pinned)
   const groups: { key: string; label: string; items: ChatConversation[] }[] = []
-  const order = ['today', 'yesterday', 'older']
+  const order = ['today', 'yesterday', 'within7days', 'older']
   const map = new Map<string, ChatConversation[]>()
 
-  for (const conv of filteredConversations.value) {
-    const key = getGroupKey(conv.created_at)
+  for (const conv of unpinned) {
+    const key = getGroupKey(conv.updated_at)
     if (!map.has(key)) map.set(key, [])
     map.get(key)!.push(conv)
   }
@@ -83,31 +104,22 @@ const groupedConversations = computed(() => {
   for (const key of order) {
     const items = map.get(key)
     if (items?.length) {
+      items.sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())
       groups.push({ key, label: groupLabels[key], items })
     }
   }
   return groups
 })
 
-function getDropdownOptions(): DropdownOption[] {
-  return [
-    {
-      label: '重命名',
-      key: 'rename',
-    },
-    {
-      label: '归档',
-      key: 'archive',
-    },
-    {
-      type: 'divider',
-      key: 'd1',
-    },
-    {
-      label: '删除',
-      key: 'delete',
-    },
+function getDropdownOptions(conv: ChatConversation): DropdownOption[] {
+  const opts: DropdownOption[] = [
+    { label: conv.pinned ? '取消置顶' : '置顶', key: conv.pinned ? 'unpin' : 'pin' },
+    { label: '重命名', key: 'rename' },
+    { label: '归档', key: 'archive' },
+    { type: 'divider', key: 'd1' },
+    { label: '删除', key: 'delete' },
   ]
+  return opts
 }
 
 function handleDropdownSelect(key: string, conv: ChatConversation) {
@@ -116,6 +128,10 @@ function handleDropdownSelect(key: string, conv: ChatConversation) {
     if (title != null) emit('rename', conv.id, title.trim() || conv.title || '未命名对话')
   } else if (key === 'archive') {
     emit('archive', conv.id)
+  } else if (key === 'pin') {
+    emit('pin', conv.id)
+  } else if (key === 'unpin') {
+    emit('unpin', conv.id)
   } else if (key === 'delete') {
     emit('delete', conv.id)
   }
@@ -138,18 +154,63 @@ function handleDeleteClick(e: Event, id: number) {
         size="small"
         role="searchbox"
         aria-label="搜索对话"
+        @update:value="emitSearch"
       />
     </div>
     <NScrollbar class="r-chat-conv-list__body">
       <NEmpty v-if="!conversations.length" description="暂无对话" />
       <template v-else>
+        <template v-if="pinnedConversations.length">
+          <div class="r-chat-conv-list__group-title">置顶</div>
+          <NDropdown
+            v-for="conv in pinnedConversations"
+            :key="'pinned-' + conv.id"
+            :trigger="('contextmenu' as any)"
+            :options="getDropdownOptions(conv)"
+            @select="(key: string) => handleDropdownSelect(key, conv)"
+          >
+            <div
+              class="r-chat-conv-list__item"
+              :class="{ 'r-chat-conv-list__item--active': conv.id === activeId }"
+              role="button"
+              tabindex="0"
+              :aria-label="`对话: ${conv.title || '未命名对话'}`"
+              @click="$emit('select', conv.id)"
+              @keydown.enter="$emit('select', conv.id)"
+              @keydown.space.prevent="$emit('select', conv.id)"
+            >
+              <div class="r-chat-conv-list__item-head">
+                <div class="r-chat-conv-list__item-title">{{ conv.title || '未命名对话' }}</div>
+                <span class="r-chat-conv-list__item-time">{{ formatRelativeTime(conv.updated_at) }}</span>
+              </div>
+              <div v-if="truncatePreview(conv.summary)" class="r-chat-conv-list__item-preview">
+                {{ truncatePreview(conv.summary) }}
+              </div>
+              <div class="r-chat-conv-list__item-meta">
+                {{ conv.message_count }} 条消息 · {{ conv.model }}
+              </div>
+              <NButton
+                quaternary
+                circle
+                size="tiny"
+                class="r-chat-conv-list__item-delete"
+                aria-label="删除对话"
+                @click="handleDeleteClick($event, conv.id)"
+              >
+                <template #icon>
+                  <Trash2 :size="14" />
+                </template>
+              </NButton>
+            </div>
+          </NDropdown>
+        </template>
         <template v-for="group in groupedConversations" :key="group.key">
           <div class="r-chat-conv-list__group-title">{{ group.label }}</div>
           <NDropdown
             v-for="conv in group.items"
             :key="conv.id"
             :trigger="('contextmenu' as any)"
-            :options="getDropdownOptions()"
+            :options="getDropdownOptions(conv)"
             @select="(key: string) => handleDropdownSelect(key, conv)"
           >
             <div
