@@ -22,7 +22,7 @@
 
   /* ───── Card & Avatar (for chat components) ───── */
   --ra-chat-avatar-bg: var(--ra-color-bg-muted, #f5f5f5);
-  --ra-chat-sidebar-active-bg: var(--ra-color-brand-subtle, #e8f5e9);
+  --ra-chat-sidebar-active-bg: var(--ra-color-primary-light, #eff6ff);
   --ra-chat-sidebar-hover-bg: var(--ra-color-bg-hover, #f5f5f5);
   --ra-chat-pre-bg: var(--ra-color-bg-muted, #f5f5f5);
   --ra-chat-border-color: var(--ra-color-border-default, #e0e0e6);
@@ -37,7 +37,7 @@
   --ra-chat-bubble-user-text: #e8e8e8;
   --ra-chat-bubble-assistant-text: #e8e8e8;
   --ra-chat-avatar-bg: #333;
-  --ra-chat-sidebar-active-bg: #1e3a2f;
+  --ra-chat-sidebar-active-bg: #1a2e4a;
   --ra-chat-sidebar-hover-bg: #2a2a2a;
   --ra-chat-pre-bg: #2a2a2a;
   --ra-chat-border-color: #404040;

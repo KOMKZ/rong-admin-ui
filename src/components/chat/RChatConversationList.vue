@@ -56,13 +56,6 @@ function formatRelativeTime(iso: string): string {
   return d.toLocaleDateString()
 }
 
-function truncatePreview(text: string | undefined, maxLines = 2): string {
-  if (!text || !text.trim()) return ''
-  const lines = text.split(/\n/)
-  const truncated = lines.slice(0, maxLines).join('\n')
-  return lines.length > maxLines ? truncated + '...' : truncated
-}
-
 function getGroupKey(iso: string): string {
   const d = new Date(iso)
   const now = new Date()
@@ -243,38 +236,37 @@ function handleFavoriteClick(e: Event, conv: ChatConversation) {
                 >
                   {{ conv.title || '未命名对话' }}
                 </div>
+                <div class="r-chat-conv-list__item-actions">
+                  <NButton
+                    quaternary
+                    circle
+                    size="tiny"
+                    :class="['r-chat-conv-list__item-favorite', { 'r-chat-conv-list__item-favorite--active': conv.favorite }]"
+                    :aria-label="conv.favorite ? '取消收藏' : '收藏'"
+                    @click="handleFavoriteClick($event, conv)"
+                  >
+                    <template #icon>
+                      <Star :size="14" :fill="conv.favorite ? 'currentColor' : 'none'" />
+                    </template>
+                  </NButton>
+                  <NButton
+                    quaternary
+                    circle
+                    size="tiny"
+                    class="r-chat-conv-list__item-delete"
+                    aria-label="删除对话"
+                    @click="handleDeleteClick($event, conv.id)"
+                  >
+                    <template #icon>
+                      <Trash2 :size="14" />
+                    </template>
+                  </NButton>
+                </div>
+              </div>
+              <div class="r-chat-conv-list__item-sub">
                 <span class="r-chat-conv-list__item-time">{{ formatRelativeTime(conv.updated_at) }}</span>
+                <span class="r-chat-conv-list__item-meta">{{ conv.message_count }} 条 · {{ conv.model }}</span>
               </div>
-              <div v-if="truncatePreview(conv.summary)" class="r-chat-conv-list__item-preview">
-                {{ truncatePreview(conv.summary) }}
-              </div>
-              <div class="r-chat-conv-list__item-meta">
-                {{ conv.message_count }} 条消息 · {{ conv.model }}
-              </div>
-              <NButton
-                quaternary
-                circle
-                size="tiny"
-                :class="['r-chat-conv-list__item-favorite', { 'r-chat-conv-list__item-favorite--active': conv.favorite }]"
-                :aria-label="conv.favorite ? '取消收藏' : '收藏'"
-                @click="handleFavoriteClick($event, conv)"
-              >
-                <template #icon>
-                  <Star :size="14" :fill="conv.favorite ? 'currentColor' : 'none'" />
-                </template>
-              </NButton>
-              <NButton
-                quaternary
-                circle
-                size="tiny"
-                class="r-chat-conv-list__item-delete"
-                aria-label="删除对话"
-                @click="handleDeleteClick($event, conv.id)"
-              >
-                <template #icon>
-                  <Trash2 :size="14" />
-                </template>
-              </NButton>
             </div>
           </NDropdown>
         </template>
@@ -315,38 +307,37 @@ function handleFavoriteClick(e: Event, conv: ChatConversation) {
                 >
                   {{ conv.title || '未命名对话' }}
                 </div>
+                <div class="r-chat-conv-list__item-actions">
+                  <NButton
+                    quaternary
+                    circle
+                    size="tiny"
+                    :class="['r-chat-conv-list__item-favorite', { 'r-chat-conv-list__item-favorite--active': conv.favorite }]"
+                    :aria-label="conv.favorite ? '取消收藏' : '收藏'"
+                    @click="handleFavoriteClick($event, conv)"
+                  >
+                    <template #icon>
+                      <Star :size="14" :fill="conv.favorite ? 'currentColor' : 'none'" />
+                    </template>
+                  </NButton>
+                  <NButton
+                    quaternary
+                    circle
+                    size="tiny"
+                    class="r-chat-conv-list__item-delete"
+                    aria-label="删除对话"
+                    @click="handleDeleteClick($event, conv.id)"
+                  >
+                    <template #icon>
+                      <Trash2 :size="14" />
+                    </template>
+                  </NButton>
+                </div>
+              </div>
+              <div class="r-chat-conv-list__item-sub">
                 <span class="r-chat-conv-list__item-time">{{ formatRelativeTime(conv.updated_at) }}</span>
+                <span class="r-chat-conv-list__item-meta">{{ conv.message_count }} 条 · {{ conv.model }}</span>
               </div>
-              <div v-if="truncatePreview(conv.summary)" class="r-chat-conv-list__item-preview">
-                {{ truncatePreview(conv.summary) }}
-              </div>
-              <div class="r-chat-conv-list__item-meta">
-                {{ conv.message_count }} 条消息 · {{ conv.model }}
-              </div>
-              <NButton
-                quaternary
-                circle
-                size="tiny"
-                :class="['r-chat-conv-list__item-favorite', { 'r-chat-conv-list__item-favorite--active': conv.favorite }]"
-                :aria-label="conv.favorite ? '取消收藏' : '收藏'"
-                @click="handleFavoriteClick($event, conv)"
-              >
-                <template #icon>
-                  <Star :size="14" :fill="conv.favorite ? 'currentColor' : 'none'" />
-                </template>
-              </NButton>
-              <NButton
-                quaternary
-                circle
-                size="tiny"
-                class="r-chat-conv-list__item-delete"
-                aria-label="删除对话"
-                @click="handleDeleteClick($event, conv.id)"
-              >
-                <template #icon>
-                  <Trash2 :size="14" />
-                </template>
-              </NButton>
             </div>
           </NDropdown>
         </template>
@@ -372,60 +363,29 @@ function handleFavoriteClick(e: Event, conv: ChatConversation) {
   padding: 0 8px;
 }
 .r-chat-conv-list__group-title {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--ra-color-text-3, #999);
-  padding: 8px 12px 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  padding: 12px 12px 4px;
+  letter-spacing: 0.3px;
 }
 .r-chat-conv-list__item {
-  position: relative;
-  padding: 10px 12px 10px 12px;
-  padding-right: 60px;
+  padding: 8px 12px;
   border-radius: 8px;
   cursor: pointer;
-  margin-bottom: 4px;
-  transition: background 0.2s;
+  margin-bottom: 2px;
+  transition: background 0.15s;
 }
 .r-chat-conv-list__item:hover {
   background: var(--ra-chat-sidebar-hover-bg);
-}
-.r-chat-conv-list__item:hover .r-chat-conv-list__item-favorite,
-.r-chat-conv-list__item:hover .r-chat-conv-list__item-delete,
-.r-chat-conv-list__item:hover .r-chat-conv-list__item-favorite {
-  opacity: 1;
-}
-.r-chat-conv-list__item-favorite {
-  position: absolute;
-  top: 8px;
-  right: 32px;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-.r-chat-conv-list__item-favorite--active {
-  opacity: 1;
-  color: var(--ra-color-warning, #f0a020);
-}
-.r-chat-conv-list__item-favorite {
-  position: absolute;
-  top: 8px;
-  right: 32px;
-  opacity: 0;
-  transition: opacity 0.2s;
-  color: var(--ra-color-warning, #f0a020);
-}
-.r-chat-conv-list__item-favorite:hover {
-  opacity: 1;
 }
 .r-chat-conv-list__item--active {
   background: var(--ra-chat-sidebar-active-bg);
 }
 .r-chat-conv-list__item-head {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
 }
 .r-chat-conv-list__item-title {
   font-size: 14px;
@@ -435,39 +395,48 @@ function handleFavoriteClick(e: Event, conv: ChatConversation) {
   white-space: nowrap;
   flex: 1;
   min-width: 0;
+  line-height: 1.4;
 }
 .r-chat-conv-list__item-edit {
   flex: 1;
   min-width: 0;
 }
+.r-chat-conv-list__item-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.r-chat-conv-list__item:hover .r-chat-conv-list__item-actions {
+  opacity: 1;
+}
+.r-chat-conv-list__item-favorite--active {
+  opacity: 1 !important;
+  color: var(--ra-color-warning, #f0a020);
+}
+.r-chat-conv-list__item-sub {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.15s, max-height 0.15s;
+}
+.r-chat-conv-list__item:hover .r-chat-conv-list__item-sub,
+.r-chat-conv-list__item--active .r-chat-conv-list__item-sub {
+  opacity: 1;
+  max-height: 20px;
+}
 .r-chat-conv-list__item-time {
   font-size: 11px;
-  opacity: 0.6;
-  flex-shrink: 0;
-}
-.r-chat-conv-list__item-preview {
-  font-size: 12px;
-  opacity: 0.75;
-  margin-top: 4px;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  line-height: 1.4;
+  color: var(--ra-color-text-3, #999);
 }
 .r-chat-conv-list__item-meta {
-  font-size: 12px;
-  opacity: 0.6;
-  margin-top: 4px;
-}
-.r-chat-conv-list__item-delete {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-.r-chat-conv-list__item-delete:hover {
-  opacity: 1;
+  font-size: 11px;
+  color: var(--ra-color-text-3, #999);
 }
 </style>

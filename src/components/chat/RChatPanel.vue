@@ -34,20 +34,20 @@ function toggleSidebar() {
 
 <template>
   <div class="r-chat-panel" :class="{ 'r-chat-panel--sidebar-collapsed': sidebarCollapsedLocal }">
-    <NButton
-      quaternary
-      circle
-      size="small"
-      class="r-chat-panel__hamburger"
-      :aria-label="sidebarCollapsedLocal ? '展开侧边栏' : '折叠侧边栏'"
-      @click="toggleSidebar"
-    >
-      <template #icon>
-        <PanelLeftClose v-if="sidebarCollapsedLocal" :size="18" />
-        <PanelLeft v-else :size="18" />
-      </template>
-    </NButton>
     <div class="r-chat-panel__sidebar">
+      <div class="r-chat-panel__sidebar-toggle">
+        <NButton
+          quaternary
+          circle
+          size="small"
+          :aria-label="'折叠侧边栏'"
+          @click="toggleSidebar"
+        >
+          <template #icon>
+            <PanelLeft :size="18" />
+          </template>
+        </NButton>
+      </div>
       <slot name="sidebar" />
     </div>
     <div
@@ -59,6 +59,19 @@ function toggleSidebar() {
       @click="sidebarCollapsedLocal = true"
     />
     <div class="r-chat-panel__main">
+      <NButton
+        v-if="sidebarCollapsedLocal"
+        quaternary
+        circle
+        size="small"
+        class="r-chat-panel__expand-btn"
+        aria-label="展开侧边栏"
+        @click="toggleSidebar"
+      >
+        <template #icon>
+          <PanelLeftClose :size="18" />
+        </template>
+      </NButton>
       <slot name="header" />
       <div class="r-chat-panel__messages">
         <slot name="messages" />
@@ -81,11 +94,20 @@ function toggleSidebar() {
 .r-chat-panel__sidebar {
   width: var(--ra-chat-sidebar-width, 280px);
   min-width: var(--ra-chat-sidebar-width, 280px);
+  display: flex;
+  flex-direction: column;
   background: var(--ra-color-bg-surface, #fff);
   border: 1px solid var(--ra-color-border-light, #eef0f6);
   border-radius: var(--ra-radius-lg, 12px);
   box-shadow: var(--ra-shadow-card, 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.03));
   overflow-y: auto;
+  transition: width 0.2s ease, min-width 0.2s ease, opacity 0.2s ease;
+}
+.r-chat-panel__sidebar-toggle {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 8px 0;
+  flex-shrink: 0;
 }
 .r-chat-panel__main {
   flex: 1;
@@ -96,6 +118,13 @@ function toggleSidebar() {
   border: 1px solid var(--ra-color-border-light, #eef0f6);
   border-radius: var(--ra-radius-lg, 12px);
   box-shadow: var(--ra-shadow-card, 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.03));
+  position: relative;
+}
+.r-chat-panel__expand-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 2;
 }
 .r-chat-panel__messages {
   flex: 1;
@@ -106,20 +135,10 @@ function toggleSidebar() {
   padding: var(--ra-spacing-3, 12px) var(--ra-spacing-4, 16px);
   border-top: 1px solid var(--ra-chat-border-color);
 }
-.r-chat-panel__hamburger {
-  flex-shrink: 0;
-  align-self: flex-start;
-}
 .r-chat-panel__backdrop {
   display: none;
 }
 @media (max-width: 768px) {
-  .r-chat-panel__hamburger {
-    position: fixed;
-    left: var(--ra-spacing-3, 12px);
-    top: var(--ra-spacing-3, 12px);
-    z-index: 1001;
-  }
   .r-chat-panel__sidebar {
     position: fixed;
     left: 0;
