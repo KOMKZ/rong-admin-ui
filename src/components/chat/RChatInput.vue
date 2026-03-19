@@ -1,21 +1,25 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { NInput, NButton, NSpace } from 'naive-ui'
+import { Send, Square } from 'lucide-vue-next'
 
 interface Props {
   disabled?: boolean
   loading?: boolean
+  isStreaming?: boolean
   placeholder?: string
   maxLength?: number
 }
 
 interface Emits {
   (e: 'send', content: string): void
+  (e: 'stop'): void
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   loading: false,
+  isStreaming: false,
   placeholder: '输入消息...',
   maxLength: 4096,
 })
@@ -30,8 +34,12 @@ function handleSend() {
   content.value = ''
 }
 
+function handleStop() {
+  emit('stop')
+}
+
 function handleKeydown(e: KeyboardEvent) {
-  if (e.key === 'Enter' && !e.shiftKey) {
+  if (e.key === 'Enter' && !e.shiftKey && !props.isStreaming) {
     e.preventDefault()
     handleSend()
   }
@@ -52,11 +60,22 @@ function handleKeydown(e: KeyboardEvent) {
     />
     <NSpace justify="end">
       <NButton
+        v-if="isStreaming"
+        type="primary"
+        :disabled="disabled"
+        @click="handleStop"
+      >
+        <Square :size="16" style="margin-right: 6px" />
+        停止生成
+      </NButton>
+      <NButton
+        v-else
         type="primary"
         :disabled="!content.trim() || disabled"
         :loading="loading"
         @click="handleSend"
       >
+        <Send :size="16" style="margin-right: 6px" />
         发送
       </NButton>
     </NSpace>
