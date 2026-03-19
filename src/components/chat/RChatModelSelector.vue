@@ -1,32 +1,76 @@
 <script setup lang="ts">
-import { NSelect } from 'naive-ui'
-import type { SelectOption } from 'naive-ui'
+import { computed } from 'vue'
+import { NTabs, NTabPane } from 'naive-ui'
+
+export type TierKey = 'instant' | 'thinking' | 'pro'
+
+export interface TierConfig {
+  label: string
+  model: string
+}
 
 interface Props {
+  /** Currently selected model (for sync with v-model) */
   modelValue: string
-  options: SelectOption[]
+  /** Mapping of tier -> model. Keys: instant, thinking, pro */
+  tierModels?: Partial<Record<TierKey, string>>
+  /** @deprecated Use tierModels instead */
+  options?: Array<{ label: string; value: string }>
   disabled?: boolean
-  placeholder?: string
+}
+
+const defaultTierModels: Record<TierKey, string> = {
+  instant: 'gpt-4o-mini',
+  thinking: 'o1-mini',
+  pro: 'gpt-4o',
 }
 
 interface Emits {
   (e: 'update:modelValue', value: string): void
+  (e: 'change', payload: { tier: TierKey; model: string }): void
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
+  tierModels: () => ({}),
   disabled: false,
-  placeholder: '选择模型',
 })
-defineEmits<Emits>()
+
+const emit = defineEmits<Emits>()
+
+const tierModelsResolved = computed(() => ({
+  ...defaultTierModels,
+  ...props.tierModels,
+}))
+
+function modelToTier(model: string): TierKey {
+  const m = tierModelsResolved.value
+  if (m.instant === model) return 'instant'
+  if (m.thinking === model) return 'thinking'
+  if (m.pro === model) return 'pro'
+  return 'instant'
+}
+
+const activeTier = computed(() => modelToTier(props.modelValue))
+
+function onSelect(value: string) {
+  const tier = (value || 'instant') as TierKey
+  const model = tierModelsResolved.value[tier] ?? defaultTierModels[tier]
+  emit('update:modelValue', model)
+  emit('change', { tier, model })
+}
 </script>
 
 <template>
-  <NSelect
-    :value="modelValue"
-    :options="options"
+  <NTabs
+    type="segment"
+    :value="activeTier"
+    size="small"
     :disabled="disabled"
-    :placeholder="placeholder"
-    filterable
-    @update:value="$emit('update:modelValue', $event)"
-  />
+    class="r-chat-model-selector"
+    @update:value="onSelect"
+  >
+    <NTabPane name="instant" tab="Instant" />
+    <NTabPane name="thinking" tab="Thinking" />
+    <NTabPane name="pro" tab="Pro" />
+  </NTabs>
 </template>
