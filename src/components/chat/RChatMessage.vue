@@ -19,11 +19,11 @@ const props = withDefaults(defineProps<Props>(), { showAvatar: true })
 const emit = defineEmits<Emits>()
 const copied = ref(false)
 
-/** Extract citations from metadata for assistant messages (CHATADV-006). */
+/** Extract citations from metadata for assistant messages (CHATADV-006 + CHATWEB-009). */
 const citations = computed(() => {
   const raw = props.message.metadata?.citations
   if (!raw || !Array.isArray(raw)) return []
-  return raw as Array<{ title?: string; url?: string }>
+  return raw as Array<{ title?: string; url?: string; snippet?: string }>
 })
 
 /** Extract tool_calls from metadata for assistant messages (CHATADV-013). */
@@ -37,6 +37,14 @@ const toolCalls = computed(() => {
     result?: string
   }>
 })
+
+function extractDomain(url: string): string {
+  try {
+    return new URL(url).hostname
+  } catch {
+    return url
+  }
+}
 
 function formatJson(s: string | Record<string, unknown>): string {
   if (typeof s === 'object') return JSON.stringify(s, null, 2)
@@ -157,15 +165,26 @@ function handleRegenerate() {
         </NCollapse>
       </div>
       <div v-if="message.role === 'assistant' && citations.length" class="r-chat-message__citations">
-        <div
-          v-for="(cite, idx) in citations"
-          :key="idx"
-          class="r-chat-message__citation"
-        >
-          <a v-if="cite.url" :href="cite.url" target="_blank" rel="noopener noreferrer">
-            [{{ idx + 1 }}] {{ cite.title || cite.url || 'Source' }} - {{ cite.url }}
+        <div class="r-chat-message__citations-header">
+          <span class="r-chat-message__citations-label">引用来源</span>
+          <span class="r-chat-message__citations-count">{{ citations.length }} 条</span>
+        </div>
+        <div class="r-chat-message__citations-list">
+          <a
+            v-for="(cite, idx) in citations"
+            :key="idx"
+            :href="cite.url || '#'"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="r-chat-message__citation-card"
+            :title="cite.snippet || cite.title || cite.url"
+          >
+            <span class="r-chat-message__citation-index">{{ idx + 1 }}</span>
+            <span class="r-chat-message__citation-info">
+              <span class="r-chat-message__citation-title">{{ cite.title || cite.url || 'Source' }}</span>
+              <span v-if="cite.url" class="r-chat-message__citation-domain">{{ extractDomain(cite.url) }}</span>
+            </span>
           </a>
-          <span v-else>[{{ idx + 1 }}] {{ cite.title || 'Source' }}</span>
         </div>
       </div>
       <div v-if="!isEditing" class="r-chat-message__actions">
@@ -301,18 +320,77 @@ function handleRegenerate() {
   margin-top: var(--ra-spacing-2, 8px);
   padding-top: var(--ra-spacing-2, 8px);
   border-top: 1px solid var(--ra-color-border-light, #eef0f6);
-  font-size: var(--ra-font-size-2xs, 11px);
-  opacity: 0.85;
 }
-.r-chat-message__citation {
-  margin-bottom: var(--ra-spacing-1, 4px);
+.r-chat-message__citations-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
 }
-.r-chat-message__citation a {
-  color: var(--ra-color-primary, #2563eb);
+.r-chat-message__citations-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ra-color-text-secondary, #6e7389);
+}
+.r-chat-message__citations-count {
+  font-size: 11px;
+  color: var(--ra-color-text-tertiary, #999);
+}
+.r-chat-message__citations-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.r-chat-message__citation-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: var(--ra-color-bg-subtle, #f8fafc);
+  border: 1px solid var(--ra-color-border-light, #eef0f6);
+  border-radius: 6px;
   text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+  max-width: 240px;
 }
-.r-chat-message__citation a:hover {
-  text-decoration: underline;
+.r-chat-message__citation-card:hover {
+  background: var(--ra-color-primary-light, #e8f0fe);
+  border-color: var(--ra-color-primary, #2563eb);
+}
+.r-chat-message__citation-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ra-color-primary, #2563eb);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.r-chat-message__citation-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  overflow: hidden;
+  min-width: 0;
+}
+.r-chat-message__citation-title {
+  font-size: 12px;
+  color: var(--ra-color-text-primary, #1a1a1a);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.r-chat-message__citation-domain {
+  font-size: 10px;
+  color: var(--ra-color-text-tertiary, #999);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .r-chat-message__tool-calls {
   margin-top: var(--ra-spacing-2, 8px);

@@ -34,6 +34,29 @@ export interface SSEChunk {
   /** CHATADV-013: tool_calls from streaming response */
   tool_calls?: Array<{ id?: string; name?: string; arguments?: string }>
   finish_reason?: string
+  /** CHATWEB-008: search progress events injected by backend Tool Loop */
+  event_type?: 'chunk' | 'search_start' | 'search_done' | 'tool_call' | 'tool_result'
+  query?: string
+  result_count?: number
+  provider?: string
+  tool_name?: string
+  tool_args?: string
+  tool_summary?: string
+  latency_ms?: number
+}
+
+export interface SearchProgress {
+  status: 'idle' | 'searching' | 'done'
+  query?: string
+  resultCount?: number
+  provider?: string
+}
+
+export interface ToolCallEvent {
+  name: string
+  args?: string
+  result?: string
+  latencyMs?: number
 }
 
 export interface ChatSSEOptions {

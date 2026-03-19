@@ -162,7 +162,7 @@ function removeAttachment(index: number) {
           size="small"
           quaternary
           :type="webSearchEnabled ? 'primary' : undefined"
-          :title="webSearchEnabled ? '联网搜索已开启' : '联网搜索（即将支持）'"
+          :title="webSearchEnabled ? '联网搜索已开启' : '开启联网搜索'"
           :aria-label="webSearchEnabled ? '联网搜索已开启' : '联网搜索'"
           @click="emit('update:webSearchEnabled', !webSearchEnabled)"
         >

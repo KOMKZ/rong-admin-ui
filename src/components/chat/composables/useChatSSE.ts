@@ -1,5 +1,5 @@
 import { ref, onUnmounted } from 'vue'
-import type { SSEChunk, ChatSSEOptions } from '../types'
+import type { SSEChunk, ChatSSEOptions, SearchProgress, ToolCallEvent } from '../types'
 
 const MAX_RETRIES = 3
 const HEARTBEAT_INTERVAL_MS = 30_000
@@ -9,6 +9,8 @@ export function useChatSSE() {
   const streamContent = ref('')
   const streamToolCallName = ref('')
   const error = ref<Error | null>(null)
+  const searchProgress = ref<SearchProgress>({ status: 'idle' })
+  const toolCallEvents = ref<ToolCallEvent[]>([])
   let abortController: AbortController | null = null
   let userStoppedRef = false
 
@@ -16,6 +18,8 @@ export function useChatSSE() {
     isStreaming.value = true
     streamContent.value = ''
     streamToolCallName.value = ''
+    searchProgress.value = { status: 'idle' }
+    toolCallEvents.value = []
     error.value = null
     userStoppedRef = false
     abortController = new AbortController()
@@ -60,7 +64,7 @@ export function useChatSSE() {
           resetHeartbeat()
 
           try {
-            while (true) {
+            for (;;) {
               const { done, value } = await reader.read()
               if (done) break
 
@@ -79,15 +83,46 @@ export function useChatSSE() {
                   }
                   try {
                     const chunk: SSEChunk = JSON.parse(data)
-                    const content = (chunk as { content?: string }).content ?? ''
-                    streamContent.value += content
-                    const tcs = (chunk as { tool_calls?: Array<{ function?: { name?: string }; name?: string }> }).tool_calls
-                    if (tcs && tcs.length > 0) {
-                      const name = tcs[0]?.function?.name ?? tcs[0]?.name ?? ''
-                      if (name) streamToolCallName.value = name
-                    } else if (content) {
+                    const evtType = chunk.event_type
+
+                    if (evtType === 'search_start') {
+                      searchProgress.value = { status: 'searching', query: chunk.query }
+                      streamToolCallName.value = 'web_search'
+                    } else if (evtType === 'search_done') {
+                      searchProgress.value = {
+                        status: 'done',
+                        query: chunk.query,
+                        resultCount: chunk.result_count,
+                        provider: chunk.provider,
+                      }
+                    } else if (evtType === 'tool_call') {
+                      const name = chunk.tool_name ?? ''
+                      if (name) {
+                        streamToolCallName.value = name
+                        toolCallEvents.value = [...toolCallEvents.value, { name, args: chunk.tool_args }]
+                      }
+                    } else if (evtType === 'tool_result') {
+                      const name = chunk.tool_name ?? ''
+                      const idx = [...toolCallEvents.value].reverse().findIndex((e) => e.name === name && !e.result)
+                      if (idx >= 0) {
+                        const realIdx = toolCallEvents.value.length - 1 - idx
+                        const updated = [...toolCallEvents.value]
+                        updated[realIdx] = { ...updated[realIdx], result: chunk.tool_summary, latencyMs: chunk.latency_ms }
+                        toolCallEvents.value = updated
+                      }
                       streamToolCallName.value = ''
+                    } else {
+                      const content = chunk.content ?? ''
+                      streamContent.value += content
+                      const tcs = (chunk as { tool_calls?: Array<{ function?: { name?: string }; name?: string }> }).tool_calls
+                      if (tcs && tcs.length > 0) {
+                        const name = tcs[0]?.function?.name ?? tcs[0]?.name ?? ''
+                        if (name) streamToolCallName.value = name
+                      } else if (content) {
+                        streamToolCallName.value = ''
+                      }
                     }
+
                     options.onChunk(chunk)
                   } catch {
                     // skip non-JSON lines
@@ -139,6 +174,8 @@ export function useChatSSE() {
     isStreaming,
     streamContent,
     streamToolCallName,
+    searchProgress,
+    toolCallEvents,
     error,
     startStream,
     stopStream,
