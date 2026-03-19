@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { NInput, NButton, NSpace } from 'naive-ui'
-import { Send, Square } from 'lucide-vue-next'
+import { Send, Square, Paperclip } from 'lucide-vue-next'
 
 interface Props {
   disabled?: boolean
@@ -48,21 +48,37 @@ function handleKeydown(e: KeyboardEvent) {
 
 <template>
   <NSpace vertical :size="8">
-    <NInput
-      v-model:value="content"
-      type="textarea"
-      :autosize="{ minRows: 1, maxRows: 6 }"
-      :placeholder="placeholder"
-      :maxlength="maxLength"
-      :disabled="disabled || loading"
-      show-count
-      @keydown="handleKeydown"
-    />
+    <div class="r-chat-input__wrapper">
+      <div class="r-chat-input__toolbar">
+        <NButton
+          size="small"
+          quaternary
+          disabled
+          title="附件（即将支持）"
+          aria-label="附件（即将支持）"
+        >
+          <Paperclip :size="18" />
+        </NButton>
+      </div>
+      <NInput
+        v-model:value="content"
+        type="textarea"
+        :autosize="{ minRows: 1, maxRows: 6 }"
+        :placeholder="placeholder"
+        :maxlength="maxLength"
+        :disabled="disabled || loading"
+        show-count
+        class="r-chat-input__textarea"
+        :input-props="{ role: 'textbox', 'aria-label': '输入消息' }"
+        @keydown="handleKeydown"
+      />
+    </div>
     <NSpace justify="end">
       <NButton
         v-if="isStreaming"
         type="primary"
         :disabled="disabled"
+        aria-label="停止生成"
         @click="handleStop"
       >
         <Square :size="16" style="margin-right: 6px" />
@@ -73,6 +89,7 @@ function handleKeydown(e: KeyboardEvent) {
         type="primary"
         :disabled="!content.trim() || disabled"
         :loading="loading"
+        aria-label="发送消息"
         @click="handleSend"
       >
         <Send :size="16" style="margin-right: 6px" />
@@ -81,3 +98,17 @@ function handleKeydown(e: KeyboardEvent) {
     </NSpace>
   </NSpace>
 </template>
+
+<style scoped>
+.r-chat-input__wrapper {
+  width: 100%;
+}
+.r-chat-input__toolbar {
+  display: flex;
+  gap: var(--ra-spacing-1, 4px);
+  margin-bottom: var(--ra-spacing-1, 4px);
+}
+.r-chat-input__textarea {
+  width: 100%;
+}
+</style>

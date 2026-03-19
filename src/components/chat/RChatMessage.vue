@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { User, Bot, Copy } from 'lucide-vue-next'
+import { NButton, NTag } from 'naive-ui'
 import type { ChatMessage } from './types'
 
 interface Props {
@@ -6,22 +9,58 @@ interface Props {
   showAvatar?: boolean
 }
 
-withDefaults(defineProps<Props>(), { showAvatar: true })
+const props = withDefaults(defineProps<Props>(), { showAvatar: true })
+const copied = ref(false)
+
+function getRoleLabel(role: string): string {
+  const map: Record<string, string> = {
+    user: '用户',
+    assistant: '助手',
+    system: '系统',
+    tool: '工具',
+  }
+  return map[role] ?? role
+}
+
+async function handleCopy() {
+  try {
+    await navigator.clipboard.writeText(props.message.content)
+    copied.value = true
+    setTimeout(() => {
+      copied.value = false
+    }, 2000)
+  } catch {
+    /* ignore */
+  }
+}
 </script>
 
 <template>
   <div class="r-chat-message" :class="`r-chat-message--${message.role}`">
     <div v-if="showAvatar" class="r-chat-message__avatar">
-      {{ message.role === 'user' ? '👤' : message.role === 'assistant' ? '🤖' : '⚙️' }}
+      <User v-if="message.role === 'user'" :size="20" />
+      <Bot v-else :size="20" />
     </div>
     <div class="r-chat-message__body">
-      <div class="r-chat-message__role">{{ message.role }}</div>
+      <div class="r-chat-message__meta-row">
+        <NTag size="small" :bordered="false" class="r-chat-message__role-badge">
+          {{ getRoleLabel(message.role) }}
+        </NTag>
+        <span class="r-chat-message__time">
+          {{ new Date(message.created_at).toLocaleTimeString() }}
+        </span>
+        <NTag v-if="message.token_count" size="small" :bordered="false" class="r-chat-message__token-badge">
+          {{ message.token_count }} tokens
+        </NTag>
+      </div>
       <div class="r-chat-message__content">
         <slot>{{ message.content }}</slot>
       </div>
-      <div class="r-chat-message__meta">
-        {{ new Date(message.created_at).toLocaleTimeString() }}
-        <span v-if="message.token_count"> · {{ message.token_count }} tokens</span>
+      <div class="r-chat-message__actions">
+        <NButton size="tiny" quaternary @click="handleCopy">
+          <Copy :size="14" />
+          {{ copied ? '已复制' : '复制' }}
+        </NButton>
       </div>
     </div>
   </div>
@@ -44,19 +83,35 @@ withDefaults(defineProps<Props>(), { showAvatar: true })
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
   flex-shrink: 0;
-  background: var(--ra-chat-avatar-bg);
+  background: var(--ra-chat-avatar-bg, #f0f2f5);
+  color: var(--ra-color-text-secondary, #6e7389);
+}
+.r-chat-message--user .r-chat-message__avatar {
+  background: var(--ra-color-primary-light, #e8f0fe);
+  color: var(--ra-color-primary, #2563eb);
 }
 .r-chat-message__body {
   display: flex;
   flex-direction: column;
   gap: var(--ra-spacing-1, 4px);
 }
-.r-chat-message__role {
-  font-size: var(--ra-font-size-xs, 12px);
-  opacity: 0.6;
-  text-transform: capitalize;
+.r-chat-message__meta-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ra-spacing-2, 8px);
+  flex-wrap: wrap;
+}
+.r-chat-message__role-badge {
+  font-size: var(--ra-font-size-2xs, 11px);
+}
+.r-chat-message__time {
+  font-size: var(--ra-font-size-2xs, 11px);
+  opacity: 0.5;
+}
+.r-chat-message__token-badge {
+  font-size: var(--ra-font-size-2xs, 11px);
+  opacity: 0.7;
 }
 .r-chat-message__content {
   padding: var(--ra-chat-bubble-padding, 12px 16px);
@@ -64,15 +119,23 @@ withDefaults(defineProps<Props>(), { showAvatar: true })
   background: var(--ra-chat-bubble-assistant-bg);
   color: var(--ra-chat-bubble-assistant-text);
   line-height: 1.6;
-  white-space: pre-wrap;
   word-break: break-word;
-}
-.r-chat-message__meta {
-  font-size: var(--ra-font-size-2xs, 11px);
-  opacity: 0.5;
 }
 .r-chat-message--user .r-chat-message__content {
   background: var(--ra-chat-bubble-user-bg);
   color: var(--ra-chat-bubble-user-text);
+}
+.r-chat-message__content :deep(.r-chat-markdown-renderer) {
+  white-space: normal;
+}
+.r-chat-message__content :deep(pre) {
+  white-space: pre-wrap;
+}
+.r-chat-message__actions {
+  margin-top: var(--ra-spacing-1, 4px);
+}
+.r-chat-message--user .r-chat-message__actions {
+  display: flex;
+  justify-content: flex-end;
 }
 </style>

@@ -24,7 +24,7 @@ defineExpose({ scrollToBottom })
 </script>
 
 <template>
-  <div ref="listRef" class="r-chat-message-list">
+  <div ref="listRef" class="r-chat-message-list" role="log" aria-live="polite">
     <NSpin v-if="loading" class="r-chat-message-list__loading" />
     <template v-else>
       <template v-for="msg in messages" :key="msg.id">

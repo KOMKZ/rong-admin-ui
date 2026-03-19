@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import RChatMarkdownRenderer from './RChatMarkdownRenderer.vue'
+
 interface Props {
   content: string
   streaming?: boolean
@@ -9,7 +11,7 @@ withDefaults(defineProps<Props>(), { streaming: false })
 
 <template>
   <div class="r-chat-stream-renderer">
-    <div class="r-chat-stream-renderer__content" v-text="content" />
+    <RChatMarkdownRenderer v-if="content" :content="content" />
     <span v-if="streaming" class="r-chat-stream-renderer__cursor">▌</span>
   </div>
 </template>
@@ -17,9 +19,8 @@ withDefaults(defineProps<Props>(), { streaming: false })
 <style scoped>
 .r-chat-stream-renderer {
   display: inline;
-  white-space: pre-wrap;
-  word-break: break-word;
   line-height: 1.6;
+  word-break: break-word;
 }
 .r-chat-stream-renderer__cursor {
   animation: blink 0.8s infinite;

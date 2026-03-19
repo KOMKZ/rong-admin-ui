@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { NButton } from 'naive-ui'
+import { PanelLeftClose, PanelLeft } from 'lucide-vue-next'
 import type { ChatConversation } from './types'
 
 interface Props {
@@ -16,13 +19,36 @@ interface Emits {
 
 withDefaults(defineProps<Props>(), { loading: false })
 defineEmits<Emits>()
+
+const sidebarCollapsed = ref(false)
 </script>
 
 <template>
-  <div class="r-chat-panel">
+  <div class="r-chat-panel" :class="{ 'r-chat-panel--sidebar-collapsed': sidebarCollapsed }">
+    <NButton
+      quaternary
+      circle
+      size="small"
+      class="r-chat-panel__hamburger"
+      :aria-label="sidebarCollapsed ? '展开侧边栏' : '折叠侧边栏'"
+      @click="sidebarCollapsed = !sidebarCollapsed"
+    >
+      <template #icon>
+        <PanelLeftClose v-if="sidebarCollapsed" :size="18" />
+        <PanelLeft v-else :size="18" />
+      </template>
+    </NButton>
     <div class="r-chat-panel__sidebar">
       <slot name="sidebar" />
     </div>
+    <div
+      v-if="!sidebarCollapsed"
+      class="r-chat-panel__backdrop"
+      role="button"
+      tabindex="-1"
+      aria-label="关闭侧边栏"
+      @click="sidebarCollapsed = true"
+    />
     <div class="r-chat-panel__main">
       <slot name="header" />
       <div class="r-chat-panel__messages">
@@ -70,5 +96,49 @@ defineEmits<Emits>()
 .r-chat-panel__input {
   padding: var(--ra-spacing-3, 12px) var(--ra-spacing-4, 16px);
   border-top: 1px solid var(--ra-chat-border-color);
+}
+.r-chat-panel__hamburger {
+  flex-shrink: 0;
+  align-self: flex-start;
+}
+.r-chat-panel__backdrop {
+  display: none;
+}
+@media (max-width: 768px) {
+  .r-chat-panel__hamburger {
+    position: fixed;
+    left: var(--ra-spacing-3, 12px);
+    top: var(--ra-spacing-3, 12px);
+    z-index: 1001;
+  }
+  .r-chat-panel__sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: var(--ra-chat-sidebar-width, 280px);
+    min-width: unset;
+    z-index: 1000;
+    transition: transform 0.25s ease;
+  }
+  .r-chat-panel--sidebar-collapsed .r-chat-panel__sidebar {
+    transform: translateX(-100%);
+  }
+  .r-chat-panel__backdrop {
+    display: block;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: var(--ra-chat-sidebar-width, 280px);
+    background: rgba(0, 0, 0, 0.3);
+    z-index: 999;
+    cursor: pointer;
+  }
+}
+@media (min-width: 769px) {
+  .r-chat-panel__backdrop {
+    display: none !important;
+  }
 }
 </style>
