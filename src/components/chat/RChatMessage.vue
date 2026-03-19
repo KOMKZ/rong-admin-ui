@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { User, Bot, Copy, Pencil, ThumbsUp, ThumbsDown, RotateCcw } from 'lucide-vue-next'
 import { NButton, NTag, NInput } from 'naive-ui'
 import type { ChatMessage } from './types'
@@ -18,6 +18,13 @@ interface Emits {
 const props = withDefaults(defineProps<Props>(), { showAvatar: true })
 const emit = defineEmits<Emits>()
 const copied = ref(false)
+
+/** Extract citations from metadata for assistant messages (CHATADV-006). */
+const citations = computed(() => {
+  const raw = props.message.metadata?.citations
+  if (!raw || !Array.isArray(raw)) return []
+  return raw as Array<{ title?: string; url?: string }>
+})
 const isEditing = ref(false)
 const editContent = ref('')
 
@@ -101,6 +108,18 @@ function handleRegenerate() {
       </div>
       <div v-else class="r-chat-message__content">
         <slot>{{ message.content }}</slot>
+      </div>
+      <div v-if="message.role === 'assistant' && citations.length" class="r-chat-message__citations">
+        <div
+          v-for="(cite, idx) in citations"
+          :key="idx"
+          class="r-chat-message__citation"
+        >
+          <a v-if="cite.url" :href="cite.url" target="_blank" rel="noopener noreferrer">
+            [{{ idx + 1 }}] {{ cite.title || cite.url || 'Source' }} - {{ cite.url }}
+          </a>
+          <span v-else>[{{ idx + 1 }}] {{ cite.title || 'Source' }}</span>
+        </div>
       </div>
       <div v-if="!isEditing" class="r-chat-message__actions">
         <NButton
@@ -230,6 +249,23 @@ function handleRegenerate() {
   display: flex;
   gap: var(--ra-spacing-2, 8px);
   justify-content: flex-end;
+}
+.r-chat-message__citations {
+  margin-top: var(--ra-spacing-2, 8px);
+  padding-top: var(--ra-spacing-2, 8px);
+  border-top: 1px solid var(--ra-color-border-light, #eef0f6);
+  font-size: var(--ra-font-size-2xs, 11px);
+  opacity: 0.85;
+}
+.r-chat-message__citation {
+  margin-bottom: var(--ra-spacing-1, 4px);
+}
+.r-chat-message__citation a {
+  color: var(--ra-color-primary, #2563eb);
+  text-decoration: none;
+}
+.r-chat-message__citation a:hover {
+  text-decoration: underline;
 }
 .r-chat-message__actions {
   margin-top: var(--ra-spacing-1, 4px);
