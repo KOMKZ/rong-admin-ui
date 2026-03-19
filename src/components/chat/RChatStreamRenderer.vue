@@ -6,11 +6,14 @@ interface Props {
   content: string
   streaming?: boolean
   isThinking?: boolean
+  /** CHATADV-013: Show "正在调用 xxx 工具..." when streaming receives tool_calls chunk. */
+  toolCallName?: string
 }
 
-const props = withDefaults(defineProps<Props>(), { streaming: false, isThinking: false })
+const props = withDefaults(defineProps<Props>(), { streaming: false, isThinking: false, toolCallName: '' })
 
 const showThinking = computed(() => props.isThinking && !props.content)
+const showToolCalling = computed(() => !!props.toolCallName && props.streaming)
 const showContent = computed(() => !!props.content)
 </script>
 
@@ -18,6 +21,13 @@ const showContent = computed(() => !!props.content)
   <div class="r-chat-stream-renderer">
     <span v-if="showThinking" class="r-chat-stream-renderer__thinking">
       思考中<span class="r-chat-stream-renderer__dots">
+        <span class="r-chat-stream-renderer__dot" />
+        <span class="r-chat-stream-renderer__dot" />
+        <span class="r-chat-stream-renderer__dot" />
+      </span>
+    </span>
+    <span v-else-if="showToolCalling" class="r-chat-stream-renderer__tool-calling">
+      正在调用 {{ toolCallName }} 工具<span class="r-chat-stream-renderer__dots">
         <span class="r-chat-stream-renderer__dot" />
         <span class="r-chat-stream-renderer__dot" />
         <span class="r-chat-stream-renderer__dot" />
@@ -36,7 +46,8 @@ const showContent = computed(() => !!props.content)
   line-height: 1.6;
   word-break: break-word;
 }
-.r-chat-stream-renderer__thinking {
+.r-chat-stream-renderer__thinking,
+.r-chat-stream-renderer__tool-calling {
   color: var(--ra-color-text-tertiary, #6e7389);
 }
 .r-chat-stream-renderer__dot {

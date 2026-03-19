@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onUnmounted } from 'vue'
 import { NInput, NButton, NSpace, useMessage } from 'naive-ui'
-import { Send, Square, Paperclip, Globe } from 'lucide-vue-next'
+import { Send, Square, Paperclip, Globe, Mic } from 'lucide-vue-next'
 
 export interface AttachmentItem {
   url: string
@@ -42,6 +42,61 @@ const inputRef = ref<{ focus: () => void } | null>(null)
 const fileInputRef = ref<HTMLInputElement | null>(null)
 const attachments = ref<AttachmentItem[]>([])
 const uploadIng = ref(false)
+
+// CHATADV-010: Web Speech API for voice input
+interface WebSpeechRecognition extends EventTarget {
+  continuous: boolean
+  interimResults: boolean
+  lang: string
+  start: () => void
+  stop: () => void
+  onresult: ((e: { resultIndex: number; results: { length: number; [i: number]: { [j: number]: { transcript: string } } } }) => void) | null
+  onerror: ((e: Event) => void) | null
+  onend: (() => void) | null
+}
+const speechSupported = computed(() => {
+  const w = window as Window & { SpeechRecognition?: new () => WebSpeechRecognition; webkitSpeechRecognition?: new () => WebSpeechRecognition }
+  return typeof w.SpeechRecognition !== 'undefined' || typeof w.webkitSpeechRecognition !== 'undefined'
+})
+const isRecording = ref(false)
+let recognition: WebSpeechRecognition | null = null
+
+function startVoiceInput() {
+  if (!speechSupported.value || props.disabled || props.loading) return
+  const w = window as Window & { SpeechRecognition?: new () => WebSpeechRecognition; webkitSpeechRecognition?: new () => WebSpeechRecognition }
+  const SR = w.SpeechRecognition || w.webkitSpeechRecognition
+  if (!SR) return
+  recognition = new SR()
+  recognition.continuous = true
+  recognition.interimResults = true
+  recognition.lang = navigator.language || 'zh-CN'
+  recognition.onresult = (e: { resultIndex: number; results: { length: number; [i: number]: { [j: number]: { transcript: string } } } }) => {
+    let transcript = ''
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      transcript += e.results[i][0].transcript
+    }
+    if (transcript) content.value = (content.value + transcript).trim()
+  }
+  recognition.onerror = () => { isRecording.value = false }
+  recognition.onend = () => { isRecording.value = false }
+  isRecording.value = true
+  recognition.start()
+}
+
+function stopVoiceInput() {
+  if (recognition && isRecording.value) {
+    recognition.stop()
+    recognition = null
+    isRecording.value = false
+  }
+}
+
+function toggleVoiceInput() {
+  if (isRecording.value) stopVoiceInput()
+  else startVoiceInput()
+}
+
+onUnmounted(() => stopVoiceInput())
 
 function focus() {
   inputRef.value?.focus?.()
@@ -123,6 +178,21 @@ function removeAttachment(index: number) {
           @click="triggerFileSelect"
         >
           <Paperclip :size="18" />
+        </NButton>
+        <NButton
+          size="small"
+          quaternary
+          :disabled="!speechSupported || disabled || loading"
+          :type="isRecording ? 'error' : undefined"
+          :title="isRecording ? '停止语音输入' : '语音输入'"
+          :aria-label="isRecording ? '停止语音输入' : '语音输入'"
+          class="r-chat-input__voice-btn"
+          @click="toggleVoiceInput"
+        >
+          <span class="r-chat-input__voice-content">
+            <span v-if="isRecording" class="r-chat-input__recording-dot" aria-hidden="true" />
+            <Mic :size="18" />
+          </span>
         </NButton>
         <input
           ref="fileInputRef"
@@ -232,5 +302,22 @@ function removeAttachment(index: number) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.r-chat-input__voice-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.r-chat-input__recording-dot {
+  width: 6px;
+  height: 6px;
+  background: #e74c3c;
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: r-chat-input__pulse 1s ease-in-out infinite;
+}
+@keyframes r-chat-input__pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
 }
 </style>

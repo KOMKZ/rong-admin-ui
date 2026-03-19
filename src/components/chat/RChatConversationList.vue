@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, nextTick } from 'vue'
 import { NInput, NButton, NScrollbar, NEmpty, NDropdown, type DropdownOption } from 'naive-ui'
-import { Trash2 } from 'lucide-vue-next'
+import { Trash2, Star } from 'lucide-vue-next'
 import type { ChatConversation } from './types'
 
 interface Props {
@@ -18,6 +18,8 @@ interface Emits {
   (e: 'archive', id: number): void
   (e: 'pin', id: number): void
   (e: 'unpin', id: number): void
+  (e: 'favorite', id: number): void
+  (e: 'unfavorite', id: number): void
   (e: 'search', keyword: string): void
 }
 
@@ -117,6 +119,7 @@ const groupedConversations = computed(() => {
 function getDropdownOptions(conv: ChatConversation): DropdownOption[] {
   const opts: DropdownOption[] = [
     { label: conv.pinned ? '取消置顶' : '置顶', key: conv.pinned ? 'unpin' : 'pin' },
+    { label: conv.favorite ? '取消收藏' : '收藏', key: conv.favorite ? 'unfavorite' : 'favorite' },
     { label: '重命名', key: 'rename' },
     { label: '归档', key: 'archive' },
     { type: 'divider', key: 'd1' },
@@ -165,6 +168,10 @@ function handleDropdownSelect(key: string, conv: ChatConversation) {
     emit('pin', conv.id)
   } else if (key === 'unpin') {
     emit('unpin', conv.id)
+  } else if (key === 'favorite') {
+    emit('favorite', conv.id)
+  } else if (key === 'unfavorite') {
+    emit('unfavorite', conv.id)
   } else if (key === 'delete') {
     emit('delete', conv.id)
   }
@@ -173,6 +180,12 @@ function handleDropdownSelect(key: string, conv: ChatConversation) {
 function handleDeleteClick(e: Event, id: number) {
   e.stopPropagation()
   emit('delete', id)
+}
+
+function handleFavoriteClick(e: Event, conv: ChatConversation) {
+  e.stopPropagation()
+  if (conv.favorite) emit('unfavorite', conv.id)
+  else emit('favorite', conv.id)
 }
 </script>
 
@@ -242,6 +255,18 @@ function handleDeleteClick(e: Event, id: number) {
                 quaternary
                 circle
                 size="tiny"
+                :class="['r-chat-conv-list__item-favorite', { 'r-chat-conv-list__item-favorite--active': conv.favorite }]"
+                :aria-label="conv.favorite ? '取消收藏' : '收藏'"
+                @click="handleFavoriteClick($event, conv)"
+              >
+                <template #icon>
+                  <Star :size="14" :fill="conv.favorite ? 'currentColor' : 'none'" />
+                </template>
+              </NButton>
+              <NButton
+                quaternary
+                circle
+                size="tiny"
                 class="r-chat-conv-list__item-delete"
                 aria-label="删除对话"
                 @click="handleDeleteClick($event, conv.id)"
@@ -302,6 +327,18 @@ function handleDeleteClick(e: Event, id: number) {
                 quaternary
                 circle
                 size="tiny"
+                :class="['r-chat-conv-list__item-favorite', { 'r-chat-conv-list__item-favorite--active': conv.favorite }]"
+                :aria-label="conv.favorite ? '取消收藏' : '收藏'"
+                @click="handleFavoriteClick($event, conv)"
+              >
+                <template #icon>
+                  <Star :size="14" :fill="conv.favorite ? 'currentColor' : 'none'" />
+                </template>
+              </NButton>
+              <NButton
+                quaternary
+                circle
+                size="tiny"
                 class="r-chat-conv-list__item-delete"
                 aria-label="删除对话"
                 @click="handleDeleteClick($event, conv.id)"
@@ -345,7 +382,7 @@ function handleDeleteClick(e: Event, id: number) {
 .r-chat-conv-list__item {
   position: relative;
   padding: 10px 12px 10px 12px;
-  padding-right: 36px;
+  padding-right: 60px;
   border-radius: 8px;
   cursor: pointer;
   margin-bottom: 4px;
@@ -354,7 +391,31 @@ function handleDeleteClick(e: Event, id: number) {
 .r-chat-conv-list__item:hover {
   background: var(--ra-chat-sidebar-hover-bg);
 }
-.r-chat-conv-list__item:hover .r-chat-conv-list__item-delete {
+.r-chat-conv-list__item:hover .r-chat-conv-list__item-favorite,
+.r-chat-conv-list__item:hover .r-chat-conv-list__item-delete,
+.r-chat-conv-list__item:hover .r-chat-conv-list__item-favorite {
+  opacity: 1;
+}
+.r-chat-conv-list__item-favorite {
+  position: absolute;
+  top: 8px;
+  right: 32px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.r-chat-conv-list__item-favorite--active {
+  opacity: 1;
+  color: var(--ra-color-warning, #f0a020);
+}
+.r-chat-conv-list__item-favorite {
+  position: absolute;
+  top: 8px;
+  right: 32px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  color: var(--ra-color-warning, #f0a020);
+}
+.r-chat-conv-list__item-favorite:hover {
   opacity: 1;
 }
 .r-chat-conv-list__item--active {

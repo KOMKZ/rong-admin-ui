@@ -12,6 +12,8 @@ const props = withDefaults(
     enableMermaid?: boolean
     enableHighlight?: boolean
     highlightTheme?: string
+    /** CHATADV-012: show disabled Run button in code blocks (reserves sandbox entry) */
+    enableRunButton?: boolean
   }>(),
   {
     content: '',
@@ -20,6 +22,7 @@ const props = withDefaults(
     enableMermaid: true,
     enableHighlight: true,
     highlightTheme: 'github-dark',
+    enableRunButton: false,
   },
 )
 
@@ -151,6 +154,15 @@ function addCopyButtons() {
   if (!containerRef.value) return
   containerRef.value.querySelectorAll('pre').forEach((pre) => {
     if (pre.classList.contains('mermaid') || pre.querySelector('.rmd-copy-btn')) return
+    pre.style.position = 'relative'
+    if (props.enableRunButton) {
+      const runBtn = document.createElement('button')
+      runBtn.className = 'rmd-run-btn'
+      runBtn.textContent = '运行'
+      runBtn.disabled = true
+      runBtn.title = '代码执行沙箱（即将支持）'
+      pre.appendChild(runBtn)
+    }
     const btn = document.createElement('button')
     btn.className = 'rmd-copy-btn'
     btn.textContent = '复制'
@@ -166,7 +178,6 @@ function addCopyButtons() {
         /* ignore */
       }
     })
-    pre.style.position = 'relative'
     pre.appendChild(btn)
   })
 }

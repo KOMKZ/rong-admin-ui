@@ -7,6 +7,7 @@ export interface ChatConversation {
   system_prompt: string
   status: 'active' | 'archived' | 'deleted'
   pinned?: boolean
+  favorite?: boolean
   summary: string
   message_count: number
   token_usage: number
@@ -28,8 +29,11 @@ export interface ChatMessage {
 }
 
 export interface SSEChunk {
-  content: string
-  index: number
+  content?: string
+  index?: number
+  /** CHATADV-013: tool_calls from streaming response */
+  tool_calls?: Array<{ id?: string; name?: string; arguments?: string }>
+  finish_reason?: string
 }
 
 export interface ChatSSEOptions {

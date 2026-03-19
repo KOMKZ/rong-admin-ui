@@ -10,7 +10,7 @@ defineProps<Props>()
 
 <template>
   <div class="r-chat-markdown-renderer">
-    <RMarkdownPreview :content="content" />
+    <RMarkdownPreview :content="content" :enable-run-button="true" />
   </div>
 </template>
 

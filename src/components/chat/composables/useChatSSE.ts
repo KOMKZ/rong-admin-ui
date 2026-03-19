@@ -7,6 +7,7 @@ const HEARTBEAT_INTERVAL_MS = 30_000
 export function useChatSSE() {
   const isStreaming = ref(false)
   const streamContent = ref('')
+  const streamToolCallName = ref('')
   const error = ref<Error | null>(null)
   let abortController: AbortController | null = null
   let userStoppedRef = false
@@ -14,6 +15,7 @@ export function useChatSSE() {
   async function startStream(options: ChatSSEOptions) {
     isStreaming.value = true
     streamContent.value = ''
+    streamToolCallName.value = ''
     error.value = null
     userStoppedRef = false
     abortController = new AbortController()
@@ -79,6 +81,13 @@ export function useChatSSE() {
                     const chunk: SSEChunk = JSON.parse(data)
                     const content = (chunk as { content?: string }).content ?? ''
                     streamContent.value += content
+                    const tcs = (chunk as { tool_calls?: Array<{ function?: { name?: string }; name?: string }> }).tool_calls
+                    if (tcs && tcs.length > 0) {
+                      const name = tcs[0]?.function?.name ?? tcs[0]?.name ?? ''
+                      if (name) streamToolCallName.value = name
+                    } else if (content) {
+                      streamToolCallName.value = ''
+                    }
                     options.onChunk(chunk)
                   } catch {
                     // skip non-JSON lines
@@ -129,6 +138,7 @@ export function useChatSSE() {
   return {
     isStreaming,
     streamContent,
+    streamToolCallName,
     error,
     startStream,
     stopStream,

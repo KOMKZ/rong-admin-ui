@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { User, Bot, Copy, Pencil, ThumbsUp, ThumbsDown, RotateCcw } from 'lucide-vue-next'
-import { NButton, NTag, NInput } from 'naive-ui'
+import { NButton, NTag, NInput, NCollapse, NCollapseItem } from 'naive-ui'
 import type { ChatMessage } from './types'
 
 interface Props {
@@ -25,6 +25,27 @@ const citations = computed(() => {
   if (!raw || !Array.isArray(raw)) return []
   return raw as Array<{ title?: string; url?: string }>
 })
+
+/** Extract tool_calls from metadata for assistant messages (CHATADV-013). */
+const toolCalls = computed(() => {
+  const raw = props.message.metadata?.tool_calls
+  if (!raw || !Array.isArray(raw)) return []
+  return raw as Array<{
+    name?: string
+    args?: string | Record<string, unknown>
+    arguments?: string
+    result?: string
+  }>
+})
+
+function formatJson(s: string | Record<string, unknown>): string {
+  if (typeof s === 'object') return JSON.stringify(s, null, 2)
+  try {
+    return JSON.stringify(JSON.parse(s), null, 2)
+  } catch {
+    return s
+  }
+}
 const isEditing = ref(false)
 const editContent = ref('')
 
@@ -108,6 +129,32 @@ function handleRegenerate() {
       </div>
       <div v-else class="r-chat-message__content">
         <slot>{{ message.content }}</slot>
+      </div>
+      <div v-if="message.role === 'assistant' && toolCalls.length" class="r-chat-message__tool-calls">
+        <NCollapse :default-expanded-names="[]">
+          <NCollapseItem
+            v-for="(tc, idx) in toolCalls"
+            :key="idx"
+            :name="`tc-${idx}`"
+          >
+            <template #header>
+              <div class="r-chat-message__tool-call-header">
+                <span class="r-chat-message__tool-icon">🔧</span>
+                <span>{{ tc.name || '未命名工具' }}</span>
+              </div>
+            </template>
+            <div class="r-chat-message__tool-call-body">
+              <div v-if="tc.arguments || tc.args" class="r-chat-message__tool-section">
+                <div class="r-chat-message__tool-label">参数</div>
+                <pre class="r-chat-message__tool-pre">{{ formatJson((tc.arguments ?? tc.args)!) }}</pre>
+              </div>
+              <div v-if="tc.result" class="r-chat-message__tool-section">
+                <div class="r-chat-message__tool-label">结果</div>
+                <pre class="r-chat-message__tool-pre">{{ tc.result }}</pre>
+              </div>
+            </div>
+          </NCollapseItem>
+        </NCollapse>
       </div>
       <div v-if="message.role === 'assistant' && citations.length" class="r-chat-message__citations">
         <div
@@ -266,6 +313,38 @@ function handleRegenerate() {
 }
 .r-chat-message__citation a:hover {
   text-decoration: underline;
+}
+.r-chat-message__tool-calls {
+  margin-top: var(--ra-spacing-2, 8px);
+  font-size: var(--ra-font-size-2xs, 11px);
+}
+.r-chat-message__tool-call-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.r-chat-message__tool-icon {
+  opacity: 0.7;
+}
+.r-chat-message__tool-call-body {
+  padding-top: 4px;
+}
+.r-chat-message__tool-section {
+  margin-bottom: 8px;
+}
+.r-chat-message__tool-label {
+  font-weight: 500;
+  margin-bottom: 2px;
+  opacity: 0.85;
+}
+.r-chat-message__tool-pre {
+  margin: 0;
+  padding: 8px;
+  background: var(--ra-color-bg-tertiary, #f5f6f8);
+  border-radius: 6px;
+  font-size: 11px;
+  overflow-x: auto;
+  white-space: pre-wrap;
 }
 .r-chat-message__actions {
   margin-top: var(--ra-spacing-1, 4px);
