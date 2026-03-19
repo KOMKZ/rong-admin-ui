@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { User, Bot, Copy, Pencil } from 'lucide-vue-next'
+import { User, Bot, Copy, Pencil, ThumbsUp, ThumbsDown, RotateCcw } from 'lucide-vue-next'
 import { NButton, NTag, NInput } from 'naive-ui'
 import type { ChatMessage } from './types'
 
@@ -11,6 +11,8 @@ interface Props {
 
 interface Emits {
   (e: 'edit-resend', payload: { messageId: number; newContent: string }): void
+  (e: 'feedback', payload: { messageId: number; rating: 'up' | 'down' }): void
+  (e: 'regenerate', payload: { messageId: number }): void
 }
 
 const props = withDefaults(defineProps<Props>(), { showAvatar: true })
@@ -56,6 +58,14 @@ function confirmEdit() {
     emit('edit-resend', { messageId: props.message.id, newContent: trimmed })
   }
   isEditing.value = false
+}
+
+function handleFeedback(rating: 'up' | 'down') {
+  emit('feedback', { messageId: props.message.id, rating })
+}
+
+function handleRegenerate() {
+  emit('regenerate', { messageId: props.message.id })
 }
 </script>
 
@@ -103,15 +113,34 @@ function confirmEdit() {
           <Pencil :size="14" />
           编辑
         </NButton>
-        <NButton
-          v-if="message.role === 'assistant'"
-          size="tiny"
-          quaternary
-          @click="handleCopy"
-        >
-          <Copy :size="14" />
-          {{ copied ? '已复制' : '复制全文' }}
-        </NButton>
+        <template v-if="message.role === 'assistant'">
+          <NButton size="tiny" quaternary @click="handleCopy">
+            <Copy :size="14" />
+            {{ copied ? '已复制' : '复制全文' }}
+          </NButton>
+          <NButton
+            size="tiny"
+            quaternary
+            :type="message.feedback === 'up' ? 'primary' : undefined"
+            @click="handleFeedback('up')"
+            aria-label="好评"
+          >
+            <ThumbsUp :size="14" />
+          </NButton>
+          <NButton
+            size="tiny"
+            quaternary
+            :type="message.feedback === 'down' ? 'primary' : undefined"
+            @click="handleFeedback('down')"
+            aria-label="差评"
+          >
+            <ThumbsDown :size="14" />
+          </NButton>
+          <NButton size="tiny" quaternary @click="handleRegenerate" aria-label="重新生成">
+            <RotateCcw :size="14" />
+            重新生成
+          </NButton>
+        </template>
       </div>
     </div>
   </div>

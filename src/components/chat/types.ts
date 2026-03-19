@@ -24,6 +24,7 @@ export interface ChatMessage {
   parent_message_id?: number
   status: 'active' | 'deleted'
   created_at: string
+  feedback?: string
 }
 
 export interface SSEChunk {
