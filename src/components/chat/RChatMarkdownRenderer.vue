@@ -20,9 +20,9 @@ defineProps<Props>()
   word-break: break-word;
 }
 .r-chat-markdown-renderer :deep(pre) {
-  background: var(--n-color-hover, #f5f5f5);
-  padding: 12px;
-  border-radius: 6px;
+  background: var(--ra-chat-pre-bg);
+  padding: var(--ra-spacing-3, 12px);
+  border-radius: var(--ra-radius-sm, 6px);
   overflow-x: auto;
 }
 .r-chat-markdown-renderer :deep(code) {

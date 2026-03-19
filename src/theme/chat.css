@@ -1,0 +1,29 @@
+/*
+ * Rong Admin — Chat Component Tokens
+ *
+ * Semantic tokens for chat UI: bubbles, avatars, sidebar, input, layout.
+ * References existing --ra-* tokens where applicable.
+ */
+
+:root {
+  /* ───── Bubble Colors ───── */
+  --ra-chat-bubble-user-bg: var(--ra-color-primary-light, #e8f4fd);
+  --ra-chat-bubble-assistant-bg: var(--ra-color-bg-surface-secondary, #f5f5f5);
+  --ra-chat-bubble-user-text: var(--ra-color-text-primary, #1a1a1a);
+  --ra-chat-bubble-assistant-text: var(--ra-color-text-primary, #1a1a1a);
+
+  /* ───── Layout & Sizing ───── */
+  --ra-chat-avatar-size: 36px;
+  --ra-chat-input-height: 48px;
+  --ra-chat-sidebar-width: 280px;
+  --ra-chat-message-gap: 16px;
+  --ra-chat-bubble-radius: 12px;
+  --ra-chat-bubble-padding: 12px 16px;
+
+  /* ───── Card & Avatar (for chat components) ───── */
+  --ra-chat-avatar-bg: var(--ra-color-bg-muted, #f5f5f5);
+  --ra-chat-sidebar-active-bg: var(--ra-color-brand-subtle, #e8f5e9);
+  --ra-chat-sidebar-hover-bg: var(--ra-color-bg-hover, #f5f5f5);
+  --ra-chat-pre-bg: var(--ra-color-bg-muted, #f5f5f5);
+  --ra-chat-border-color: var(--ra-color-border-default, #e0e0e6);
+}

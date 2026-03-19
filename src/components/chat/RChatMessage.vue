@@ -30,7 +30,7 @@ withDefaults(defineProps<Props>(), { showAvatar: true })
 <style scoped>
 .r-chat-message {
   display: flex;
-  gap: 12px;
+  gap: var(--ra-spacing-3, 12px);
   max-width: 85%;
 }
 .r-chat-message--user {
@@ -38,40 +38,41 @@ withDefaults(defineProps<Props>(), { showAvatar: true })
   flex-direction: row-reverse;
 }
 .r-chat-message__avatar {
-  width: 36px;
-  height: 36px;
+  width: var(--ra-chat-avatar-size, 36px);
+  height: var(--ra-chat-avatar-size, 36px);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 18px;
   flex-shrink: 0;
-  background: var(--n-color-hover, #f5f5f5);
+  background: var(--ra-chat-avatar-bg);
 }
 .r-chat-message__body {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--ra-spacing-1, 4px);
 }
 .r-chat-message__role {
-  font-size: 12px;
+  font-size: var(--ra-font-size-xs, 12px);
   opacity: 0.6;
   text-transform: capitalize;
 }
 .r-chat-message__content {
-  padding: 10px 14px;
-  border-radius: 12px;
-  background: var(--n-color-hover, #f5f5f5);
+  padding: var(--ra-chat-bubble-padding, 12px 16px);
+  border-radius: var(--ra-chat-bubble-radius, 12px);
+  background: var(--ra-chat-bubble-assistant-bg);
+  color: var(--ra-chat-bubble-assistant-text);
   line-height: 1.6;
   white-space: pre-wrap;
   word-break: break-word;
 }
-.r-chat-message--user .r-chat-message__content {
-  background: var(--n-color-target, #18a058);
-  color: white;
-}
 .r-chat-message__meta {
-  font-size: 11px;
+  font-size: var(--ra-font-size-2xs, 11px);
   opacity: 0.5;
+}
+.r-chat-message--user .r-chat-message__content {
+  background: var(--ra-chat-bubble-user-bg);
+  color: var(--ra-chat-bubble-user-text);
 }
 </style>

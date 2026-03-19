@@ -44,6 +44,7 @@ export type {
 
 import './primitives.css'
 import './semantic.css'
+import './chat.css'
 import './presets/enterprise-blue.css'
 import './presets/teal-ops.css'
 import './presets/graphite-pro.css'

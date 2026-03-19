@@ -69,10 +69,10 @@ const searchKeyword = ref('')
   transition: background 0.2s;
 }
 .r-chat-conv-list__item:hover {
-  background: var(--n-color-hover, #f5f5f5);
+  background: var(--ra-chat-sidebar-hover-bg);
 }
 .r-chat-conv-list__item--active {
-  background: var(--n-color-target, #e8f5e9);
+  background: var(--ra-chat-sidebar-active-bg);
 }
 .r-chat-conv-list__item-title {
   font-size: 14px;

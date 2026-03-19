@@ -39,7 +39,7 @@ defineExpose({ scrollToBottom })
 .r-chat-message-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--ra-chat-message-gap, 16px);
   overflow-y: auto;
   height: 100%;
 }

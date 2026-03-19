@@ -38,13 +38,18 @@ defineEmits<Emits>()
 <style scoped>
 .r-chat-panel {
   display: flex;
+  gap: var(--ra-spacing-3, 12px);
   height: 100%;
   overflow: hidden;
+  padding: var(--ra-spacing-3, 12px);
 }
 .r-chat-panel__sidebar {
-  width: 280px;
-  min-width: 280px;
-  border-right: 1px solid var(--n-border-color, #e0e0e6);
+  width: var(--ra-chat-sidebar-width, 280px);
+  min-width: var(--ra-chat-sidebar-width, 280px);
+  background: var(--ra-color-bg-surface, #fff);
+  border: 1px solid var(--ra-color-border-light, #eef0f6);
+  border-radius: var(--ra-radius-lg, 12px);
+  box-shadow: var(--ra-shadow-card, 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.03));
   overflow-y: auto;
 }
 .r-chat-panel__main {
@@ -52,14 +57,18 @@ defineEmits<Emits>()
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: var(--ra-color-bg-surface, #fff);
+  border: 1px solid var(--ra-color-border-light, #eef0f6);
+  border-radius: var(--ra-radius-lg, 12px);
+  box-shadow: var(--ra-shadow-card, 0 1px 3px 0 rgb(0 0 0 / 0.04), 0 1px 2px -1px rgb(0 0 0 / 0.03));
 }
 .r-chat-panel__messages {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
+  padding: var(--ra-spacing-4, 16px);
 }
 .r-chat-panel__input {
-  padding: 12px 16px;
-  border-top: 1px solid var(--n-border-color, #e0e0e6);
+  padding: var(--ra-spacing-3, 12px) var(--ra-spacing-4, 16px);
+  border-top: 1px solid var(--ra-chat-border-color);
 }
 </style>
