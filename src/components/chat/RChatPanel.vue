@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed } from 'vue'
 import { NButton } from 'naive-ui'
 import { PanelLeftClose, PanelLeft } from 'lucide-vue-next'
 import type { ChatConversation } from './types'
@@ -8,6 +8,7 @@ interface Props {
   conversations: ChatConversation[]
   activeConversationId?: number
   loading?: boolean
+  sidebarCollapsed?: boolean
 }
 
 interface Emits {
@@ -15,26 +16,34 @@ interface Emits {
   (e: 'create'): void
   (e: 'delete', id: number): void
   (e: 'rename', id: number, title: string): void
+  (e: 'update:sidebarCollapsed', value: boolean): void
 }
 
-withDefaults(defineProps<Props>(), { loading: false })
-defineEmits<Emits>()
+const props = withDefaults(defineProps<Props>(), { loading: false, sidebarCollapsed: false })
+const emit = defineEmits<Emits>()
 
-const sidebarCollapsed = ref(false)
+const sidebarCollapsedLocal = computed({
+  get: () => props.sidebarCollapsed,
+  set: (v) => emit('update:sidebarCollapsed', v),
+})
+
+function toggleSidebar() {
+  sidebarCollapsedLocal.value = !sidebarCollapsedLocal.value
+}
 </script>
 
 <template>
-  <div class="r-chat-panel" :class="{ 'r-chat-panel--sidebar-collapsed': sidebarCollapsed }">
+  <div class="r-chat-panel" :class="{ 'r-chat-panel--sidebar-collapsed': sidebarCollapsedLocal }">
     <NButton
       quaternary
       circle
       size="small"
       class="r-chat-panel__hamburger"
-      :aria-label="sidebarCollapsed ? '展开侧边栏' : '折叠侧边栏'"
-      @click="sidebarCollapsed = !sidebarCollapsed"
+      :aria-label="sidebarCollapsedLocal ? '展开侧边栏' : '折叠侧边栏'"
+      @click="toggleSidebar"
     >
       <template #icon>
-        <PanelLeftClose v-if="sidebarCollapsed" :size="18" />
+        <PanelLeftClose v-if="sidebarCollapsedLocal" :size="18" />
         <PanelLeft v-else :size="18" />
       </template>
     </NButton>
@@ -42,12 +51,12 @@ const sidebarCollapsed = ref(false)
       <slot name="sidebar" />
     </div>
     <div
-      v-if="!sidebarCollapsed"
+      v-if="!sidebarCollapsedLocal"
       class="r-chat-panel__backdrop"
       role="button"
       tabindex="-1"
       aria-label="关闭侧边栏"
-      @click="sidebarCollapsed = true"
+      @click="sidebarCollapsedLocal = true"
     />
     <div class="r-chat-panel__main">
       <slot name="header" />
@@ -139,6 +148,14 @@ const sidebarCollapsed = ref(false)
 @media (min-width: 769px) {
   .r-chat-panel__backdrop {
     display: none !important;
+  }
+  .r-chat-panel--sidebar-collapsed .r-chat-panel__sidebar {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+    padding: 0;
+    border: none;
+    box-shadow: none;
   }
 }
 </style>

@@ -26,6 +26,13 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 const content = ref('')
+const inputRef = ref<{ focus: () => void } | null>(null)
+
+function focus() {
+  inputRef.value?.focus?.()
+}
+
+defineExpose({ focus })
 
 function handleSend() {
   const trimmed = content.value.trim()
@@ -61,6 +68,7 @@ function handleKeydown(e: KeyboardEvent) {
         </NButton>
       </div>
       <NInput
+        ref="inputRef"
         v-model:value="content"
         type="textarea"
         :autosize="{ minRows: 1, maxRows: 6 }"

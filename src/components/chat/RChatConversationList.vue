@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { NInput, NButton, NScrollbar, NEmpty, NDropdown, type DropdownOption } from 'naive-ui'
 import { Trash2 } from 'lucide-vue-next'
 import type { ChatConversation } from './types'
@@ -25,6 +25,9 @@ const props = withDefaults(defineProps<Props>(), { loading: false })
 const emit = defineEmits<Emits>()
 
 const searchKeyword = ref('')
+const editingConvId = ref<number | null>(null)
+const editingTitle = ref('')
+const editingInputRef = ref<{ focus: () => void } | null>(null)
 const searchDebounceTimer = ref<ReturnType<typeof setTimeout> | null>(null)
 
 function emitSearch() {
@@ -122,10 +125,40 @@ function getDropdownOptions(conv: ChatConversation): DropdownOption[] {
   return opts
 }
 
+function startEditing(conv: ChatConversation) {
+  editingConvId.value = conv.id
+  editingTitle.value = conv.title || '未命名对话'
+  nextTick(() => editingInputRef.value?.focus?.())
+}
+
+function saveEditing(conv: ChatConversation) {
+  const title = editingTitle.value.trim() || conv.title || '未命名对话'
+  emit('rename', conv.id, title)
+  editingConvId.value = null
+  editingTitle.value = ''
+}
+
+function cancelEditing() {
+  editingConvId.value = null
+  editingTitle.value = ''
+}
+
+function handleItemClick(conv: ChatConversation) {
+  if (editingConvId.value === conv.id) return
+  emit('select', conv.id)
+}
+
+function handleItemKeydown(e: KeyboardEvent, conv: ChatConversation) {
+  if (editingConvId.value === conv.id) return
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault()
+    emit('select', conv.id)
+  }
+}
+
 function handleDropdownSelect(key: string, conv: ChatConversation) {
   if (key === 'rename') {
-    const title = window.prompt('输入新标题', conv.title || '未命名对话')
-    if (title != null) emit('rename', conv.id, title.trim() || conv.title || '未命名对话')
+    startEditing(conv)
   } else if (key === 'archive') {
     emit('archive', conv.id)
   } else if (key === 'pin') {
@@ -175,12 +208,28 @@ function handleDeleteClick(e: Event, id: number) {
               role="button"
               tabindex="0"
               :aria-label="`对话: ${conv.title || '未命名对话'}`"
-              @click="$emit('select', conv.id)"
-              @keydown.enter="$emit('select', conv.id)"
-              @keydown.space.prevent="$emit('select', conv.id)"
+              @click="handleItemClick(conv)"
+              @keydown="(e: KeyboardEvent) => handleItemKeydown(e, conv)"
             >
               <div class="r-chat-conv-list__item-head">
-                <div class="r-chat-conv-list__item-title">{{ conv.title || '未命名对话' }}</div>
+                <NInput
+                  v-if="editingConvId === conv.id"
+                  ref="editingInputRef"
+                  v-model:value="editingTitle"
+                  size="small"
+                  placeholder="对话标题"
+                  class="r-chat-conv-list__item-edit"
+                  @click.stop
+                  @keydown.enter.prevent="saveEditing(conv)"
+                  @keydown.escape="cancelEditing()"
+                />
+                <div
+                  v-else
+                  class="r-chat-conv-list__item-title"
+                  @dblclick.stop="startEditing(conv)"
+                >
+                  {{ conv.title || '未命名对话' }}
+                </div>
                 <span class="r-chat-conv-list__item-time">{{ formatRelativeTime(conv.updated_at) }}</span>
               </div>
               <div v-if="truncatePreview(conv.summary)" class="r-chat-conv-list__item-preview">
@@ -219,12 +268,28 @@ function handleDeleteClick(e: Event, id: number) {
               role="button"
               tabindex="0"
               :aria-label="`对话: ${conv.title || '未命名对话'}`"
-              @click="$emit('select', conv.id)"
-              @keydown.enter="$emit('select', conv.id)"
-              @keydown.space.prevent="$emit('select', conv.id)"
+              @click="handleItemClick(conv)"
+              @keydown="(e: KeyboardEvent) => handleItemKeydown(e, conv)"
             >
               <div class="r-chat-conv-list__item-head">
-                <div class="r-chat-conv-list__item-title">{{ conv.title || '未命名对话' }}</div>
+                <NInput
+                  v-if="editingConvId === conv.id"
+                  ref="editingInputRef"
+                  v-model:value="editingTitle"
+                  size="small"
+                  placeholder="对话标题"
+                  class="r-chat-conv-list__item-edit"
+                  @click.stop
+                  @keydown.enter.prevent="saveEditing(conv)"
+                  @keydown.escape="cancelEditing()"
+                />
+                <div
+                  v-else
+                  class="r-chat-conv-list__item-title"
+                  @dblclick.stop="startEditing(conv)"
+                >
+                  {{ conv.title || '未命名对话' }}
+                </div>
                 <span class="r-chat-conv-list__item-time">{{ formatRelativeTime(conv.updated_at) }}</span>
               </div>
               <div v-if="truncatePreview(conv.summary)" class="r-chat-conv-list__item-preview">
@@ -307,6 +372,10 @@ function handleDeleteClick(e: Event, id: number) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+.r-chat-conv-list__item-edit {
   flex: 1;
   min-width: 0;
 }
