@@ -19,11 +19,11 @@ const props = withDefaults(defineProps<Props>(), { showAvatar: true })
 const emit = defineEmits<Emits>()
 const copied = ref(false)
 
-/** Extract citations from metadata for assistant messages (CHATADV-006 + CHATWEB-009). */
+/** Extract citations from metadata for assistant messages (CHATADV-006 + CHATWEB-009 + CRED-026). */
 const citations = computed(() => {
   const raw = props.message.metadata?.citations
   if (!raw || !Array.isArray(raw)) return []
-  return raw as Array<{ title?: string; url?: string; snippet?: string }>
+  return raw as Array<{ title?: string; url?: string; snippet?: string; type?: 'search' | 'fetch' }>
 })
 
 /** Extract tool_calls from metadata for assistant messages (CHATADV-013). */
@@ -183,6 +183,9 @@ function handleRegenerate() {
             <span class="r-chat-message__citation-info">
               <span class="r-chat-message__citation-title">{{ cite.title || cite.url || 'Source' }}</span>
               <span v-if="cite.url" class="r-chat-message__citation-domain">{{ extractDomain(cite.url) }}</span>
+              <NTag v-if="cite.type === 'fetch'" size="tiny" :bordered="false" type="success" class="r-chat-message__citation-tag">
+                已认证
+              </NTag>
             </span>
           </a>
         </div>
@@ -391,6 +394,10 @@ function handleRegenerate() {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.r-chat-message__citation-tag {
+  margin-top: 2px;
+  font-size: 10px;
 }
 .r-chat-message__tool-calls {
   margin-top: var(--ra-spacing-2, 8px);

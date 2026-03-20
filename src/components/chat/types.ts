@@ -35,7 +35,18 @@ export interface SSEChunk {
   tool_calls?: Array<{ id?: string; name?: string; arguments?: string }>
   finish_reason?: string
   /** CHATWEB-008: search progress events injected by backend Tool Loop */
-  event_type?: 'chunk' | 'search_start' | 'search_done' | 'tool_call' | 'tool_result'
+  /** CRED-025: fetch progress events for authenticated web fetch */
+  event_type?:
+    | 'chunk'
+    | 'search_start'
+    | 'search_done'
+    | 'fetch_start'
+    | 'fetch_done'
+    | 'fetch_fallback'
+    | 'mcp_tool_start'
+    | 'mcp_tool_done'
+    | 'tool_call'
+    | 'tool_result'
   query?: string
   result_count?: number
   provider?: string
@@ -43,6 +54,30 @@ export interface SSEChunk {
   tool_args?: string
   tool_summary?: string
   latency_ms?: number
+  /** fetch_start/fetch_done/fetch_fallback */
+  url?: string
+  domain?: string
+  status_code?: number
+  /** fetch_fallback: e.g. spa_playwright */
+  reason?: string
+  /** fetch_done: which engine was used */
+  fetch_method?: 'http' | 'playwright'
+  /** mcp_tool_start / mcp_tool_done (tool_name is also used for tool_call / tool_result) */
+  server_name?: string
+}
+
+/** MCP tool call progress from SSE (mcp_tool_start / mcp_tool_done) */
+export interface MCPProgress {
+  status: 'idle' | 'calling' | 'done'
+  serverName?: string
+  toolName?: string
+}
+
+/** Option for @ MCP server picker in chat input */
+export interface MCPServerOption {
+  server_name: string
+  server_display_name: string
+  tools: Array<{ name: string; description: string }>
 }
 
 export interface SearchProgress {
@@ -52,11 +87,39 @@ export interface SearchProgress {
   provider?: string
 }
 
-export interface ToolCallEvent {
+/** CRED-025: fetch progress for authenticated web fetch */
+export interface FetchProgress {
+  status: 'idle' | 'fetching' | 'done'
+  domain?: string
+  statusCode?: number
+  latencyMs?: number
+  /** Which fetch engine was used: http (default) or playwright (headless browser) */
+  fetchMethod?: 'http' | 'playwright'
+}
+
+/** tool_call / tool_result row */
+export interface ToolInvocationEvent {
   name: string
   args?: string
   result?: string
   latencyMs?: number
+}
+
+/** web_fetch fell back to headless browser (e.g. SPA) */
+export interface FetchFallbackEvent {
+  type: 'fetch_fallback'
+  url: string
+  reason: string
+}
+
+export type ToolCallEvent = ToolInvocationEvent | FetchFallbackEvent
+
+export function isFetchFallbackToolEvent(e: ToolCallEvent): e is FetchFallbackEvent {
+  return (e as FetchFallbackEvent).type === 'fetch_fallback'
+}
+
+export function isToolInvocationEvent(e: ToolCallEvent): e is ToolInvocationEvent {
+  return !isFetchFallbackToolEvent(e)
 }
 
 export interface ChatSSEOptions {

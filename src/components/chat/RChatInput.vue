@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { ref, computed, onUnmounted } from 'vue'
+import { ref, computed, watch, onUnmounted } from 'vue'
 import { NInput, NButton, NSpace, useMessage } from 'naive-ui'
 import { Send, Square, Paperclip, Globe, Mic } from 'lucide-vue-next'
+import RChatMCPSelector from './RChatMCPSelector.vue'
+import type { MCPServerOption } from './types'
 
 export interface AttachmentItem {
   url: string
@@ -18,10 +20,12 @@ interface Props {
   webSearchEnabled?: boolean
   /** CHATADV-001: upload file and return URL; when provided, attachment button is enabled */
   uploadFile?: (file: File) => Promise<{ url: string; filename?: string }>
+  /** Running MCP servers for @ mention */
+  mcpServers?: MCPServerOption[]
 }
 
 interface Emits {
-  (e: 'send', content: string, attachments?: string[]): void
+  (e: 'send-with-mcp', content: string, mcpContext: { server_name: string } | null, attachments?: string[]): void
   (e: 'stop'): void
   (e: 'update:webSearchEnabled', value: boolean): void
 }
@@ -33,15 +37,52 @@ const props = withDefaults(defineProps<Props>(), {
   placeholder: '输入消息...',
   maxLength: 4096,
   webSearchEnabled: false,
+  mcpServers: () => [],
 })
 
 const msg = useMessage()
 const emit = defineEmits<Emits>()
 const content = ref('')
 const inputRef = ref<{ focus: () => void } | null>(null)
+const mcpSelectorRef = ref<{ handleParentKeydown: (e: KeyboardEvent) => boolean } | null>(null)
 const fileInputRef = ref<HTMLInputElement | null>(null)
 const attachments = ref<AttachmentItem[]>([])
 const uploadIng = ref(false)
+const mcpSelectorVisible = ref(false)
+const mcpFilterText = ref('')
+const selectedMcpContext = ref<{ server_name: string } | null>(null)
+
+function getMentionState(text: string): { active: boolean; filter: string; atIndex: number } {
+  const lastAt = text.lastIndexOf('@')
+  if (lastAt === -1) return { active: false, filter: '', atIndex: -1 }
+  const after = text.slice(lastAt + 1)
+  if (after.includes(' ')) return { active: false, filter: '', atIndex: -1 }
+  return { active: true, filter: after, atIndex: lastAt }
+}
+
+watch(content, () => {
+  const st = getMentionState(content.value)
+  mcpSelectorVisible.value = st.active && props.mcpServers.length > 0
+  mcpFilterText.value = st.filter
+})
+
+function onMcpSelect(serverName: string) {
+  const st = getMentionState(content.value)
+  if (!st.active) return
+  const before = content.value.slice(0, st.atIndex)
+  const tail = content.value.slice(st.atIndex + 1 + st.filter.length)
+  content.value = `${before}@${serverName} ${tail}`
+  selectedMcpContext.value = { server_name: serverName }
+  mcpSelectorVisible.value = false
+}
+
+function onMcpClose() {
+  const st = getMentionState(content.value)
+  if (st.active) {
+    content.value = content.value.slice(0, st.atIndex) + content.value.slice(st.atIndex + 1 + st.filter.length)
+  }
+  mcpSelectorVisible.value = false
+}
 
 // CHATADV-010: Web Speech API for voice input
 interface WebSpeechRecognition extends EventTarget {
@@ -108,9 +149,10 @@ function handleSend() {
   const trimmed = content.value.trim()
   if (!trimmed && attachments.value.length === 0) return
   const urls = attachments.value.map((a) => a.url)
-  emit('send', trimmed || '', urls.length ? urls : undefined)
+  emit('send-with-mcp', trimmed || '', selectedMcpContext.value, urls.length ? urls : undefined)
   content.value = ''
   attachments.value = []
+  selectedMcpContext.value = null
 }
 
 function handleStop() {
@@ -118,7 +160,10 @@ function handleStop() {
 }
 
 function handleKeydown(e: KeyboardEvent) {
-  if (e.key === 'Enter' && !e.shiftKey && !props.isStreaming) {
+  if (mcpSelectorVisible.value && mcpSelectorRef.value?.handleParentKeydown(e)) {
+    return
+  }
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !props.isStreaming) {
     e.preventDefault()
     handleSend()
   }
@@ -221,19 +266,29 @@ function removeAttachment(index: number) {
           </NButton>
         </div>
       </div>
-      <NInput
-        ref="inputRef"
-        v-model:value="content"
-        type="textarea"
-        :autosize="{ minRows: 1, maxRows: 6 }"
-        :placeholder="placeholder"
-        :maxlength="maxLength"
-        :disabled="disabled || loading"
-        show-count
-        class="r-chat-input__textarea"
-        :input-props="{ role: 'textbox', 'aria-label': '输入消息' }"
-        @keydown="handleKeydown"
-      />
+      <div class="r-chat-input__input-area">
+        <RChatMCPSelector
+          ref="mcpSelectorRef"
+          :visible="mcpSelectorVisible"
+          :options="mcpServers"
+          :filter-text="mcpFilterText"
+          @select="onMcpSelect"
+          @close="onMcpClose"
+        />
+        <NInput
+          ref="inputRef"
+          v-model:value="content"
+          type="textarea"
+          :autosize="{ minRows: 1, maxRows: 6 }"
+          :placeholder="placeholder"
+          :maxlength="maxLength"
+          :disabled="disabled || loading"
+          show-count
+          class="r-chat-input__textarea"
+          :input-props="{ role: 'textbox', 'aria-label': '输入消息' }"
+          @keydown="handleKeydown"
+        />
+      </div>
     </div>
     <NSpace justify="end">
       <NButton
@@ -269,6 +324,10 @@ function removeAttachment(index: number) {
   display: flex;
   gap: var(--ra-spacing-1, 4px);
   margin-bottom: var(--ra-spacing-1, 4px);
+}
+.r-chat-input__input-area {
+  position: relative;
+  width: 100%;
 }
 .r-chat-input__textarea {
   width: 100%;

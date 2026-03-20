@@ -1,8 +1,24 @@
 import { ref, onUnmounted } from 'vue'
-import type { SSEChunk, ChatSSEOptions, SearchProgress, ToolCallEvent } from '../types'
+import {
+  type SSEChunk,
+  type ChatSSEOptions,
+  type SearchProgress,
+  type FetchProgress,
+  type MCPProgress,
+  type ToolCallEvent,
+  isToolInvocationEvent,
+} from '../types'
 
 const MAX_RETRIES = 3
 const HEARTBEAT_INTERVAL_MS = 30_000
+
+function extractDomain(url: string): string {
+  try {
+    return new URL(url).hostname
+  } catch {
+    return url
+  }
+}
 
 export function useChatSSE() {
   const isStreaming = ref(false)
@@ -10,6 +26,8 @@ export function useChatSSE() {
   const streamToolCallName = ref('')
   const error = ref<Error | null>(null)
   const searchProgress = ref<SearchProgress>({ status: 'idle' })
+  const fetchProgress = ref<FetchProgress>({ status: 'idle' })
+  const mcpProgress = ref<MCPProgress>({ status: 'idle' })
   const toolCallEvents = ref<ToolCallEvent[]>([])
   let abortController: AbortController | null = null
   let userStoppedRef = false
@@ -19,6 +37,8 @@ export function useChatSSE() {
     streamContent.value = ''
     streamToolCallName.value = ''
     searchProgress.value = { status: 'idle' }
+    fetchProgress.value = { status: 'idle' }
+    mcpProgress.value = { status: 'idle' }
     toolCallEvents.value = []
     error.value = null
     userStoppedRef = false
@@ -95,6 +115,42 @@ export function useChatSSE() {
                         resultCount: chunk.result_count,
                         provider: chunk.provider,
                       }
+                    } else if (evtType === 'fetch_start') {
+                      fetchProgress.value = { status: 'fetching', domain: chunk.domain }
+                      streamToolCallName.value = 'web_fetch'
+                    } else if (evtType === 'fetch_done') {
+                      const domain = chunk.domain ?? (chunk.url ? extractDomain(chunk.url) : undefined)
+                      fetchProgress.value = {
+                        status: 'done',
+                        domain,
+                        statusCode: chunk.status_code,
+                        latencyMs: chunk.latency_ms,
+                        fetchMethod: chunk.fetch_method ?? 'http',
+                      }
+                    } else if (evtType === 'mcp_tool_start') {
+                      mcpProgress.value = {
+                        status: 'calling',
+                        serverName: chunk.server_name,
+                        toolName: chunk.tool_name,
+                      }
+                      streamToolCallName.value = chunk.tool_name ?? chunk.server_name ?? 'mcp'
+                    } else if (evtType === 'mcp_tool_done') {
+                      mcpProgress.value = {
+                        status: 'done',
+                        serverName: chunk.server_name,
+                        toolName: chunk.tool_name,
+                      }
+                      streamToolCallName.value = ''
+                    } else if (evtType === 'fetch_fallback') {
+                      toolCallEvents.value = [
+                        ...toolCallEvents.value,
+                        {
+                          type: 'fetch_fallback',
+                          url: chunk.url ?? '',
+                          reason: chunk.reason ?? '',
+                        },
+                      ]
+                      streamToolCallName.value = 'web_fetch'
                     } else if (evtType === 'tool_call') {
                       const name = chunk.tool_name ?? ''
                       if (name) {
@@ -103,7 +159,9 @@ export function useChatSSE() {
                       }
                     } else if (evtType === 'tool_result') {
                       const name = chunk.tool_name ?? ''
-                      const idx = [...toolCallEvents.value].reverse().findIndex((e) => e.name === name && !e.result)
+                      const idx = [...toolCallEvents.value]
+                        .reverse()
+                        .findIndex((e) => isToolInvocationEvent(e) && e.name === name && !e.result)
                       if (idx >= 0) {
                         const realIdx = toolCallEvents.value.length - 1 - idx
                         const updated = [...toolCallEvents.value]
@@ -175,6 +233,8 @@ export function useChatSSE() {
     streamContent,
     streamToolCallName,
     searchProgress,
+    fetchProgress,
+    mcpProgress,
     toolCallEvents,
     error,
     startStream,
