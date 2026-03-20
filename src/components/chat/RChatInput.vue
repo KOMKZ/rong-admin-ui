@@ -145,11 +145,23 @@ function focus() {
 
 defineExpose({ focus })
 
+function detectMcpMention(text: string): { server_name: string } | null {
+  if (selectedMcpContext.value) return selectedMcpContext.value
+  const match = text.match(/^@(\S+)\s/)
+  if (!match) return null
+  const name = match[1]
+  if (props.mcpServers.some((s) => s.server_name === name)) {
+    return { server_name: name }
+  }
+  return null
+}
+
 function handleSend() {
   const trimmed = content.value.trim()
   if (!trimmed && attachments.value.length === 0) return
   const urls = attachments.value.map((a) => a.url)
-  emit('send-with-mcp', trimmed || '', selectedMcpContext.value, urls.length ? urls : undefined)
+  const mcpCtx = detectMcpMention(trimmed)
+  emit('send-with-mcp', trimmed || '', mcpCtx, urls.length ? urls : undefined)
   content.value = ''
   attachments.value = []
   selectedMcpContext.value = null
