@@ -47,6 +47,19 @@ export interface SSEChunk {
     | 'mcp_tool_done'
     | 'tool_call'
     | 'tool_result'
+    | 'usage'
+    | 'error'
+  /** usage event fields (CTX-007) */
+  type?: string
+  input_tokens?: number
+  output_tokens?: number
+  total_tokens?: number
+  input_cost?: number
+  output_cost?: number
+  total_cost?: number
+  /** error event fields (CTX-006) */
+  code?: string
+  message?: string
   query?: string
   result_count?: number
   provider?: string
@@ -120,6 +133,23 @@ export function isFetchFallbackToolEvent(e: ToolCallEvent): e is FetchFallbackEv
 
 export function isToolInvocationEvent(e: ToolCallEvent): e is ToolInvocationEvent {
   return !isFetchFallbackToolEvent(e)
+}
+
+/** Token usage data from SSE usage event (CTX-007) */
+export interface TokenUsage {
+  inputTokens: number
+  outputTokens: number
+  totalTokens: number
+  inputCost?: number
+  outputCost?: number
+  totalCost?: number
+}
+
+/** Structured SSE error event (CTX-006) */
+export interface SSEError {
+  type: 'error'
+  code: 'token_budget' | 'rate_limit' | 'content_filter' | 'provider_error' | string
+  message: string
 }
 
 export interface ChatSSEOptions {

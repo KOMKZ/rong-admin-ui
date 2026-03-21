@@ -6,6 +6,8 @@ import {
   type FetchProgress,
   type MCPProgress,
   type ToolCallEvent,
+  type TokenUsage,
+  type SSEError,
   isToolInvocationEvent,
 } from '../types'
 
@@ -29,6 +31,8 @@ export function useChatSSE() {
   const fetchProgress = ref<FetchProgress>({ status: 'idle' })
   const mcpProgress = ref<MCPProgress>({ status: 'idle' })
   const toolCallEvents = ref<ToolCallEvent[]>([])
+  const tokenUsage = ref<TokenUsage | null>(null)
+  const contextError = ref<SSEError | null>(null)
   let abortController: AbortController | null = null
   let userStoppedRef = false
 
@@ -40,6 +44,8 @@ export function useChatSSE() {
     fetchProgress.value = { status: 'idle' }
     mcpProgress.value = { status: 'idle' }
     toolCallEvents.value = []
+    tokenUsage.value = null
+    contextError.value = null
     error.value = null
     userStoppedRef = false
     abortController = new AbortController()
@@ -169,6 +175,21 @@ export function useChatSSE() {
                         toolCallEvents.value = updated
                       }
                       streamToolCallName.value = ''
+                    } else if (chunk.type === 'usage' || evtType === 'usage') {
+                      tokenUsage.value = {
+                        inputTokens: chunk.input_tokens ?? 0,
+                        outputTokens: chunk.output_tokens ?? 0,
+                        totalTokens: chunk.total_tokens ?? 0,
+                        inputCost: chunk.input_cost,
+                        outputCost: chunk.output_cost,
+                        totalCost: chunk.total_cost,
+                      }
+                    } else if (chunk.type === 'error' || evtType === 'error') {
+                      contextError.value = {
+                        type: 'error',
+                        code: chunk.code ?? 'provider_error',
+                        message: chunk.message ?? 'Unknown error',
+                      }
                     } else {
                       const content = chunk.content ?? ''
                       streamContent.value += content
@@ -236,6 +257,8 @@ export function useChatSSE() {
     fetchProgress,
     mcpProgress,
     toolCallEvents,
+    tokenUsage,
+    contextError,
     error,
     startStream,
     stopStream,
