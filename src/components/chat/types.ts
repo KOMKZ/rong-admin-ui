@@ -11,6 +11,8 @@ export interface ChatConversation {
   summary: string
   message_count: number
   token_usage: number
+  compaction_count?: number
+  last_compaction_at?: string
   created_at: string
   updated_at: string
 }
