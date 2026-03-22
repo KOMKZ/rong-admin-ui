@@ -12,17 +12,11 @@ export interface TierConfig {
 interface Props {
   /** Currently selected model (for sync with v-model) */
   modelValue: string
-  /** Mapping of tier -> model. Keys: instant, thinking, pro */
+  /** Mapping of tier -> model from backend Provider 列表 (no 内置默认模型 ID) */
   tierModels?: Partial<Record<TierKey, string>>
   /** @deprecated Use tierModels instead */
   options?: Array<{ label: string; value: string }>
   disabled?: boolean
-}
-
-const defaultTierModels: Record<TierKey, string> = {
-  instant: 'gpt-4o-mini',
-  thinking: 'o1-mini',
-  pro: 'gpt-4o',
 }
 
 interface Emits {
@@ -37,10 +31,12 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
-const tierModelsResolved = computed(() => ({
-  ...defaultTierModels,
-  ...props.tierModels,
-}))
+const tierModelsResolved = computed(() => props.tierModels ?? {})
+
+const hasUsableTiers = computed(() => {
+  const m = tierModelsResolved.value
+  return Boolean(m.instant?.trim() && m.thinking?.trim() && m.pro?.trim())
+})
 
 function modelToTier(model: string): TierKey {
   const m = tierModelsResolved.value
@@ -54,14 +50,19 @@ const activeTier = computed(() => modelToTier(props.modelValue))
 
 function onSelect(value: string) {
   const tier = (value || 'instant') as TierKey
-  const model = tierModelsResolved.value[tier] ?? defaultTierModels[tier]
+  const model = tierModelsResolved.value[tier]?.trim()
+  if (!model) return
   emit('update:modelValue', model)
   emit('change', { tier, model })
 }
 </script>
 
 <template>
+  <span v-if="!hasUsableTiers" class="r-chat-model-selector r-chat-model-selector--empty">
+    无可用模型
+  </span>
   <NTabs
+    v-else
     type="segment"
     :value="activeTier"
     size="small"
@@ -74,3 +75,11 @@ function onSelect(value: string) {
     <NTabPane name="pro" tab="Pro" />
   </NTabs>
 </template>
+
+<style scoped>
+.r-chat-model-selector--empty {
+  font-size: 12px;
+  color: var(--n-text-color-3);
+  white-space: nowrap;
+}
+</style>

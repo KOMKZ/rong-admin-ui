@@ -71,6 +71,8 @@ export default defineConfig({
         'components/settings-manager/index': resolve(__dirname, 'src/components/settings-manager/index.ts'),
         'components/dashboard-builder/index': resolve(__dirname, 'src/components/dashboard-builder/index.ts'),
         'components/chat/index': resolve(__dirname, 'src/components/chat/index.ts'),
+        'components/entity-execution/index': resolve(__dirname, 'src/components/entity-execution/index.ts'),
+        'components/ops-panel/index': resolve(__dirname, 'src/components/ops-panel/index.ts'),
         'app-captcha/index': resolve(__dirname, 'src/app-captcha/index.ts'),
         'naive/index': resolve(__dirname, 'src/naive/index.ts'),
       },
