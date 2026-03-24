@@ -88,6 +88,14 @@ export interface MCPProgress {
   toolName?: string
 }
 
+/** Agent execution progress from SSE (event: agent_start / agent_finish) */
+export interface AgentProgress {
+  status: 'idle' | 'running' | 'done'
+  agentId?: number
+  agentName?: string
+  agentAvatar?: string
+}
+
 /** Option for @ MCP server picker in chat input */
 export interface MCPServerOption {
   server_name: string

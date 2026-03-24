@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { Globe, Search, Monitor, Plug } from 'lucide-vue-next'
+import { Globe, Search, Monitor, Plug, Bot } from 'lucide-vue-next'
 import RChatMarkdownRenderer from './RChatMarkdownRenderer.vue'
-import type { SearchProgress, FetchProgress, MCPProgress, ToolCallEvent } from './types'
+import type { SearchProgress, FetchProgress, MCPProgress, AgentProgress, ToolCallEvent } from './types'
 import { isFetchFallbackToolEvent, isToolInvocationEvent } from './types'
 
 interface Props {
@@ -13,6 +13,7 @@ interface Props {
   searchProgress?: SearchProgress
   fetchProgress?: FetchProgress
   mcpProgress?: MCPProgress
+  agentProgress?: AgentProgress
   toolCallEvents?: ToolCallEvent[]
 }
 
@@ -23,11 +24,14 @@ const props = withDefaults(defineProps<Props>(), {
   searchProgress: () => ({ status: 'idle' as const }),
   fetchProgress: () => ({ status: 'idle' as const }),
   mcpProgress: () => ({ status: 'idle' as const }),
+  agentProgress: () => ({ status: 'idle' as const }),
   toolCallEvents: () => [],
 })
 
 const isMcpCalling = computed(() => props.mcpProgress?.status === 'calling')
 const isMcpDone = computed(() => props.mcpProgress?.status === 'done')
+const isAgentRunning = computed(() => props.agentProgress?.status === 'running')
+const agentName = computed(() => props.agentProgress?.agentName || 'Agent')
 const showThinking = computed(
   () =>
     props.isThinking &&
@@ -71,6 +75,18 @@ function fetchFallbackLabel(reason: string): string {
 
 <template>
   <div class="r-chat-stream-renderer">
+    <div v-if="isAgentRunning && !showContent" class="r-chat-stream-renderer__agent-progress">
+      <div class="r-chat-stream-renderer__agent-bar">
+        <Bot :size="16" class="r-chat-stream-renderer__agent-icon" />
+        <span>{{ agentName }} 正在处理</span>
+        <span class="r-chat-stream-renderer__dots">
+          <span class="r-chat-stream-renderer__dot" />
+          <span class="r-chat-stream-renderer__dot" />
+          <span class="r-chat-stream-renderer__dot" />
+        </span>
+      </div>
+    </div>
+
     <div v-if="isSearching" class="r-chat-stream-renderer__search-progress">
       <div class="r-chat-stream-renderer__search-bar">
         <Search :size="16" class="r-chat-stream-renderer__search-icon" />
@@ -155,6 +171,10 @@ function fetchFallbackLabel(reason: string): string {
       </span>
     </span>
     <template v-else>
+      <div v-if="isAgentRunning && showContent" class="r-chat-stream-renderer__search-done-compact r-chat-stream-renderer__search-done-compact--agent">
+        <Bot :size="14" />
+        <span>{{ agentName }} 处理中</span>
+      </div>
       <div v-if="isSearchDone && showContent" class="r-chat-stream-renderer__search-done-compact">
         <Search :size="14" />
         <span>已搜索 {{ searchProgress?.resultCount ?? 0 }} 条结果</span>
@@ -306,6 +326,33 @@ function fetchFallbackLabel(reason: string): string {
 }
 .r-chat-stream-renderer__search-done-compact--playwright {
   color: var(--ra-color-warning, #d97706);
+}
+.r-chat-stream-renderer__agent-progress {
+  margin-bottom: 8px;
+}
+.r-chat-stream-renderer__agent-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.10));
+  color: #6366f1;
+  font-size: 13px;
+  font-weight: 500;
+  width: fit-content;
+}
+.r-chat-stream-renderer__agent-icon {
+  flex-shrink: 0;
+  opacity: 0.9;
+  animation: agent-pulse 2s ease-in-out infinite;
+}
+@keyframes agent-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+.r-chat-stream-renderer__search-done-compact--agent {
+  color: #6366f1;
 }
 .r-chat-stream-renderer__mcp-progress,
 .r-chat-stream-renderer__mcp-done-block {
