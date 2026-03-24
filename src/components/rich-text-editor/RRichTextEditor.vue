@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, computed, watch, onBeforeUnmount } from 'vue'
 import { useEditor, EditorContent } from '@tiptap/vue-3'
+import type { AnyExtension } from '@tiptap/core'
 import StarterKit from '@tiptap/starter-kit'
 import { Table } from '@tiptap/extension-table'
 import { TableCell } from '@tiptap/extension-table-cell'
@@ -83,7 +84,7 @@ const editor = useEditor({
     StarterKit.configure({
       heading: { levels: [1, 2, 3, 4, 5, 6] },
       codeBlock: false,
-    }),
+    }) as AnyExtension,
     Table.configure({ resizable: true }),
     TableRow,
     TableHeader,

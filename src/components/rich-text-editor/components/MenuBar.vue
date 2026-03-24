@@ -38,6 +38,11 @@ const props = defineProps<{
   onFileUpload?: () => void
 }>()
 
+/** TipTap ChainedCommands typing does not include all StarterKit / extension commands. */
+function edChain() {
+  return props.editor.chain().focus() as any
+}
+
 function is(key: keyof ToolbarConfig): boolean {
   if (props.config === false) return false
   if (!props.config) return true
@@ -86,9 +91,9 @@ onBeforeUnmount(() => document.removeEventListener('click', handleClickOutside))
 
 function insertCodeBlock(lang: string | null) {
   if (lang) {
-    props.editor.chain().focus().toggleCodeBlock({ language: lang }).run()
+    edChain().toggleCodeBlock({ language: lang }).run()
   } else {
-    props.editor.chain().focus().toggleCodeBlock().run()
+    edChain().toggleCodeBlock().run()
   }
   closeAllMenus()
 }
@@ -96,80 +101,80 @@ function insertCodeBlock(lang: string | null) {
 const HIGHLIGHT_COLORS = ['#ffe066', '#ffccc7', '#b7eb8f', '#91caff', '#d3adf7', '#f5f5f5']
 
 function setHighlight(color: string) {
-  props.editor.chain().focus().toggleHighlight({ color }).run()
+  edChain().toggleHighlight({ color }).run()
   closeAllMenus()
 }
 
 function clearHighlight() {
-  props.editor.chain().focus().unsetHighlight().run()
+  edChain().unsetHighlight().run()
   closeAllMenus()
 }
 
 function insertTable() {
-  props.editor.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+  edChain().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
   closeAllMenus()
 }
 
 function addColumnBefore() {
-  props.editor.chain().focus().addColumnBefore().run()
+  edChain().addColumnBefore().run()
   closeAllMenus()
 }
 
 function addColumnAfter() {
-  props.editor.chain().focus().addColumnAfter().run()
+  edChain().addColumnAfter().run()
   closeAllMenus()
 }
 
 function deleteColumn() {
-  props.editor.chain().focus().deleteColumn().run()
+  edChain().deleteColumn().run()
   closeAllMenus()
 }
 
 function addRowBefore() {
-  props.editor.chain().focus().addRowBefore().run()
+  edChain().addRowBefore().run()
   closeAllMenus()
 }
 
 function addRowAfter() {
-  props.editor.chain().focus().addRowAfter().run()
+  edChain().addRowAfter().run()
   closeAllMenus()
 }
 
 function deleteRow() {
-  props.editor.chain().focus().deleteRow().run()
+  edChain().deleteRow().run()
   closeAllMenus()
 }
 
 function mergeCells() {
-  props.editor.chain().focus().mergeCells().run()
+  edChain().mergeCells().run()
   closeAllMenus()
 }
 
 function splitCell() {
-  props.editor.chain().focus().splitCell().run()
+  edChain().splitCell().run()
   closeAllMenus()
 }
 
 function toggleHeaderRow() {
-  props.editor.chain().focus().toggleHeaderRow().run()
+  edChain().toggleHeaderRow().run()
   closeAllMenus()
 }
 
 function deleteTable() {
-  props.editor.chain().focus().deleteTable().run()
+  edChain().deleteTable().run()
   closeAllMenus()
 }
 
 function removeLink() {
-  props.editor.chain().focus().unsetLink().run()
+  edChain().unsetLink().run()
   closeAllMenus()
 }
 
 function confirmLink() {
   if (linkUrl.value) {
-    props.editor.chain().focus().extendMarkRange('link').setLink({ href: linkUrl.value }).run()
+    edChain().extendMarkRange('link').setLink({ href: linkUrl.value }).run()
   } else {
-    props.editor.chain().focus().unsetLink().run()
+    edChain().unsetLink().run()
   }
   linkUrl.value = ''
   showLinkInput.value = false
@@ -178,15 +183,15 @@ function confirmLink() {
 function insertMermaid() {
   const template =
     'graph TD;\n  A[开始] --> B{条件?};\n  B -- 是 --> C[执行任务];\n  B -- 否 --> D[结束];'
-  props.editor.chain().focus().insertMermaidBlock(template).run()
+  edChain().insertMermaidBlock(template).run()
 }
 
 function insertGrid() {
-  props.editor.chain().focus().insertGridBlock().run()
+  edChain().insertGridBlock().run()
 }
 
 function insertToc() {
-  props.editor.chain().focus().insertTableOfContents().run()
+  edChain().insertTableOfContents().run()
 }
 
 const CODE_LANGUAGES = [
@@ -217,7 +222,7 @@ const CODE_LANGUAGES = [
         v-if="is('bold')"
         :active="editor.isActive('bold')"
         title="加粗"
-        @click="editor.chain().focus().toggleBold().run()"
+        @click="edChain().toggleBold().run()"
       >
         <Bold :size="16" />
       </ToolbarButton>
@@ -225,7 +230,7 @@ const CODE_LANGUAGES = [
         v-if="is('italic')"
         :active="editor.isActive('italic')"
         title="斜体"
-        @click="editor.chain().focus().toggleItalic().run()"
+        @click="edChain().toggleItalic().run()"
       >
         <Italic :size="16" />
       </ToolbarButton>
@@ -233,7 +238,7 @@ const CODE_LANGUAGES = [
         v-if="is('underline')"
         :active="editor.isActive('underline')"
         title="下划线"
-        @click="editor.chain().focus().toggleUnderline().run()"
+        @click="edChain().toggleUnderline().run()"
       >
         <Underline :size="16" />
       </ToolbarButton>
@@ -241,14 +246,14 @@ const CODE_LANGUAGES = [
         v-if="is('strike')"
         :active="editor.isActive('strike')"
         title="删除线"
-        @click="editor.chain().focus().toggleStrike().run()"
+        @click="edChain().toggleStrike().run()"
       >
         <Strikethrough :size="16" />
       </ToolbarButton>
       <ToolbarButton
         :active="editor.isActive('code')"
         title="行内代码"
-        @click="editor.chain().focus().toggleCode().run()"
+        @click="edChain().toggleCode().run()"
       >
         <Code :size="16" />
       </ToolbarButton>
@@ -285,7 +290,7 @@ const CODE_LANGUAGES = [
         v-if="is('heading')"
         :active="editor.isActive('heading', { level: 1 })"
         title="标题 1"
-        @click="editor.chain().focus().toggleHeading({ level: 1 }).run()"
+        @click="edChain().toggleHeading({ level: 1 }).run()"
       >
         <Heading1 :size="16" />
       </ToolbarButton>
@@ -293,7 +298,7 @@ const CODE_LANGUAGES = [
         v-if="is('heading')"
         :active="editor.isActive('heading', { level: 2 })"
         title="标题 2"
-        @click="editor.chain().focus().toggleHeading({ level: 2 }).run()"
+        @click="edChain().toggleHeading({ level: 2 }).run()"
       >
         <Heading2 :size="16" />
       </ToolbarButton>
@@ -301,7 +306,7 @@ const CODE_LANGUAGES = [
         v-if="is('heading')"
         :active="editor.isActive('heading', { level: 3 })"
         title="标题 3"
-        @click="editor.chain().focus().toggleHeading({ level: 3 }).run()"
+        @click="edChain().toggleHeading({ level: 3 }).run()"
       >
         <Heading3 :size="16" />
       </ToolbarButton>
@@ -315,7 +320,7 @@ const CODE_LANGUAGES = [
         v-if="is('bulletList')"
         :active="editor.isActive('bulletList')"
         title="无序列表"
-        @click="editor.chain().focus().toggleBulletList().run()"
+        @click="edChain().toggleBulletList().run()"
       >
         <List :size="16" />
       </ToolbarButton>
@@ -323,7 +328,7 @@ const CODE_LANGUAGES = [
         v-if="is('orderedList')"
         :active="editor.isActive('orderedList')"
         title="有序列表"
-        @click="editor.chain().focus().toggleOrderedList().run()"
+        @click="edChain().toggleOrderedList().run()"
       >
         <ListOrdered :size="16" />
       </ToolbarButton>
@@ -331,7 +336,7 @@ const CODE_LANGUAGES = [
         v-if="is('taskList')"
         :active="editor.isActive('taskList')"
         title="任务列表"
-        @click="editor.chain().focus().toggleTaskList().run()"
+        @click="edChain().toggleTaskList().run()"
       >
         <ListChecks :size="16" />
       </ToolbarButton>
@@ -345,7 +350,7 @@ const CODE_LANGUAGES = [
         v-if="is('blockquote')"
         :active="editor.isActive('blockquote')"
         title="引用"
-        @click="editor.chain().focus().toggleBlockquote().run()"
+        @click="edChain().toggleBlockquote().run()"
       >
         <Quote :size="16" />
       </ToolbarButton>
@@ -378,7 +383,7 @@ const CODE_LANGUAGES = [
       <ToolbarButton
         v-if="is('horizontalRule')"
         title="分割线"
-        @click="editor.chain().focus().setHorizontalRule().run()"
+        @click="edChain().setHorizontalRule().run()"
       >
         <Minus :size="16" />
       </ToolbarButton>
@@ -487,7 +492,7 @@ const CODE_LANGUAGES = [
         v-if="is('undo')"
         :disabled="!editor.can().undo()"
         title="撤销"
-        @click="editor.chain().focus().undo().run()"
+        @click="edChain().undo().run()"
       >
         <Undo2 :size="16" />
       </ToolbarButton>
@@ -495,7 +500,7 @@ const CODE_LANGUAGES = [
         v-if="is('redo')"
         :disabled="!editor.can().redo()"
         title="重做"
-        @click="editor.chain().focus().redo().run()"
+        @click="edChain().redo().run()"
       >
         <Redo2 :size="16" />
       </ToolbarButton>
