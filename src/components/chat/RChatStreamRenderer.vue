@@ -32,6 +32,14 @@ const isMcpCalling = computed(() => props.mcpProgress?.status === 'calling')
 const isMcpDone = computed(() => props.mcpProgress?.status === 'done')
 const isAgentRunning = computed(() => props.agentProgress?.status === 'running')
 const agentName = computed(() => props.agentProgress?.agentName || 'Agent')
+const agentStepLabel = computed(() => {
+  const p = props.agentProgress
+  if (!p || p.status !== 'running') return ''
+  if (p.totalNodes && p.currentStep !== undefined) {
+    return `Step ${p.currentStep + 1}/${p.totalNodes}`
+  }
+  return ''
+})
 const showThinking = computed(
   () =>
     props.isThinking &&
@@ -79,6 +87,7 @@ function fetchFallbackLabel(reason: string): string {
       <div class="r-chat-stream-renderer__agent-bar">
         <Bot :size="16" class="r-chat-stream-renderer__agent-icon" />
         <span>{{ agentName }} 正在处理</span>
+        <span v-if="agentStepLabel" class="r-chat-stream-renderer__step-label">{{ agentStepLabel }}</span>
         <span class="r-chat-stream-renderer__dots">
           <span class="r-chat-stream-renderer__dot" />
           <span class="r-chat-stream-renderer__dot" />
@@ -346,6 +355,13 @@ function fetchFallbackLabel(reason: string): string {
   flex-shrink: 0;
   opacity: 0.9;
   animation: agent-pulse 2s ease-in-out infinite;
+}
+.r-chat-stream-renderer__step-label {
+  margin-left: 6px;
+  font-size: 11px;
+  color: #6366f1;
+  font-weight: 500;
+  opacity: 0.85;
 }
 @keyframes agent-pulse {
   0%, 100% { opacity: 0.6; }

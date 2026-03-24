@@ -102,9 +102,27 @@ export function useChatSSE() {
                   agentId: payload.agent_id as number | undefined,
                   agentName: payload.agent_name as string | undefined,
                   agentAvatar: payload.agent_avatar as string | undefined,
+                  totalNodes: payload.total_nodes as number | undefined,
+                  currentStep: 0,
                 }
               } else if (eventName === 'agent_finish') {
                 agentProgress.value = { ...agentProgress.value, status: 'done' }
+              } else if (eventName === 'llm_token') {
+                const token = payload.token as string | undefined
+                if (token) {
+                  streamContent.value += token
+                  options.onChunk({ content: token } as SSEChunk)
+                }
+              } else if (eventName === 'node_enter') {
+                const step = payload.current_step as number | undefined
+                const total = payload.total_nodes as number | undefined
+                if (step !== undefined || total !== undefined) {
+                  agentProgress.value = {
+                    ...agentProgress.value,
+                    currentStep: step ?? agentProgress.value.currentStep,
+                    totalNodes: total ?? agentProgress.value.totalNodes,
+                  }
+                }
               }
             }
 

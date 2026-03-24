@@ -94,6 +94,8 @@ export interface AgentProgress {
   agentId?: number
   agentName?: string
   agentAvatar?: string
+  totalNodes?: number
+  currentStep?: number
 }
 
 /** Option for @ MCP server picker in chat input */
