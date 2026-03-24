@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { Globe, Search, Monitor, Plug, Bot } from 'lucide-vue-next'
 import RChatMarkdownRenderer from './RChatMarkdownRenderer.vue'
-import type { SearchProgress, FetchProgress, MCPProgress, AgentProgress, ToolCallEvent } from './types'
+import type { SearchProgress, FetchProgress, MCPProgress, AgentProgress, ToolCallEvent, ToolInvocationEvent } from './types'
 import { isFetchFallbackToolEvent, isToolInvocationEvent } from './types'
 
 interface Props {
@@ -78,6 +78,69 @@ function fetchMethodLabel(method?: string): string {
 function fetchFallbackLabel(reason: string): string {
   if (reason === 'spa_playwright') return '检测到 SPA 页面，切换到浏览器渲染…'
   return '正在使用浏览器引擎抓取…'
+}
+
+const CODE_EXEC_TOOLS = new Set(['code_execute', 'shell_exec'])
+const expandedCodeIdx = ref<number | null>(null)
+
+function isCodeExecTool(name: string): boolean {
+  return CODE_EXEC_TOOLS.has(name)
+}
+
+function toggleCodeExec(idx: number) {
+  expandedCodeIdx.value = expandedCodeIdx.value === idx ? null : idx
+}
+
+function isCodeExecError(evt: ToolInvocationEvent): boolean {
+  if (!evt.result) return false
+  try {
+    const r = JSON.parse(evt.result)
+    return !!(r.stderr || r.error || (r.exit_code !== undefined && r.exit_code !== 0))
+  } catch {
+    return evt.result.includes('error') || evt.result.includes('Error')
+  }
+}
+
+function parseCodeLang(args?: string): string {
+  if (!args) return 'Code'
+  try {
+    const a = JSON.parse(args)
+    const lang = a.language || a.lang || ''
+    const map: Record<string, string> = { python: 'Python', javascript: 'JavaScript', shell: 'Shell', bash: 'Bash', node: 'Node.js' }
+    return map[lang] || lang || 'Code'
+  } catch {
+    return 'Code'
+  }
+}
+
+function parseCodeSource(args?: string): string {
+  if (!args) return ''
+  try {
+    const a = JSON.parse(args)
+    return a.code || a.command || ''
+  } catch {
+    return args
+  }
+}
+
+function parseCodeStdout(result?: string): string {
+  if (!result) return ''
+  try {
+    const r = JSON.parse(result)
+    return r.stdout || r.output || (typeof r === 'string' ? r : '')
+  } catch {
+    return result
+  }
+}
+
+function parseCodeStderr(result?: string): string {
+  if (!result) return ''
+  try {
+    const r = JSON.parse(result)
+    return r.stderr || r.error || ''
+  } catch {
+    return ''
+  }
 }
 </script>
 
@@ -216,6 +279,39 @@ function fetchFallbackLabel(reason: string): string {
               </span>
             </div>
             <div v-if="evt.url" class="r-chat-stream-renderer__fetch-fallback-url">{{ evt.url }}</div>
+          </div>
+          <div
+            v-else-if="isToolInvocationEvent(evt) && isCodeExecTool(evt.name)"
+            class="r-chat-stream-renderer__code-exec"
+          >
+            <div class="r-chat-stream-renderer__code-exec-header" @click="toggleCodeExec(idx)">
+              <span class="r-chat-stream-renderer__code-exec-icon" :class="{ 'r-chat-stream-renderer__code-exec-icon--error': isCodeExecError(evt) }">
+                {{ isCodeExecError(evt) ? '✗' : '✓' }}
+              </span>
+              <span class="r-chat-stream-renderer__code-exec-lang">{{ parseCodeLang(evt.args) }}</span>
+              <span v-if="evt.result" class="r-chat-stream-renderer__tool-event-check">完成</span>
+              <span v-else class="r-chat-stream-renderer__dots">
+                <span class="r-chat-stream-renderer__dot" />
+                <span class="r-chat-stream-renderer__dot" />
+                <span class="r-chat-stream-renderer__dot" />
+              </span>
+              <span v-if="evt.latencyMs" class="r-chat-stream-renderer__tool-event-latency">{{ evt.latencyMs }}ms</span>
+              <span class="r-chat-stream-renderer__code-exec-chevron">{{ expandedCodeIdx === idx ? '▼' : '▶' }}</span>
+            </div>
+            <div v-if="expandedCodeIdx === idx" class="r-chat-stream-renderer__code-exec-body">
+              <div v-if="parseCodeSource(evt.args)" class="r-chat-stream-renderer__code-exec-section">
+                <div class="r-chat-stream-renderer__code-exec-label">代码</div>
+                <pre class="r-chat-stream-renderer__code-exec-code"><code>{{ parseCodeSource(evt.args) }}</code></pre>
+              </div>
+              <div v-if="parseCodeStdout(evt.result)" class="r-chat-stream-renderer__code-exec-section">
+                <div class="r-chat-stream-renderer__code-exec-label">输出</div>
+                <pre class="r-chat-stream-renderer__code-exec-output">{{ parseCodeStdout(evt.result) }}</pre>
+              </div>
+              <div v-if="parseCodeStderr(evt.result)" class="r-chat-stream-renderer__code-exec-section">
+                <div class="r-chat-stream-renderer__code-exec-label r-chat-stream-renderer__code-exec-label--error">错误</div>
+                <pre class="r-chat-stream-renderer__code-exec-output r-chat-stream-renderer__code-exec-output--error">{{ parseCodeStderr(evt.result) }}</pre>
+              </div>
+            </div>
           </div>
           <details
             v-else-if="isToolInvocationEvent(evt)"
@@ -500,6 +596,103 @@ function fetchFallbackLabel(reason: string): string {
   word-break: break-all;
   max-height: 120px;
   overflow-y: auto;
+}
+.r-chat-stream-renderer__code-exec {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fafafa;
+}
+.r-chat-stream-renderer__code-exec-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  cursor: pointer;
+  background: #f3f4f6;
+  transition: background 0.15s;
+  font-size: 12px;
+}
+.r-chat-stream-renderer__code-exec-header:hover {
+  background: #e5e7eb;
+}
+.r-chat-stream-renderer__code-exec-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: white;
+  background: #10b981;
+  flex-shrink: 0;
+}
+.r-chat-stream-renderer__code-exec-icon--error {
+  background: #ef4444;
+}
+.r-chat-stream-renderer__code-exec-lang {
+  font-weight: 600;
+  color: #374151;
+}
+.r-chat-stream-renderer__code-exec-chevron {
+  font-size: 10px;
+  color: #9ca3af;
+  margin-left: auto;
+}
+.r-chat-stream-renderer__code-exec-body {
+  padding: 12px;
+}
+.r-chat-stream-renderer__code-exec-section {
+  margin-bottom: 10px;
+}
+.r-chat-stream-renderer__code-exec-section:last-child {
+  margin-bottom: 0;
+}
+.r-chat-stream-renderer__code-exec-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.r-chat-stream-renderer__code-exec-label--error {
+  color: #dc2626;
+}
+.r-chat-stream-renderer__code-exec-code {
+  margin: 0;
+  padding: 8px 10px;
+  background: #1f2937;
+  color: #e5e7eb;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+  max-height: 200px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.r-chat-stream-renderer__code-exec-code code {
+  font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+}
+.r-chat-stream-renderer__code-exec-output {
+  margin: 0;
+  padding: 8px 10px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  font-size: 12px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  max-height: 200px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+.r-chat-stream-renderer__code-exec-output--error {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #dc2626;
 }
 .r-chat-stream-renderer__cursor {
   animation: blink 0.8s infinite;
