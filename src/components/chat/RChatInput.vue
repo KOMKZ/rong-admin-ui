@@ -22,6 +22,8 @@ interface Props {
   uploadFile?: (file: File) => Promise<{ url: string; filename?: string }>
   /** Running MCP servers for @ mention */
   mcpServers?: MCPServerOption[]
+  /** URLs staged outside this input (e.g. chat page image/file widgets); merged into send payload before paperclip attachments */
+  stagedAttachmentUrls?: string[]
 }
 
 interface Emits {
@@ -38,6 +40,7 @@ const props = withDefaults(defineProps<Props>(), {
   maxLength: 4096,
   webSearchEnabled: false,
   mcpServers: () => [],
+  stagedAttachmentUrls: () => [],
 })
 
 const msg = useMessage()
@@ -51,6 +54,13 @@ const uploadIng = ref(false)
 const mcpSelectorVisible = ref(false)
 const mcpFilterText = ref('')
 const selectedMcpContext = ref<{ server_name: string } | null>(null)
+
+const canSend = computed(
+  () =>
+    content.value.trim().length > 0 ||
+    attachments.value.length > 0 ||
+    (props.stagedAttachmentUrls?.length ?? 0) > 0,
+)
 
 function getMentionState(text: string): { active: boolean; filter: string; atIndex: number } {
   const lastAt = text.lastIndexOf('@')
@@ -158,8 +168,9 @@ function detectMcpMention(text: string): { server_name: string } | null {
 
 function handleSend() {
   const trimmed = content.value.trim()
-  if (!trimmed && attachments.value.length === 0) return
-  const urls = attachments.value.map((a) => a.url)
+  const staged = props.stagedAttachmentUrls ?? []
+  if (!trimmed && attachments.value.length === 0 && staged.length === 0) return
+  const urls = [...staged, ...attachments.value.map((a) => a.url)]
   const mcpCtx = detectMcpMention(trimmed)
   emit('send-with-mcp', trimmed || '', mcpCtx, urls.length ? urls : undefined)
   content.value = ''
@@ -316,7 +327,7 @@ function removeAttachment(index: number) {
       <NButton
         v-else
         type="primary"
-        :disabled="(!content.trim() && !attachments.length) || disabled"
+        :disabled="!canSend || disabled"
         :loading="loading"
         aria-label="发送消息"
         @click="handleSend"
