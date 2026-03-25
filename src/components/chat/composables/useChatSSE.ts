@@ -13,7 +13,7 @@ import {
 } from '../types'
 
 const MAX_RETRIES = 3
-const HEARTBEAT_INTERVAL_MS = 30_000
+const HEARTBEAT_INTERVAL_MS = 120_000
 
 function extractDomain(url: string): string {
   try {
@@ -96,7 +96,9 @@ export function useChatSSE() {
             let pendingEventName: string | undefined
 
             function handleAgentEvent(eventName: string, payload: Record<string, unknown>) {
-              if (eventName === 'agent_start') {
+              if (eventName === 'heartbeat') {
+                return
+              } else if (eventName === 'agent_start') {
                 agentProgress.value = {
                   status: 'running',
                   agentId: payload.agent_id as number | undefined,
@@ -114,7 +116,7 @@ export function useChatSSE() {
                   options.onChunk({ content: token } as SSEChunk)
                 }
               } else if (eventName === 'node_enter') {
-                const step = payload.current_step as number | undefined
+                const step = (payload.current_step ?? payload.step_index) as number | undefined
                 const total = payload.total_nodes as number | undefined
                 if (step !== undefined || total !== undefined) {
                   agentProgress.value = {
@@ -241,6 +243,8 @@ export function useChatSSE() {
               return false
             }
 
+            const DATA_EVENT_NAMES = new Set(['chunk', 'usage', 'error'])
+
             function processFrame(frame: string): boolean {
               const dataLines: string[] = []
               let frameEvent: string | undefined
@@ -256,7 +260,7 @@ export function useChatSSE() {
               if (payload) {
                 const effectiveEvent = frameEvent ?? pendingEventName
                 if (effectiveEvent) pendingEventName = effectiveEvent
-                if (pendingEventName && payload !== '[DONE]') {
+                if (pendingEventName && payload !== '[DONE]' && !DATA_EVENT_NAMES.has(pendingEventName)) {
                   try {
                     const parsed = JSON.parse(payload)
                     handleAgentEvent(pendingEventName, parsed)
