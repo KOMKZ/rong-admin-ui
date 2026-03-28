@@ -10,4 +10,10 @@ export type {
   DocListDirectoriesResponse,
   RDocsBrowserProps,
   RDocsBrowserEmits,
+  HighlightColor,
+  HighlightItem,
+  HighlightApiAdapter,
+  HighlightSourceQuery,
+  CreateHighlightInput,
+  SerializedRange,
 } from './types'

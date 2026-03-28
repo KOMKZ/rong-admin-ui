@@ -272,6 +272,22 @@
           <span>导出 PDF</span>
         </button>
 
+        <!-- 高亮工具栏 -->
+        <template v-if="showHighlight">
+          <div class="r-docs-toolbar-divider"></div>
+          <HighlightToolbar
+            :highlight-mode="highlight.highlightMode.value"
+            :active-color="highlight.activeColor.value"
+            :panel-visible="highlight.panelVisible.value"
+            :highlight-count="highlight.highlights.value.length"
+            :colors="highlight.HIGHLIGHT_COLORS"
+            :color-map="highlight.COLOR_MAP"
+            @toggle-mode="highlight.highlightMode.value = !highlight.highlightMode.value"
+            @select-color="(c: HighlightColor) => (highlight.activeColor.value = c)"
+            @toggle-panel="highlight.panelVisible.value = !highlight.panelVisible.value"
+          />
+        </template>
+
         <!-- 全屏时：退出全屏按钮 -->
         <button
           v-if="isFullscreen"
@@ -294,19 +310,79 @@
         </button>
       </div>
 
-      <ContentViewer
-        :file-content="fileContent"
-        :selected-file="selectedFile"
-        :loading="contentLoading"
-        :cached="isCached"
-        :toc-visible="tocVisible"
-        :fullscreen="isFullscreen"
-        :enable-toc="enableToc"
-        :enable-fullscreen="enableFullscreen"
-        @toggle-toc="tocVisible = !tocVisible"
-        @toggle-fullscreen="toggleFullscreen"
-      />
+      <div
+        class="r-docs-content-wrapper"
+        :class="{ 'r-docs-content-wrapper--brush': highlight.highlightMode.value }"
+        :style="highlight.highlightMode.value ? { '--r-docs-selection-color': highlight.COLOR_MAP[highlight.activeColor.value] } : undefined"
+        @mouseup="handleTextSelection"
+        @click="handleHighlightClick"
+      >
+        <ContentViewer
+          :file-content="fileContent"
+          :selected-file="selectedFile"
+          :loading="contentLoading"
+          :cached="isCached"
+          :toc-visible="tocVisible"
+          :fullscreen="isFullscreen"
+          :enable-toc="enableToc"
+          :enable-fullscreen="enableFullscreen"
+          @toggle-toc="tocVisible = !tocVisible"
+          @toggle-fullscreen="toggleFullscreen"
+        />
+
+        <!-- 高亮操作气泡 -->
+        <Teleport to="body">
+          <Transition name="r-docs-popover">
+            <div
+              v-if="highlightPopover.visible"
+              class="r-docs-highlight-popover"
+              :style="{ top: highlightPopover.top + 'px', left: highlightPopover.left + 'px' }"
+              @click.stop
+            >
+              <span class="r-docs-highlight-popover__text" :title="highlightPopover.text">
+                {{ highlightPopover.text.length > 20 ? highlightPopover.text.slice(0, 20) + '…' : highlightPopover.text }}
+              </span>
+              <button
+                class="r-docs-highlight-popover__btn r-docs-highlight-popover__btn--note"
+                title="备注"
+                @click="handlePopoverNote"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                </svg>
+              </button>
+              <button
+                class="r-docs-highlight-popover__btn r-docs-highlight-popover__btn--delete"
+                title="删除高亮"
+                @click="handlePopoverDelete"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+              </button>
+            </div>
+          </Transition>
+        </Teleport>
+      </div>
     </div>
+
+    <!-- 高亮面板 -->
+    <HighlightPanel
+      v-if="showHighlight && highlight.panelVisible.value"
+      :highlights="highlight.sortedHighlights.value"
+      :loading="highlight.loading.value"
+      :editing-note-id="highlight.editingNoteId.value"
+      :editing-note-text="highlight.editingNoteText.value"
+      :color-map="highlight.COLOR_MAP"
+      @copy-all="handleCopyAllHighlights"
+      @clear-all="handleClearAllHighlights"
+      @close="highlight.panelVisible.value = false"
+      @delete="handleDeleteHighlight"
+      @edit-note="highlight.startEditNote"
+      @save-note="highlight.saveNote"
+      @cancel-note="highlight.cancelEditNote"
+      @update:editing-note-text="(v: string) => (highlight.editingNoteText.value = v)"
+    />
 
     <!-- TOC 侧边栏 -->
     <div
@@ -451,28 +527,36 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick, toRef } from 'vue'
 import { MarkdownToc } from '../markdown-preview'
 import DirectorySidebar from './components/DirectorySidebar.vue'
 import FileList from './components/FileList.vue'
 import ContentViewer from './components/ContentViewer.vue'
+import HighlightToolbar from './components/HighlightToolbar.vue'
+import HighlightPanel from './components/HighlightPanel.vue'
+import { useHighlight } from './composables/useHighlight'
 import type {
   DocsApiAdapter,
+  HighlightApiAdapter,
   DocDirectory,
   DocFileItem,
   DocFileContent,
   DocSortBy,
   DocSortOrder,
+  HighlightColor,
+  SerializedRange,
 } from './types'
 
 const props = withDefaults(
   defineProps<{
     api: DocsApiAdapter
+    highlightApi?: HighlightApiAdapter
     cacheKey?: string
     height?: string
     enableToc?: boolean
     enableCache?: boolean
     enableFullscreen?: boolean
+    enableHighlight?: boolean
     activeFileTag?: string
   }>(),
   {
@@ -481,6 +565,7 @@ const props = withDefaults(
     enableToc: true,
     enableCache: true,
     enableFullscreen: true,
+    enableHighlight: false,
     activeFileTag: '',
   },
 )
@@ -533,6 +618,344 @@ const printSettings = ref<PrintSettings>({
   mermaidAutoFit: true,
 })
 let printStyleEl: HTMLStyleElement | null = null
+
+// --- 高亮 ---
+const highlightSourceKey = computed(() => {
+  if (!selectedFile.value) return ''
+  return `${selectedFile.value.directory}::${selectedFile.value.path}`
+})
+
+const highlight = useHighlight({
+  api: toRef(props, 'highlightApi'),
+  sourceType: ref('doc'),
+  sourceId: ref(undefined),
+  sourceKey: highlightSourceKey,
+})
+
+const showHighlight = computed(() => props.enableHighlight && props.highlightApi)
+
+const highlightPopover = reactive({
+  visible: false,
+  highlightId: 0,
+  text: '',
+  top: 0,
+  left: 0,
+})
+
+function handleHighlightClick(e: MouseEvent) {
+  const target = (e.target as HTMLElement)?.closest?.('.r-docs-highlight-mark') as HTMLElement | null
+  if (!target || !showHighlight.value) {
+    dismissPopover()
+    return
+  }
+  const idStr = target.dataset.highlightId
+  if (!idStr) return
+
+  const id = Number(idStr)
+  const item = highlight.highlights.value.find(h => h.id === id)
+  if (!item) return
+
+  const rect = target.getBoundingClientRect()
+  highlightPopover.highlightId = id
+  highlightPopover.text = item.text
+  highlightPopover.top = rect.top - 40
+  highlightPopover.left = rect.left + rect.width / 2
+  highlightPopover.visible = true
+}
+
+function dismissPopover() {
+  highlightPopover.visible = false
+}
+
+function handlePopoverDelete() {
+  const id = highlightPopover.highlightId
+  dismissPopover()
+  handleDeleteHighlight(id)
+  showToast('已删除高亮', 'info')
+}
+
+function handlePopoverNote() {
+  const id = highlightPopover.highlightId
+  dismissPopover()
+  highlight.panelVisible.value = true
+  nextTick(() => highlight.startEditNote(id))
+}
+
+function onDocumentClick(e: MouseEvent) {
+  if (!highlightPopover.visible) return
+  const popoverEl = document.querySelector('.r-docs-highlight-popover')
+  if (popoverEl && popoverEl.contains(e.target as Node)) return
+  dismissPopover()
+}
+
+onMounted(() => document.addEventListener('click', onDocumentClick, true))
+onUnmounted(() => document.removeEventListener('click', onDocumentClick, true))
+
+let skipNextRestoreWatch = false
+
+function collectOverlappingHighlightIds(range: Range): number[] {
+  const ids = new Set<number>()
+  const marks = document.querySelectorAll<HTMLElement>('.r-docs-highlight-mark[data-highlight-id]')
+  for (const mark of marks) {
+    if (!range.intersectsNode(mark)) continue
+    const id = Number(mark.dataset.highlightId)
+    if (id) ids.add(id)
+  }
+  return Array.from(ids)
+}
+
+function removeHighlightMarksById(ids: Set<number>) {
+  const marks = document.querySelectorAll('.r-docs-highlight-mark[data-highlight-id]')
+  for (const mark of marks) {
+    const id = Number((mark as HTMLElement).dataset.highlightId)
+    if (!ids.has(id)) continue
+    const parent = mark.parentNode
+    if (!parent) continue
+    while (mark.firstChild) parent.insertBefore(mark.firstChild, mark)
+    parent.removeChild(mark)
+    parent.normalize()
+  }
+}
+
+function handleTextSelection() {
+  if (!highlight.highlightMode.value || !showHighlight.value) return
+
+  const selection = window.getSelection()
+  if (!selection || selection.isCollapsed || !selection.rangeCount) return
+
+  const range = selection.getRangeAt(0)
+  const text = selection.toString().trim()
+  if (!text) return
+
+  const contentBody = document.querySelector('.r-docs-content-body')
+  if (!contentBody || !contentBody.contains(range.commonAncestorContainer)) return
+
+  const overlappingIds = collectOverlappingHighlightIds(range)
+
+  if (overlappingIds.length > 0) {
+    skipNextRestoreWatch = true
+    const deletePromises = overlappingIds.map(id => highlight.deleteHighlight(id))
+    Promise.all(deletePromises).then(() => {
+      removeHighlightMarksById(new Set(overlappingIds))
+      createAndApplyHighlight(text, contentBody, selection)
+    })
+  } else {
+    createAndApplyHighlight(text, contentBody, selection)
+  }
+}
+
+function createAndApplyHighlight(text: string, contentBody: Element, selection: Selection) {
+  const range = selection.getRangeAt(0)
+  const serialized = serializeRange(range, contentBody)
+  if (!serialized) return
+
+  skipNextRestoreWatch = true
+  highlight.createHighlight(text, serialized).then((item) => {
+    if (item) {
+      applyHighlightMark(range, item.color, item.id)
+      selection.removeAllRanges()
+    }
+  })
+}
+
+function serializeRange(range: Range, root: Element): SerializedRange | null {
+  try {
+    return {
+      startContainerPath: getNodePath(range.startContainer, root),
+      startOffset: range.startOffset,
+      endContainerPath: getNodePath(range.endContainer, root),
+      endOffset: range.endOffset,
+    }
+  } catch {
+    return null
+  }
+}
+
+function getNodePath(node: Node, root: Element): string {
+  const path: number[] = []
+  let current: Node | null = node
+  while (current && current !== root) {
+    const parent: Node | null = current.parentNode
+    if (!parent) break
+    const children = Array.from(parent.childNodes)
+    path.unshift(children.indexOf(current as ChildNode))
+    current = parent
+  }
+  return path.join('/')
+}
+
+function createMarkElement(color: string, bgColor: string, highlightId?: number): HTMLElement {
+  const mark = document.createElement('mark')
+  mark.className = 'r-docs-highlight-mark'
+  mark.dataset.highlightColor = color
+  if (highlightId != null) mark.dataset.highlightId = String(highlightId)
+  mark.style.background = bgColor
+  mark.style.borderRadius = '2px'
+  mark.style.padding = '0 1px'
+  return mark
+}
+
+function applyHighlightMark(range: Range, color: string, highlightId?: number) {
+  const bgColor = highlight.COLOR_MAP[color as HighlightColor] || highlight.COLOR_MAP.yellow
+
+  try {
+    const mark = createMarkElement(color, bgColor, highlightId)
+    range.surroundContents(mark)
+  } catch {
+    const treeWalker = document.createTreeWalker(
+      range.commonAncestorContainer,
+      NodeFilter.SHOW_TEXT,
+      {
+        acceptNode(node) {
+          const r = document.createRange()
+          r.selectNodeContents(node)
+          return range.compareBoundaryPoints(Range.END_TO_START, r) < 0 &&
+            range.compareBoundaryPoints(Range.START_TO_END, r) > 0
+            ? NodeFilter.FILTER_ACCEPT
+            : NodeFilter.FILTER_REJECT
+        },
+      },
+    )
+
+    const textNodes: Text[] = []
+    while (treeWalker.nextNode()) {
+      textNodes.push(treeWalker.currentNode as Text)
+    }
+
+    for (const textNode of textNodes) {
+      const mark = createMarkElement(color, bgColor, highlightId)
+      const nodeRange = document.createRange()
+      if (textNode === range.startContainer) {
+        nodeRange.setStart(textNode, range.startOffset)
+        nodeRange.setEnd(textNode, textNode.length)
+      } else if (textNode === range.endContainer) {
+        nodeRange.setStart(textNode, 0)
+        nodeRange.setEnd(textNode, range.endOffset)
+      } else {
+        nodeRange.selectNodeContents(textNode)
+      }
+      nodeRange.surroundContents(mark)
+    }
+  }
+}
+
+function restoreHighlights() {
+  removeAllHighlightMarks()
+  const contentBody = document.querySelector('.r-docs-content-body')
+  if (!contentBody) return
+
+  for (const item of highlight.highlights.value) {
+    try {
+      const serialized: SerializedRange = JSON.parse(item.serialized_range)
+      const range = deserializeRange(serialized, contentBody)
+      if (range) {
+        applyHighlightMark(range, item.color, item.id)
+      }
+    } catch {
+      // skip broken ranges
+    }
+  }
+}
+
+function deserializeRange(serialized: SerializedRange, root: Element): Range | null {
+  try {
+    const startNode = resolveNodePath(serialized.startContainerPath, root)
+    const endNode = resolveNodePath(serialized.endContainerPath, root)
+    if (!startNode || !endNode) return null
+    const range = document.createRange()
+    range.setStart(startNode, serialized.startOffset)
+    range.setEnd(endNode, serialized.endOffset)
+    return range
+  } catch {
+    return null
+  }
+}
+
+function resolveNodePath(path: string, root: Element): Node | null {
+  if (!path) return root
+  const indices = path.split('/').map(Number)
+  let current: Node = root
+  for (const idx of indices) {
+    if (isNaN(idx) || !current.childNodes[idx]) return null
+    current = current.childNodes[idx]
+  }
+  return current
+}
+
+function removeAllHighlightMarks() {
+  const marks = document.querySelectorAll('.r-docs-highlight-mark')
+  marks.forEach((mark) => {
+    const parent = mark.parentNode
+    if (parent) {
+      while (mark.firstChild) {
+        parent.insertBefore(mark.firstChild, mark)
+      }
+      parent.removeChild(mark)
+      parent.normalize()
+    }
+  })
+}
+
+async function handleCopyAllHighlights() {
+  const text = await highlight.copyAllHighlights()
+  if (text) {
+    await navigator.clipboard.writeText(text)
+    showToast('已复制到剪贴板', 'success')
+  }
+}
+
+async function handleClearAllHighlights() {
+  skipNextRestoreWatch = true
+  await highlight.clearAllHighlights()
+  removeAllHighlightMarks()
+  showToast('已清除全部高亮', 'info')
+}
+
+async function handleDeleteHighlight(id: number) {
+  skipNextRestoreWatch = true
+  await highlight.deleteHighlight(id)
+  restoreHighlights()
+}
+
+let pendingRestore = false
+
+watch(highlightSourceKey, async (newKey, oldKey) => {
+  if (!newKey || !showHighlight.value) return
+  if (newKey === oldKey) return
+  removeAllHighlightMarks()
+  pendingRestore = true
+  await highlight.loadHighlights()
+  await nextTick()
+  scheduleRestore()
+})
+
+watch(() => fileContent.value, () => {
+  if (!showHighlight.value || !pendingRestore) return
+  nextTick(() => scheduleRestore())
+}, { flush: 'post' })
+
+watch(() => highlight.highlights.value.length, () => {
+  if (!showHighlight.value) return
+  if (skipNextRestoreWatch) {
+    skipNextRestoreWatch = false
+    return
+  }
+  nextTick(() => scheduleRestore())
+}, { flush: 'post' })
+
+function scheduleRestore() {
+  if (!highlight.highlights.value.length) {
+    pendingRestore = false
+    return
+  }
+  const contentBody = document.querySelector('.r-docs-content-body')
+  if (!contentBody || !contentBody.textContent?.trim()) {
+    setTimeout(scheduleRestore, 200)
+    return
+  }
+  pendingRestore = false
+  restoreHighlights()
+}
 
 // --- 折叠状态 ---
 const dirCollapsed = ref(false)
@@ -1188,6 +1611,98 @@ defineExpose({
 .r-docs-error-retry:hover {
   background: var(--ra-color-danger, #dc2626);
   color: #fff;
+}
+
+/* --- Content Wrapper --- */
+.r-docs-content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.r-docs-content-wrapper--brush {
+  cursor: text;
+}
+
+.r-docs-content-wrapper--brush .r-docs-content-body {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.r-docs-content-wrapper--brush .r-docs-content-body ::selection {
+  background: var(--r-docs-selection-color, rgba(250, 204, 21, 0.4));
+}
+
+.r-docs-highlight-mark {
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+.r-docs-highlight-mark:hover {
+  filter: brightness(0.92);
+}
+
+.r-docs-highlight-popover {
+  position: fixed;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--ra-color-surface, #fff);
+  border: 1px solid var(--ra-color-border, #e5e7eb);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--ra-color-text-secondary, #6b7280);
+  pointer-events: auto;
+}
+
+.r-docs-highlight-popover__text {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--ra-color-text-tertiary, #9ca3af);
+}
+
+.r-docs-highlight-popover__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  cursor: pointer;
+  color: var(--ra-color-text-secondary, #6b7280);
+  transition: background 0.15s, color 0.15s;
+}
+.r-docs-highlight-popover__btn:hover {
+  background: var(--ra-color-surface-hover, #f3f4f6);
+}
+.r-docs-highlight-popover__btn--delete:hover {
+  color: var(--ra-color-danger, #dc2626);
+  background: var(--ra-color-danger-subtle, #fef2f2);
+}
+.r-docs-highlight-popover__btn--note:hover {
+  color: var(--ra-color-primary, #2563eb);
+  background: var(--ra-color-primary-subtle, #eff6ff);
+}
+
+.r-docs-popover-enter-active,
+.r-docs-popover-leave-active {
+  transition: opacity 0.15s, transform 0.15s;
+}
+.r-docs-popover-enter-from,
+.r-docs-popover-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(4px);
 }
 
 /* --- Main Area --- */
