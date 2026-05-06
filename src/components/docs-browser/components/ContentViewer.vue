@@ -2,25 +2,52 @@
   <div class="r-docs-content" data-testid="docs-content-viewer">
     <!-- 内容头部 -->
     <div v-if="fileContent" class="r-docs-content-header">
-      <div class="r-docs-content-breadcrumb">
-        <span class="r-docs-breadcrumb-dir">{{ selectedFile?.directory }}</span>
-        <svg
-          width="12"
-          height="12"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <polyline points="9 18 15 12 9 6" />
-        </svg>
-        <span class="r-docs-breadcrumb-file">{{ fileContent.name }}</span>
+      <div class="r-docs-content-path-wrap">
+        <div class="r-docs-content-breadcrumb">
+          <span class="r-docs-breadcrumb-dir">{{ selectedFile?.directory }}</span>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+          <span class="r-docs-breadcrumb-file">{{ fileContent.name }}</span>
+        </div>
+        <div class="r-docs-content-full-path" :title="fullPath">{{ fullPath }}</div>
       </div>
       <div class="r-docs-content-actions">
         <span v-if="cached" class="r-docs-cached-badge" data-testid="docs-cached-badge"
           >已缓存</span
         >
         <span class="r-docs-content-size">{{ formatSize(fileContent.size) }}</span>
+        <button
+          class="r-docs-action-btn r-docs-action-btn--with-label"
+          title="定位当前文件"
+          data-testid="docs-locate-file"
+          @click="$emit('locate-file')"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 1 1 18 0z" />
+            <circle cx="12" cy="10" r="3" />
+          </svg>
+          <span>定位文件</span>
+        </button>
+        <button
+          class="r-docs-action-btn r-docs-action-btn--with-label"
+          title="复制完整路径"
+          data-testid="docs-copy-path"
+          @click="$emit('copy-path', fullPath)"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </svg>
+          <span>复制路径</span>
+        </button>
         <button
           v-if="enableToc && isMarkdown"
           class="r-docs-action-btn"
@@ -140,9 +167,17 @@ const props = defineProps<{
 defineEmits<{
   (e: 'toggle-toc'): void
   (e: 'toggle-fullscreen'): void
+  (e: 'copy-path', path: string): void
+  (e: 'locate-file'): void
 }>()
 
 const isMarkdown = computed(() => props.fileContent?.name.endsWith('.md'))
+const fullPath = computed(() => {
+  if (!props.selectedFile || !props.fileContent) {
+    return ''
+  }
+  return `${props.selectedFile.directory}/${props.fileContent.path}`
+})
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return bytes + ' B'
@@ -163,14 +198,23 @@ function formatSize(bytes: number): string {
 
 .r-docs-content-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+  gap: var(--ra-spacing-3, 12px);
   padding: var(--ra-spacing-3, 12px) var(--ra-spacing-4, 16px);
   border-bottom: 1px solid var(--ra-color-border, #e5e7eb);
   background: var(--ra-color-surface, #ffffff);
   position: sticky;
   top: 0;
   z-index: 2;
+}
+
+.r-docs-content-path-wrap {
+  min-width: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .r-docs-content-breadcrumb {
@@ -184,6 +228,15 @@ function formatSize(bytes: number): string {
 .r-docs-breadcrumb-file {
   color: var(--ra-color-text-primary, #111827);
   font-weight: 500;
+}
+
+.r-docs-content-full-path {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ra-color-text-tertiary, #9ca3af);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .r-docs-content-actions {
@@ -209,6 +262,7 @@ function formatSize(bytes: number): string {
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
   width: 32px;
   height: 32px;
   border: 1px solid var(--ra-color-border, #e5e7eb);
@@ -217,6 +271,12 @@ function formatSize(bytes: number): string {
   color: var(--ra-color-text-secondary, #6b7280);
   cursor: pointer;
   transition: all 0.15s ease;
+}
+
+.r-docs-action-btn--with-label {
+  width: auto;
+  padding: 0 10px;
+  font-size: 12px;
 }
 
 .r-docs-action-btn:hover {

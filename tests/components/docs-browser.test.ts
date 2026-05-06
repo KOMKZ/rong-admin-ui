@@ -38,7 +38,8 @@ function createApiMock(fileList?: DocFileItem[]): DocsApiAdapter {
 
   return {
     getDirectories: vi.fn().mockResolvedValue({
-      directories: [{ name: 'docs', path: 'docs' }],
+      directories: [{ name: 'docs', path: '', directory: 'docs', file_count: files.length, children: [] }],
+      total: files.length,
     }),
     getFileList: vi.fn().mockImplementation(async (order: DocSortOrder = 'desc', sortBy: DocSortBy = 'mod_time') => ({
       files: sortFiles(files, order, sortBy),

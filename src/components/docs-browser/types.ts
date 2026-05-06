@@ -1,6 +1,9 @@
 export interface DocDirectory {
   name: string
   path: string
+  directory: string
+  file_count: number
+  children?: DocDirectory[]
 }
 
 export interface DocFileItem {
@@ -33,6 +36,7 @@ export interface DocListFilesResponse {
 
 export interface DocListDirectoriesResponse {
   directories: DocDirectory[]
+  total: number
 }
 
 export interface DocsApiAdapter {

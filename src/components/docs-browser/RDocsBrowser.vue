@@ -30,10 +30,11 @@
         <DirectorySidebar
           :directories="directories"
           :active-dir="activeDir"
-          :file-counts="dirFileCounts"
-          :total-count="files.length"
+          :total-count="directoryTotalCount"
+          :expanded-keys="expandedDirKeys"
           title="目录"
           @select="handleDirSelect"
+          @toggle="toggleDirectoryExpanded"
         />
       </div>
       <!-- 目录 resize handle -->
@@ -328,6 +329,8 @@
           :enable-fullscreen="enableFullscreen"
           @toggle-toc="tocVisible = !tocVisible"
           @toggle-fullscreen="toggleFullscreen"
+          @copy-path="handleCopyPath"
+          @locate-file="handleLocateCurrentFile"
         />
 
         <!-- 高亮操作气泡 -->
@@ -607,6 +610,7 @@ const isFullscreen = ref(false)
 const sortBy = ref<DocSortBy>('mod_time')
 const sortOrder = ref<DocSortOrder>('desc')
 const tocVisible = ref(false)
+const expandedDirKeys = ref<Set<string>>(new Set())
 const fileCache = ref<Record<string, DocFileContent>>({})
 const printDialogVisible = ref(false)
 const isPrinting = ref(false)
@@ -1013,17 +1017,13 @@ function showToast(msg: string, type: 'success' | 'info' = 'success') {
 }
 
 // --- 计算 ---
-const dirFileCounts = computed(() => {
-  const counts: Record<string, number> = {}
-  for (const f of files.value) {
-    counts[f.directory] = (counts[f.directory] || 0) + 1
-  }
-  return counts
-})
+const directoryTotalCount = computed(() => files.value.length)
 
 const filteredFiles = computed(() => {
   if (!activeDir.value) return files.value
-  return files.value.filter((f) => f.directory === activeDir.value)
+
+  const parsed = parseDirectoryScope(activeDir.value)
+  return files.value.filter((file) => matchesDirectoryScope(file, parsed))
 })
 
 const isMarkdown = computed(() => fileContent.value?.name.endsWith('.md'))
@@ -1032,6 +1032,87 @@ const isMarkdown = computed(() => fileContent.value?.name.endsWith('.md'))
 function handleDirSelect(dir: string) {
   activeDir.value = dir
   emit('directory-change', dir)
+}
+
+function toggleDirectoryExpanded(scopeKey: string) {
+  const next = new Set(expandedDirKeys.value)
+  if (next.has(scopeKey)) {
+    next.delete(scopeKey)
+  } else {
+    next.add(scopeKey)
+  }
+  expandedDirKeys.value = next
+}
+
+function buildExpandedScopeKeys(directory: string, filePath: string): Set<string> {
+  const keys = new Set<string>()
+  keys.add(directory)
+
+  const parentDir = getFileParentDirectory(filePath)
+  if (!parentDir) {
+    return keys
+  }
+
+  const segments = parentDir.split('/').filter(Boolean)
+  let currentPath = ''
+  for (const segment of segments) {
+    currentPath = currentPath ? `${currentPath}/${segment}` : segment
+    keys.add(`${directory}::${currentPath}`)
+  }
+
+  return keys
+}
+
+function handleLocateCurrentFile() {
+  if (!selectedFile.value) {
+    return
+  }
+
+  const file = selectedFile.value
+  activeDir.value = buildDirectoryScope(file.directory, file.path)
+  expandedDirKeys.value = buildExpandedScopeKeys(file.directory, file.path)
+  dirCollapsed.value = false
+  fileListCollapsed.value = false
+  emit('directory-change', activeDir.value)
+}
+
+function parseDirectoryScope(scope: string): { directory: string; path: string } {
+  const separatorIndex = scope.indexOf('::')
+  if (separatorIndex < 0) {
+    return { directory: scope, path: '' }
+  }
+  return {
+    directory: scope.slice(0, separatorIndex),
+    path: scope.slice(separatorIndex + 2),
+  }
+}
+
+function buildDirectoryScope(directory: string, filePath: string): string {
+  const parentDir = getFileParentDirectory(filePath)
+  if (!parentDir) {
+    return directory
+  }
+  return `${directory}::${parentDir}`
+}
+
+function getFileParentDirectory(filePath: string): string {
+  const normalizedPath = filePath.replace(/\\/g, '/')
+  const slashIndex = normalizedPath.lastIndexOf('/')
+  if (slashIndex < 0) {
+    return ''
+  }
+  return normalizedPath.slice(0, slashIndex)
+}
+
+function matchesDirectoryScope(file: DocFileItem, scope: { directory: string; path: string }): boolean {
+  if (file.directory !== scope.directory) {
+    return false
+  }
+  if (!scope.path) {
+    return true
+  }
+  const parentDir = getFileParentDirectory(file.path)
+  return parentDir === scope.path || parentDir.startsWith(`${scope.path}/`)
 }
 
 function handleSortModeChange(mode: { sortBy: DocSortBy; sortOrder: DocSortOrder }) {
@@ -1102,6 +1183,18 @@ async function handlePrintConfirm() {
   updatePrintStyleTag()
   await waitForPrintAssets()
   window.print()
+}
+
+async function handleCopyPath(path: string) {
+  if (!path) {
+    return
+  }
+  try {
+    await navigator.clipboard.writeText(path)
+    showToast('路径已复制', 'success')
+  } catch {
+    showToast('复制失败', 'info')
+  }
 }
 
 function handleKeydown(e: KeyboardEvent) {
@@ -1196,7 +1289,8 @@ async function syncFromActiveFileTag(): Promise<void> {
   })
   if (!matched) return
 
-  activeDir.value = matched.directory
+  activeDir.value = buildDirectoryScope(matched.directory, matched.path)
+  expandedDirKeys.value = buildExpandedScopeKeys(matched.directory, matched.path)
   await handleFileClick(matched, false)
 }
 
