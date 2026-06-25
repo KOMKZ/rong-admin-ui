@@ -10,6 +10,7 @@
       '--r-docs-print-mermaid-max-width': printSettings.mermaidAutoFit
         ? '100%'
         : `calc(100% * ${printSettings.mermaidScale / 100})`,
+      '--r-docs-academic-section-gap': academicSectionGapPt,
     }"
     data-testid="docs-browser"
   >
@@ -458,7 +459,7 @@
           </div>
 
           <div class="r-docs-print-section">
-            <p class="r-docs-print-section__title">打印主题</p>
+            <p class="r-docs-print-section__title">排版模板</p>
             <div class="r-docs-print-grid">
               <label>
                 <input v-model="printSettings.theme" type="radio" value="paper" />
@@ -471,6 +472,70 @@
               <label>
                 <input v-model="printSettings.theme" type="radio" value="github" />
                 GitHub 风格
+              </label>
+              <label>
+                <input v-model="printSettings.theme" type="radio" value="academic" />
+                学术论文（双栏紧凑）
+              </label>
+            </div>
+          </div>
+
+          <div v-if="printSettings.theme === 'academic'" class="r-docs-print-section">
+            <p class="r-docs-print-section__title">表格字号（学术论文）</p>
+            <div class="r-docs-print-grid">
+              <label>
+                <input v-model="printSettings.academicTableSize" type="radio" value="auto" />
+                自动（按列数+内容长度）
+              </label>
+              <label>
+                <input
+                  v-model.number="printSettings.academicTableSize"
+                  type="radio"
+                  :value="9"
+                />
+                9pt
+              </label>
+              <label>
+                <input
+                  v-model.number="printSettings.academicTableSize"
+                  type="radio"
+                  :value="8"
+                />
+                8pt
+              </label>
+              <label>
+                <input
+                  v-model.number="printSettings.academicTableSize"
+                  type="radio"
+                  :value="7"
+                />
+                7pt（推荐紧凑表格）
+              </label>
+              <label>
+                <input
+                  v-model.number="printSettings.academicTableSize"
+                  type="radio"
+                  :value="6"
+                />
+                6pt（极紧凑）
+              </label>
+            </div>
+          </div>
+
+          <div v-if="printSettings.theme === 'academic'" class="r-docs-print-section">
+            <p class="r-docs-print-section__title">章节间距（学术论文）</p>
+            <div class="r-docs-print-grid">
+              <label>
+                <input v-model="printSettings.academicSectionGap" type="radio" value="compact" />
+                紧凑
+              </label>
+              <label>
+                <input v-model="printSettings.academicSectionGap" type="radio" value="normal" />
+                标准（推荐）
+              </label>
+              <label>
+                <input v-model="printSettings.academicSectionGap" type="radio" value="loose" />
+                宽松
               </label>
             </div>
           </div>
@@ -575,8 +640,10 @@ const props = withDefaults(
 
 type PrintOrientation = 'portrait' | 'landscape'
 type PrintMarginPreset = 'narrow' | 'normal' | 'wide'
-type PrintThemePreset = 'paper' | 'ink' | 'github'
+type PrintThemePreset = 'paper' | 'ink' | 'github' | 'academic'
 type PrintMermaidScale = 100 | 90 | 80
+type PrintAcademicTableSize = 'auto' | 9 | 8 | 7 | 6
+type PrintAcademicSectionGap = 'compact' | 'normal' | 'loose'
 
 type PrintSettings = {
   orientation: PrintOrientation
@@ -584,6 +651,14 @@ type PrintSettings = {
   theme: PrintThemePreset
   mermaidScale: PrintMermaidScale
   mermaidAutoFit: boolean
+  academicTableSize: PrintAcademicTableSize
+  academicSectionGap: PrintAcademicSectionGap
+}
+
+const ACADEMIC_SECTION_GAP_PT: Record<PrintAcademicSectionGap, string> = {
+  compact: '12pt',
+  normal: '20pt',
+  loose: '30pt',
 }
 
 const PRINT_SETTINGS_STORAGE_KEY = 'r-docs-print-settings-v1'
@@ -620,8 +695,14 @@ const printSettings = ref<PrintSettings>({
   theme: 'paper',
   mermaidScale: 90,
   mermaidAutoFit: true,
+  academicTableSize: 'auto',
+  academicSectionGap: 'normal',
 })
 let printStyleEl: HTMLStyleElement | null = null
+
+const academicSectionGapPt = computed(
+  () => ACADEMIC_SECTION_GAP_PT[printSettings.value.academicSectionGap] ?? ACADEMIC_SECTION_GAP_PT.normal,
+)
 
 // --- 高亮 ---
 const highlightSourceKey = computed(() => {
@@ -1174,6 +1255,58 @@ async function waitForPrintAssets() {
 
 function handleAfterPrint() {
   isPrinting.value = false
+  clearAcademicTableSizes()
+}
+
+function adjustAcademicTableSizes() {
+  if (printSettings.value.theme !== 'academic') return
+  const tables = document.querySelectorAll<HTMLTableElement>(
+    '.r-docs-content-body .r-markdown-preview table',
+  )
+  const manual = printSettings.value.academicTableSize
+  tables.forEach((table) => {
+    let fontPt: number
+    if (manual !== 'auto') {
+      fontPt = manual
+    } else {
+      const rows = table.querySelectorAll('tr')
+      if (!rows.length) return
+      const colCount = rows[0].querySelectorAll('th, td').length || 1
+      let maxLen = 0
+      let totalLen = 0
+      let cellCount = 0
+      rows.forEach((row) => {
+        row.querySelectorAll('th, td').forEach((cell) => {
+          const len = (cell.textContent || '').trim().length
+          if (len > maxLen) maxLen = len
+          totalLen += len
+          cellCount += 1
+        })
+      })
+      const avgLen = cellCount > 0 ? totalLen / cellCount : 0
+
+      fontPt = 9.5
+      if (colCount >= 3 && (maxLen > 25 || avgLen > 12)) fontPt = 9
+      if (colCount >= 4) fontPt = 8
+      if (colCount >= 4 && (maxLen > 50 || avgLen > 20)) fontPt = 7.5
+      if (colCount >= 5) fontPt = Math.min(fontPt, 7.5)
+      if (colCount >= 6 || maxLen > 80) fontPt = 7
+      if (colCount >= 7 || maxLen > 150) fontPt = 6.5
+    }
+
+    table.style.fontSize = `${fontPt}pt`
+    table.dataset.academicAdjusted = '1'
+  })
+}
+
+function clearAcademicTableSizes() {
+  const tables = document.querySelectorAll<HTMLTableElement>(
+    '.r-docs-content-body .r-markdown-preview table[data-academic-adjusted="1"]',
+  )
+  tables.forEach((table) => {
+    table.style.fontSize = ''
+    delete table.dataset.academicAdjusted
+  })
 }
 
 async function handlePrintConfirm() {
@@ -1181,6 +1314,7 @@ async function handlePrintConfirm() {
   isPrinting.value = true
   printDialogVisible.value = false
   updatePrintStyleTag()
+  adjustAcademicTableSizes()
   await waitForPrintAssets()
   window.print()
 }
@@ -1348,7 +1482,12 @@ function loadPrintSettings() {
     if (parsed.marginPreset === 'narrow' || parsed.marginPreset === 'normal' || parsed.marginPreset === 'wide') {
       printSettings.value.marginPreset = parsed.marginPreset
     }
-    if (parsed.theme === 'paper' || parsed.theme === 'ink' || parsed.theme === 'github') {
+    if (
+      parsed.theme === 'paper' ||
+      parsed.theme === 'ink' ||
+      parsed.theme === 'github' ||
+      parsed.theme === 'academic'
+    ) {
       printSettings.value.theme = parsed.theme
     }
     if (parsed.mermaidScale === 100 || parsed.mermaidScale === 90 || parsed.mermaidScale === 80) {
@@ -1356,6 +1495,22 @@ function loadPrintSettings() {
     }
     if (typeof parsed.mermaidAutoFit === 'boolean') {
       printSettings.value.mermaidAutoFit = parsed.mermaidAutoFit
+    }
+    if (
+      parsed.academicTableSize === 'auto' ||
+      parsed.academicTableSize === 9 ||
+      parsed.academicTableSize === 8 ||
+      parsed.academicTableSize === 7 ||
+      parsed.academicTableSize === 6
+    ) {
+      printSettings.value.academicTableSize = parsed.academicTableSize
+    }
+    if (
+      parsed.academicSectionGap === 'compact' ||
+      parsed.academicSectionGap === 'normal' ||
+      parsed.academicSectionGap === 'loose'
+    ) {
+      printSettings.value.academicSectionGap = parsed.academicSectionGap
     }
   } catch {
     /* ignore corrupted settings */
@@ -1921,10 +2076,14 @@ defineExpose({
   .r-docs-browser,
   .r-docs-main-area,
   .r-docs-content,
+  .r-docs-content-wrapper,
   .r-docs-content-body {
     height: auto !important;
+    min-height: 0 !important;
     max-height: none !important;
     overflow: visible !important;
+    display: block !important;
+    flex: none !important;
   }
 
   .r-docs-browser {
@@ -1973,6 +2132,23 @@ defineExpose({
   .r-markdown-preview img {
     break-inside: avoid;
     page-break-inside: avoid;
+  }
+
+  .r-markdown-preview p,
+  .r-markdown-preview li,
+  .r-markdown-preview blockquote p {
+    orphans: 3;
+    widows: 3;
+  }
+
+  .r-markdown-preview h1,
+  .r-markdown-preview h2,
+  .r-markdown-preview h3,
+  .r-markdown-preview h4,
+  .r-markdown-preview h5,
+  .r-markdown-preview h6 {
+    break-after: avoid-page;
+    page-break-after: avoid;
   }
 
   .r-markdown-preview table {
@@ -2039,6 +2215,219 @@ defineExpose({
   .r-docs-browser.print-theme-github .r-markdown-preview {
     font-size: 15px !important;
     line-height: 1.6 !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview {
+    font-family: 'Times New Roman', 'Songti SC', 'STSong', 'SimSun', serif !important;
+    font-size: 10.5pt !important;
+    line-height: 1.55 !important;
+    color: #000 !important;
+    background: #fff !important;
+    text-align: justify !important;
+    hyphens: auto;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview p {
+    margin: 0 0 5pt !important;
+    text-indent: 2em;
+    orphans: 3;
+    widows: 3;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview strong,
+  .r-docs-browser.print-theme-academic .r-markdown-preview b {
+    font-weight: 700 !important;
+    font-family: 'Times New Roman', 'Heiti SC', 'STHeiti', 'SimHei', 'Microsoft YaHei',
+      'Songti SC', serif !important;
+    color: #000 !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview h1,
+  .r-docs-browser.print-theme-academic .r-markdown-preview h2 {
+    text-align: center !important;
+    text-indent: 0 !important;
+    font-weight: 700 !important;
+    color: #000 !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview h1 {
+    font-size: 17pt !important;
+    margin: 10pt 0 8pt !important;
+    border: none !important;
+    letter-spacing: 0.5pt;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview h2 {
+    font-size: 14pt !important;
+    margin: var(--r-docs-academic-section-gap, 20pt) 0 6pt !important;
+    padding-bottom: 3pt !important;
+    border-bottom: 0.5pt solid #bbb !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview h1 + h2,
+  .r-docs-browser.print-theme-academic .r-markdown-preview h2:first-child {
+    margin-top: 6pt !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview h3 {
+    font-size: 11.5pt !important;
+    margin: 8pt 0 4pt !important;
+    text-indent: 0 !important;
+    text-align: left !important;
+    font-weight: 700 !important;
+    border: none !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview h4,
+  .r-docs-browser.print-theme-academic .r-markdown-preview h5,
+  .r-docs-browser.print-theme-academic .r-markdown-preview h6 {
+    font-size: 10.5pt !important;
+    margin: 5pt 0 3pt !important;
+    text-indent: 0 !important;
+    text-align: left !important;
+    font-weight: 700 !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview ul,
+  .r-docs-browser.print-theme-academic .r-markdown-preview ol {
+    margin: 0 0 5pt !important;
+    padding-left: 22pt !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview li {
+    margin: 0 0 1pt !important;
+    text-indent: 0 !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview li > p {
+    text-indent: 0 !important;
+    margin: 0 0 2pt !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview pre,
+  .r-docs-browser.print-theme-academic .r-markdown-preview table,
+  .r-docs-browser.print-theme-academic .r-markdown-preview blockquote,
+  .r-docs-browser.print-theme-academic .r-markdown-preview .rmd-mermaid-container {
+    margin: 6pt 0 !important;
+    text-indent: 0 !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview pre,
+  .r-docs-browser.print-theme-academic .r-markdown-preview pre code {
+    font-family: 'SF Mono', 'Menlo', 'Consolas', 'Courier New', monospace !important;
+    font-size: 9pt !important;
+    line-height: 1.4 !important;
+    background: #f6f8fa !important;
+    border: 0.4pt solid #d0d7de !important;
+    padding: 5pt 7pt !important;
+    text-align: left !important;
+    text-indent: 0 !important;
+    white-space: pre !important;
+    word-break: normal !important;
+    overflow-wrap: normal !important;
+    overflow-x: hidden !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview pre,
+  .r-docs-browser.print-theme-academic .r-markdown-preview pre *,
+  .r-docs-browser.print-theme-academic .r-markdown-preview pre code,
+  .r-docs-browser.print-theme-academic .r-markdown-preview pre code * {
+    text-decoration: none !important;
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview pre code,
+  .r-docs-browser.print-theme-academic .r-markdown-preview pre code *,
+  .r-docs-browser.print-theme-academic .r-markdown-preview pre a {
+    background: transparent !important;
+    background-color: transparent !important;
+    border-radius: 0 !important;
+    padding: 0 !important;
+    color: inherit !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview pre code :not(pre) > code {
+    font-size: inherit !important;
+    background: transparent !important;
+    padding: 0 !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview :not(pre) > code {
+    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace !important;
+    font-size: 9.5pt !important;
+    background: #f6f8fa !important;
+    padding: 0 2pt !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview table {
+    font-size: 10pt !important;
+    border-collapse: collapse !important;
+    width: 100% !important;
+    table-layout: auto !important;
+    word-break: normal !important;
+    line-height: 1.4 !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview table th,
+  .r-docs-browser.print-theme-academic .r-markdown-preview table td {
+    border: 0.5pt solid #000 !important;
+    padding: 3pt 5pt !important;
+    text-indent: 0 !important;
+    text-align: left !important;
+    background: #fff !important;
+    vertical-align: top;
+    word-break: normal !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+    line-break: strict;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview table th p,
+  .r-docs-browser.print-theme-academic .r-markdown-preview table td p {
+    text-indent: 0 !important;
+    margin: 0 !important;
+    text-align: left !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview table th {
+    background: #f0f0f0 !important;
+    font-weight: 700 !important;
+    text-align: center !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview table tr:nth-child(2n) {
+    background: #fff !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview blockquote {
+    border-left: 1.5pt solid #555 !important;
+    padding: 3pt 10pt !important;
+    margin: 6pt 0 !important;
+    color: #333 !important;
+    font-style: italic;
+    background: #fafafa !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview blockquote p {
+    text-indent: 0 !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview img,
+  .r-docs-browser.print-theme-academic .r-markdown-preview svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview .rmd-mermaid-container svg {
+    max-height: 200mm !important;
+  }
+
+  .r-docs-browser.print-theme-academic .r-markdown-preview hr {
+    border: none !important;
+    border-top: 0.4pt solid #999 !important;
+    margin: 8pt 0 !important;
   }
 }
 </style>

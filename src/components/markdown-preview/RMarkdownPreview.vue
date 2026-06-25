@@ -75,6 +75,15 @@ const md = new MarkdownIt({
   },
 })
 
+// Allow all data: URIs in images/links. markdown-it 14.x default only permits
+// data:image/(gif|png|jpeg|webp); but markdown files often embed SVG, JPG, or
+// other data URI variants that would be silently stripped.
+md.validateLink = (url: string) => {
+  const str = url.trim().toLowerCase()
+  if (str.startsWith('data:')) return true
+  return !/^(vbscript|javascript|file):/.test(str)
+}
+
 function slugifyHeading(text: string): string {
   return text
     .toLowerCase()
