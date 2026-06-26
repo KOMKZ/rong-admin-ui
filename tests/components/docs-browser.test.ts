@@ -152,7 +152,7 @@ describe('RDocsBrowser', () => {
 
     await wrapper.get('[data-testid="docs-sort-option-name-asc"]').trigger('click')
     await flushPromises()
-    expect(api.getFileList).toHaveBeenLastCalledWith('asc', 'name')
+    expect(api.getFileList).toHaveBeenLastCalledWith('asc', 'name', 1, 100)
 
     let order = wrapper.findAll('.r-docs-file-item').map((node) => node.attributes('data-testid'))
     expect(order).toEqual(['docs-file-alpha.md', 'docs-file-zeta.md'])
@@ -161,9 +161,32 @@ describe('RDocsBrowser', () => {
     await flushPromises()
     await wrapper.get('[data-testid="docs-sort-option-name-desc"]').trigger('click')
     await flushPromises()
-    expect(api.getFileList).toHaveBeenLastCalledWith('desc', 'name')
+    expect(api.getFileList).toHaveBeenLastCalledWith('desc', 'name', 1, 100)
 
     order = wrapper.findAll('.r-docs-file-item').map((node) => node.attributes('data-testid'))
     expect(order).toEqual(['docs-file-zeta.md', 'docs-file-alpha.md'])
+  })
+
+  it('virtualizes large file lists', async () => {
+    const files = Array.from({ length: 200 }, (_, index) => ({
+      name: `doc-${String(index).padStart(3, '0')}.md`,
+      path: `doc-${String(index).padStart(3, '0')}.md`,
+      size: 120,
+      is_dir: false,
+      mod_time: index,
+      directory: 'docs',
+    }))
+    const api = createApiMock(files)
+    const wrapper = mount(RDocsBrowser, {
+      props: {
+        api,
+        enableCache: false,
+      },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.findAll('.r-docs-file-item')).toHaveLength(28)
+    expect(wrapper.find('[data-testid="docs-file-doc-000.md"]').exists()).toBe(false)
   })
 })
