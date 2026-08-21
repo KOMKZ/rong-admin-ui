@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { NInput } from 'naive-ui'
 import { RFormRenderer } from '@/components/form-renderer'
 import type { FormFieldSchema } from '@/components/form-renderer'
 
@@ -51,6 +52,31 @@ describe('RFormRenderer', () => {
     })
     const textarea = wrapper.find('textarea')
     expect(textarea.exists()).toBe(true)
+  })
+
+  it('should sync custom component value via update:value event (NInput compat)', async () => {
+    // 回归：NInput 发射 update:value 而非 update:model-value，custom 分支必须双监听
+    const wrapper = mount(RFormRenderer, {
+      props: {
+        schema: [
+          {
+            key: 'password',
+            label: '密码',
+            type: 'custom',
+            component: NInput,
+            componentProps: { type: 'password' },
+          },
+        ],
+        model: { password: '' },
+      },
+    })
+    const input = wrapper.find('input')
+    expect(input.exists()).toBe(true)
+    await input.setValue('secret123')
+    const emitted = wrapper.emitted('update:model')
+    expect(emitted).toBeTruthy()
+    const lastPayload = emitted![emitted!.length - 1][0] as Record<string, unknown>
+    expect(lastPayload.password).toBe('secret123')
   })
 
   it('should render switch field type', () => {

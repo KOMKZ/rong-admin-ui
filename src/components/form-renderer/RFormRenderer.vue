@@ -405,6 +405,7 @@ defineExpose(expose)
                 :model-value="model[field.key]"
                 v-bind="field.componentProps"
                 @update:model-value="updateField(field.key, $event)"
+                @update:value="updateField(field.key, $event)"
               />
             </template>
             <slot name="fieldSuffix" :field="field" />
@@ -557,6 +558,7 @@ defineExpose(expose)
             :model-value="model[field.key]"
             v-bind="field.componentProps"
             @update:model-value="updateField(field.key, $event)"
+            @update:value="updateField(field.key, $event)"
           />
         </template>
         <slot name="fieldSuffix" :field="field" />
