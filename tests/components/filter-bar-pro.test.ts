@@ -27,6 +27,16 @@ describe('RFilterBarPro', () => {
     expect(wrapper.find('[data-testid="filter-reset-btn"]').exists()).toBe(true)
   })
 
+  it('hides form-renderer default submit/reset actions (no duplicate action buttons)', () => {
+    const wrapper = mount(RFilterBarPro, {
+      props: { schema: baseSchema, modelValue: {} },
+    })
+    // 内部 RFormRenderer 的默认「提交/重置」已被覆写，表单区不应出现任何按钮
+    const form = wrapper.find('[data-testid="filter-form"] .n-form')
+    expect(form.exists()).toBe(true)
+    expect(form.findAll('button').length).toBe(0)
+  })
+
   it('shows advanced toggle when collapsible and has more fields', () => {
     const wrapper = mount(RFilterBarPro, {
       props: { schema: baseSchema, modelValue: {}, collapsible: true, maxVisibleFields: 2 },

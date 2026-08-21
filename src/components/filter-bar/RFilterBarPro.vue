@@ -187,7 +187,10 @@ defineExpose(expose)
         :cols="cols"
         :label-width="80"
         @update:model="handleModelUpdate"
-      />
+      >
+        <!-- 覆写 form-renderer 默认「提交/重置」按钮：filter-bar 自带「搜索/重置」操作行，避免重复 -->
+        <template #actions><span /></template>
+      </RFormRenderer>
     </div>
 
     <!-- Actions Row -->
