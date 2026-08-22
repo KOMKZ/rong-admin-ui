@@ -57,9 +57,9 @@ defineExpose(expose)
       <div class="r-batch-action-bar__actions">
         <NSpace size="small">
           <template v-for="action in actions" :key="action.key">
-            <!-- Danger action with confirm -->
+            <!-- Action with confirm -->
             <NPopconfirm
-              v-if="action.danger && action.confirmMessage"
+              v-if="action.confirmMessage"
               @positive-click="handleAction(action.key)"
             >
               <template #trigger>

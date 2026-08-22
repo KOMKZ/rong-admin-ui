@@ -1,6 +1,9 @@
 <script lang="ts" setup generic="T extends Record<string, unknown> = Record<string, unknown>">
-import { computed, ref, watch, type PropType } from 'vue'
-import { NDataTable, NEmpty, NSpin, type DataTableColumns } from 'naive-ui'
+import { computed, ref, useSlots, watch, type PropType } from 'vue'
+import { NButton, NDataTable, NEmpty, NPopconfirm, NSpin, type DataTableColumns } from 'naive-ui'
+import RBatchActionBar from '../batch-action-bar/RBatchActionBar.vue'
+import RIcon from '../icon/RIcon.vue'
+import type { BatchAction } from '../batch-action-bar/types'
 import type {
   DataTableColumn,
   DataTablePagination,
@@ -10,6 +13,8 @@ import type {
   DataTableExpose,
   ColumnConfigItem,
   ServerSideParams,
+  DataTableBatchPayload,
+  DataTableExportPayload,
 } from './types'
 
 const props = defineProps({
@@ -37,6 +42,26 @@ const props = defineProps({
   remote: { type: Boolean, default: undefined },
   columnConfigurable: { type: Boolean, default: false },
   columnStorageKey: { type: String, default: undefined },
+  exportable: { type: Boolean, default: false },
+  exportData: { type: Array as PropType<T[]>, default: undefined },
+  exportSelected: { type: Boolean, default: true },
+  batchDeletable: { type: Boolean, default: false },
+  batchActions: { type: Array as PropType<BatchAction[]>, default: () => [] },
+  exportFileName: { type: String, default: 'table-export.csv' },
+  exportAllLabel: { type: String, default: '导出全部' },
+  exportSelectedLabel: { type: String, default: '导出选中' },
+  exportAllConfirmMessage: { type: String, default: '确定导出全部数据？' },
+  exportSelectedConfirmMessage: { type: String, default: '确定导出选中的数据？' },
+  batchDeleteLabel: { type: String, default: '批量删除' },
+  batchDeleteConfirmMessage: { type: String, default: '确定删除选中的数据？此操作不可恢复' },
+  exportHandler: {
+    type: Function as PropType<(payload: DataTableExportPayload<T>) => void | Promise<void>>,
+    default: undefined,
+  },
+  batchDeleteHandler: {
+    type: Function as PropType<(payload: DataTableBatchPayload<T>) => void | Promise<void>>,
+    default: undefined,
+  },
 })
 
 const emit = defineEmits<{
@@ -47,10 +72,14 @@ const emit = defineEmits<{
   'update:filters': [filters: DataTableFilterState[]]
   'server-params-change': [params: ServerSideParams]
   rowClick: [row: T, index: number]
+  export: [payload: DataTableExportPayload<T>]
+  batchDelete: [payload: DataTableBatchPayload<T>]
+  batchAction: [key: string, selectedKeys: DataTableRowKey[], selectedRows: T[]]
 }>()
 
 const tableRef = ref<InstanceType<typeof NDataTable> | null>(null)
 const showColumnConfig = ref(false)
+const slots: ReturnType<typeof useSlots> = useSlots()
 
 const columnConfig = ref<ColumnConfigItem[]>([])
 const activeFilters = ref<DataTableFilterState[]>([])
@@ -183,7 +212,37 @@ const rowKeyFn = computed(() => {
 })
 
 const selectedCount = computed(() => props.checkedRowKeys.length)
-const showBatchToolbar = computed(() => props.selectable && selectedCount.value > 0)
+const selectedRows = computed(() => {
+  const selected = new Set(props.checkedRowKeys)
+  return props.data.filter((row) => selected.has(rowKeyFn.value(row)))
+})
+const builtInBatchActions = computed<BatchAction[]>(() => {
+  const actions: BatchAction[] = []
+  if (props.exportable && props.exportSelected) {
+    actions.push({
+      key: 'export-selected',
+      label: props.exportSelectedLabel,
+      icon: 'download',
+      confirmMessage: props.exportSelectedConfirmMessage,
+    })
+  }
+  if (props.batchDeletable) {
+    actions.push({
+      key: 'delete',
+      label: props.batchDeleteLabel,
+      icon: 'trash-2',
+      danger: true,
+      confirmMessage: props.batchDeleteConfirmMessage,
+    })
+  }
+  return [...actions, ...props.batchActions]
+})
+const showBatchToolbar = computed<boolean>(
+  (): boolean =>
+    props.selectable &&
+    selectedCount.value > 0 &&
+    (Boolean(slots.batchToolbar) || builtInBatchActions.value.length > 0),
+)
 
 function emitServerParams(): void {
   const params: ServerSideParams = {}
@@ -208,6 +267,74 @@ function handleCheckedRowKeysChange(keys: DataTableRowKey[]): void {
   emit('update:checkedRowKeys', keys)
 }
 
+async function handleExport(scope: 'all' | 'selected'): Promise<void> {
+  const payload: DataTableExportPayload<T> = {
+    scope,
+    rows: scope === 'selected' ? selectedRows.value : (props.exportData ?? props.data),
+    selectedKeys: [...props.checkedRowKeys],
+    columns: effectiveColumns.value,
+  }
+  emit('export', payload)
+  if (props.exportHandler) {
+    await props.exportHandler(payload)
+    return
+  }
+  exportRowsAsCsv(payload, props.exportFileName)
+}
+
+async function handleBatchAction(key: string, selectedKeys: DataTableRowKey[]): Promise<void> {
+  if (key === 'export-selected') {
+    await handleExport('selected')
+    return
+  }
+
+  const payload: DataTableBatchPayload<T> = {
+    selectedKeys: [...selectedKeys],
+    selectedRows: selectedRows.value,
+  }
+
+  if (key === 'delete') {
+    emit('batchDelete', payload)
+    if (props.batchDeleteHandler) {
+      await props.batchDeleteHandler(payload)
+    }
+    emit('update:checkedRowKeys', [])
+    return
+  }
+
+  emit('batchAction', key, [...selectedKeys], selectedRows.value)
+}
+
+function exportRowsAsCsv(payload: DataTableExportPayload<T>, fileName: string): void {
+  if (typeof document === 'undefined') return
+  const columns = payload.columns.filter((column) => column.key && column.title)
+  const header = columns.map((column) => csvCell(column.title)).join(',')
+  const lines = payload.rows.map((row) =>
+    columns.map((column) => csvCell(formatCsvValue(row[column.key]))).join(','),
+  )
+  const csv = ['\ufeff' + header, ...lines].join('\n')
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = url
+  link.download = fileName
+  link.click()
+  URL.revokeObjectURL(url)
+}
+
+function formatCsvValue(value: unknown): string {
+  if (Array.isArray(value)) return value.join('; ')
+  if (value === null || value === undefined) return ''
+  if (value instanceof Date) return value.toISOString()
+  if (typeof value === 'object') return JSON.stringify(value)
+  return String(value)
+}
+
+function csvCell(value: unknown): string {
+  const text = String(value ?? '')
+  return `"${text.replace(/"/g, '""')}"`
+}
+
 function handleRowProps(row: T, index: number): Record<string, unknown> {
   return {
     onClick: () => emit('rowClick', row, index),
@@ -220,6 +347,10 @@ function toggleColumnVisibility(key: string): void {
     item.visible = !item.visible
     persistColumnConfig()
   }
+}
+
+function isColumnVisible(key: string): boolean {
+  return columnConfig.value.find((item) => item.key === key)?.visible ?? true
 }
 
 function resetColumnConfigToDefaults(): void {
@@ -253,8 +384,23 @@ defineExpose(expose)
 
 <template>
   <div class="r-data-table" role="region" aria-label="data table" :aria-busy="loading">
-    <div v-if="$slots.toolbar || columnConfigurable" class="r-data-table__toolbar">
-      <slot name="toolbar" />
+    <div v-if="$slots.toolbar || columnConfigurable || exportable" class="r-data-table__toolbar">
+      <div class="r-data-table__toolbar-left">
+        <slot name="toolbar" />
+      </div>
+      <div class="r-data-table__toolbar-actions">
+        <NPopconfirm v-if="exportable" @positive-click="handleExport('all')">
+          <template #trigger>
+            <NButton size="small" data-testid="data-table-export-all">
+              <template #icon>
+                <RIcon name="download" :size="14" />
+              </template>
+              {{ exportAllLabel }}
+            </NButton>
+          </template>
+          {{ exportAllConfirmMessage }}
+        </NPopconfirm>
+      </div>
       <button
         v-if="columnConfigurable"
         class="r-data-table__config-btn"
@@ -286,7 +432,7 @@ defineExpose(expose)
       >
         <input
           type="checkbox"
-          :checked="columnConfig.find((c) => c.key === col.key)?.visible ?? true"
+          :checked="isColumnVisible(col.key)"
           :disabled="col.configurable === false"
           @change="toggleColumnVisibility(col.key)"
         />
@@ -296,7 +442,13 @@ defineExpose(expose)
 
     <div v-if="showBatchToolbar" class="r-data-table__batch-toolbar" data-testid="batch-toolbar">
       <slot name="batchToolbar" :selected-count="selectedCount" :selected-keys="checkedRowKeys">
-        <span class="r-data-table__batch-info"> {{ selectedCount }} item(s) selected </span>
+        <RBatchActionBar
+          :selected-count="selectedCount"
+          :selected-keys="checkedRowKeys"
+          :actions="builtInBatchActions"
+          @clear="emit('update:checkedRowKeys', [])"
+          @action="handleBatchAction"
+        />
       </slot>
     </div>
 
@@ -340,6 +492,12 @@ defineExpose(expose)
   align-items: center;
   justify-content: space-between;
   margin-bottom: var(--ra-spacing-2, 8px);
+  gap: var(--ra-spacing-2, 8px);
+}
+.r-data-table__toolbar-left,
+.r-data-table__toolbar-actions {
+  display: flex;
+  align-items: center;
   gap: var(--ra-spacing-2, 8px);
 }
 .r-data-table__config-btn {
@@ -402,14 +560,7 @@ defineExpose(expose)
   cursor: not-allowed;
 }
 .r-data-table__batch-toolbar {
-  display: flex;
-  align-items: center;
-  gap: var(--ra-spacing-2, 8px);
-  padding: var(--ra-spacing-2, 8px) var(--ra-spacing-3, 12px);
   margin-bottom: var(--ra-spacing-2, 8px);
-  background: var(--ra-color-brand-light, #e8f4ff);
-  border-radius: var(--ra-radius-sm, 4px);
-  border: 1px solid var(--ra-color-brand-primary, #2080f0);
 }
 .r-data-table__batch-info {
   font-size: var(--ra-font-size-sm, 13px);

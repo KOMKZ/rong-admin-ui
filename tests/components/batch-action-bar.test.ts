@@ -102,4 +102,15 @@ describe('RBatchActionBar', () => {
     })
     expect(wrapper.find('[data-testid="batch-action-delete"]').exists()).toBe(true)
   })
+
+  it('wraps non-danger actions with confirm when confirmMessage is provided', () => {
+    const wrapper = mount(RBatchActionBar, {
+      props: {
+        selectedCount: 1,
+        selectedKeys: [1],
+        actions: [{ key: 'export-selected', label: '导出选中', confirmMessage: '确定导出？' }],
+      },
+    })
+    expect(wrapper.find('[data-testid="batch-action-export-selected"]').exists()).toBe(true)
+  })
 })

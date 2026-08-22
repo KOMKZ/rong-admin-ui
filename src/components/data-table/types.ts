@@ -60,6 +60,20 @@ export interface ServerSideParams {
   pagination?: { page: number; pageSize: number }
 }
 
+export type DataTableExportScope = 'all' | 'selected'
+
+export interface DataTableExportPayload<T = Record<string, unknown>> {
+  scope: DataTableExportScope
+  rows: T[]
+  selectedKeys: DataTableRowKey[]
+  columns: DataTableColumn<T>[]
+}
+
+export interface DataTableBatchPayload<T = Record<string, unknown>> {
+  selectedKeys: DataTableRowKey[]
+  selectedRows: T[]
+}
+
 export interface DataTableProps<T = Record<string, unknown>> {
   columns: DataTableColumn<T>[]
   data: T[]
@@ -82,6 +96,20 @@ export interface DataTableProps<T = Record<string, unknown>> {
   columnConfigurable?: boolean
   /** localStorage key for persisting column configuration */
   columnStorageKey?: string
+  /** Enable built-in client-side export actions */
+  exportable?: boolean
+  /** Data source used by built-in export-all; defaults to current table data */
+  exportData?: T[]
+  /** Enable built-in selected row export action */
+  exportSelected?: boolean
+  /** Enable built-in batch delete action */
+  batchDeletable?: boolean
+  /** Filename used by the built-in CSV exporter */
+  exportFileName?: string
+  /** Optional export adapter; defaults to client-side CSV download */
+  exportHandler?: (payload: DataTableExportPayload<T>) => void | Promise<void>
+  /** Optional batch delete adapter; defaults to emitting only */
+  batchDeleteHandler?: (payload: DataTableBatchPayload<T>) => void | Promise<void>
 }
 
 export interface DataTableEmits<T = Record<string, unknown>> {
@@ -92,6 +120,9 @@ export interface DataTableEmits<T = Record<string, unknown>> {
   'update:filters': [filters: DataTableFilterState[]]
   'server-params-change': [params: ServerSideParams]
   rowClick: [row: T, index: number]
+  export: [payload: DataTableExportPayload<T>]
+  batchDelete: [payload: DataTableBatchPayload<T>]
+  batchAction: [key: string, selectedKeys: DataTableRowKey[], selectedRows: T[]]
 }
 
 export interface DataTableSlots<T = Record<string, unknown>> {

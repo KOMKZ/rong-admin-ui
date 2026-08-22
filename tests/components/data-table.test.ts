@@ -110,6 +110,29 @@ describe('RDataTable', () => {
     expect(wrapper.find('.custom-toolbar').exists()).toBe(true)
   })
 
+  it('should render built-in export all action when exportable', () => {
+    const wrapper = mount(RDataTable, {
+      props: { columns, data, exportable: true },
+    })
+    expect(wrapper.find('[data-testid="data-table-export-all"]').exists()).toBe(true)
+  })
+
+  it('should render built-in selected export and delete actions', () => {
+    const wrapper = mount(RDataTable, {
+      props: {
+        columns,
+        data,
+        selectable: true,
+        checkedRowKeys: [1],
+        exportable: true,
+        batchDeletable: true,
+      },
+    })
+    expect(wrapper.find('[data-testid="batch-action-bar"]').exists()).toBe(true)
+    expect(wrapper.find('[data-testid="batch-action-export-selected"]').exists()).toBe(true)
+    expect(wrapper.find('[data-testid="batch-action-delete"]').exists()).toBe(true)
+  })
+
   it('should render summary slot', () => {
     const wrapper = mount(RDataTable, {
       props: { columns, data },
