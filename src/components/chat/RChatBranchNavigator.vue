@@ -2,14 +2,14 @@
 import { NButton, NSpace } from 'naive-ui'
 import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 
-interface Props {
+export interface RChatBranchNavigatorProps {
   hasPrev?: boolean
   hasNext?: boolean
   /** Current branch path label, e.g. "分支 2/3" */
   pathLabel?: string
 }
 
-withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<RChatBranchNavigatorProps>(), {
   hasPrev: false,
   hasNext: false,
   pathLabel: '',

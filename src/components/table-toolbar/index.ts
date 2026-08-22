@@ -6,4 +6,5 @@ export type {
   TableToolbarProExpose,
   TableDensity,
   ColumnPreset,
+  TableToolbarAction,
 } from './types'

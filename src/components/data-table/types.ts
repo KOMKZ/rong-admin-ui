@@ -96,17 +96,13 @@ export interface DataTableProps<T = Record<string, unknown>> {
   columnConfigurable?: boolean
   /** localStorage key for persisting column configuration */
   columnStorageKey?: string
-  /** Enable built-in client-side export actions */
+  /** Enable built-in selected export action; actual export must be handled by application API layer */
   exportable?: boolean
-  /** Data source used by built-in export-all; defaults to current table data */
-  exportData?: T[]
   /** Enable built-in selected row export action */
   exportSelected?: boolean
   /** Enable built-in batch delete action */
   batchDeletable?: boolean
-  /** Filename used by the built-in CSV exporter */
-  exportFileName?: string
-  /** Optional export adapter; defaults to client-side CSV download */
+  /** Export adapter implemented by application API layer */
   exportHandler?: (payload: DataTableExportPayload<T>) => void | Promise<void>
   /** Optional batch delete adapter; defaults to emitting only */
   batchDeleteHandler?: (payload: DataTableBatchPayload<T>) => void | Promise<void>

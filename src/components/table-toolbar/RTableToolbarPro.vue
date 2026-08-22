@@ -1,13 +1,21 @@
 <script lang="ts" setup>
 import { ref, type PropType } from 'vue'
-import { NButton, NSpace, NPopover, NCheckbox, NTooltip } from 'naive-ui'
+import { NButton, NSpace, NPopover, NCheckbox, NTooltip, useDialog } from 'naive-ui'
 import RIcon from '../icon/RIcon.vue'
-import type { TableDensity, ColumnPreset, TableToolbarProExpose } from './types'
+import type {
+  TableDensity,
+  ColumnPreset,
+  TableToolbarAction,
+  TableToolbarProExpose,
+} from './types'
 
 const props = defineProps({
   title: { type: String, default: undefined },
   refreshable: { type: Boolean, default: true },
   exportable: { type: Boolean, default: false },
+  exportLabel: { type: String, default: '导出全部' },
+  exportConfirmMessage: { type: String, default: '确定导出全部数据？' },
+  actions: { type: Array as PropType<TableToolbarAction[]>, default: () => [] },
   densitySwitchable: { type: Boolean, default: true },
   fullscreenable: { type: Boolean, default: true },
   columnConfigurable: { type: Boolean, default: false },
@@ -19,10 +27,20 @@ const props = defineProps({
 const emit = defineEmits<{
   refresh: []
   export: []
+  action: [key: string]
   'update:density': [density: TableDensity]
   'update:fullscreen': [fullscreen: boolean]
   'update:columnPresets': [presets: ColumnPreset[]]
 }>()
+
+type DialogApi = ReturnType<typeof useDialog>
+
+let dialog: DialogApi | null = null
+try {
+  dialog = useDialog()
+} catch {
+  dialog = null
+}
 
 const isFullscreen = ref(false)
 const densityOptions: { value: TableDensity; label: string; icon: string }[] = [
@@ -36,7 +54,39 @@ function handleRefresh(): void {
 }
 
 function handleExport(): void {
-  emit('export')
+  confirmAction(
+    {
+      key: 'export',
+      label: props.exportLabel,
+      icon: 'download',
+      confirmMessage: props.exportConfirmMessage,
+    },
+    () => emit('export'),
+  )
+}
+
+function handleAction(action: TableToolbarAction): void {
+  confirmAction(action, () => emit('action', action.key))
+}
+
+function confirmAction(action: TableToolbarAction, run: () => void): void {
+  if (!action.confirmMessage) {
+    run()
+    return
+  }
+  if (!dialog) {
+    if (typeof window === 'undefined' || window.confirm(action.confirmMessage)) {
+      run()
+    }
+    return
+  }
+  dialog.warning({
+    title: action.confirmTitle ?? '确认操作',
+    content: action.confirmMessage,
+    positiveText: action.positiveText ?? '确定',
+    negativeText: action.negativeText ?? '取消',
+    onPositiveClick: run,
+  })
 }
 
 function handleDensityChange(density: TableDensity): void {
@@ -80,6 +130,28 @@ defineExpose(expose)
     <div class="r-table-toolbar-pro__right">
       <NSpace size="small" align="center">
         <slot name="extra" />
+
+        <NTooltip v-for="action in actions" :key="action.key">
+          <template #trigger>
+            <NButton
+              quaternary
+              :circle="Boolean(action.icon)"
+              size="small"
+              :type="action.danger ? 'error' : 'default'"
+              :disabled="action.disabled"
+              :data-testid="`toolbar-action-${action.key}`"
+              @click="handleAction(action)"
+            >
+              <template v-if="action.icon" #icon>
+                <RIcon :name="action.icon" :size="16" />
+              </template>
+              <span v-if="!action.icon" class="r-table-toolbar-pro__action-label">
+                {{ action.label }}
+              </span>
+            </NButton>
+          </template>
+          {{ action.label }}
+        </NTooltip>
 
         <!-- Refresh -->
         <NTooltip v-if="refreshable">
@@ -177,7 +249,7 @@ defineExpose(expose)
               <template #icon><RIcon name="download" :size="16" /></template>
             </NButton>
           </template>
-          导出
+          {{ exportLabel }}
         </NTooltip>
       </NSpace>
     </div>

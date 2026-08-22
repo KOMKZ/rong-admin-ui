@@ -2,13 +2,13 @@
 import { computed, ref, watch, nextTick } from 'vue'
 import type { MCPServerOption } from './types'
 
-interface Props {
+export interface RChatMCPSelectorProps {
   visible: boolean
   options: MCPServerOption[]
   filterText: string
 }
 
-const props = defineProps<Props>()
+const props = defineProps<RChatMCPSelectorProps>()
 
 const emit = defineEmits<{
   select: [serverName: string]

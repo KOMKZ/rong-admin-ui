@@ -3,7 +3,7 @@ import { ref, computed, nextTick, watch, onMounted, onUnmounted } from 'vue'
 import type { ChatMessage } from './types'
 import { NSpin, NButton } from 'naive-ui'
 
-interface Props {
+export interface RChatMessageListProps {
   messages: ChatMessage[]
   loading?: boolean
 }
@@ -14,7 +14,7 @@ interface ListItem {
   dateLabel?: string
 }
 
-const props = withDefaults(defineProps<Props>(), { loading: false })
+const props = withDefaults(defineProps<RChatMessageListProps>(), { loading: false })
 
 function formatDateLabel(iso: string): string {
   const d = new Date(iso)

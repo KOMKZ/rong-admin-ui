@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { NButton, NInput } from 'naive-ui'
 import { PanelRightClose, PanelRight, Send } from 'lucide-vue-next'
 
-interface Props {
+export interface RChatCanvasProps {
   visible?: boolean
   content?: string
   title?: string
@@ -14,7 +14,7 @@ interface Emits {
   (e: 'apply', content: string): void
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<RChatCanvasProps>(), {
   visible: false,
   content: '',
   title: 'Artifact',

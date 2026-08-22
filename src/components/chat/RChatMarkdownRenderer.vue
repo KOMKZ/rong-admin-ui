@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import RMarkdownPreview from '../markdown-preview/RMarkdownPreview.vue'
 
-interface Props {
+export interface RChatMarkdownRendererProps {
   content: string
 }
 
-defineProps<Props>()
+defineProps<RChatMarkdownRendererProps>()
 </script>
 
 <template>

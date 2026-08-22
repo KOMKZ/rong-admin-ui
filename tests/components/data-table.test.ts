@@ -110,13 +110,6 @@ describe('RDataTable', () => {
     expect(wrapper.find('.custom-toolbar').exists()).toBe(true)
   })
 
-  it('should render built-in export all action when exportable', () => {
-    const wrapper = mount(RDataTable, {
-      props: { columns, data, exportable: true },
-    })
-    expect(wrapper.find('[data-testid="data-table-export-all"]').exists()).toBe(true)
-  })
-
   it('should render built-in selected export and delete actions', () => {
     const wrapper = mount(RDataTable, {
       props: {

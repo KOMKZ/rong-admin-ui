@@ -9,10 +9,25 @@ export interface ColumnPreset {
   fixed?: 'left' | 'right' | false
 }
 
+export interface TableToolbarAction {
+  key: string
+  label: string
+  icon?: string
+  danger?: boolean
+  disabled?: boolean
+  confirmMessage?: string
+  confirmTitle?: string
+  positiveText?: string
+  negativeText?: string
+}
+
 export interface TableToolbarProProps {
   title?: string
   refreshable?: boolean
   exportable?: boolean
+  exportLabel?: string
+  exportConfirmMessage?: string
+  actions?: TableToolbarAction[]
   densitySwitchable?: boolean
   fullscreenable?: boolean
   columnConfigurable?: boolean
@@ -24,6 +39,7 @@ export interface TableToolbarProProps {
 export interface TableToolbarProEmits {
   refresh: []
   export: []
+  action: [key: string]
   'update:density': [density: TableDensity]
   'update:fullscreen': [fullscreen: boolean]
   'update:columnPresets': [presets: ColumnPreset[]]

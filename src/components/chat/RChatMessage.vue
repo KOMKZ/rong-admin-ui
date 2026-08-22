@@ -4,7 +4,7 @@ import { User, Bot, Copy, Pencil, ThumbsUp, ThumbsDown, RotateCcw } from 'lucide
 import { NButton, NTag, NInput, NCollapse, NCollapseItem } from 'naive-ui'
 import type { ChatMessage } from './types'
 
-interface Props {
+export interface RChatMessageProps {
   message: ChatMessage
   showAvatar?: boolean
 }
@@ -15,7 +15,7 @@ interface Emits {
   (e: 'regenerate', payload: { messageId: number }): void
 }
 
-const props = withDefaults(defineProps<Props>(), { showAvatar: true })
+const props = withDefaults(defineProps<RChatMessageProps>(), { showAvatar: true })
 const emit = defineEmits<Emits>()
 const copied = ref(false)
 

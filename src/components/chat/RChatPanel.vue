@@ -4,7 +4,7 @@ import { NButton } from 'naive-ui'
 import { PanelLeftClose, PanelLeft } from 'lucide-vue-next'
 import type { ChatConversation } from './types'
 
-interface Props {
+export interface RChatPanelProps {
   conversations: ChatConversation[]
   activeConversationId?: number
   loading?: boolean
@@ -19,7 +19,7 @@ interface Emits {
   (e: 'update:sidebarCollapsed', value: boolean): void
 }
 
-const props = withDefaults(defineProps<Props>(), { loading: false, sidebarCollapsed: false })
+const props = withDefaults(defineProps<RChatPanelProps>(), { loading: false, sidebarCollapsed: false })
 const emit = defineEmits<Emits>()
 
 const sidebarCollapsedLocal = computed({

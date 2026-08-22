@@ -9,7 +9,7 @@ export interface TierConfig {
   model: string
 }
 
-interface Props {
+export interface RChatModelSelectorProps {
   /** Currently selected model (for sync with v-model) */
   modelValue: string
   /** Mapping of tier -> model from backend Provider 列表 (no 内置默认模型 ID) */
@@ -24,7 +24,7 @@ interface Emits {
   (e: 'change', payload: { tier: TierKey; model: string }): void
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<RChatModelSelectorProps>(), {
   tierModels: () => ({}),
   disabled: false,
 })

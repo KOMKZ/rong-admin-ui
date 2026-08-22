@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { type PropType } from 'vue'
-import { NButton, NSpace, NPopconfirm } from 'naive-ui'
+import { NButton, NSpace, useDialog } from 'naive-ui'
 import RIcon from '../icon/RIcon.vue'
 import type { BatchAction, BatchActionBarExpose } from './types'
 
@@ -18,8 +18,33 @@ const emit = defineEmits<{
   clear: []
 }>()
 
-function handleAction(key: string): void {
-  emit('action', key, [...props.selectedKeys])
+type DialogApi = ReturnType<typeof useDialog>
+
+let dialog: DialogApi | null = null
+try {
+  dialog = useDialog()
+} catch {
+  dialog = null
+}
+
+function handleAction(action: BatchAction): void {
+  if (!action.confirmMessage) {
+    emit('action', action.key, [...props.selectedKeys])
+    return
+  }
+  if (!dialog) {
+    if (typeof window === 'undefined' || window.confirm(action.confirmMessage)) {
+      emit('action', action.key, [...props.selectedKeys])
+    }
+    return
+  }
+  dialog.warning({
+    title: action.danger ? '确认删除' : '确认操作',
+    content: action.confirmMessage,
+    positiveText: action.danger ? '删除' : '确定',
+    negativeText: '取消',
+    onPositiveClick: () => emit('action', action.key, [...props.selectedKeys]),
+  })
 }
 
 function handleClear(): void {
@@ -57,35 +82,12 @@ defineExpose(expose)
       <div class="r-batch-action-bar__actions">
         <NSpace size="small">
           <template v-for="action in actions" :key="action.key">
-            <!-- Action with confirm -->
-            <NPopconfirm
-              v-if="action.confirmMessage"
-              @positive-click="handleAction(action.key)"
-            >
-              <template #trigger>
-                <NButton
-                  type="error"
-                  size="small"
-                  :disabled="action.disabled"
-                  :data-testid="`batch-action-${action.key}`"
-                >
-                  <template v-if="action.icon" #icon>
-                    <RIcon :name="action.icon" :size="14" />
-                  </template>
-                  {{ action.label }}
-                </NButton>
-              </template>
-              {{ action.confirmMessage }}
-            </NPopconfirm>
-
-            <!-- Normal action -->
             <NButton
-              v-else
               :type="action.danger ? 'error' : 'default'"
               size="small"
               :disabled="action.disabled"
               :data-testid="`batch-action-${action.key}`"
-              @click="handleAction(action.key)"
+              @click="handleAction(action)"
             >
               <template v-if="action.icon" #icon>
                 <RIcon :name="action.icon" :size="14" />

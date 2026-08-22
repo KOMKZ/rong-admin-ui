@@ -5,7 +5,7 @@ import RChatMarkdownRenderer from './RChatMarkdownRenderer.vue'
 import type { SearchProgress, FetchProgress, MCPProgress, AgentProgress, ToolCallEvent, ToolInvocationEvent } from './types'
 import { isFetchFallbackToolEvent, isToolInvocationEvent } from './types'
 
-interface Props {
+export interface RChatStreamRendererProps {
   content: string
   streaming?: boolean
   isThinking?: boolean
@@ -17,7 +17,7 @@ interface Props {
   toolCallEvents?: ToolCallEvent[]
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<RChatStreamRendererProps>(), {
   streaming: false,
   isThinking: false,
   toolCallName: '',

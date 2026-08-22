@@ -4,7 +4,7 @@ import { NInput, NButton, NScrollbar, NEmpty, NDropdown, type DropdownOption } f
 import { Trash2, Star } from 'lucide-vue-next'
 import type { ChatConversation } from './types'
 
-interface Props {
+export interface RChatConversationListProps {
   conversations: ChatConversation[]
   activeId?: number
   loading?: boolean
@@ -23,7 +23,7 @@ interface Emits {
   (e: 'search', keyword: string): void
 }
 
-const props = withDefaults(defineProps<Props>(), { loading: false })
+const props = withDefaults(defineProps<RChatConversationListProps>(), { loading: false })
 const emit = defineEmits<Emits>()
 
 const searchKeyword = ref('')

@@ -62,10 +62,19 @@ describe('RTableToolbarPro', () => {
 
   it('emits export on click', async () => {
     const wrapper = mount(RTableToolbarPro, {
-      props: { exportable: true },
+      props: { exportable: true, exportConfirmMessage: '' },
     })
     await wrapper.find('[data-testid="toolbar-export"]').trigger('click')
     expect(wrapper.emitted('export')).toBeTruthy()
+  })
+
+  it('renders custom toolbar actions', () => {
+    const wrapper = mount(RTableToolbarPro, {
+      props: {
+        actions: [{ key: 'archive', label: '归档', icon: 'archive' }],
+      },
+    })
+    expect(wrapper.find('[data-testid="toolbar-action-archive"]').exists()).toBe(true)
   })
 
   it('renders column config when columnConfigurable', () => {

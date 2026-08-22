@@ -3,7 +3,7 @@ import { NButton } from 'naive-ui'
 import { MessageSquarePlus, Sparkles, Code, Languages, PenLine } from 'lucide-vue-next'
 import { computed } from 'vue'
 
-interface Props {
+export interface RChatEmptyStateProps {
   title?: string
   description?: string
   suggestions?: string[]
@@ -14,7 +14,7 @@ interface Emits {
   (e: 'select-prompt', prompt: string): void
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<RChatEmptyStateProps>(), {
   title: '开始新的对话',
   description: '选择一个 AI 模型，开始你的第一次对话',
   suggestions: () => [],

@@ -1,8 +1,7 @@
 <script lang="ts" setup generic="T extends Record<string, unknown> = Record<string, unknown>">
 import { computed, ref, useSlots, watch, type PropType } from 'vue'
-import { NButton, NDataTable, NEmpty, NPopconfirm, NSpin, type DataTableColumns } from 'naive-ui'
+import { NDataTable, NEmpty, NSpin, type DataTableColumns } from 'naive-ui'
 import RBatchActionBar from '../batch-action-bar/RBatchActionBar.vue'
-import RIcon from '../icon/RIcon.vue'
 import type { BatchAction } from '../batch-action-bar/types'
 import type {
   DataTableColumn,
@@ -43,14 +42,10 @@ const props = defineProps({
   columnConfigurable: { type: Boolean, default: false },
   columnStorageKey: { type: String, default: undefined },
   exportable: { type: Boolean, default: false },
-  exportData: { type: Array as PropType<T[]>, default: undefined },
   exportSelected: { type: Boolean, default: true },
   batchDeletable: { type: Boolean, default: false },
   batchActions: { type: Array as PropType<BatchAction[]>, default: () => [] },
-  exportFileName: { type: String, default: 'table-export.csv' },
-  exportAllLabel: { type: String, default: '导出全部' },
   exportSelectedLabel: { type: String, default: '导出选中' },
-  exportAllConfirmMessage: { type: String, default: '确定导出全部数据？' },
   exportSelectedConfirmMessage: { type: String, default: '确定导出选中的数据？' },
   batchDeleteLabel: { type: String, default: '批量删除' },
   batchDeleteConfirmMessage: { type: String, default: '确定删除选中的数据？此操作不可恢复' },
@@ -270,16 +265,14 @@ function handleCheckedRowKeysChange(keys: DataTableRowKey[]): void {
 async function handleExport(scope: 'all' | 'selected'): Promise<void> {
   const payload: DataTableExportPayload<T> = {
     scope,
-    rows: scope === 'selected' ? selectedRows.value : (props.exportData ?? props.data),
+    rows: scope === 'selected' ? selectedRows.value : props.data,
     selectedKeys: [...props.checkedRowKeys],
     columns: effectiveColumns.value,
   }
   emit('export', payload)
   if (props.exportHandler) {
     await props.exportHandler(payload)
-    return
   }
-  exportRowsAsCsv(payload, props.exportFileName)
 }
 
 async function handleBatchAction(key: string, selectedKeys: DataTableRowKey[]): Promise<void> {
@@ -303,36 +296,6 @@ async function handleBatchAction(key: string, selectedKeys: DataTableRowKey[]): 
   }
 
   emit('batchAction', key, [...selectedKeys], selectedRows.value)
-}
-
-function exportRowsAsCsv(payload: DataTableExportPayload<T>, fileName: string): void {
-  if (typeof document === 'undefined') return
-  const columns = payload.columns.filter((column) => column.key && column.title)
-  const header = columns.map((column) => csvCell(column.title)).join(',')
-  const lines = payload.rows.map((row) =>
-    columns.map((column) => csvCell(formatCsvValue(row[column.key]))).join(','),
-  )
-  const csv = ['\ufeff' + header, ...lines].join('\n')
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = fileName
-  link.click()
-  URL.revokeObjectURL(url)
-}
-
-function formatCsvValue(value: unknown): string {
-  if (Array.isArray(value)) return value.join('; ')
-  if (value === null || value === undefined) return ''
-  if (value instanceof Date) return value.toISOString()
-  if (typeof value === 'object') return JSON.stringify(value)
-  return String(value)
-}
-
-function csvCell(value: unknown): string {
-  const text = String(value ?? '')
-  return `"${text.replace(/"/g, '""')}"`
 }
 
 function handleRowProps(row: T, index: number): Record<string, unknown> {
@@ -384,22 +347,9 @@ defineExpose(expose)
 
 <template>
   <div class="r-data-table" role="region" aria-label="data table" :aria-busy="loading">
-    <div v-if="$slots.toolbar || columnConfigurable || exportable" class="r-data-table__toolbar">
+    <div v-if="$slots.toolbar || columnConfigurable" class="r-data-table__toolbar">
       <div class="r-data-table__toolbar-left">
         <slot name="toolbar" />
-      </div>
-      <div class="r-data-table__toolbar-actions">
-        <NPopconfirm v-if="exportable" @positive-click="handleExport('all')">
-          <template #trigger>
-            <NButton size="small" data-testid="data-table-export-all">
-              <template #icon>
-                <RIcon name="download" :size="14" />
-              </template>
-              {{ exportAllLabel }}
-            </NButton>
-          </template>
-          {{ exportAllConfirmMessage }}
-        </NPopconfirm>
       </div>
       <button
         v-if="columnConfigurable"

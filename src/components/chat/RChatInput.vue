@@ -11,7 +11,7 @@ export interface AttachmentItem {
   isImage?: boolean
 }
 
-interface Props {
+export interface RChatInputProps {
   disabled?: boolean
   loading?: boolean
   isStreaming?: boolean
@@ -32,7 +32,7 @@ interface Emits {
   (e: 'update:webSearchEnabled', value: boolean): void
 }
 
-const props = withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<RChatInputProps>(), {
   disabled: false,
   loading: false,
   isStreaming: false,
