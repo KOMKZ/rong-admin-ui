@@ -1,9 +1,11 @@
 import { computed, type Ref } from 'vue'
 import { useRoute } from 'vue-router'
+import type { AppMenuItem } from '../app-menu'
 
 export interface UIAuthPayload {
   visible_routes: string[]
   visible_menus: string[]
+  menus?: AppMenuItem[]
   element_permissions: Record<string, string[]>
   page_actions?: Record<string, string[]>
 }
@@ -42,7 +44,11 @@ export function hasElementPermission(
   return routePermissions.includes(permissionCode)
 }
 
-export function hasPageAction(uiAuth: UIAuthPayload | null, routePath: string, actionID: string): boolean {
+export function hasPageAction(
+  uiAuth: UIAuthPayload | null,
+  routePath: string,
+  actionID: string,
+): boolean {
   if (!uiAuth) return true
 
   const normalized = normalizePath(routePath)
@@ -54,7 +60,10 @@ export function hasPageAction(uiAuth: UIAuthPayload | null, routePath: string, a
   return actions.includes(actionID)
 }
 
-export function filterMenusByVisibleNames<T>(menus: MenuLike<T>[], uiAuth: UIAuthPayload | null): MenuLike<T>[] {
+export function filterMenusByVisibleNames<T>(
+  menus: MenuLike<T>[],
+  uiAuth: UIAuthPayload | null,
+): MenuLike<T>[] {
   if (!uiAuth) return menus
 
   const visibleMenus = new Set((uiAuth.visible_menus ?? []).map((item) => String(item)))

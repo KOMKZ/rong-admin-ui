@@ -11,6 +11,7 @@ describe('ui-auth helpers', () => {
   const auth: UIAuthPayload = {
     visible_routes: ['/dashboard', '/system', '/system/permission-hub'],
     visible_menus: ['Dashboard', 'SystemManagement', 'PermissionHub'],
+    menus: [{ name: 'Dashboard', path: '/dashboard', title: 'Dashboard' }],
     element_permissions: {
       '/system/permission-hub': ['permission:write'],
     },

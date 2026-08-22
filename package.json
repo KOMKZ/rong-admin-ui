@@ -48,6 +48,14 @@
       "types": "./dist/app-preset/index.d.ts",
       "import": "./dist/app-preset/index.js"
     },
+    "./app-devtools": {
+      "types": "./dist/app-devtools/index.d.ts",
+      "import": "./dist/app-devtools/index.js"
+    },
+    "./app-menu": {
+      "types": "./dist/app-menu/index.d.ts",
+      "import": "./dist/app-menu/index.js"
+    },
     "./theme": {
       "types": "./dist/theme/index.d.ts",
       "import": "./dist/theme/index.js"
