@@ -1,28 +1,28 @@
 <script lang="ts" setup>
-import { type PropType } from 'vue'
-import { type ColumnPreset, type TableDensity } from '../table-toolbar/types'
-import RTableToolbarPro from '../table-toolbar/RTableToolbarPro.vue'
+  import { type PropType } from 'vue'
+  import { type ColumnPreset, type TableDensity } from '../table-toolbar/types'
+  import RTableToolbarPro from '../table-toolbar/RTableToolbarPro.vue'
 
-const props = defineProps({
-  title: { type: String, default: undefined },
-  loading: { type: Boolean, default: false },
-  refreshable: { type: Boolean, default: true },
-  exportable: { type: Boolean, default: false },
-  densitySwitchable: { type: Boolean, default: true },
-  fullscreenable: { type: Boolean, default: false },
-  columnConfigurable: { type: Boolean, default: false },
-  currentDensity: { type: String as PropType<TableDensity>, default: 'default' },
-  columnPresets: { type: Array as PropType<ColumnPreset[]>, default: () => [] },
-  dataTestid: { type: String, default: undefined },
-})
+  const props = defineProps({
+    title: { type: String, default: undefined },
+    loading: { type: Boolean, default: false },
+    refreshable: { type: Boolean, default: true },
+    exportable: { type: Boolean, default: false },
+    densitySwitchable: { type: Boolean, default: true },
+    fullscreenable: { type: Boolean, default: false },
+    columnConfigurable: { type: Boolean, default: false },
+    currentDensity: { type: String as PropType<TableDensity>, default: 'default' },
+    columnPresets: { type: Array as PropType<ColumnPreset[]>, default: () => [] },
+    dataTestid: { type: String, default: undefined },
+  })
 
-const emit = defineEmits<{
-  refresh: []
-  export: []
-  'update:density': [density: TableDensity]
-  'update:fullscreen': [fullscreen: boolean]
-  'update:columnPresets': [presets: ColumnPreset[]]
-}>()
+  const emit = defineEmits<{
+    refresh: []
+    export: []
+    'update:density': [density: TableDensity]
+    'update:fullscreen': [fullscreen: boolean]
+    'update:columnPresets': [presets: ColumnPreset[]]
+  }>()
 </script>
 
 <template>
@@ -42,7 +42,7 @@ const emit = defineEmits<{
         @export="emit('export')"
         @update:density="emit('update:density', $event)"
         @update:fullscreen="emit('update:fullscreen', $event)"
-        @update:columnPresets="emit('update:columnPresets', $event)"
+        @update:column-presets="emit('update:columnPresets', $event)"
       >
         <template #prefix>
           <slot name="prefix" />
@@ -69,26 +69,26 @@ const emit = defineEmits<{
 </template>
 
 <style scoped>
-.r-table-card__header {
-  padding: var(--ra-spacing-4, 16px) var(--ra-card-padding-x) 0;
-}
+  .r-table-card__header {
+    padding: var(--ra-spacing-4, 16px) var(--ra-card-padding-x) var(--ra-spacing-3, 12px);
+  }
 
-.r-table-card__body {
-  padding: 0 var(--ra-card-padding-x) var(--ra-spacing-2, 8px);
-}
+  .r-table-card__body {
+    padding: 0 var(--ra-card-padding-x) var(--ra-spacing-4, 16px);
+  }
 
-.r-table-card__footer {
-  padding: 0 var(--ra-card-padding-x) var(--ra-spacing-4, 16px);
-}
+  .r-table-card__footer {
+    padding: 0 var(--ra-card-padding-x) var(--ra-spacing-4, 16px);
+  }
 
-/* ra-card--flush 下分页区贴边，统一在框架层补内边距 */
-.r-table-card :deep(.n-data-table__pagination) {
-  padding: var(--ra-spacing-3) var(--ra-spacing-4);
-}
+  /* ra-card--flush 下分页区贴边，统一在框架层补内边距 */
+  .r-table-card :deep(.n-data-table__pagination) {
+    padding: var(--ra-spacing-3, 12px) 0 0;
+  }
 
-.r-table-card__title {
-  font-size: var(--ra-font-size-base);
-  font-weight: var(--ra-font-weight-semibold);
-  color: var(--ra-color-text-primary);
-}
+  .r-table-card__title {
+    font-size: var(--ra-font-size-base);
+    font-weight: var(--ra-font-weight-semibold);
+    color: var(--ra-color-text-primary);
+  }
 </style>
