@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
 import RFilterBarPro from '../../src/components/filter-bar/RFilterBarPro.vue'
+import RFormRenderer from '../../src/components/form-renderer/RFormRenderer.vue'
 import type { FilterBarProExpose } from '../../src/components/filter-bar/types'
 import type { FormFieldSchema } from '../../src/components/form-renderer/types'
 
@@ -35,6 +36,31 @@ describe('RFilterBarPro', () => {
     const form = wrapper.find('[data-testid="filter-form"] .n-form')
     expect(form.exists()).toBe(true)
     expect(form.findAll('button').length).toBe(0)
+  })
+
+  it('marks searchable text and option fields clearable by default', () => {
+    const wrapper = mount(RFilterBarPro, {
+      props: { schema: baseSchema, modelValue: {}, collapsible: false },
+    })
+    const formRenderer = wrapper.findComponent(RFormRenderer)
+    const schema = formRenderer.props('schema') as FormFieldSchema[]
+
+    expect(schema.find((field) => field.key === 'keyword')?.clearable).toBe(true)
+    expect(schema.find((field) => field.key === 'status')?.clearable).toBe(true)
+  })
+
+  it('preserves explicit clearable false overrides', () => {
+    const schema: FormFieldSchema[] = [
+      { key: 'keyword', label: '关键字', type: 'input', clearable: false },
+      { key: 'status', label: '状态', type: 'select', clearable: false },
+    ]
+    const wrapper = mount(RFilterBarPro, {
+      props: { schema, modelValue: {}, collapsible: false },
+    })
+    const formRenderer = wrapper.findComponent(RFormRenderer)
+    const renderedSchema = formRenderer.props('schema') as FormFieldSchema[]
+
+    expect(renderedSchema.every((field) => field.clearable === false)).toBe(true)
   })
 
   it('shows advanced toggle when collapsible and has more fields', () => {

@@ -166,6 +166,10 @@ function isFieldDisabled(field: FormFieldSchema): boolean {
   return !!field.disabled
 }
 
+function isFieldClearable(field: FormFieldSchema): boolean {
+  return !!field.clearable && !props.readonly && !isFieldDisabled(field)
+}
+
 function updateField(key: string, value: unknown): void {
   latestModel = { ...latestModel, [key]: value }
   emit('update:model', { ...latestModel })
@@ -338,6 +342,7 @@ defineExpose(expose)
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
                 :readonly="readonly"
+                :clearable="isFieldClearable(field)"
                 @update:value="updateField(field.key, $event)"
               />
               <NInput
@@ -347,6 +352,7 @@ defineExpose(expose)
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
                 :readonly="readonly"
+                :clearable="isFieldClearable(field)"
                 :rows="3"
                 @update:value="updateField(field.key, $event)"
               />
@@ -356,6 +362,7 @@ defineExpose(expose)
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
                 :readonly="readonly"
+                :clearable="isFieldClearable(field)"
                 style="width: 100%"
                 @update:value="updateField(field.key, $event)"
               />
@@ -365,6 +372,7 @@ defineExpose(expose)
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
                 :options="resolvedOptions(field)"
+                :clearable="isFieldClearable(field)"
                 @update:value="updateField(field.key, $event)"
               />
               <NRadioGroup
@@ -407,6 +415,7 @@ defineExpose(expose)
                 :value="fieldNum(field.key)"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
+                :clearable="isFieldClearable(field)"
                 style="width: 100%"
                 @update:value="updateField(field.key, $event)"
               />
@@ -415,6 +424,7 @@ defineExpose(expose)
                 type="daterange"
                 :value="fieldDateRange(field.key)"
                 :disabled="isFieldDisabled(field)"
+                :clearable="isFieldClearable(field)"
                 style="width: 100%"
                 @update:value="updateField(field.key, $event)"
               />
@@ -455,6 +465,7 @@ defineExpose(expose)
             :placeholder="field.placeholder"
             :disabled="isFieldDisabled(field)"
             :readonly="readonly"
+            :clearable="isFieldClearable(field)"
             @update:value="updateField(field.key, $event)"
           />
           <NSelect
@@ -463,6 +474,7 @@ defineExpose(expose)
             :placeholder="field.placeholder"
             :disabled="isFieldDisabled(field)"
             :options="resolvedOptions(field)"
+            :clearable="isFieldClearable(field)"
             @update:value="updateField(field.key, $event)"
           />
           <slot name="fieldSuffix" :field="field" />
@@ -490,6 +502,7 @@ defineExpose(expose)
             :placeholder="field.placeholder"
             :disabled="isFieldDisabled(field)"
             :readonly="readonly"
+            :clearable="isFieldClearable(field)"
             @update:value="updateField(field.key, $event)"
           />
           <NInput
@@ -499,6 +512,7 @@ defineExpose(expose)
             :placeholder="field.placeholder"
             :disabled="isFieldDisabled(field)"
             :readonly="readonly"
+            :clearable="isFieldClearable(field)"
             :rows="3"
             @update:value="updateField(field.key, $event)"
           />
@@ -508,6 +522,7 @@ defineExpose(expose)
             :placeholder="field.placeholder"
             :disabled="isFieldDisabled(field)"
             :readonly="readonly"
+            :clearable="isFieldClearable(field)"
             style="width: 100%"
             @update:value="updateField(field.key, $event)"
           />
@@ -517,6 +532,7 @@ defineExpose(expose)
             :placeholder="field.placeholder"
             :disabled="isFieldDisabled(field)"
             :options="resolvedOptions(field)"
+            :clearable="isFieldClearable(field)"
             @update:value="updateField(field.key, $event)"
           />
           <NRadioGroup
@@ -559,6 +575,7 @@ defineExpose(expose)
             :value="fieldNum(field.key)"
             :placeholder="field.placeholder"
             :disabled="isFieldDisabled(field)"
+            :clearable="isFieldClearable(field)"
             style="width: 100%"
             @update:value="updateField(field.key, $event)"
           />
@@ -567,6 +584,7 @@ defineExpose(expose)
             type="daterange"
             :value="fieldDateRange(field.key)"
             :disabled="isFieldDisabled(field)"
+            :clearable="isFieldClearable(field)"
             style="width: 100%"
             @update:value="updateField(field.key, $event)"
           />

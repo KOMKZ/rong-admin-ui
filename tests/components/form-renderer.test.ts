@@ -44,6 +44,29 @@ describe('RFormRenderer', () => {
     expect(input.exists()).toBe(true)
   })
 
+  it('passes clearable to clearable field controls', () => {
+    const wrapper = mount(RFormRenderer, {
+      props: {
+        schema: [
+          { key: 'keyword', label: '关键字', type: 'input', clearable: true },
+          {
+            key: 'status',
+            label: '状态',
+            type: 'select',
+            clearable: true,
+            options: [{ label: '启用', value: 'enabled' }],
+          },
+          { key: 'created_at', label: '创建时间', type: 'date', clearable: true },
+        ],
+        model: { keyword: '', status: null, created_at: null },
+      },
+    })
+
+    expect(wrapper.findComponent({ name: 'Input' }).props('clearable')).toBe(true)
+    expect(wrapper.findComponent({ name: 'Select' }).props('clearable')).toBe(true)
+    expect(wrapper.findComponent({ name: 'DatePicker' }).props('clearable')).toBe(true)
+  })
+
   it('should render textarea field type', () => {
     const wrapper = mount(RFormRenderer, {
       props: {

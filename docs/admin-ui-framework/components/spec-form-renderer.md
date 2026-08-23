@@ -22,6 +22,12 @@
 | readonly | `boolean` | false | - | 全局只读 |
 | size | `'small' \| 'medium' \| 'large'` | 'medium' | - | 尺寸 |
 
+### FormFieldSchema 补充
+
+| 名称 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| clearable | `boolean` | false | input / textarea / number / select / date / daterange 是否显示清除入口；`RFilterBarPro` 筛选场景默认对这些字段启用 |
+
 ### Emits
 
 | 事件名 | Payload | 触发时机 | 说明 |
@@ -41,6 +47,7 @@
 ## 3. 状态与交互
 
 - 正常态：表单字段可输入
+- 清除态：筛选输入和筛选选项支持一键清空，不需要通过整表重置才能移除单个条件
 - 加载态：字段显示骨架屏
 - 空态：不适用
 - 错误态：字段红框 + 错误提示文本

@@ -9,6 +9,7 @@
 - `schema: FormFieldSchema[]` — 字段定义（key/label/type/rules/options）
 - `model: Record<string, unknown>` — 表单数据（双向绑定）
 - 支持字段类型：input / textarea / number / select / radio / checkbox / switch / date / daterange / custom
+- `clearable?: boolean` — input / textarea / number / select / date / daterange 透传清除能力；列表筛选场景由 `RFilterBarPro` 默认启用
 
 ## 输出
 
@@ -31,6 +32,7 @@
 - 基于 Naive UI NForm + NGrid 封装
 - hidden 字段支持函数式条件隐藏
 - disabled 字段支持函数式条件禁用
+- 列表筛选字段必须可清除；需要禁止清除时显式设置 `clearable: false`
 - 自定义字段通过 `type: 'custom'` + `component` prop 注入
 
 ## 示例

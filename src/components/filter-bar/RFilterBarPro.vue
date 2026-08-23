@@ -36,6 +36,14 @@
   const schemeNameInput = ref('')
   const showSchemeSave = ref(false)
   const localModel = ref<Record<string, unknown>>({ ...props.modelValue })
+  const clearableFieldTypes = new Set([
+    'input',
+    'textarea',
+    'select',
+    'number',
+    'date',
+    'daterange',
+  ])
 
   watch(
     () => props.modelValue,
@@ -46,8 +54,15 @@
   )
 
   const visibleSchema = computed(() => {
-    if (!props.collapsible || !collapsed.value) return props.schema
-    return props.schema.slice(0, props.maxVisibleFields)
+    const schema =
+      !props.collapsible || !collapsed.value
+        ? props.schema
+        : props.schema.slice(0, props.maxVisibleFields)
+    return schema.map((field) =>
+      clearableFieldTypes.has(field.type) && field.clearable === undefined
+        ? { ...field, clearable: true }
+        : field,
+    )
   })
 
   const hasAdvanced = computed(

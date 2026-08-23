@@ -66,6 +66,8 @@ export interface FormFieldSchema {
   placeholder?: string
   rules?: FormFieldRule[]
   options?: FormFieldOption[]
+  /** Whether the rendered control can clear its current value. */
+  clearable?: boolean
   /** Async option loader; takes precedence over static options when provided */
   asyncOptions?: AsyncOptionsLoader
   /** Field dependency configuration for reactive schema patching */
