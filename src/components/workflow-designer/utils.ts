@@ -119,7 +119,11 @@ export function validateWorkflowGraph(graph: WorkflowGraph): WorkflowValidationI
   for (const node of graph.nodes) {
     if (node.type === 'end') continue
     if ((outboundMap.get(node.id) ?? []).length === 0) {
-      issues.push({ code: 'NODE_DANGLING', message: `节点「${node.label}」缺少流出连线`, level: 'warning' })
+      issues.push({
+        code: 'NODE_DANGLING',
+        message: `节点「${node.label}」缺少流出连线`,
+        level: 'warning',
+      })
     }
   }
 
@@ -127,7 +131,11 @@ export function validateWorkflowGraph(graph: WorkflowGraph): WorkflowValidationI
     const visited = walkReachable(startNodes[0].id, outboundMap)
     const hasReachableEnd = endNodes.some((node) => visited.has(node.id))
     if (!hasReachableEnd) {
-      issues.push({ code: 'END_UNREACHABLE', message: '开始节点无法到达任何结束节点', level: 'error' })
+      issues.push({
+        code: 'END_UNREACHABLE',
+        message: '开始节点无法到达任何结束节点',
+        level: 'error',
+      })
     }
   }
 
@@ -140,11 +148,19 @@ export function validateWorkflowGraph(graph: WorkflowGraph): WorkflowValidationI
       const key = String(field.key || '').trim()
       const label = String(field.label || '').trim()
       if (!key || !label) {
-        issues.push({ code: 'FORM_FIELD_INVALID', message: '发起表单字段必须填写字段 key 和标题', level: 'warning' })
+        issues.push({
+          code: 'FORM_FIELD_INVALID',
+          message: '发起表单字段必须填写字段 key 和标题',
+          level: 'warning',
+        })
         continue
       }
       if (keySet.has(key)) {
-        issues.push({ code: 'FORM_FIELD_DUPLICATED', message: `发起表单字段 key 重复：${key}`, level: 'error' })
+        issues.push({
+          code: 'FORM_FIELD_DUPLICATED',
+          message: `发起表单字段 key 重复：${key}`,
+          level: 'error',
+        })
         continue
       }
       keySet.add(key)

@@ -1,3 +1,4 @@
+import { defineComponent, h } from 'vue'
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { NInput } from 'naive-ui'
@@ -77,6 +78,54 @@ describe('RFormRenderer', () => {
     expect(emitted).toBeTruthy()
     const lastPayload = emitted![emitted!.length - 1][0] as Record<string, unknown>
     expect(lastPayload.password).toBe('secret123')
+  })
+
+  it('should map custom component events to other model fields', async () => {
+    const AvatarUploadStub = defineComponent({
+      props: {
+        modelValue: String,
+      },
+      emits: ['update:modelValue', 'uploaded-url'],
+      setup(_, { emit }) {
+        return () =>
+          h(
+            'button',
+            {
+              type: 'button',
+              class: 'avatar-upload-stub',
+              onClick: () => {
+                emit('update:modelValue', 'oss:avatar@abc.jpg')
+                emit('uploaded-url', 'https://cdn.example.com/avatar/abc.jpg')
+              },
+            },
+            'upload',
+          )
+      },
+    })
+
+    const wrapper = mount(RFormRenderer, {
+      props: {
+        schema: [
+          {
+            key: 'avatar_storage_id',
+            label: '头像',
+            type: 'custom',
+            component: AvatarUploadStub,
+            componentEventMap: {
+              'uploaded-url': 'avatar',
+            },
+          },
+        ],
+        model: { avatar_storage_id: '', avatar: '' },
+      },
+    })
+
+    await wrapper.find('.avatar-upload-stub').trigger('click')
+    const emitted = wrapper.emitted('update:model')
+    expect(emitted).toBeTruthy()
+    const lastPayload = emitted![emitted!.length - 1][0] as Record<string, unknown>
+    expect(lastPayload.avatar_storage_id).toBe('oss:avatar@abc.jpg')
+    expect(lastPayload.avatar).toBe('https://cdn.example.com/avatar/abc.jpg')
   })
 
   it('should render switch field type', () => {

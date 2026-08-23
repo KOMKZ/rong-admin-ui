@@ -1,38 +1,38 @@
 <script lang="ts" setup>
-import { ref, computed, type PropType } from 'vue'
-import { NInput, NButton, NSpace, NTooltip, NBadge } from 'naive-ui'
-import RIcon from '../icon/RIcon.vue'
-import type { TreeI18n, TreeBatchConfig } from './types'
-import { DEFAULT_I18N } from './types'
+  import { ref, computed, type PropType } from 'vue'
+  import { NInput, NButton, NSpace, NTooltip, NBadge } from 'naive-ui'
+  import RIcon from '../icon/RIcon.vue'
+  import type { TreeI18n, TreeBatchConfig } from './types'
+  import { DEFAULT_I18N } from './types'
 
-const props = defineProps({
-  i18n: { type: Object as PropType<TreeI18n>, default: () => ({}) },
-  loading: { type: Boolean, default: false },
-  keyword: { type: String, default: '' },
-  selectable: { type: Boolean, default: false },
-  batch: { type: [Object, Boolean] as PropType<TreeBatchConfig | false>, default: false },
-  checkedCount: { type: Number, default: 0 },
-  batchMode: { type: Boolean, default: false },
-})
+  const props = defineProps({
+    i18n: { type: Object as PropType<TreeI18n>, default: () => ({}) },
+    loading: { type: Boolean, default: false },
+    keyword: { type: String, default: '' },
+    selectable: { type: Boolean, default: false },
+    batch: { type: [Object, Boolean] as PropType<TreeBatchConfig | false>, default: false },
+    checkedCount: { type: Number, default: 0 },
+    batchMode: { type: Boolean, default: false },
+  })
 
-const emit = defineEmits<{
-  'update:keyword': [value: string]
-  expandAll: []
-  collapseAll: []
-  refresh: []
-  create: []
-  toggleBatchMode: []
-  batchMove: []
-  batchDelete: []
-}>()
+  const emit = defineEmits<{
+    'update:keyword': [value: string]
+    expandAll: []
+    collapseAll: []
+    refresh: []
+    create: []
+    toggleBatchMode: []
+    batchMove: []
+    batchDelete: []
+  }>()
 
-const t = computed(() => ({ ...DEFAULT_I18N, ...props.i18n }))
-const localKeyword = ref(props.keyword)
+  const t = computed(() => ({ ...DEFAULT_I18N, ...props.i18n }))
+  const localKeyword = ref(props.keyword)
 
-function onSearchInput(value: string): void {
-  localKeyword.value = value
-  emit('update:keyword', value)
-}
+  function onSearchInput(value: string): void {
+    localKeyword.value = value
+    emit('update:keyword', value)
+  }
 </script>
 
 <template>
@@ -160,32 +160,32 @@ function onSearchInput(value: string): void {
 </template>
 
 <style scoped>
-.rpte-toolbar {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ra-spacing-2);
-  padding-bottom: var(--ra-spacing-2);
-  border-bottom: 1px solid var(--ra-color-border-light);
-}
-.rpte-toolbar__search {
-  flex: 1;
-}
-.rpte-toolbar__actions {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.rpte-toolbar__batch {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--ra-spacing-1-5) var(--ra-spacing-2);
-  background: var(--ra-color-brand-subtle);
-  border-radius: var(--ra-radius-md);
-  gap: var(--ra-spacing-2);
-}
-.rpte-toolbar__batch-label {
-  font-size: var(--ra-font-size-xs);
-  color: var(--ra-color-text-secondary);
-}
+  .rpte-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ra-spacing-2);
+    padding-bottom: var(--ra-spacing-2);
+    border-bottom: 1px solid var(--ra-color-border-light);
+  }
+  .rpte-toolbar__search {
+    flex: 1;
+  }
+  .rpte-toolbar__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .rpte-toolbar__batch {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--ra-spacing-1-5) var(--ra-spacing-2);
+    background: var(--ra-color-brand-subtle);
+    border-radius: var(--ra-radius-md);
+    gap: var(--ra-spacing-2);
+  }
+  .rpte-toolbar__batch-label {
+    font-size: var(--ra-font-size-xs);
+    color: var(--ra-color-text-secondary);
+  }
 </style>

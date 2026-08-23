@@ -29,7 +29,7 @@ const content = ref('<p>Hello World</p>')
 | `height` | `string \| number` | - | 编辑区高度 |
 | `maxHeight` | `string \| number` | - | 最大高度 |
 | `toolbar` | `ToolbarConfig \| false` | - | 工具栏配置或隐藏 |
-| `extensions` | `TiptapExtension[]` | `[]` | 自定义 Tiptap 扩展 |
+| `extensions` | `unknown[]` | `[]` | 自定义 Tiptap 扩展 |
 | `imageUploadAdapter` | `ImageUploadAdapter` | - | 图片上传适配器 |
 | `i18n` | `RichTextEditorI18n` | - | 国际化文案 |
 
@@ -40,7 +40,15 @@ const content = ref('<p>Hello World</p>')
 | `update:modelValue` | `(value: string)` | 内容变更 |
 | `focus` | - | 获得焦点 |
 | `blur` | - | 失去焦点 |
-| `ready` | `(editor: Editor)` | 编辑器就绪 |
+| `ready` | `(editor: unknown)` | 编辑器就绪 |
+
+## Expose
+
+| 方法 | 返回值 | 说明 |
+|------|--------|------|
+| `getEditor` | `unknown` | 获取底层编辑器实例 |
+| `getHTML` | `string` | 获取 HTML 内容 |
+| `getJSON` | `unknown` | 获取结构化内容 |
 
 ## 功能特性
 

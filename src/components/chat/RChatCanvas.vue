@@ -1,37 +1,37 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { NButton, NInput } from 'naive-ui'
-import { PanelRightClose, PanelRight, Send } from 'lucide-vue-next'
+  import { ref } from 'vue'
+  import { NButton, NInput } from 'naive-ui'
+  import { PanelRightClose, PanelRight, Send } from 'lucide-vue-next'
 
-export interface RChatCanvasProps {
-  visible?: boolean
-  content?: string
-  title?: string
-}
+  export interface RChatCanvasProps {
+    visible?: boolean
+    content?: string
+    title?: string
+  }
 
-interface Emits {
-  (e: 'update:visible', value: boolean): void
-  (e: 'apply', content: string): void
-}
+  interface Emits {
+    (e: 'update:visible', value: boolean): void
+    (e: 'apply', content: string): void
+  }
 
-const props = withDefaults(defineProps<RChatCanvasProps>(), {
-  visible: false,
-  content: '',
-  title: 'Artifact',
-})
+  const props = withDefaults(defineProps<RChatCanvasProps>(), {
+    visible: false,
+    content: '',
+    title: 'Artifact',
+  })
 
-const emit = defineEmits<Emits>()
+  const emit = defineEmits<Emits>()
 
-const collapsed = ref(false)
-const editedContent = ref(props.content)
+  const collapsed = ref(false)
+  const editedContent = ref(props.content)
 
-function togglePanel() {
-  collapsed.value = !collapsed.value
-}
+  function togglePanel() {
+    collapsed.value = !collapsed.value
+  }
 
-function handleApply() {
-  emit('apply', editedContent.value || props.content || '')
-}
+  function handleApply() {
+    emit('apply', editedContent.value || props.content || '')
+  }
 </script>
 
 <template>
@@ -68,46 +68,46 @@ function handleApply() {
 </template>
 
 <style scoped>
-.r-chat-canvas {
-  display: flex;
-  flex-direction: column;
-  border-left: 1px solid var(--ra-color-border-light, #eef0f6);
-  background: var(--ra-color-bg-surface, #fff);
-  min-width: 200px;
-}
+  .r-chat-canvas {
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--ra-color-border-light, #eef0f6);
+    background: var(--ra-color-bg-surface, #fff);
+    min-width: 200px;
+  }
 
-.r-chat-canvas--collapsed {
-  min-width: 40px;
-}
+  .r-chat-canvas--collapsed {
+    min-width: 40px;
+  }
 
-.r-chat-canvas__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--ra-spacing-2, 8px) var(--ra-spacing-3, 12px);
-  border-bottom: 1px solid var(--ra-color-border-light, #eef0f6);
-}
+  .r-chat-canvas__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--ra-spacing-2, 8px) var(--ra-spacing-3, 12px);
+    border-bottom: 1px solid var(--ra-color-border-light, #eef0f6);
+  }
 
-.r-chat-canvas__title {
-  font-size: var(--ra-font-size-sm, 14px);
-  font-weight: 500;
-}
+  .r-chat-canvas__title {
+    font-size: var(--ra-font-size-sm, 14px);
+    font-weight: 500;
+  }
 
-.r-chat-canvas__body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: var(--ra-spacing-3, 12px);
-  overflow: hidden;
-}
+  .r-chat-canvas__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: var(--ra-spacing-3, 12px);
+    overflow: hidden;
+  }
 
-.r-chat-canvas__editor {
-  flex: 1;
-  margin-bottom: var(--ra-spacing-2, 8px);
-}
+  .r-chat-canvas__editor {
+    flex: 1;
+    margin-bottom: var(--ra-spacing-2, 8px);
+  }
 
-.r-chat-canvas__actions {
-  display: flex;
-  justify-content: flex-end;
-}
+  .r-chat-canvas__actions {
+    display: flex;
+    justify-content: flex-end;
+  }
 </style>

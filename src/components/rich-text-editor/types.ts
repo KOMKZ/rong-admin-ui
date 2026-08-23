@@ -1,8 +1,6 @@
-import type { Editor, Extension, Mark, Node } from '@tiptap/vue-3'
-
 export type RichTextEditorTheme = 'classic' | 'minimal' | 'midnight' | 'aurora'
 
-export type TiptapExtension = Extension | Mark | Node
+export type TiptapExtension = unknown
 
 export interface ImageUploadAdapter {
   upload: (file: File) => Promise<string>
@@ -77,5 +75,11 @@ export interface RRichTextEditorEmits {
   (e: 'update:modelValue', value: string): void
   (e: 'focus'): void
   (e: 'blur'): void
-  (e: 'ready', editor: Editor): void
+  (e: 'ready', editor: unknown): void
+}
+
+export interface RRichTextEditorExpose {
+  getEditor: () => unknown
+  getHTML: () => string
+  getJSON: () => unknown
 }

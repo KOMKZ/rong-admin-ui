@@ -95,7 +95,10 @@ export function useChatSSE() {
           try {
             let pendingEventName: string | undefined
 
-            function handleAgentEvent(eventName: string, payload: Record<string, unknown>) {
+            const handleAgentEvent = (
+              eventName: string,
+              payload: Record<string, unknown>,
+            ): void => {
               if (eventName === 'heartbeat') {
                 return
               } else if (eventName === 'agent_start') {
@@ -128,7 +131,7 @@ export function useChatSSE() {
               }
             }
 
-            function processDataLine(data: string) {
+            const processDataLine = (data: string): boolean => {
               if (data === '[DONE]') {
                 if (heartbeatTimer) clearTimeout(heartbeatTimer)
                 options.onDone()
@@ -195,7 +198,10 @@ export function useChatSSE() {
                   const name = chunk.tool_name ?? ''
                   if (name) {
                     streamToolCallName.value = name
-                    toolCallEvents.value = [...toolCallEvents.value, { name, args: chunk.tool_args }]
+                    toolCallEvents.value = [
+                      ...toolCallEvents.value,
+                      { name, args: chunk.tool_args },
+                    ]
                   }
                 } else if (evtType === 'tool_result') {
                   const name = chunk.tool_name ?? ''
@@ -205,7 +211,11 @@ export function useChatSSE() {
                   if (idx >= 0) {
                     const realIdx = toolCallEvents.value.length - 1 - idx
                     const updated = [...toolCallEvents.value]
-                    updated[realIdx] = { ...updated[realIdx], result: chunk.tool_summary, latencyMs: chunk.latency_ms }
+                    updated[realIdx] = {
+                      ...updated[realIdx],
+                      result: chunk.tool_summary,
+                      latencyMs: chunk.latency_ms,
+                    }
                     toolCallEvents.value = updated
                   }
                   streamToolCallName.value = ''
@@ -227,7 +237,9 @@ export function useChatSSE() {
                 } else {
                   const content = chunk.content ?? ''
                   streamContent.value += content
-                  const tcs = (chunk as { tool_calls?: Array<{ function?: { name?: string }; name?: string }> }).tool_calls
+                  const tcs = (
+                    chunk as { tool_calls?: Array<{ function?: { name?: string }; name?: string }> }
+                  ).tool_calls
                   if (tcs && tcs.length > 0) {
                     const name = tcs[0]?.function?.name ?? tcs[0]?.name ?? ''
                     if (name) streamToolCallName.value = name
@@ -245,7 +257,7 @@ export function useChatSSE() {
 
             const DATA_EVENT_NAMES = new Set(['chunk', 'usage', 'error'])
 
-            function processFrame(frame: string): boolean {
+            const processFrame = (frame: string): boolean => {
               const dataLines: string[] = []
               let frameEvent: string | undefined
               for (const raw of frame.split('\n')) {
@@ -260,13 +272,19 @@ export function useChatSSE() {
               if (payload) {
                 const effectiveEvent = frameEvent ?? pendingEventName
                 if (effectiveEvent) pendingEventName = effectiveEvent
-                if (pendingEventName && payload !== '[DONE]' && !DATA_EVENT_NAMES.has(pendingEventName)) {
+                if (
+                  pendingEventName &&
+                  payload !== '[DONE]' &&
+                  !DATA_EVENT_NAMES.has(pendingEventName)
+                ) {
                   try {
                     const parsed = JSON.parse(payload)
                     handleAgentEvent(pendingEventName, parsed)
                     pendingEventName = undefined
                     return false
-                  } catch { /* fall through to processDataLine */ }
+                  } catch {
+                    /* fall through to processDataLine */
+                  }
                 }
                 pendingEventName = undefined
                 return processDataLine(payload)

@@ -52,6 +52,7 @@ export default defineConfig({
           __dirname,
           'src/components/table-toolbar/index.ts',
         ),
+        'components/table-card/index': resolve(__dirname, 'src/components/table-card/index.ts'),
         'components/descriptions-panel/index': resolve(
           __dirname,
           'src/components/descriptions-panel/index.ts',
@@ -96,6 +97,10 @@ export default defineConfig({
           'src/components/notification-center/index.ts',
         ),
         'components/pro-upload/index': resolve(__dirname, 'src/components/pro-upload/index.ts'),
+        'components/image-crop-upload/index': resolve(
+          __dirname,
+          'src/components/image-crop-upload/index.ts',
+        ),
         'components/pro-tree-editor/index': resolve(
           __dirname,
           'src/components/pro-tree-editor/index.ts',
@@ -123,12 +128,43 @@ export default defineConfig({
           __dirname,
           'src/components/dashboard-builder/index.ts',
         ),
+        'components/menu-preset-editor/index': resolve(
+          __dirname,
+          'src/components/menu-preset-editor/index.ts',
+        ),
+        'components/export-button/index': resolve(
+          __dirname,
+          'src/components/export-button/index.ts',
+        ),
+        'components/workflow-designer/index': resolve(
+          __dirname,
+          'src/components/workflow-designer/index.ts',
+        ),
         'components/chat/index': resolve(__dirname, 'src/components/chat/index.ts'),
+        'components/flow/index': resolve(__dirname, 'src/components/flow/index.ts'),
         'components/entity-execution/index': resolve(
           __dirname,
           'src/components/entity-execution/index.ts',
         ),
         'components/ops-panel/index': resolve(__dirname, 'src/components/ops-panel/index.ts'),
+        'components/index-progress/index': resolve(
+          __dirname,
+          'src/components/index-progress/index.ts',
+        ),
+        'components/step-progress/index': resolve(
+          __dirname,
+          'src/components/step-progress/index.ts',
+        ),
+        'components/timeline-view/index': resolve(
+          __dirname,
+          'src/components/timeline-view/index.ts',
+        ),
+        'components/collapsible-panel/index': resolve(
+          __dirname,
+          'src/components/collapsible-panel/index.ts',
+        ),
+        'components/template/index': resolve(__dirname, 'src/components/template/index.ts'),
+        'components/i18n/index': resolve(__dirname, 'src/components/i18n/index.ts'),
         'app-captcha/index': resolve(__dirname, 'src/app-captcha/index.ts'),
         'naive/index': resolve(__dirname, 'src/naive/index.ts'),
       },

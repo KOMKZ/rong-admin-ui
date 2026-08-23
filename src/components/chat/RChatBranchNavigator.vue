@@ -1,31 +1,31 @@
 <script setup lang="ts">
-import { NButton, NSpace } from 'naive-ui'
-import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
+  import { NButton, NSpace } from 'naive-ui'
+  import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
 
-export interface RChatBranchNavigatorProps {
-  hasPrev?: boolean
-  hasNext?: boolean
-  /** Current branch path label, e.g. "分支 2/3" */
-  pathLabel?: string
-}
+  export interface RChatBranchNavigatorProps {
+    hasPrev?: boolean
+    hasNext?: boolean
+    /** Current branch path label, e.g. "分支 2/3" */
+    pathLabel?: string
+  }
 
-withDefaults(defineProps<RChatBranchNavigatorProps>(), {
-  hasPrev: false,
-  hasNext: false,
-  pathLabel: '',
-})
+  withDefaults(defineProps<RChatBranchNavigatorProps>(), {
+    hasPrev: false,
+    hasNext: false,
+    pathLabel: '',
+  })
 
-const emit = defineEmits<{
-  (e: 'switch-branch', direction: 'prev' | 'next'): void
-}>()
+  const emit = defineEmits<{
+    (e: 'switch-branch', direction: 'prev' | 'next'): void
+  }>()
 
-function emitPrev() {
-  emit('switch-branch', 'prev')
-}
+  function emitPrev() {
+    emit('switch-branch', 'prev')
+  }
 
-function emitNext() {
-  emit('switch-branch', 'next')
-}
+  function emitNext() {
+    emit('switch-branch', 'next')
+  }
 </script>
 
 <template>
@@ -59,12 +59,12 @@ function emitNext() {
 </template>
 
 <style scoped>
-.r-chat-branch-nav {
-  display: inline-flex;
-  align-items: center;
-}
-.r-chat-branch-nav__label {
-  font-size: 12px;
-  color: var(--ra-color-text-3, #999);
-}
+  .r-chat-branch-nav {
+    display: inline-flex;
+    align-items: center;
+  }
+  .r-chat-branch-nav__label {
+    font-size: 12px;
+    color: var(--ra-color-text-3, #999);
+  }
 </style>

@@ -1,32 +1,32 @@
 <script lang="ts" setup>
-import type { PropType } from 'vue'
-import { NButton, NTooltip } from 'naive-ui'
-import { RIcon } from '../icon'
+  import type { PropType } from 'vue'
+  import { NButton, NTooltip } from 'naive-ui'
+  import { RIcon } from '../icon'
 
-const props = defineProps({
-  icon: { type: String, required: true },
-  tooltip: { type: String, default: '' },
-  size: { type: String as PropType<'tiny' | 'small' | 'medium' | 'large'>, default: 'small' },
-  type: {
-    type: String as PropType<'default' | 'primary' | 'info' | 'success' | 'warning' | 'error'>,
-    default: 'default',
-  },
-  danger: { type: Boolean, default: false },
-  loading: { type: Boolean, default: false },
-  disabled: { type: Boolean, default: false },
-  circle: { type: Boolean, default: true },
-  ghost: { type: Boolean, default: false },
-  dashed: { type: Boolean, default: false },
-  ariaLabel: { type: String, default: '' },
-})
+  const props = defineProps({
+    icon: { type: String, required: true },
+    tooltip: { type: String, default: '' },
+    size: { type: String as PropType<'tiny' | 'small' | 'medium' | 'large'>, default: 'small' },
+    type: {
+      type: String as PropType<'default' | 'primary' | 'info' | 'success' | 'warning' | 'error'>,
+      default: 'default',
+    },
+    danger: { type: Boolean, default: false },
+    loading: { type: Boolean, default: false },
+    disabled: { type: Boolean, default: false },
+    circle: { type: Boolean, default: true },
+    ghost: { type: Boolean, default: false },
+    dashed: { type: Boolean, default: false },
+    ariaLabel: { type: String, default: '' },
+  })
 
-const emit = defineEmits<{ click: [event: MouseEvent] }>()
+  const emit = defineEmits<{ click: [event: MouseEvent] }>()
 
-function handleClick(e: MouseEvent): void {
-  if (!props.disabled && !props.loading) {
-    emit('click', e)
+  function handleClick(e: MouseEvent): void {
+    if (!props.disabled && !props.loading) {
+      emit('click', e)
+    }
   }
-}
 </script>
 
 <template>
@@ -73,7 +73,7 @@ function handleClick(e: MouseEvent): void {
 </template>
 
 <style scoped>
-.r-icon-button {
-  transition: all var(--ra-transition-fast);
-}
+  .r-icon-button {
+    transition: all var(--ra-transition-fast);
+  }
 </style>

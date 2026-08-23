@@ -32,7 +32,7 @@ function formatSize(bytes: number): string {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
-const previewUrl = computed(() => props.file.thumbUrl ?? props.file.url)
+const previewUrl = computed(() => props.file.url ?? props.file.thumbUrl)
 
 const isPicture = computed(() => props.listType !== 'text')
 const isCard = computed(() => props.listType === 'picture-card')

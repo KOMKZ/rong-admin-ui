@@ -1,103 +1,103 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { NButton, NInput, NSelect } from 'naive-ui'
-import type { DashboardWidgetDefinition } from '../../types'
-import {
-  normalizeRouteQuickActionsConfig,
-  type RouteQuickActionItem,
-  type RouteQuickActionsEditorOptions,
-  type RouteQuickActionsWidgetConfig,
-} from './types'
+  import { computed } from 'vue'
+  import { NButton, NInput, NSelect } from 'naive-ui'
+  import type { DashboardWidgetDefinition } from '../../types'
+  import {
+    normalizeRouteQuickActionsConfig,
+    type RouteQuickActionItem,
+    type RouteQuickActionsEditorOptions,
+    type RouteQuickActionsWidgetConfig,
+  } from './types'
 
-const props = defineProps<{
-  modelValue?: Record<string, unknown>
-  definition?: DashboardWidgetDefinition
-}>()
+  const props = defineProps<{
+    modelValue?: Record<string, unknown>
+    definition?: DashboardWidgetDefinition
+  }>()
 
-const emit = defineEmits<{
-  'update:modelValue': [value: Record<string, unknown>]
-}>()
+  const emit = defineEmits<{
+    'update:modelValue': [value: Record<string, unknown>]
+  }>()
 
-const config = computed<RouteQuickActionsWidgetConfig>(() =>
-  normalizeRouteQuickActionsConfig(props.modelValue),
-)
-
-const routeOptions = computed<
-  Array<{ label: string; value: string; openMode: 'in_app' | 'new_tab' }>
->(() => {
-  const editorOptions = props.definition?.editorOptions as
-    | RouteQuickActionsEditorOptions
-    | undefined
-  return (
-    editorOptions?.routeOptions?.map((item) => ({
-      openMode: item.openMode === 'new_tab' ? 'new_tab' : 'in_app',
-      label: item.description ? `${item.label} (${item.description})` : item.label,
-      value: item.value,
-    })) || []
+  const config = computed<RouteQuickActionsWidgetConfig>(() =>
+    normalizeRouteQuickActionsConfig(props.modelValue),
   )
-})
 
-const openModeOptions = [
-  { label: '应用内', value: 'in_app' },
-  { label: '新标签', value: 'new_tab' },
-]
-
-function emitConfig(next: RouteQuickActionsWidgetConfig): void {
-  emit('update:modelValue', {
-    title: next.title || '',
-    description: next.description || '',
-    actions: next.actions,
+  const routeOptions = computed<
+    Array<{ label: string; value: string; openMode: 'in_app' | 'new_tab' }>
+  >(() => {
+    const editorOptions = props.definition?.editorOptions as
+      | RouteQuickActionsEditorOptions
+      | undefined
+    return (
+      editorOptions?.routeOptions?.map((item) => ({
+        openMode: item.openMode === 'new_tab' ? 'new_tab' : 'in_app',
+        label: item.description ? `${item.label} (${item.description})` : item.label,
+        value: item.value,
+      })) || []
+    )
   })
-}
 
-function updateField(field: 'title' | 'description', value: string): void {
-  emitConfig({
-    ...config.value,
-    [field]: value,
-  })
-}
+  const openModeOptions = [
+    { label: '应用内', value: 'in_app' },
+    { label: '新标签', value: 'new_tab' },
+  ]
 
-function updateAction(index: number, patch: Partial<RouteQuickActionItem>): void {
-  const next = config.value.actions.map((item, itemIndex) =>
-    itemIndex === index
-      ? {
-          ...item,
-          ...patch,
-        }
-      : item,
-  )
-  emitConfig({ ...config.value, actions: next })
-}
-
-function addAction(): void {
-  const firstRoute = routeOptions.value[0]
-  const next: RouteQuickActionItem = {
-    id: `action-${Date.now()}`,
-    label: '新按钮',
-    route: firstRoute?.value || '/dashboard',
-    openMode: firstRoute?.openMode || 'in_app',
+  function emitConfig(next: RouteQuickActionsWidgetConfig): void {
+    emit('update:modelValue', {
+      title: next.title || '',
+      description: next.description || '',
+      actions: next.actions,
+    })
   }
-  emitConfig({
-    ...config.value,
-    actions: [...config.value.actions, next],
-  })
-}
 
-function removeAction(index: number): void {
-  emitConfig({
-    ...config.value,
-    actions: config.value.actions.filter((_, itemIndex) => itemIndex !== index),
-  })
-}
+  function updateField(field: 'title' | 'description', value: string): void {
+    emitConfig({
+      ...config.value,
+      [field]: value,
+    })
+  }
 
-function fillActionRoute(index: number, value: string | null): void {
-  if (!value) return
-  const matched = routeOptions.value.find((item) => item.value === value)
-  updateAction(index, {
-    route: value,
-    openMode: matched?.openMode || 'in_app',
-  })
-}
+  function updateAction(index: number, patch: Partial<RouteQuickActionItem>): void {
+    const next = config.value.actions.map((item, itemIndex) =>
+      itemIndex === index
+        ? {
+            ...item,
+            ...patch,
+          }
+        : item,
+    )
+    emitConfig({ ...config.value, actions: next })
+  }
+
+  function addAction(): void {
+    const firstRoute = routeOptions.value[0]
+    const next: RouteQuickActionItem = {
+      id: `action-${Date.now()}`,
+      label: '新按钮',
+      route: firstRoute?.value || '/dashboard',
+      openMode: firstRoute?.openMode || 'in_app',
+    }
+    emitConfig({
+      ...config.value,
+      actions: [...config.value.actions, next],
+    })
+  }
+
+  function removeAction(index: number): void {
+    emitConfig({
+      ...config.value,
+      actions: config.value.actions.filter((_, itemIndex) => itemIndex !== index),
+    })
+  }
+
+  function fillActionRoute(index: number, value: string | null): void {
+    if (!value) return
+    const matched = routeOptions.value.find((item) => item.value === value)
+    updateAction(index, {
+      route: value,
+      openMode: matched?.openMode || 'in_app',
+    })
+  }
 </script>
 
 <template>
@@ -189,55 +189,55 @@ function fillActionRoute(index: number, value: string | null): void {
 </template>
 
 <style scoped>
-.route-quick-actions-editor {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ra-spacing-3);
-}
-
-.route-quick-actions-editor__group {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ra-spacing-1);
-}
-
-.route-quick-actions-editor__label {
-  color: var(--ra-color-text-tertiary);
-  font-size: var(--ra-font-size-xs);
-}
-
-.route-quick-actions-editor__section-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: var(--ra-color-text-primary);
-  font-size: var(--ra-font-size-sm);
-  font-weight: var(--ra-font-weight-medium);
-}
-
-.route-quick-actions-editor__actions {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ra-spacing-2);
-}
-
-.route-quick-actions-editor__action-row {
-  display: grid;
-  grid-template-columns: 1fr 1.4fr 0.9fr 1.1fr auto;
-  gap: var(--ra-spacing-2);
-}
-
-.route-quick-actions-editor__empty {
-  border-radius: var(--ra-radius-md);
-  border: 1px dashed var(--ra-color-border-default);
-  padding: var(--ra-spacing-3);
-  color: var(--ra-color-text-tertiary);
-  font-size: var(--ra-font-size-xs);
-}
-
-@media (max-width: 900px) {
-  .route-quick-actions-editor__action-row {
-    grid-template-columns: 1fr;
+  .route-quick-actions-editor {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ra-spacing-3);
   }
-}
+
+  .route-quick-actions-editor__group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ra-spacing-1);
+  }
+
+  .route-quick-actions-editor__label {
+    color: var(--ra-color-text-tertiary);
+    font-size: var(--ra-font-size-xs);
+  }
+
+  .route-quick-actions-editor__section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--ra-color-text-primary);
+    font-size: var(--ra-font-size-sm);
+    font-weight: var(--ra-font-weight-medium);
+  }
+
+  .route-quick-actions-editor__actions {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ra-spacing-2);
+  }
+
+  .route-quick-actions-editor__action-row {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr 0.9fr 1.1fr auto;
+    gap: var(--ra-spacing-2);
+  }
+
+  .route-quick-actions-editor__empty {
+    border-radius: var(--ra-radius-md);
+    border: 1px dashed var(--ra-color-border-default);
+    padding: var(--ra-spacing-3);
+    color: var(--ra-color-text-tertiary);
+    font-size: var(--ra-font-size-xs);
+  }
+
+  @media (max-width: 900px) {
+    .route-quick-actions-editor__action-row {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

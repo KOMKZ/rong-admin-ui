@@ -1,63 +1,63 @@
 <script lang="ts" setup>
-import { type PropType } from 'vue'
-import { NButton, NSpace, useDialog } from 'naive-ui'
-import RIcon from '../icon/RIcon.vue'
-import type { BatchAction, BatchActionBarExpose } from './types'
+  import { type PropType } from 'vue'
+  import { NButton, NSpace, useDialog } from 'naive-ui'
+  import RIcon from '../icon/RIcon.vue'
+  import type { BatchAction, BatchActionBarExpose } from './types'
 
-const props = defineProps({
-  selectedCount: { type: Number, required: true },
-  selectedKeys: { type: Array as PropType<(string | number)[]>, default: () => [] },
-  actions: { type: Array as PropType<BatchAction[]>, required: true },
-  visible: { type: Boolean, default: undefined },
-  clearLabel: { type: String, default: '取消选择' },
-  countTemplate: { type: String, default: '已选择 {count} 项' },
-})
-
-const emit = defineEmits<{
-  action: [key: string, selectedKeys: (string | number)[]]
-  clear: []
-}>()
-
-type DialogApi = ReturnType<typeof useDialog>
-
-let dialog: DialogApi | null = null
-try {
-  dialog = useDialog()
-} catch {
-  dialog = null
-}
-
-function handleAction(action: BatchAction): void {
-  if (!action.confirmMessage) {
-    emit('action', action.key, [...props.selectedKeys])
-    return
-  }
-  if (!dialog) {
-    if (typeof window === 'undefined' || window.confirm(action.confirmMessage)) {
-      emit('action', action.key, [...props.selectedKeys])
-    }
-    return
-  }
-  dialog.warning({
-    title: action.danger ? '确认删除' : '确认操作',
-    content: action.confirmMessage,
-    positiveText: action.danger ? '删除' : '确定',
-    negativeText: '取消',
-    onPositiveClick: () => emit('action', action.key, [...props.selectedKeys]),
+  const props = defineProps({
+    selectedCount: { type: Number, required: true },
+    selectedKeys: { type: Array as PropType<(string | number)[]>, default: () => [] },
+    actions: { type: Array as PropType<BatchAction[]>, required: true },
+    visible: { type: Boolean, default: undefined },
+    clearLabel: { type: String, default: '取消选择' },
+    countTemplate: { type: String, default: '已选择 {count} 项' },
   })
-}
 
-function handleClear(): void {
-  emit('clear')
-}
+  const emit = defineEmits<{
+    action: [key: string, selectedKeys: (string | number)[]]
+    clear: []
+  }>()
 
-function formatCount(): string {
-  return props.countTemplate.replace('{count}', String(props.selectedCount))
-}
+  type DialogApi = ReturnType<typeof useDialog>
 
-const clear = handleClear
-const expose: BatchActionBarExpose = { clear }
-defineExpose(expose)
+  let dialog: DialogApi | null = null
+  try {
+    dialog = useDialog()
+  } catch {
+    dialog = null
+  }
+
+  function handleAction(action: BatchAction): void {
+    if (!action.confirmMessage) {
+      emit('action', action.key, [...props.selectedKeys])
+      return
+    }
+    if (!dialog) {
+      if (typeof window === 'undefined' || window.confirm(action.confirmMessage)) {
+        emit('action', action.key, [...props.selectedKeys])
+      }
+      return
+    }
+    dialog.warning({
+      title: action.danger ? '确认删除' : '确认操作',
+      content: action.confirmMessage,
+      positiveText: action.danger ? '删除' : '确定',
+      negativeText: '取消',
+      onPositiveClick: () => emit('action', action.key, [...props.selectedKeys]),
+    })
+  }
+
+  function handleClear(): void {
+    emit('clear')
+  }
+
+  function formatCount(): string {
+    return props.countTemplate.replace('{count}', String(props.selectedCount))
+  }
+
+  const clear = handleClear
+  const expose: BatchActionBarExpose = { clear }
+  defineExpose(expose)
 </script>
 
 <template>
@@ -104,39 +104,39 @@ defineExpose(expose)
 </template>
 
 <style scoped>
-.r-batch-action-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--ra-spacing-4);
-  padding: var(--ra-spacing-2) var(--ra-spacing-4);
-  background: var(--ra-color-brand-subtle, #f0f6ff);
-  color: var(--ra-color-text-primary);
-  border-radius: var(--ra-radius-md);
-  border: 1px solid var(--ra-color-brand-light, #d6e4ff);
-}
-.r-batch-action-bar__info {
-  display: flex;
-  align-items: center;
-  gap: var(--ra-spacing-3);
-}
-.r-batch-action-bar__count {
-  font-size: var(--ra-font-size-sm);
-  font-weight: var(--ra-font-weight-medium);
-  color: var(--ra-color-brand-primary, #2080f0);
-}
-.r-batch-action-bar__actions {
-  display: flex;
-  align-items: center;
-  gap: var(--ra-spacing-3);
-}
-.r-batch-bar-enter-active,
-.r-batch-bar-leave-active {
-  transition: all var(--ra-transition-base);
-}
-.r-batch-bar-enter-from,
-.r-batch-bar-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
-}
+  .r-batch-action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ra-spacing-4);
+    padding: var(--ra-spacing-2) var(--ra-spacing-4);
+    background: var(--ra-color-brand-subtle, #f0f6ff);
+    color: var(--ra-color-text-primary);
+    border-radius: var(--ra-radius-md);
+    border: 1px solid var(--ra-color-brand-light, #d6e4ff);
+  }
+  .r-batch-action-bar__info {
+    display: flex;
+    align-items: center;
+    gap: var(--ra-spacing-3);
+  }
+  .r-batch-action-bar__count {
+    font-size: var(--ra-font-size-sm);
+    font-weight: var(--ra-font-weight-medium);
+    color: var(--ra-color-brand-primary, #2080f0);
+  }
+  .r-batch-action-bar__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--ra-spacing-3);
+  }
+  .r-batch-bar-enter-active,
+  .r-batch-bar-leave-active {
+    transition: all var(--ra-transition-base);
+  }
+  .r-batch-bar-enter-from,
+  .r-batch-bar-leave-to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
 </style>

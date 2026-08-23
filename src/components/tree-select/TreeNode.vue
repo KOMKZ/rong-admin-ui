@@ -119,181 +119,181 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import type { TreeSelectNode } from './types'
+  import { computed } from 'vue'
+  import type { TreeSelectNode } from './types'
 
-const props = defineProps<{
-  node: TreeSelectNode
-  depth: number
-  expandedKeys: Set<string | number>
-  selectedId: string | number | null
-  keyword?: string
-}>()
+  const props = defineProps<{
+    node: TreeSelectNode
+    depth: number
+    expandedKeys: Set<string | number>
+    selectedId: string | number | null
+    keyword?: string
+  }>()
 
-const emit = defineEmits<{
-  select: [node: TreeSelectNode]
-  toggle: [id: string | number]
-}>()
+  const emit = defineEmits<{
+    select: [node: TreeSelectNode]
+    toggle: [id: string | number]
+  }>()
 
-const hasChildren = computed(() => (props.node.children?.length ?? 0) > 0)
-const isExpanded = computed(() => props.expandedKeys.has(props.node.id))
+  const hasChildren = computed(() => (props.node.children?.length ?? 0) > 0)
+  const isExpanded = computed(() => props.expandedKeys.has(props.node.id))
 
-function handleClick(): void {
-  if (props.node.disabled) return
-  if (hasChildren.value) {
-    emit('toggle', props.node.id)
-  }
-  emit('select', props.node)
-}
-
-function handleKeydown(e: KeyboardEvent): void {
-  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault()
-    handleClick()
-  } else if (e.key === 'ArrowRight' && hasChildren.value && !isExpanded.value) {
-    e.preventDefault()
-    emit('toggle', props.node.id)
-  } else if (e.key === 'ArrowLeft' && hasChildren.value && isExpanded.value) {
-    e.preventDefault()
-    emit('toggle', props.node.id)
-  }
-}
-
-function highlightLabel(label: string, kw: string): string {
-  if (!kw) return label
-  const idx = label.toLowerCase().indexOf(kw.toLowerCase())
-  if (idx === -1) return label
-  const before = label.slice(0, idx)
-  const match = label.slice(idx, idx + kw.length)
-  const after = label.slice(idx + kw.length)
-  return `${escapeHtml(before)}<mark class="r-tree-node__highlight">${escapeHtml(match)}</mark>${escapeHtml(after)}`
-}
-
-function escapeHtml(str: string): string {
-  return str.replace(/[&<>"']/g, (m) => {
-    const map: Record<string, string> = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;',
+  function handleClick(): void {
+    if (props.node.disabled) return
+    if (hasChildren.value) {
+      emit('toggle', props.node.id)
     }
-    return map[m] ?? m
-  })
-}
+    emit('select', props.node)
+  }
+
+  function handleKeydown(e: KeyboardEvent): void {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      handleClick()
+    } else if (e.key === 'ArrowRight' && hasChildren.value && !isExpanded.value) {
+      e.preventDefault()
+      emit('toggle', props.node.id)
+    } else if (e.key === 'ArrowLeft' && hasChildren.value && isExpanded.value) {
+      e.preventDefault()
+      emit('toggle', props.node.id)
+    }
+  }
+
+  function highlightLabel(label: string, kw: string): string {
+    if (!kw) return label
+    const idx = label.toLowerCase().indexOf(kw.toLowerCase())
+    if (idx === -1) return label
+    const before = label.slice(0, idx)
+    const match = label.slice(idx, idx + kw.length)
+    const after = label.slice(idx + kw.length)
+    return `${escapeHtml(before)}<mark class="r-tree-node__highlight">${escapeHtml(match)}</mark>${escapeHtml(after)}`
+  }
+
+  function escapeHtml(str: string): string {
+    return str.replace(/[&<>"']/g, (m) => {
+      const map: Record<string, string> = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      }
+      return map[m] ?? m
+    })
+  }
 </script>
 
 <style>
-.r-tree-node__row {
-  display: flex;
-  align-items: center;
-  padding: 4px 8px;
-  cursor: pointer;
-  border-radius: var(--ra-radius-sm);
-  margin: 1px 4px;
-  transition: background var(--ra-transition-fast);
-  outline: none;
-  min-height: 32px;
-}
+  .r-tree-node__row {
+    display: flex;
+    align-items: center;
+    padding: 4px 8px;
+    cursor: pointer;
+    border-radius: var(--ra-radius-sm);
+    margin: 1px 4px;
+    transition: background var(--ra-transition-fast);
+    outline: none;
+    min-height: 32px;
+  }
 
-.r-tree-node__row:hover {
-  background: var(--ra-color-bg-hover);
-}
+  .r-tree-node__row:hover {
+    background: var(--ra-color-bg-hover);
+  }
 
-.r-tree-node__row--selected {
-  background: color-mix(in srgb, var(--ra-color-brand-primary) 10%, transparent);
-  color: var(--ra-color-brand-primary);
-}
+  .r-tree-node__row--selected {
+    background: color-mix(in srgb, var(--ra-color-brand-primary) 10%, transparent);
+    color: var(--ra-color-brand-primary);
+  }
 
-.r-tree-node__row--selected:hover {
-  background: color-mix(in srgb, var(--ra-color-brand-primary) 15%, transparent);
-}
+  .r-tree-node__row--selected:hover {
+    background: color-mix(in srgb, var(--ra-color-brand-primary) 15%, transparent);
+  }
 
-.r-tree-node__row--disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
+  .r-tree-node__row--disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
 
-.r-tree-node__row:focus-visible {
-  outline: 2px solid var(--ra-color-border-focus);
-  outline-offset: -2px;
-}
+  .r-tree-node__row:focus-visible {
+    outline: 2px solid var(--ra-color-border-focus);
+    outline-offset: -2px;
+  }
 
-.r-tree-node__indent {
-  flex-shrink: 0;
-}
+  .r-tree-node__indent {
+    flex-shrink: 0;
+  }
 
-.r-tree-node__toggle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  flex-shrink: 0;
-  color: var(--ra-color-text-tertiary);
-  border-radius: var(--ra-radius-sm);
-  transition: color var(--ra-transition-fast);
-  cursor: pointer;
-}
+  .r-tree-node__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--ra-color-text-tertiary);
+    border-radius: var(--ra-radius-sm);
+    transition: color var(--ra-transition-fast);
+    cursor: pointer;
+  }
 
-.r-tree-node__toggle:hover {
-  color: var(--ra-color-text-primary);
-}
+  .r-tree-node__toggle:hover {
+    color: var(--ra-color-text-primary);
+  }
 
-.r-tree-node__toggle svg {
-  transition: transform var(--ra-transition-fast);
-}
+  .r-tree-node__toggle svg {
+    transition: transform var(--ra-transition-fast);
+  }
 
-.r-tree-node__toggle-placeholder {
-  width: 20px;
-  flex-shrink: 0;
-}
+  .r-tree-node__toggle-placeholder {
+    width: 20px;
+    flex-shrink: 0;
+  }
 
-.r-tree-node__icon {
-  display: flex;
-  align-items: center;
-  margin-right: 6px;
-  color: var(--ra-color-text-secondary);
-  flex-shrink: 0;
-}
+  .r-tree-node__icon {
+    display: flex;
+    align-items: center;
+    margin-right: 6px;
+    color: var(--ra-color-text-secondary);
+    flex-shrink: 0;
+  }
 
-.r-tree-node__row--selected .r-tree-node__icon {
-  color: var(--ra-color-brand-primary);
-}
+  .r-tree-node__row--selected .r-tree-node__icon {
+    color: var(--ra-color-brand-primary);
+  }
 
-.r-tree-node__label {
-  flex: 1;
-  font-size: var(--ra-font-size-sm);
-  line-height: var(--ra-line-height-tight, 1.4);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+  .r-tree-node__label {
+    flex: 1;
+    font-size: var(--ra-font-size-sm);
+    line-height: var(--ra-line-height-tight, 1.4);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-.r-tree-node__highlight {
-  background: color-mix(in srgb, var(--ra-color-warning) 25%, transparent);
-  color: inherit;
-  border-radius: 2px;
-  padding: 0 1px;
-}
+  .r-tree-node__highlight {
+    background: color-mix(in srgb, var(--ra-color-warning) 25%, transparent);
+    color: inherit;
+    border-radius: 2px;
+    padding: 0 1px;
+  }
 
-/* ─── Expand animation ─── */
+  /* ─── Expand animation ─── */
 
-.r-tree-node-expand-enter-active,
-.r-tree-node-expand-leave-active {
-  transition: all var(--ra-transition-fast);
-  overflow: hidden;
-}
+  .r-tree-node-expand-enter-active,
+  .r-tree-node-expand-leave-active {
+    transition: all var(--ra-transition-fast);
+    overflow: hidden;
+  }
 
-.r-tree-node-expand-enter-from,
-.r-tree-node-expand-leave-to {
-  opacity: 0;
-  max-height: 0;
-}
+  .r-tree-node-expand-enter-from,
+  .r-tree-node-expand-leave-to {
+    opacity: 0;
+    max-height: 0;
+  }
 
-.r-tree-node-expand-enter-to,
-.r-tree-node-expand-leave-from {
-  opacity: 1;
-  max-height: 500px;
-}
+  .r-tree-node-expand-enter-to,
+  .r-tree-node-expand-leave-from {
+    opacity: 1;
+    max-height: 500px;
+  }
 </style>

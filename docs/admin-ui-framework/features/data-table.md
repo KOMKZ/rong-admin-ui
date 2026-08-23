@@ -23,6 +23,7 @@
 - 基于 Naive UI NDataTable 封装，要求消费方安装 naive-ui
 - 空态自动显示，可通过 empty slot 自定义
 - 支持 toolbar / summary / loading / empty 四个插槽
+- 行操作优先使用 `RRowActions`；默认 `maxInline=3`，第 4 个及以后动作自动收进“更多”下拉，避免操作列平铺 4 个及以上文字按钮。`ygctl web gen` 默认生成该组件，业务页只需在 `buildRowActions(row)` 追加动作。
 
 ## 示例
 

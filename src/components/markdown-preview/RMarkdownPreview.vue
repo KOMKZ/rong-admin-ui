@@ -1,246 +1,223 @@
 <script lang="ts" setup>
-import { computed, ref, watch, nextTick, onMounted, onUnmounted, toRef } from 'vue'
-import MarkdownIt from 'markdown-it'
-import type { MarkdownPreviewTheme } from './types'
-import { useMermaid } from './composables/useMermaid'
+  import { computed, ref, watch, nextTick, onMounted, onUnmounted, toRef } from 'vue'
+  import MarkdownIt from 'markdown-it'
+  import type { MarkdownPreviewTheme } from './types'
+  import { useMermaid } from './composables/useMermaid'
 
-const props = withDefaults(
-  defineProps<{
-    content: string
-    scale?: number
-    theme?: MarkdownPreviewTheme
-    enableMermaid?: boolean
-    enableHighlight?: boolean
-    highlightTheme?: string
-    /** CHATADV-012: show disabled Run button in code blocks (reserves sandbox entry) */
-    enableRunButton?: boolean
-  }>(),
-  {
-    content: '',
-    scale: 100,
-    theme: 'github',
-    enableMermaid: true,
-    enableHighlight: true,
-    highlightTheme: 'github-dark',
-    enableRunButton: false,
-  },
-)
+  const props = withDefaults(
+    defineProps<{
+      content: string
+      scale?: number
+      theme?: MarkdownPreviewTheme
+      enableMermaid?: boolean
+      enableHighlight?: boolean
+      highlightTheme?: string
+      /** CHATADV-012: show disabled Run button in code blocks (reserves sandbox entry) */
+      enableRunButton?: boolean
+    }>(),
+    {
+      content: '',
+      scale: 100,
+      theme: 'github',
+      enableMermaid: true,
+      enableHighlight: true,
+      highlightTheme: 'github-dark',
+      enableRunButton: false,
+    },
+  )
 
-const containerRef = ref<HTMLElement | null>(null)
-const enableMermaidRef = toRef(props, 'enableMermaid')
+  const containerRef = ref<HTMLElement | null>(null)
+  const enableMermaidRef = toRef(props, 'enableMermaid')
 
-const {
-  fullscreenSvg,
-  canvasRef,
-  canvasZoom,
-  canvasPanX,
-  canvasPanY,
-  isDragging,
-  renderDiagrams,
-  canvasZoomIn,
-  canvasZoomOut,
-  canvasResetView,
-  closeFullscreen,
-  onCanvasWheel,
-  onCanvasDragStart,
-} = useMermaid({ containerRef, enabled: enableMermaidRef })
+  const {
+    fullscreenSvg,
+    canvasRef,
+    canvasZoom,
+    canvasPanX,
+    canvasPanY,
+    isDragging,
+    renderDiagrams,
+    canvasZoomIn,
+    canvasZoomOut,
+    canvasResetView,
+    closeFullscreen,
+    onCanvasWheel,
+    onCanvasDragStart,
+  } = useMermaid({ containerRef, enabled: enableMermaidRef })
 
-let hljsModule: typeof import('highlight.js') | null = null
+  let hljsModule: typeof import('highlight.js') | null = null
 
-async function loadHighlightJs() {
-  if (hljsModule) return hljsModule.default
-  hljsModule = await import('highlight.js')
-  return hljsModule.default
-}
+  async function loadHighlightJs() {
+    if (hljsModule) return hljsModule.default
+    hljsModule = await import('highlight.js')
+    return hljsModule.default
+  }
 
-const md = new MarkdownIt({
-  html: true,
-  linkify: true,
-  typographer: true,
-  highlight: (str: string, lang: string) => {
-    if (!props.enableHighlight) return ''
-    if (lang === 'mermaid') return ''
-    /* highlight.js is loaded async; on first render it may not be available yet */
-    if (hljsModule) {
-      const hljs = hljsModule.default
-      if (lang && hljs.getLanguage(lang)) {
-        try {
-          return hljs.highlight(str, { language: lang, ignoreIllegals: true }).value
-        } catch {
-          /* swallow */
+  const md = new MarkdownIt({
+    html: true,
+    linkify: true,
+    typographer: true,
+    highlight: (str: string, lang: string) => {
+      if (!props.enableHighlight) return ''
+      if (lang === 'mermaid') return ''
+      /* highlight.js is loaded async; on first render it may not be available yet */
+      if (hljsModule) {
+        const hljs = hljsModule.default
+        if (lang && hljs.getLanguage(lang)) {
+          try {
+            return hljs.highlight(str, { language: lang, ignoreIllegals: true }).value
+          } catch {
+            /* swallow */
+          }
         }
       }
-    }
-    return ''
-  },
-})
-
-// Allow all data: URIs in images/links. markdown-it 14.x default only permits
-// data:image/(gif|png|jpeg|webp); but markdown files often embed SVG, JPG, or
-// other data URI variants that would be silently stripped.
-md.validateLink = (url: string) => {
-  const str = url.trim().toLowerCase()
-  if (str.startsWith('data:')) return true
-  return !/^(vbscript|javascript|file):/.test(str)
-}
-
-function slugifyHeading(text: string): string {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/<[^>]+>/g, '')
-    .replace(/[^\w\u4e00-\u9fa5\s-]+/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '')
-}
-
-const originalHeadingOpenRenderer = md.renderer.rules.heading_open
-
-md.renderer.rules.heading_open = (tokens, idx, options, env, self) => {
-  const inlineToken = tokens[idx + 1]
-  const headingText = inlineToken?.type === 'inline' ? inlineToken.content : ''
-  const baseSlug = slugifyHeading(headingText) || `heading-${idx}`
-  const envObj = env as Record<string, unknown>
-  const key = '__rmdHeadingSlugMap'
-  const slugMap = (envObj[key] as Record<string, number> | undefined) || {}
-  const count = slugMap[baseSlug] || 0
-  slugMap[baseSlug] = count + 1
-  envObj[key] = slugMap
-  const uniqueSlug = count === 0 ? baseSlug : `${baseSlug}-${count + 1}`
-  tokens[idx].attrSet('id', uniqueSlug)
-
-  if (originalHeadingOpenRenderer) {
-    return originalHeadingOpenRenderer(tokens, idx, options, env, self)
-  }
-  return self.renderToken(tokens, idx, options)
-}
-
-const originalFenceRenderer = md.renderer.rules.fence
-
-md.renderer.rules.fence = (tokens, idx, options, env, self) => {
-  const token = tokens[idx]
-  const info = token.info ? token.info.trim() : ''
-  const lang = info.split(/\s+/g)[0]
-
-  if (lang === 'mermaid' && props.enableMermaid) {
-    const escaped = md.utils.escapeHtml(token.content)
-    return `<div class="rmd-mermaid-container"><pre class="mermaid">${escaped}</pre></div>`
-  }
-
-  const inner = originalFenceRenderer
-    ? originalFenceRenderer(tokens, idx, options, env, self)
-    : self.renderToken(tokens, idx, options)
-  if (lang) {
-    return `<div class="rmd-code-block"><span class="rmd-code-lang">${md.utils.escapeHtml(lang)}</span>${inner}</div>`
-  }
-  return inner
-}
-
-const renderedContent = computed(() => {
-  if (!props.content) return '<p class="rmd-empty">暂无内容</p>'
-  return md.render(props.content)
-})
-
-const scaleStyle = computed(() => {
-  if (props.scale === 100) return {}
-  const scaleValue = props.scale / 100
-  return {
-    transform: `scale(${scaleValue})`,
-    transformOrigin: 'top left',
-    width: `${100 / scaleValue}%`,
-  }
-})
-
-const themeClass = computed(() => `r-markdown-preview--${props.theme}`)
-
-const canvasTransformStyle = computed(() => ({
-  transform: `translate(${canvasPanX.value}px, ${canvasPanY.value}px) scale(${canvasZoom.value})`,
-  cursor: isDragging.value ? 'grabbing' : 'grab',
-}))
-
-function addCopyButtons() {
-  if (!containerRef.value) return
-  containerRef.value.querySelectorAll('pre').forEach((pre) => {
-    if (pre.classList.contains('mermaid') || pre.querySelector('.rmd-copy-btn')) return
-    pre.style.position = 'relative'
-    if (props.enableRunButton) {
-      const runBtn = document.createElement('button')
-      runBtn.className = 'rmd-run-btn'
-      runBtn.textContent = '运行'
-      runBtn.disabled = true
-      runBtn.title = '代码执行沙箱（即将支持）'
-      pre.appendChild(runBtn)
-    }
-    const btn = document.createElement('button')
-    btn.className = 'rmd-copy-btn'
-    btn.textContent = '复制'
-    btn.addEventListener('click', async () => {
-      const code = pre.querySelector('code')?.textContent || pre.textContent || ''
-      try {
-        await navigator.clipboard.writeText(code)
-        btn.textContent = '已复制'
-        setTimeout(() => {
-          btn.textContent = '复制'
-        }, 2000)
-      } catch {
-        /* ignore */
-      }
-    })
-    pre.appendChild(btn)
+      return ''
+    },
   })
-}
 
-function escapeSelector(value: string): string {
-  if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') {
-    return CSS.escape(value)
-  }
-  return value
-}
-
-function handlePreviewClick(event: MouseEvent) {
-  const target = event.target as HTMLElement | null
-  const anchor = target?.closest('a[href^="#"]') as HTMLAnchorElement | null
-  if (!anchor || !containerRef.value) return
-
-  const href = anchor.getAttribute('href') || ''
-  if (!href.startsWith('#') || href.length <= 1) return
-
-  const rawId = decodeURIComponent(href.slice(1))
-  const targetHeading = containerRef.value.querySelector<HTMLElement>(`#${escapeSelector(rawId)}`)
-  if (!targetHeading) return
-
-  event.preventDefault()
-
-  const scrollContainer = containerRef.value.closest('.r-docs-content-body') as HTMLElement | null
-  if (!scrollContainer) {
-    targetHeading.scrollIntoView({ behavior: 'smooth', block: 'start' })
-    return
+  function slugifyHeading(text: string): string {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/<[^>]+>/g, '')
+      .replace(/[^\w\u4e00-\u9fa5\s-]+/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '')
   }
 
-  const offsetTop =
-    targetHeading.getBoundingClientRect().top -
-    scrollContainer.getBoundingClientRect().top +
-    scrollContainer.scrollTop
-  scrollContainer.scrollTo({ top: Math.max(0, offsetTop - 12), behavior: 'smooth' })
-}
+  const originalHeadingOpenRenderer = md.renderer.rules.heading_open
 
-onMounted(async () => {
-  if (props.enableHighlight) {
-    await loadHighlightJs()
-  }
-  await nextTick()
-  if (props.enableMermaid) {
-    renderDiagrams()
-  }
-  addCopyButtons()
-  containerRef.value?.addEventListener('click', handlePreviewClick)
-})
+  md.renderer.rules.heading_open = (tokens, idx, options, env, self) => {
+    const inlineToken = tokens[idx + 1]
+    const headingText = inlineToken?.type === 'inline' ? inlineToken.content : ''
+    const baseSlug = slugifyHeading(headingText) || `heading-${idx}`
+    const envObj = env as Record<string, unknown>
+    const key = '__rmdHeadingSlugMap'
+    const slugMap = (envObj[key] as Record<string, number> | undefined) || {}
+    const count = slugMap[baseSlug] || 0
+    slugMap[baseSlug] = count + 1
+    envObj[key] = slugMap
+    const uniqueSlug = count === 0 ? baseSlug : `${baseSlug}-${count + 1}`
+    tokens[idx].attrSet('id', uniqueSlug)
 
-watch(
-  () => props.content,
-  async () => {
-    if (props.enableHighlight && !hljsModule) {
+    if (originalHeadingOpenRenderer) {
+      return originalHeadingOpenRenderer(tokens, idx, options, env, self)
+    }
+    return self.renderToken(tokens, idx, options)
+  }
+
+  const originalFenceRenderer = md.renderer.rules.fence
+
+  md.renderer.rules.fence = (tokens, idx, options, env, self) => {
+    const token = tokens[idx]
+    const info = token.info ? token.info.trim() : ''
+    const lang = info.split(/\s+/g)[0]
+
+    if (lang === 'mermaid' && props.enableMermaid) {
+      const escaped = md.utils.escapeHtml(token.content)
+      return `<div class="rmd-mermaid-container"><pre class="mermaid">${escaped}</pre></div>`
+    }
+
+    const inner = originalFenceRenderer
+      ? originalFenceRenderer(tokens, idx, options, env, self)
+      : self.renderToken(tokens, idx, options)
+    if (lang) {
+      return `<div class="rmd-code-block"><span class="rmd-code-lang">${md.utils.escapeHtml(lang)}</span>${inner}</div>`
+    }
+    return inner
+  }
+
+  const renderedContent = computed(() => {
+    if (!props.content) return '<p class="rmd-empty">暂无内容</p>'
+    return md.render(props.content)
+  })
+
+  const scaleStyle = computed(() => {
+    if (props.scale === 100) return {}
+    const scaleValue = props.scale / 100
+    return {
+      transform: `scale(${scaleValue})`,
+      transformOrigin: 'top left',
+      width: `${100 / scaleValue}%`,
+    }
+  })
+
+  const themeClass = computed(() => `r-markdown-preview--${props.theme}`)
+
+  const canvasTransformStyle = computed(() => ({
+    transform: `translate(${canvasPanX.value}px, ${canvasPanY.value}px) scale(${canvasZoom.value})`,
+    cursor: isDragging.value ? 'grabbing' : 'grab',
+  }))
+
+  function addCopyButtons() {
+    if (!containerRef.value) return
+    containerRef.value.querySelectorAll('pre').forEach((pre) => {
+      if (pre.classList.contains('mermaid') || pre.querySelector('.rmd-copy-btn')) return
+      pre.style.position = 'relative'
+      if (props.enableRunButton) {
+        const runBtn = document.createElement('button')
+        runBtn.className = 'rmd-run-btn'
+        runBtn.textContent = '运行'
+        runBtn.disabled = true
+        runBtn.title = '代码执行沙箱（即将支持）'
+        pre.appendChild(runBtn)
+      }
+      const btn = document.createElement('button')
+      btn.className = 'rmd-copy-btn'
+      btn.textContent = '复制'
+      btn.addEventListener('click', async () => {
+        const code = pre.querySelector('code')?.textContent || pre.textContent || ''
+        try {
+          await navigator.clipboard.writeText(code)
+          btn.textContent = '已复制'
+          setTimeout(() => {
+            btn.textContent = '复制'
+          }, 2000)
+        } catch {
+          /* ignore */
+        }
+      })
+      pre.appendChild(btn)
+    })
+  }
+
+  function escapeSelector(value: string): string {
+    if (typeof CSS !== 'undefined' && typeof CSS.escape === 'function') {
+      return CSS.escape(value)
+    }
+    return value
+  }
+
+  function handlePreviewClick(event: MouseEvent) {
+    const target = event.target as HTMLElement | null
+    const anchor = target?.closest('a[href^="#"]') as HTMLAnchorElement | null
+    if (!anchor || !containerRef.value) return
+
+    const href = anchor.getAttribute('href') || ''
+    if (!href.startsWith('#') || href.length <= 1) return
+
+    const rawId = decodeURIComponent(href.slice(1))
+    const targetHeading = containerRef.value.querySelector<HTMLElement>(`#${escapeSelector(rawId)}`)
+    if (!targetHeading) return
+
+    event.preventDefault()
+
+    const scrollContainer = containerRef.value.closest('.r-docs-content-body') as HTMLElement | null
+    if (!scrollContainer) {
+      targetHeading.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      return
+    }
+
+    const offsetTop =
+      targetHeading.getBoundingClientRect().top -
+      scrollContainer.getBoundingClientRect().top +
+      scrollContainer.scrollTop
+    scrollContainer.scrollTo({ top: Math.max(0, offsetTop - 12), behavior: 'smooth' })
+  }
+
+  onMounted(async () => {
+    if (props.enableHighlight) {
       await loadHighlightJs()
     }
     await nextTick()
@@ -248,12 +225,26 @@ watch(
       renderDiagrams()
     }
     addCopyButtons()
-  },
-)
+    containerRef.value?.addEventListener('click', handlePreviewClick)
+  })
 
-onUnmounted(() => {
-  containerRef.value?.removeEventListener('click', handlePreviewClick)
-})
+  watch(
+    () => props.content,
+    async () => {
+      if (props.enableHighlight && !hljsModule) {
+        await loadHighlightJs()
+      }
+      await nextTick()
+      if (props.enableMermaid) {
+        renderDiagrams()
+      }
+      addCopyButtons()
+    },
+  )
+
+  onUnmounted(() => {
+    containerRef.value?.removeEventListener('click', handlePreviewClick)
+  })
 </script>
 
 <template>
@@ -348,464 +339,464 @@ onUnmounted(() => {
 </template>
 
 <style>
-@import './styles/github.css';
-@import './styles/github-dark.css';
+  @import './styles/github.css';
+  @import './styles/github-dark.css';
 
-.r-markdown-preview {
-  color: var(--rmd-text);
-  background: var(--rmd-bg);
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif,
-    'Apple Color Emoji', 'Segoe UI Emoji';
-  font-size: 16px;
-  line-height: 1.5;
-  word-wrap: break-word;
-  padding: 32px;
-  border-radius: var(--ra-radius-lg, 6px);
-}
+  .r-markdown-preview {
+    color: var(--rmd-text);
+    background: var(--rmd-bg);
+    font-family:
+      -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif,
+      'Apple Color Emoji', 'Segoe UI Emoji';
+    font-size: 16px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    padding: 32px;
+    border-radius: var(--ra-radius-lg, 6px);
+  }
 
-.r-markdown-preview .rmd-empty {
-  color: var(--rmd-blockquote-text);
-  font-style: italic;
-}
+  .r-markdown-preview .rmd-empty {
+    color: var(--rmd-blockquote-text);
+    font-style: italic;
+  }
 
-/* Headings */
-.r-markdown-preview h1,
-.r-markdown-preview h2,
-.r-markdown-preview h3,
-.r-markdown-preview h4,
-.r-markdown-preview h5,
-.r-markdown-preview h6 {
-  margin-top: 24px;
-  margin-bottom: 16px;
-  font-weight: 600;
-  line-height: 1.25;
-}
+  /* Headings */
+  .r-markdown-preview h1,
+  .r-markdown-preview h2,
+  .r-markdown-preview h3,
+  .r-markdown-preview h4,
+  .r-markdown-preview h5,
+  .r-markdown-preview h6 {
+    margin-top: 24px;
+    margin-bottom: 16px;
+    font-weight: 600;
+    line-height: 1.25;
+  }
 
-.r-markdown-preview h1 {
-  font-size: 2em;
-  padding-bottom: 0.3em;
-  border-bottom: 1px solid var(--rmd-border);
-}
+  .r-markdown-preview h1 {
+    font-size: 2em;
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid var(--rmd-border);
+  }
 
-.r-markdown-preview h2 {
-  font-size: 1.5em;
-  padding-bottom: 0.3em;
-  border-bottom: 1px solid var(--rmd-border);
-}
+  .r-markdown-preview h2 {
+    font-size: 1.5em;
+    padding-bottom: 0.3em;
+    border-bottom: 1px solid var(--rmd-border);
+  }
 
-.r-markdown-preview h3 {
-  font-size: 1.25em;
-}
+  .r-markdown-preview h3 {
+    font-size: 1.25em;
+  }
 
-.r-markdown-preview h4 {
-  font-size: 1em;
-}
+  .r-markdown-preview h4 {
+    font-size: 1em;
+  }
 
-.r-markdown-preview h5 {
-  font-size: 0.875em;
-}
+  .r-markdown-preview h5 {
+    font-size: 0.875em;
+  }
 
-.r-markdown-preview h6 {
-  font-size: 0.85em;
-  color: var(--rmd-blockquote-text);
-}
+  .r-markdown-preview h6 {
+    font-size: 0.85em;
+    color: var(--rmd-blockquote-text);
+  }
 
-/* Paragraphs */
-.r-markdown-preview p {
-  margin-top: 0;
-  margin-bottom: 16px;
-}
+  /* Paragraphs */
+  .r-markdown-preview p {
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
 
-/* Links */
-.r-markdown-preview a {
-  color: var(--rmd-link);
-  text-decoration: none;
-}
+  /* Links */
+  .r-markdown-preview a {
+    color: var(--rmd-link);
+    text-decoration: none;
+  }
 
-.r-markdown-preview a:hover {
-  text-decoration: underline;
-}
+  .r-markdown-preview a:hover {
+    text-decoration: underline;
+  }
 
-/* Strong */
-.r-markdown-preview strong {
-  font-weight: 600;
-}
+  /* Strong */
+  .r-markdown-preview strong {
+    font-weight: 600;
+  }
 
-/* Inline code */
-.r-markdown-preview code {
-  padding: 0.2em 0.4em;
-  margin: 0;
-  font-size: 85%;
-  white-space: break-spaces;
-  background-color: rgba(175, 184, 193, 0.2);
-  border-radius: 6px;
-  font-family:
-    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-}
+  /* Inline code */
+  .r-markdown-preview code {
+    padding: 0.2em 0.4em;
+    margin: 0;
+    font-size: 85%;
+    white-space: break-spaces;
+    background-color: rgba(175, 184, 193, 0.2);
+    border-radius: 6px;
+    font-family:
+      ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  }
 
-/* Code block with language label */
-.r-markdown-preview .rmd-code-block {
-  margin-bottom: 16px;
-  border-radius: 8px;
-  overflow: hidden;
-  background-color: var(--rmd-code-bg);
-}
-.r-markdown-preview .rmd-code-lang {
-  display: block;
-  padding: 6px 12px;
-  font-size: 12px;
-  color: var(--rmd-blockquote-text);
-  background: rgba(0, 0, 0, 0.05);
-  border-bottom: 1px solid var(--rmd-border);
-  font-family:
-    ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
-}
-.r-markdown-preview--github-dark .rmd-code-lang {
-  background: rgba(255, 255, 255, 0.06);
-}
+  /* Code block with language label */
+  .r-markdown-preview .rmd-code-block {
+    margin-bottom: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--rmd-code-bg);
+  }
+  .r-markdown-preview .rmd-code-lang {
+    display: block;
+    padding: 6px 12px;
+    font-size: 12px;
+    color: var(--rmd-blockquote-text);
+    background: rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid var(--rmd-border);
+    font-family:
+      ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  }
+  .r-markdown-preview--github-dark .rmd-code-lang {
+    background: rgba(255, 255, 255, 0.06);
+  }
 
-/* Code blocks */
-.r-markdown-preview pre {
-  padding: 16px;
-  overflow: auto;
-  font-size: 85%;
-  line-height: 1.45;
-  background-color: var(--rmd-code-bg);
-  border-radius: 6px;
-  margin-top: 0;
-  margin-bottom: 16px;
-}
+  /* Code blocks */
+  .r-markdown-preview pre {
+    padding: 16px;
+    overflow: auto;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: var(--rmd-code-bg);
+    border-radius: 6px;
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
 
-.r-markdown-preview pre code {
-  padding: 0;
-  margin: 0;
-  overflow: visible;
-  line-height: inherit;
-  word-wrap: normal;
-  background-color: transparent;
-  border: 0;
-  font-size: 100%;
-  white-space: pre;
-}
+  .r-markdown-preview pre code {
+    padding: 0;
+    margin: 0;
+    overflow: visible;
+    line-height: inherit;
+    word-wrap: normal;
+    background-color: transparent;
+    border: 0;
+    font-size: 100%;
+    white-space: pre;
+  }
 
-/* Syntax-highlighted code blocks */
-.r-markdown-preview pre.hljs {
-  background-color: var(--rmd-pre-dark-bg);
-  color: var(--rmd-pre-dark-text);
-}
+  /* Syntax-highlighted code blocks */
+  .r-markdown-preview pre.hljs {
+    background-color: var(--rmd-pre-dark-bg);
+    color: var(--rmd-pre-dark-text);
+  }
 
-.r-markdown-preview pre.hljs code {
-  color: inherit;
-  background-color: transparent;
-}
+  .r-markdown-preview pre.hljs code {
+    color: inherit;
+    background-color: transparent;
+  }
 
-/* Code block with language label */
-.r-markdown-preview .rmd-code-block {
-  margin-bottom: 16px;
-  border-radius: 8px;
-  overflow: hidden;
-  background-color: var(--rmd-code-bg);
-}
-.r-markdown-preview .rmd-code-block pre.hljs {
-  border-radius: 0;
-  margin: 0;
-}
-.r-markdown-preview .rmd-code-lang {
-  display: block;
-  padding: 6px 16px;
-  font-size: 12px;
-  color: var(--rmd-blockquote-text, #6e7781);
-  background: rgba(0, 0, 0, 0.05);
-  border-bottom: 1px solid var(--rmd-border, rgba(0, 0, 0, 0.06));
-  font-family: ui-monospace, monospace;
-}
-.r-markdown-preview--github-dark .rmd-code-lang {
-  background: rgba(255, 255, 255, 0.05);
-  border-bottom-color: rgba(255, 255, 255, 0.08);
-}
+  /* Code block with language label */
+  .r-markdown-preview .rmd-code-block {
+    margin-bottom: 16px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--rmd-code-bg);
+  }
+  .r-markdown-preview .rmd-code-block pre.hljs {
+    border-radius: 0;
+    margin: 0;
+  }
+  .r-markdown-preview .rmd-code-lang {
+    display: block;
+    padding: 6px 16px;
+    font-size: 12px;
+    color: var(--rmd-blockquote-text, #6e7781);
+    background: rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid var(--rmd-border, rgba(0, 0, 0, 0.06));
+    font-family: ui-monospace, monospace;
+  }
+  .r-markdown-preview--github-dark .rmd-code-lang {
+    background: rgba(255, 255, 255, 0.05);
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+  }
 
-/* Blockquotes */
-.r-markdown-preview blockquote {
-  padding: 0 1em;
-  color: var(--rmd-blockquote-text);
-  border-left: 0.25em solid var(--rmd-blockquote-border);
-  margin: 0 0 16px 0;
-}
+  /* Blockquotes */
+  .r-markdown-preview blockquote {
+    padding: 0 1em;
+    color: var(--rmd-blockquote-text);
+    border-left: 0.25em solid var(--rmd-blockquote-border);
+    margin: 0 0 16px 0;
+  }
 
-.r-markdown-preview blockquote > :first-child {
-  margin-top: 0;
-}
+  .r-markdown-preview blockquote > :first-child {
+    margin-top: 0;
+  }
 
-.r-markdown-preview blockquote > :last-child {
-  margin-bottom: 0;
-}
+  .r-markdown-preview blockquote > :last-child {
+    margin-bottom: 0;
+  }
 
-/* Lists */
-.r-markdown-preview ul,
-.r-markdown-preview ol {
-  padding-left: 2em;
-  margin-top: 0;
-  margin-bottom: 16px;
-}
+  /* Lists */
+  .r-markdown-preview ul,
+  .r-markdown-preview ol {
+    padding-left: 2em;
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
 
-.r-markdown-preview ul ul,
-.r-markdown-preview ul ol,
-.r-markdown-preview ol ul,
-.r-markdown-preview ol ol {
-  margin-top: 0;
-  margin-bottom: 0;
-}
+  .r-markdown-preview ul ul,
+  .r-markdown-preview ul ol,
+  .r-markdown-preview ol ul,
+  .r-markdown-preview ol ol {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
 
-.r-markdown-preview li {
-  margin-top: 0.25em;
-}
+  .r-markdown-preview li {
+    margin-top: 0.25em;
+  }
 
-.r-markdown-preview li + li {
-  margin-top: 0.25em;
-}
+  .r-markdown-preview li + li {
+    margin-top: 0.25em;
+  }
 
-/* Tables */
-.r-markdown-preview table {
-  display: block;
-  width: max-content;
-  max-width: 100%;
-  overflow: auto;
-  border-spacing: 0;
-  border-collapse: collapse;
-  margin-top: 0;
-  margin-bottom: 16px;
-}
+  /* Tables */
+  .r-markdown-preview table {
+    display: block;
+    width: max-content;
+    max-width: 100%;
+    overflow: auto;
+    border-spacing: 0;
+    border-collapse: collapse;
+    margin-top: 0;
+    margin-bottom: 16px;
+  }
 
-.r-markdown-preview table th {
-  font-weight: 600;
-}
+  .r-markdown-preview table th {
+    font-weight: 600;
+  }
 
-.r-markdown-preview table th,
-.r-markdown-preview table td {
-  padding: 6px 13px;
-  border: 1px solid var(--rmd-border);
-}
+  .r-markdown-preview table th,
+  .r-markdown-preview table td {
+    padding: 6px 13px;
+    border: 1px solid var(--rmd-border);
+  }
 
-.r-markdown-preview table tr {
-  background-color: var(--rmd-bg);
-  border-top: 1px solid var(--rmd-table-border-top);
-}
+  .r-markdown-preview table tr {
+    background-color: var(--rmd-bg);
+    border-top: 1px solid var(--rmd-table-border-top);
+  }
 
-.r-markdown-preview table tr:nth-child(2n) {
-  background-color: var(--rmd-table-stripe-bg);
-}
+  .r-markdown-preview table tr:nth-child(2n) {
+    background-color: var(--rmd-table-stripe-bg);
+  }
 
-/* Horizontal rule */
-.r-markdown-preview hr {
-  height: 0.25em;
-  padding: 0;
-  margin: 24px 0;
-  background-color: var(--rmd-border);
-  border: 0;
-}
+  /* Horizontal rule */
+  .r-markdown-preview hr {
+    height: 0.25em;
+    padding: 0;
+    margin: 24px 0;
+    background-color: var(--rmd-border);
+    border: 0;
+  }
 
-/* Images */
-.r-markdown-preview img {
-  max-width: 100%;
-  box-sizing: content-box;
-  background-color: var(--rmd-bg);
-  border-radius: 6px;
-}
+  /* Images */
+  .r-markdown-preview img {
+    max-width: 100%;
+    box-sizing: content-box;
+    background-color: var(--rmd-bg);
+    border-radius: 6px;
+  }
 
-/* Task lists */
-.r-markdown-preview .task-list-item {
-  list-style-type: none;
-}
+  /* Task lists */
+  .r-markdown-preview .task-list-item {
+    list-style-type: none;
+  }
 
-.r-markdown-preview .task-list-item input[type='checkbox'] {
-  margin: 0 0.2em 0.25em -1.4em;
-  vertical-align: middle;
-}
+  .r-markdown-preview .task-list-item input[type='checkbox'] {
+    margin: 0 0.2em 0.25em -1.4em;
+    vertical-align: middle;
+  }
 
-/* Strikethrough */
-.r-markdown-preview del {
-  color: var(--rmd-blockquote-text);
-}
+  /* Strikethrough */
+  .r-markdown-preview del {
+    color: var(--rmd-blockquote-text);
+  }
 
-/* Keyboard */
-.r-markdown-preview kbd {
-  display: inline-block;
-  padding: 3px 5px;
-  font:
-    11px ui-monospace,
-    SFMono-Regular,
-    'SF Mono',
-    Menlo,
-    Consolas,
-    'Liberation Mono',
-    monospace;
-  line-height: 10px;
-  color: var(--rmd-text);
-  vertical-align: middle;
-  background-color: var(--rmd-code-bg);
-  border: solid 1px var(--rmd-border);
-  border-bottom-color: var(--rmd-kbd-border-bottom);
-  border-radius: 6px;
-  box-shadow: inset 0 -1px 0 var(--rmd-kbd-shadow);
-}
+  /* Keyboard */
+  .r-markdown-preview kbd {
+    display: inline-block;
+    padding: 3px 5px;
+    font:
+      11px ui-monospace,
+      SFMono-Regular,
+      'SF Mono',
+      Menlo,
+      Consolas,
+      'Liberation Mono',
+      monospace;
+    line-height: 10px;
+    color: var(--rmd-text);
+    vertical-align: middle;
+    background-color: var(--rmd-code-bg);
+    border: solid 1px var(--rmd-border);
+    border-bottom-color: var(--rmd-kbd-border-bottom);
+    border-radius: 6px;
+    box-shadow: inset 0 -1px 0 var(--rmd-kbd-shadow);
+  }
 
-/* Code block copy button */
-.r-markdown-preview .rmd-copy-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  padding: 3px 10px;
-  font-size: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.6);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  opacity: 0;
-  z-index: 2;
-}
+  /* Code block copy button */
+  .r-markdown-preview .rmd-copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 3px 10px;
+    font-size: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    opacity: 0;
+    z-index: 2;
+  }
 
-.r-markdown-preview pre:hover .rmd-copy-btn {
-  opacity: 1;
-}
+  .r-markdown-preview pre:hover .rmd-copy-btn {
+    opacity: 1;
+  }
 
-.r-markdown-preview .rmd-copy-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
-}
+  .r-markdown-preview .rmd-copy-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+  }
 
-/* Mermaid container */
-.r-markdown-preview .rmd-mermaid-container {
-  margin: 16px 0;
-  border: 1px solid var(--rmd-border);
-  border-radius: var(--ra-radius-lg, 8px);
-  background-color: var(--rmd-mermaid-container-bg);
-  overflow: hidden;
-  position: relative;
-}
+  /* Mermaid container */
+  .r-markdown-preview .rmd-mermaid-container {
+    margin: 16px 0;
+    border: 1px solid var(--rmd-border);
+    border-radius: var(--ra-radius-lg, 8px);
+    background-color: var(--rmd-mermaid-container-bg);
+    overflow: hidden;
+    position: relative;
+  }
 
-.r-markdown-preview .rmd-mermaid-fullscreen-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--rmd-border);
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--rmd-blockquote-text);
-  cursor: pointer;
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease,
-    box-shadow 0.15s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
+  .r-markdown-preview .rmd-mermaid-fullscreen-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--rmd-border);
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.92);
+    color: var(--rmd-blockquote-text);
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease,
+      box-shadow 0.15s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  }
 
-.r-markdown-preview .rmd-mermaid-fullscreen-btn:hover {
-  background: #f3f4f6;
-  color: var(--rmd-text);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-}
+  .r-markdown-preview .rmd-mermaid-fullscreen-btn:hover {
+    background: #f3f4f6;
+    color: var(--rmd-text);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  }
 
-/* Mermaid fullscreen overlay */
-.rmd-canvas-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  background: var(--rmd-fullscreen-bg, #1a1a2e);
-}
+  /* Mermaid fullscreen overlay */
+  .rmd-canvas-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    background: var(--rmd-fullscreen-bg, #1a1a2e);
+  }
 
-.rmd-canvas-toolbar {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 8px 16px;
-  background: var(--rmd-fullscreen-toolbar-bg, #16213e);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  flex-shrink: 0;
-  user-select: none;
-}
+  .rmd-canvas-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 16px;
+    background: var(--rmd-fullscreen-toolbar-bg, #16213e);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    flex-shrink: 0;
+    user-select: none;
+  }
 
-.rmd-canvas-toolbar button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  color: rgba(255, 255, 255, 0.7);
-  cursor: pointer;
-  transition:
-    background-color 0.15s ease,
-    color 0.15s ease;
-}
+  .rmd-canvas-toolbar button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
 
-.rmd-canvas-toolbar button:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
+  .rmd-canvas-toolbar button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
 
-.rmd-canvas-toolbar button:active {
-  background: rgba(255, 255, 255, 0.15);
-}
+  .rmd-canvas-toolbar button:active {
+    background: rgba(255, 255, 255, 0.15);
+  }
 
-.rmd-canvas-zoom-text {
-  min-width: 52px;
-  text-align: center;
-  font-size: 13px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.8);
-  font-variant-numeric: tabular-nums;
-}
+  .rmd-canvas-zoom-text {
+    min-width: 52px;
+    text-align: center;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+    font-variant-numeric: tabular-nums;
+  }
 
-.rmd-canvas-divider {
-  width: 1px;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.12);
-  margin: 0 8px;
-}
+  .rmd-canvas-divider {
+    width: 1px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.12);
+    margin: 0 8px;
+  }
 
-.rmd-canvas-area {
-  flex: 1;
-  overflow: hidden;
-  position: relative;
-}
+  .rmd-canvas-area {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+  }
 
-.rmd-canvas-transform {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform-origin: 0 0;
-  will-change: transform;
-}
+  .rmd-canvas-transform {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0 0;
+    will-change: transform;
+  }
 
-.rmd-canvas-transform svg {
-  display: block;
-  background: #fff;
-  border-radius: 8px;
-  padding: 24px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
-}
+  .rmd-canvas-transform svg {
+    display: block;
+    background: #fff;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+  }
 
-/* Transition */
-.rmd-overlay-enter-active,
-.rmd-overlay-leave-active {
-  transition: opacity 0.2s ease;
-}
+  /* Transition */
+  .rmd-overlay-enter-active,
+  .rmd-overlay-leave-active {
+    transition: opacity 0.2s ease;
+  }
 
-.rmd-overlay-enter-from,
-.rmd-overlay-leave-to {
-  opacity: 0;
-}
+  .rmd-overlay-enter-from,
+  .rmd-overlay-leave-to {
+    opacity: 0;
+  }
 </style>

@@ -1,6 +1,10 @@
 <script lang="ts" setup>
   import { type PropType } from 'vue'
-  import { type ColumnPreset, type TableDensity, type TableToolbarAction } from '../table-toolbar/types'
+  import {
+    type ColumnPreset,
+    type TableDensity,
+    type TableToolbarAction,
+  } from '../table-toolbar/types'
   import RTableToolbarPro from '../table-toolbar/RTableToolbarPro.vue'
 
   const props = defineProps({

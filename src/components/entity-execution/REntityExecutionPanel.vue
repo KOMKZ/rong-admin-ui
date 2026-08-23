@@ -15,63 +15,63 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue'
-import { NDrawer, NDrawerContent, NEmpty } from 'naive-ui'
-import RFlowTimeline from '../flow/RFlowTimeline.vue'
-import type { FlowData } from '../flow/types'
+  import { computed, ref, watch } from 'vue'
+  import { NDrawer, NDrawerContent, NEmpty } from 'naive-ui'
+  import RFlowTimeline from '../flow/RFlowTimeline.vue'
+  import type { FlowData } from '../flow/types'
 
-const props = defineProps<{
-  show: boolean
-  entityType: 'agent' | 'team'
-  entityId?: number | null
-  fetchGraph?: (id: number) => Promise<FlowData>
-}>()
+  const props = defineProps<{
+    show: boolean
+    entityType: 'agent' | 'team'
+    entityId?: number | null
+    fetchGraph?: (id: number) => Promise<FlowData>
+  }>()
 
-const emit = defineEmits<{
-  'update:show': [value: boolean]
-}>()
+  const emit = defineEmits<{
+    'update:show': [value: boolean]
+  }>()
 
-const visible = ref(props.show)
-const graphData = ref<FlowData | null>(null)
-const timelineRef = ref<InstanceType<typeof RFlowTimeline> | null>(null)
+  const visible = ref(props.show)
+  const graphData = ref<FlowData | null>(null)
+  const timelineRef = ref<InstanceType<typeof RFlowTimeline> | null>(null)
 
-const drawerWidth = computed(() => (props.entityType === 'team' ? 560 : 520))
+  const drawerWidth = computed(() => (props.entityType === 'team' ? 560 : 520))
 
-const drawerTitle = computed(() =>
-  props.entityType === 'team' ? 'Team 执行过程' : 'Agent 执行过程',
-)
+  const drawerTitle = computed(() =>
+    props.entityType === 'team' ? 'Team 执行过程' : 'Agent 执行过程',
+  )
 
-const emptyDescription = computed(() =>
-  props.entityType === 'team' ? '等待 Team 执行...' : '等待 Agent 执行...',
-)
+  const emptyDescription = computed(() =>
+    props.entityType === 'team' ? '等待 Team 执行...' : '等待 Agent 执行...',
+  )
 
-watch(
-  () => props.show,
-  (val) => {
-    visible.value = val
-  },
-)
-watch(visible, (val) => {
-  emit('update:show', val)
-})
+  watch(
+    () => props.show,
+    (val) => {
+      visible.value = val
+    },
+  )
+  watch(visible, (val) => {
+    emit('update:show', val)
+  })
 
-watch(
-  () => props.entityId,
-  async (id) => {
-    if (!id || !props.fetchGraph) {
-      graphData.value = null
-      return
-    }
-    try {
-      graphData.value = await props.fetchGraph(id)
-    } catch {
-      graphData.value = null
-    }
-  },
-  { immediate: true },
-)
+  watch(
+    () => props.entityId,
+    async (id) => {
+      if (!id || !props.fetchGraph) {
+        graphData.value = null
+        return
+      }
+      try {
+        graphData.value = await props.fetchGraph(id)
+      } catch {
+        graphData.value = null
+      }
+    },
+    { immediate: true },
+  )
 
-defineExpose({
-  getTimeline: () => timelineRef.value,
-})
+  defineExpose({
+    getTimeline: () => timelineRef.value,
+  })
 </script>

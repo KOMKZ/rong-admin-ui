@@ -7,8 +7,6 @@ export type {
   ImageUploadAdapter,
   FileUploadAdapter,
   RichTextEditorI18n,
+  RRichTextEditorExpose,
   TiptapExtension,
 } from './types'
-export { MermaidBlockExtension } from './extensions/mermaid'
-export { GridBlockExtension, extractGridBlocks } from './extensions/grid'
-export { TableOfContentsExtension } from './extensions/toc'

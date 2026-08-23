@@ -1,225 +1,251 @@
 <script setup lang="ts">
-import { ref, computed, watch, onUnmounted } from 'vue'
-import { NInput, NButton, NSpace, useMessage } from 'naive-ui'
-import { Send, Square, Paperclip, Globe, Mic } from 'lucide-vue-next'
-import RChatMCPSelector from './RChatMCPSelector.vue'
-import type { MCPServerOption } from './types'
+  import { ref, computed, watch, onUnmounted } from 'vue'
+  import { NInput, NButton, NSpace, useMessage } from 'naive-ui'
+  import { Send, Square, Paperclip, Globe, Mic } from 'lucide-vue-next'
+  import RChatMCPSelector from './RChatMCPSelector.vue'
+  import type { MCPServerOption } from './types'
 
-export interface AttachmentItem {
-  url: string
-  filename: string
-  isImage?: boolean
-}
-
-export interface RChatInputProps {
-  disabled?: boolean
-  loading?: boolean
-  isStreaming?: boolean
-  placeholder?: string
-  maxLength?: number
-  webSearchEnabled?: boolean
-  /** CHATADV-001: upload file and return URL; when provided, attachment button is enabled */
-  uploadFile?: (file: File) => Promise<{ url: string; filename?: string }>
-  /** Running MCP servers for @ mention */
-  mcpServers?: MCPServerOption[]
-  /** URLs staged outside this input (e.g. chat page image/file widgets); merged into send payload before paperclip attachments */
-  stagedAttachmentUrls?: string[]
-}
-
-interface Emits {
-  (e: 'send-with-mcp', content: string, mcpContext: { server_name: string } | null, attachments?: string[]): void
-  (e: 'stop'): void
-  (e: 'update:webSearchEnabled', value: boolean): void
-}
-
-const props = withDefaults(defineProps<RChatInputProps>(), {
-  disabled: false,
-  loading: false,
-  isStreaming: false,
-  placeholder: '输入消息...',
-  maxLength: 4096,
-  webSearchEnabled: false,
-  mcpServers: () => [],
-  stagedAttachmentUrls: () => [],
-})
-
-const msg = useMessage()
-const emit = defineEmits<Emits>()
-const content = ref('')
-const inputRef = ref<{ focus: () => void } | null>(null)
-const mcpSelectorRef = ref<{ handleParentKeydown: (e: KeyboardEvent) => boolean } | null>(null)
-const fileInputRef = ref<HTMLInputElement | null>(null)
-const attachments = ref<AttachmentItem[]>([])
-const uploadIng = ref(false)
-const mcpSelectorVisible = ref(false)
-const mcpFilterText = ref('')
-const selectedMcpContext = ref<{ server_name: string } | null>(null)
-
-const canSend = computed(
-  () =>
-    content.value.trim().length > 0 ||
-    attachments.value.length > 0 ||
-    (props.stagedAttachmentUrls?.length ?? 0) > 0,
-)
-
-function getMentionState(text: string): { active: boolean; filter: string; atIndex: number } {
-  const lastAt = text.lastIndexOf('@')
-  if (lastAt === -1) return { active: false, filter: '', atIndex: -1 }
-  const after = text.slice(lastAt + 1)
-  if (after.includes(' ')) return { active: false, filter: '', atIndex: -1 }
-  return { active: true, filter: after, atIndex: lastAt }
-}
-
-watch(content, () => {
-  const st = getMentionState(content.value)
-  mcpSelectorVisible.value = st.active && props.mcpServers.length > 0
-  mcpFilterText.value = st.filter
-})
-
-function onMcpSelect(serverName: string) {
-  const st = getMentionState(content.value)
-  if (!st.active) return
-  const before = content.value.slice(0, st.atIndex)
-  const tail = content.value.slice(st.atIndex + 1 + st.filter.length)
-  content.value = `${before}@${serverName} ${tail}`
-  selectedMcpContext.value = { server_name: serverName }
-  mcpSelectorVisible.value = false
-}
-
-function onMcpClose() {
-  const st = getMentionState(content.value)
-  if (st.active) {
-    content.value = content.value.slice(0, st.atIndex) + content.value.slice(st.atIndex + 1 + st.filter.length)
+  export interface AttachmentItem {
+    url: string
+    filename: string
+    isImage?: boolean
   }
-  mcpSelectorVisible.value = false
-}
 
-// CHATADV-010: Web Speech API for voice input
-interface WebSpeechRecognition extends EventTarget {
-  continuous: boolean
-  interimResults: boolean
-  lang: string
-  start: () => void
-  stop: () => void
-  onresult: ((e: { resultIndex: number; results: { length: number; [i: number]: { [j: number]: { transcript: string } } } }) => void) | null
-  onerror: ((e: Event) => void) | null
-  onend: (() => void) | null
-}
-const speechSupported = computed(() => {
-  const w = window as Window & { SpeechRecognition?: new () => WebSpeechRecognition; webkitSpeechRecognition?: new () => WebSpeechRecognition }
-  return typeof w.SpeechRecognition !== 'undefined' || typeof w.webkitSpeechRecognition !== 'undefined'
-})
-const isRecording = ref(false)
-let recognition: WebSpeechRecognition | null = null
+  export interface RChatInputProps {
+    disabled?: boolean
+    loading?: boolean
+    isStreaming?: boolean
+    placeholder?: string
+    maxLength?: number
+    webSearchEnabled?: boolean
+    /** CHATADV-001: upload file and return URL; when provided, attachment button is enabled */
+    uploadFile?: (file: File) => Promise<{ url: string; filename?: string }>
+    /** Running MCP servers for @ mention */
+    mcpServers?: MCPServerOption[]
+    /** URLs staged outside this input (e.g. chat page image/file widgets); merged into send payload before paperclip attachments */
+    stagedAttachmentUrls?: string[]
+  }
 
-function startVoiceInput() {
-  if (!speechSupported.value || props.disabled || props.loading) return
-  const w = window as Window & { SpeechRecognition?: new () => WebSpeechRecognition; webkitSpeechRecognition?: new () => WebSpeechRecognition }
-  const SR = w.SpeechRecognition || w.webkitSpeechRecognition
-  if (!SR) return
-  recognition = new SR()
-  recognition.continuous = true
-  recognition.interimResults = true
-  recognition.lang = navigator.language || 'zh-CN'
-  recognition.onresult = (e: { resultIndex: number; results: { length: number; [i: number]: { [j: number]: { transcript: string } } } }) => {
-    let transcript = ''
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      transcript += e.results[i][0].transcript
+  interface Emits {
+    (
+      e: 'send-with-mcp',
+      content: string,
+      mcpContext: { server_name: string } | null,
+      attachments?: string[],
+    ): void
+    (e: 'stop'): void
+    (e: 'update:webSearchEnabled', value: boolean): void
+  }
+
+  const props = withDefaults(defineProps<RChatInputProps>(), {
+    disabled: false,
+    loading: false,
+    isStreaming: false,
+    placeholder: '输入消息...',
+    maxLength: 4096,
+    webSearchEnabled: false,
+    mcpServers: () => [],
+    stagedAttachmentUrls: () => [],
+  })
+
+  const msg = useMessage()
+  const emit = defineEmits<Emits>()
+  const content = ref('')
+  const inputRef = ref<{ focus: () => void } | null>(null)
+  const mcpSelectorRef = ref<{ handleParentKeydown: (e: KeyboardEvent) => boolean } | null>(null)
+  const fileInputRef = ref<HTMLInputElement | null>(null)
+  const attachments = ref<AttachmentItem[]>([])
+  const uploadIng = ref(false)
+  const mcpSelectorVisible = ref(false)
+  const mcpFilterText = ref('')
+  const selectedMcpContext = ref<{ server_name: string } | null>(null)
+
+  const canSend = computed(
+    () =>
+      content.value.trim().length > 0 ||
+      attachments.value.length > 0 ||
+      (props.stagedAttachmentUrls?.length ?? 0) > 0,
+  )
+
+  function getMentionState(text: string): { active: boolean; filter: string; atIndex: number } {
+    const lastAt = text.lastIndexOf('@')
+    if (lastAt === -1) return { active: false, filter: '', atIndex: -1 }
+    const after = text.slice(lastAt + 1)
+    if (after.includes(' ')) return { active: false, filter: '', atIndex: -1 }
+    return { active: true, filter: after, atIndex: lastAt }
+  }
+
+  watch(content, () => {
+    const st = getMentionState(content.value)
+    mcpSelectorVisible.value = st.active && props.mcpServers.length > 0
+    mcpFilterText.value = st.filter
+  })
+
+  function onMcpSelect(serverName: string) {
+    const st = getMentionState(content.value)
+    if (!st.active) return
+    const before = content.value.slice(0, st.atIndex)
+    const tail = content.value.slice(st.atIndex + 1 + st.filter.length)
+    content.value = `${before}@${serverName} ${tail}`
+    selectedMcpContext.value = { server_name: serverName }
+    mcpSelectorVisible.value = false
+  }
+
+  function onMcpClose() {
+    const st = getMentionState(content.value)
+    if (st.active) {
+      content.value =
+        content.value.slice(0, st.atIndex) + content.value.slice(st.atIndex + 1 + st.filter.length)
     }
-    if (transcript) content.value = (content.value + transcript).trim()
+    mcpSelectorVisible.value = false
   }
-  recognition.onerror = () => { isRecording.value = false }
-  recognition.onend = () => { isRecording.value = false }
-  isRecording.value = true
-  recognition.start()
-}
 
-function stopVoiceInput() {
-  if (recognition && isRecording.value) {
-    recognition.stop()
-    recognition = null
-    isRecording.value = false
+  // CHATADV-010: Web Speech API for voice input
+  interface WebSpeechRecognition extends EventTarget {
+    continuous: boolean
+    interimResults: boolean
+    lang: string
+    start: () => void
+    stop: () => void
+    onresult:
+      | ((e: {
+          resultIndex: number
+          results: { length: number; [i: number]: { [j: number]: { transcript: string } } }
+        }) => void)
+      | null
+    onerror: ((e: Event) => void) | null
+    onend: (() => void) | null
   }
-}
+  const speechSupported = computed(() => {
+    const w = window as Window & {
+      SpeechRecognition?: new () => WebSpeechRecognition
+      webkitSpeechRecognition?: new () => WebSpeechRecognition
+    }
+    return (
+      typeof w.SpeechRecognition !== 'undefined' || typeof w.webkitSpeechRecognition !== 'undefined'
+    )
+  })
+  const isRecording = ref(false)
+  let recognition: WebSpeechRecognition | null = null
 
-function toggleVoiceInput() {
-  if (isRecording.value) stopVoiceInput()
-  else startVoiceInput()
-}
-
-onUnmounted(() => stopVoiceInput())
-
-function focus() {
-  inputRef.value?.focus?.()
-}
-
-defineExpose({ focus })
-
-function detectMcpMention(text: string): { server_name: string } | null {
-  if (selectedMcpContext.value) return selectedMcpContext.value
-  const match = text.match(/^@(\S+)\s/)
-  if (!match) return null
-  const name = match[1]
-  if (props.mcpServers.some((s) => s.server_name === name)) {
-    return { server_name: name }
+  function startVoiceInput() {
+    if (!speechSupported.value || props.disabled || props.loading) return
+    const w = window as Window & {
+      SpeechRecognition?: new () => WebSpeechRecognition
+      webkitSpeechRecognition?: new () => WebSpeechRecognition
+    }
+    const SR = w.SpeechRecognition || w.webkitSpeechRecognition
+    if (!SR) return
+    recognition = new SR()
+    recognition.continuous = true
+    recognition.interimResults = true
+    recognition.lang = navigator.language || 'zh-CN'
+    recognition.onresult = (e: {
+      resultIndex: number
+      results: { length: number; [i: number]: { [j: number]: { transcript: string } } }
+    }) => {
+      let transcript = ''
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        transcript += e.results[i][0].transcript
+      }
+      if (transcript) content.value = (content.value + transcript).trim()
+    }
+    recognition.onerror = () => {
+      isRecording.value = false
+    }
+    recognition.onend = () => {
+      isRecording.value = false
+    }
+    isRecording.value = true
+    recognition.start()
   }
-  return null
-}
 
-function handleSend() {
-  const trimmed = content.value.trim()
-  const staged = props.stagedAttachmentUrls ?? []
-  if (!trimmed && attachments.value.length === 0 && staged.length === 0) return
-  const urls = [...staged, ...attachments.value.map((a) => a.url)]
-  const mcpCtx = detectMcpMention(trimmed)
-  emit('send-with-mcp', trimmed || '', mcpCtx, urls.length ? urls : undefined)
-  content.value = ''
-  attachments.value = []
-  selectedMcpContext.value = null
-}
-
-function handleStop() {
-  emit('stop')
-}
-
-function handleKeydown(e: KeyboardEvent) {
-  if (mcpSelectorVisible.value && mcpSelectorRef.value?.handleParentKeydown(e)) {
-    return
+  function stopVoiceInput() {
+    if (recognition && isRecording.value) {
+      recognition.stop()
+      recognition = null
+      isRecording.value = false
+    }
   }
-  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !props.isStreaming) {
-    e.preventDefault()
-    handleSend()
+
+  function toggleVoiceInput() {
+    if (isRecording.value) stopVoiceInput()
+    else startVoiceInput()
   }
-}
 
-function triggerFileSelect() {
-  if (!props.uploadFile || props.disabled || props.loading) return
-  fileInputRef.value?.click()
-}
+  onUnmounted(() => stopVoiceInput())
 
-async function onFileChange(e: Event) {
-  const input = e.target as HTMLInputElement
-  const file = input.files?.[0]
-  input.value = ''
-  if (!file || !props.uploadFile) return
-  uploadIng.value = true
-  try {
-    const res = await props.uploadFile(file)
-    attachments.value.push({
-      url: res.url,
-      filename: res.filename ?? file.name,
-      isImage: file.type.startsWith('image/'),
-    })
-  } catch (err) {
-    msg.error(err instanceof Error ? err.message : '上传失败')
-  } finally {
-    uploadIng.value = false
+  function focus() {
+    inputRef.value?.focus?.()
   }
-}
 
-function removeAttachment(index: number) {
-  attachments.value = attachments.value.filter((_, i) => i !== index)
-}
+  defineExpose({ focus })
+
+  function detectMcpMention(text: string): { server_name: string } | null {
+    if (selectedMcpContext.value) return selectedMcpContext.value
+    const match = text.match(/^@(\S+)\s/)
+    if (!match) return null
+    const name = match[1]
+    if (props.mcpServers.some((s) => s.server_name === name)) {
+      return { server_name: name }
+    }
+    return null
+  }
+
+  function handleSend() {
+    const trimmed = content.value.trim()
+    const staged = props.stagedAttachmentUrls ?? []
+    if (!trimmed && attachments.value.length === 0 && staged.length === 0) return
+    const urls = [...staged, ...attachments.value.map((a) => a.url)]
+    const mcpCtx = detectMcpMention(trimmed)
+    emit('send-with-mcp', trimmed || '', mcpCtx, urls.length ? urls : undefined)
+    content.value = ''
+    attachments.value = []
+    selectedMcpContext.value = null
+  }
+
+  function handleStop() {
+    emit('stop')
+  }
+
+  function handleKeydown(e: KeyboardEvent) {
+    if (mcpSelectorVisible.value && mcpSelectorRef.value?.handleParentKeydown(e)) {
+      return
+    }
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !props.isStreaming) {
+      e.preventDefault()
+      handleSend()
+    }
+  }
+
+  function triggerFileSelect() {
+    if (!props.uploadFile || props.disabled || props.loading) return
+    fileInputRef.value?.click()
+  }
+
+  async function onFileChange(e: Event) {
+    const input = e.target as HTMLInputElement
+    const file = input.files?.[0]
+    input.value = ''
+    if (!file || !props.uploadFile) return
+    uploadIng.value = true
+    try {
+      const res = await props.uploadFile(file)
+      attachments.value.push({
+        url: res.url,
+        filename: res.filename ?? file.name,
+        isImage: file.type.startsWith('image/'),
+      })
+    } catch (err) {
+      msg.error(err instanceof Error ? err.message : '上传失败')
+    } finally {
+      uploadIng.value = false
+    }
+  }
+
+  function removeAttachment(index: number) {
+    attachments.value = attachments.value.filter((_, i) => i !== index)
+  }
 </script>
 
 <template>
@@ -269,24 +295,13 @@ function removeAttachment(index: number) {
           accept="image/*,.pdf,.doc,.docx,.txt"
           class="r-chat-input__file-input"
           @change="onFileChange"
-        >
+        />
       </div>
       <div v-if="attachments.length" class="r-chat-input__attachments">
-        <div
-          v-for="(att, idx) in attachments"
-          :key="att.url"
-          class="r-chat-input__attachment"
-        >
-          <img
-            v-if="att.isImage"
-            :src="att.url"
-            :alt="att.filename"
-            class="r-chat-input__thumb"
-          >
+        <div v-for="(att, idx) in attachments" :key="att.url" class="r-chat-input__attachment">
+          <img v-if="att.isImage" :src="att.url" :alt="att.filename" class="r-chat-input__thumb" />
           <span v-else class="r-chat-input__filename">{{ att.filename }}</span>
-          <NButton size="tiny" quaternary @click="removeAttachment(idx)">
-            ×
-          </NButton>
+          <NButton size="tiny" quaternary @click="removeAttachment(idx)"> × </NButton>
         </div>
       </div>
       <div class="r-chat-input__input-area">
@@ -340,66 +355,73 @@ function removeAttachment(index: number) {
 </template>
 
 <style scoped>
-.r-chat-input__wrapper {
-  width: 100%;
-}
-.r-chat-input__toolbar {
-  display: flex;
-  gap: var(--ra-spacing-1, 4px);
-  margin-bottom: var(--ra-spacing-1, 4px);
-}
-.r-chat-input__input-area {
-  position: relative;
-  width: 100%;
-}
-.r-chat-input__textarea {
-  width: 100%;
-}
-.r-chat-input__file-input {
-  display: none;
-}
-.r-chat-input__attachments {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 4px;
-}
-.r-chat-input__attachment {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 2px 6px;
-  background: var(--ra-color-bg-2, #f0f0f0);
-  border-radius: 4px;
-}
-.r-chat-input__thumb {
-  width: 40px;
-  height: 40px;
-  object-fit: cover;
-  border-radius: 4px;
-}
-.r-chat-input__filename {
-  font-size: 12px;
-  max-width: 80px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.r-chat-input__voice-content {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-.r-chat-input__recording-dot {
-  width: 6px;
-  height: 6px;
-  background: #e74c3c;
-  border-radius: 50%;
-  flex-shrink: 0;
-  animation: r-chat-input__pulse 1s ease-in-out infinite;
-}
-@keyframes r-chat-input__pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.3); opacity: 0.7; }
-}
+  .r-chat-input__wrapper {
+    width: 100%;
+  }
+  .r-chat-input__toolbar {
+    display: flex;
+    gap: var(--ra-spacing-1, 4px);
+    margin-bottom: var(--ra-spacing-1, 4px);
+  }
+  .r-chat-input__input-area {
+    position: relative;
+    width: 100%;
+  }
+  .r-chat-input__textarea {
+    width: 100%;
+  }
+  .r-chat-input__file-input {
+    display: none;
+  }
+  .r-chat-input__attachments {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .r-chat-input__attachment {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 6px;
+    background: var(--ra-color-bg-2, #f0f0f0);
+    border-radius: 4px;
+  }
+  .r-chat-input__thumb {
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
+    border-radius: 4px;
+  }
+  .r-chat-input__filename {
+    font-size: 12px;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .r-chat-input__voice-content {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .r-chat-input__recording-dot {
+    width: 6px;
+    height: 6px;
+    background: #e74c3c;
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: r-chat-input__pulse 1s ease-in-out infinite;
+  }
+  @keyframes r-chat-input__pulse {
+    0%,
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.3);
+      opacity: 0.7;
+    }
+  }
 </style>

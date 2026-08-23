@@ -5,7 +5,7 @@
 </template>
 
 <script setup lang="ts">
-import { NTabs } from 'naive-ui'
+  import { NTabs } from 'naive-ui'
 
-const tab = defineModel<string>('tab', { required: true })
+  const tab = defineModel<string>('tab', { required: true })
 </script>

@@ -1,33 +1,33 @@
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue'
-import type { ICellEditorParams } from 'ag-grid-community'
+  import { ref, onMounted } from 'vue'
+  import type { ICellEditorParams } from 'ag-grid-community'
 
-const props = defineProps<{ params: ICellEditorParams }>()
-const inputRef = ref<HTMLInputElement | null>(null)
-const yearValue = ref<string>('')
+  const props = defineProps<{ params: ICellEditorParams }>()
+  const inputRef = ref<HTMLInputElement | null>(null)
+  const yearValue = ref<string>('')
 
-onMounted(() => {
-  const v = props.params.value
-  if (v) yearValue.value = typeof v === 'number' ? String(v) : String(parseInt(v) || '')
-  setTimeout(() => {
-    inputRef.value?.focus()
-    inputRef.value?.select()
-  }, 0)
-})
+  onMounted(() => {
+    const v = props.params.value
+    if (v) yearValue.value = typeof v === 'number' ? String(v) : String(parseInt(v) || '')
+    setTimeout(() => {
+      inputRef.value?.focus()
+      inputRef.value?.select()
+    }, 0)
+  })
 
-function getValue(): string {
-  const y = parseInt(yearValue.value)
-  return !isNaN(y) && y >= 1900 && y <= 2100 ? String(y) : ''
-}
+  function getValue(): string {
+    const y = parseInt(yearValue.value)
+    return !isNaN(y) && y >= 1900 && y <= 2100 ? String(y) : ''
+  }
 
-function isCancelBeforeStart() {
-  return false
-}
-function isCancelAfterEnd() {
-  return false
-}
+  function isCancelBeforeStart() {
+    return false
+  }
+  function isCancelAfterEnd() {
+    return false
+  }
 
-defineExpose({ getValue, isCancelBeforeStart, isCancelAfterEnd })
+  defineExpose({ getValue, isCancelBeforeStart, isCancelAfterEnd })
 </script>
 
 <template>
@@ -46,14 +46,14 @@ defineExpose({ getValue, isCancelBeforeStart, isCancelAfterEnd })
 </template>
 
 <style>
-.rdg-cell-editor--year {
-  width: 100%;
-  height: 100%;
-  border: 2px solid var(--ra-color-brand-primary, #0969da);
-  border-radius: 3px;
-  padding: 4px 8px;
-  font-size: 14px;
-  outline: none;
-  box-sizing: border-box;
-}
+  .rdg-cell-editor--year {
+    width: 100%;
+    height: 100%;
+    border: 2px solid var(--ra-color-brand-primary, #0969da);
+    border-radius: 3px;
+    padding: 4px 8px;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+  }
 </style>

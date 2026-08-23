@@ -88,7 +88,10 @@ export interface CreateHighlightInput {
 export interface HighlightApiAdapter {
   listHighlights: (query: HighlightSourceQuery) => Promise<{ items: HighlightItem[] }>
   createHighlight: (input: CreateHighlightInput) => Promise<HighlightItem>
-  updateHighlight: (id: number, data: Partial<Pick<HighlightItem, 'color' | 'note' | 'sort_order'>>) => Promise<void>
+  updateHighlight: (
+    id: number,
+    data: Partial<Pick<HighlightItem, 'color' | 'note' | 'sort_order'>>,
+  ) => Promise<void>
   deleteHighlight: (id: number) => Promise<void>
   copyText: (query: HighlightSourceQuery) => Promise<{ text: string }>
   batchDelete: (query: HighlightSourceQuery) => Promise<void>

@@ -1,211 +1,211 @@
 <script lang="ts" setup>
-import type { Editor } from '@tiptap/vue-3'
-import type { ToolbarConfig } from '../types'
-import ToolbarButton from './ToolbarButton.vue'
-import { ref, onMounted, onBeforeUnmount } from 'vue'
-import {
-  Bold,
-  Italic,
-  Underline,
-  Strikethrough,
-  Code,
-  Highlighter,
-  Heading1,
-  Heading2,
-  Heading3,
-  List,
-  ListOrdered,
-  ListChecks,
-  Quote,
-  Braces,
-  Minus,
-  Table,
-  Link,
-  Image,
-  Paperclip,
-  GitBranch,
-  LayoutGrid,
-  TableOfContents,
-  Undo2,
-  Redo2,
-  X,
-} from 'lucide-vue-next'
+  import type { Editor } from '@tiptap/vue-3'
+  import type { ToolbarConfig } from '../types'
+  import ToolbarButton from './ToolbarButton.vue'
+  import { ref, onMounted, onBeforeUnmount } from 'vue'
+  import {
+    Bold,
+    Italic,
+    Underline,
+    Strikethrough,
+    Code,
+    Highlighter,
+    Heading1,
+    Heading2,
+    Heading3,
+    List,
+    ListOrdered,
+    ListChecks,
+    Quote,
+    Braces,
+    Minus,
+    Table,
+    Link,
+    Image,
+    Paperclip,
+    GitBranch,
+    LayoutGrid,
+    TableOfContents,
+    Undo2,
+    Redo2,
+    X,
+  } from 'lucide-vue-next'
 
-const props = defineProps<{
-  editor: Editor
-  config?: ToolbarConfig | false
-  onImageUpload?: () => void
-  onFileUpload?: () => void
-}>()
+  const props = defineProps<{
+    editor: Editor
+    config?: ToolbarConfig | false
+    onImageUpload?: () => void
+    onFileUpload?: () => void
+  }>()
 
-/** TipTap ChainedCommands typing does not include all StarterKit / extension commands. */
-function edChain() {
-  return props.editor.chain().focus() as any
-}
-
-function is(key: keyof ToolbarConfig): boolean {
-  if (props.config === false) return false
-  if (!props.config) return true
-  return props.config[key] !== false
-}
-
-// Dropdown state
-const showTableMenu = ref(false)
-const showCodeBlockMenu = ref(false)
-const showHighlightMenu = ref(false)
-const showLinkInput = ref(false)
-const linkUrl = ref('')
-
-function closeAllMenus() {
-  showTableMenu.value = false
-  showCodeBlockMenu.value = false
-  showHighlightMenu.value = false
-  showLinkInput.value = false
-}
-
-function toggleMenu(menu: 'table' | 'codeBlock' | 'highlight' | 'link') {
-  const isOpen =
-    menu === 'table'
-      ? showTableMenu.value
-      : menu === 'codeBlock'
-        ? showCodeBlockMenu.value
-        : menu === 'highlight'
-          ? showHighlightMenu.value
-          : showLinkInput.value
-  closeAllMenus()
-  if (!isOpen) {
-    if (menu === 'table') showTableMenu.value = true
-    else if (menu === 'codeBlock') showCodeBlockMenu.value = true
-    else if (menu === 'highlight') showHighlightMenu.value = true
-    else showLinkInput.value = true
+  /** TipTap ChainedCommands typing does not include all StarterKit / extension commands. */
+  function edChain() {
+    return props.editor.chain().focus() as any
   }
-}
 
-function handleClickOutside(e: MouseEvent) {
-  const toolbar = (e.target as Element)?.closest('.rrte-menubar')
-  if (!toolbar) closeAllMenus()
-}
-
-onMounted(() => document.addEventListener('click', handleClickOutside))
-onBeforeUnmount(() => document.removeEventListener('click', handleClickOutside))
-
-function insertCodeBlock(lang: string | null) {
-  if (lang) {
-    edChain().toggleCodeBlock({ language: lang }).run()
-  } else {
-    edChain().toggleCodeBlock().run()
+  function is(key: keyof ToolbarConfig): boolean {
+    if (props.config === false) return false
+    if (!props.config) return true
+    return props.config[key] !== false
   }
-  closeAllMenus()
-}
 
-const HIGHLIGHT_COLORS = ['#ffe066', '#ffccc7', '#b7eb8f', '#91caff', '#d3adf7', '#f5f5f5']
+  // Dropdown state
+  const showTableMenu = ref(false)
+  const showCodeBlockMenu = ref(false)
+  const showHighlightMenu = ref(false)
+  const showLinkInput = ref(false)
+  const linkUrl = ref('')
 
-function setHighlight(color: string) {
-  edChain().toggleHighlight({ color }).run()
-  closeAllMenus()
-}
+  function closeAllMenus() {
+    showTableMenu.value = false
+    showCodeBlockMenu.value = false
+    showHighlightMenu.value = false
+    showLinkInput.value = false
+  }
 
-function clearHighlight() {
-  edChain().unsetHighlight().run()
-  closeAllMenus()
-}
+  function toggleMenu(menu: 'table' | 'codeBlock' | 'highlight' | 'link') {
+    const isOpen =
+      menu === 'table'
+        ? showTableMenu.value
+        : menu === 'codeBlock'
+          ? showCodeBlockMenu.value
+          : menu === 'highlight'
+            ? showHighlightMenu.value
+            : showLinkInput.value
+    closeAllMenus()
+    if (!isOpen) {
+      if (menu === 'table') showTableMenu.value = true
+      else if (menu === 'codeBlock') showCodeBlockMenu.value = true
+      else if (menu === 'highlight') showHighlightMenu.value = true
+      else showLinkInput.value = true
+    }
+  }
 
-function insertTable() {
-  edChain().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
-  closeAllMenus()
-}
+  function handleClickOutside(e: MouseEvent) {
+    const toolbar = (e.target as Element)?.closest('.rrte-menubar')
+    if (!toolbar) closeAllMenus()
+  }
 
-function addColumnBefore() {
-  edChain().addColumnBefore().run()
-  closeAllMenus()
-}
+  onMounted(() => document.addEventListener('click', handleClickOutside))
+  onBeforeUnmount(() => document.removeEventListener('click', handleClickOutside))
 
-function addColumnAfter() {
-  edChain().addColumnAfter().run()
-  closeAllMenus()
-}
+  function insertCodeBlock(lang: string | null) {
+    if (lang) {
+      edChain().toggleCodeBlock({ language: lang }).run()
+    } else {
+      edChain().toggleCodeBlock().run()
+    }
+    closeAllMenus()
+  }
 
-function deleteColumn() {
-  edChain().deleteColumn().run()
-  closeAllMenus()
-}
+  const HIGHLIGHT_COLORS = ['#ffe066', '#ffccc7', '#b7eb8f', '#91caff', '#d3adf7', '#f5f5f5']
 
-function addRowBefore() {
-  edChain().addRowBefore().run()
-  closeAllMenus()
-}
+  function setHighlight(color: string) {
+    edChain().toggleHighlight({ color }).run()
+    closeAllMenus()
+  }
 
-function addRowAfter() {
-  edChain().addRowAfter().run()
-  closeAllMenus()
-}
+  function clearHighlight() {
+    edChain().unsetHighlight().run()
+    closeAllMenus()
+  }
 
-function deleteRow() {
-  edChain().deleteRow().run()
-  closeAllMenus()
-}
+  function insertTable() {
+    edChain().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()
+    closeAllMenus()
+  }
 
-function mergeCells() {
-  edChain().mergeCells().run()
-  closeAllMenus()
-}
+  function addColumnBefore() {
+    edChain().addColumnBefore().run()
+    closeAllMenus()
+  }
 
-function splitCell() {
-  edChain().splitCell().run()
-  closeAllMenus()
-}
+  function addColumnAfter() {
+    edChain().addColumnAfter().run()
+    closeAllMenus()
+  }
 
-function toggleHeaderRow() {
-  edChain().toggleHeaderRow().run()
-  closeAllMenus()
-}
+  function deleteColumn() {
+    edChain().deleteColumn().run()
+    closeAllMenus()
+  }
 
-function deleteTable() {
-  edChain().deleteTable().run()
-  closeAllMenus()
-}
+  function addRowBefore() {
+    edChain().addRowBefore().run()
+    closeAllMenus()
+  }
 
-function removeLink() {
-  edChain().unsetLink().run()
-  closeAllMenus()
-}
+  function addRowAfter() {
+    edChain().addRowAfter().run()
+    closeAllMenus()
+  }
 
-function confirmLink() {
-  if (linkUrl.value) {
-    edChain().extendMarkRange('link').setLink({ href: linkUrl.value }).run()
-  } else {
+  function deleteRow() {
+    edChain().deleteRow().run()
+    closeAllMenus()
+  }
+
+  function mergeCells() {
+    edChain().mergeCells().run()
+    closeAllMenus()
+  }
+
+  function splitCell() {
+    edChain().splitCell().run()
+    closeAllMenus()
+  }
+
+  function toggleHeaderRow() {
+    edChain().toggleHeaderRow().run()
+    closeAllMenus()
+  }
+
+  function deleteTable() {
+    edChain().deleteTable().run()
+    closeAllMenus()
+  }
+
+  function removeLink() {
     edChain().unsetLink().run()
+    closeAllMenus()
   }
-  linkUrl.value = ''
-  showLinkInput.value = false
-}
 
-function insertMermaid() {
-  const template =
-    'graph TD;\n  A[开始] --> B{条件?};\n  B -- 是 --> C[执行任务];\n  B -- 否 --> D[结束];'
-  edChain().insertMermaidBlock(template).run()
-}
+  function confirmLink() {
+    if (linkUrl.value) {
+      edChain().extendMarkRange('link').setLink({ href: linkUrl.value }).run()
+    } else {
+      edChain().unsetLink().run()
+    }
+    linkUrl.value = ''
+    showLinkInput.value = false
+  }
 
-function insertGrid() {
-  edChain().insertGridBlock().run()
-}
+  function insertMermaid() {
+    const template =
+      'graph TD;\n  A[开始] --> B{条件?};\n  B -- 是 --> C[执行任务];\n  B -- 否 --> D[结束];'
+    edChain().insertMermaidBlock(template).run()
+  }
 
-function insertToc() {
-  edChain().insertTableOfContents().run()
-}
+  function insertGrid() {
+    edChain().insertGridBlock().run()
+  }
 
-const CODE_LANGUAGES = [
-  { label: 'JavaScript', value: 'javascript' },
-  { label: 'TypeScript', value: 'typescript' },
-  { label: 'Python', value: 'python' },
-  { label: 'Java', value: 'java' },
-  { label: 'Go', value: 'go' },
-  { label: 'HTML', value: 'html' },
-  { label: 'CSS', value: 'css' },
-  { label: 'JSON', value: 'json' },
-  { label: 'SQL', value: 'sql' },
-  { label: 'Shell', value: 'bash' },
-]
+  function insertToc() {
+    edChain().insertTableOfContents().run()
+  }
+
+  const CODE_LANGUAGES = [
+    { label: 'JavaScript', value: 'javascript' },
+    { label: 'TypeScript', value: 'typescript' },
+    { label: 'Python', value: 'python' },
+    { label: 'Java', value: 'java' },
+    { label: 'Go', value: 'go' },
+    { label: 'HTML', value: 'html' },
+    { label: 'CSS', value: 'css' },
+    { label: 'JSON', value: 'json' },
+    { label: 'SQL', value: 'sql' },
+    { label: 'Shell', value: 'bash' },
+  ]
 </script>
 
 <template>
@@ -509,175 +509,175 @@ const CODE_LANGUAGES = [
 </template>
 
 <style>
-.rrte-menubar {
-  display: flex;
-  align-items: center;
-  gap: 2px;
-  padding: 6px 8px;
-  border-bottom: 1px solid var(--ra-color-border-light, #e5e7eb);
-  background: var(--ra-color-bg-surface-secondary, #f6f8fa);
-  flex-wrap: wrap;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-}
+  .rrte-menubar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 6px 8px;
+    border-bottom: 1px solid var(--ra-color-border-light, #e5e7eb);
+    background: var(--ra-color-bg-surface-secondary, #f6f8fa);
+    flex-wrap: wrap;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
 
-.rrte-menubar__group {
-  display: flex;
-  align-items: center;
-  gap: 1px;
-}
+  .rrte-menubar__group {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+  }
 
-.rrte-menubar__divider {
-  width: 1px;
-  height: 20px;
-  background: var(--ra-color-border-light, #e5e7eb);
-  margin: 0 4px;
-}
+  .rrte-menubar__divider {
+    width: 1px;
+    height: 20px;
+    background: var(--ra-color-border-light, #e5e7eb);
+    margin: 0 4px;
+  }
 
-/* Dropdown */
-.rrte-menubar__dropdown-wrap {
-  position: relative;
-}
+  /* Dropdown */
+  .rrte-menubar__dropdown-wrap {
+    position: relative;
+  }
 
-.rrte-menubar__dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  z-index: 50;
-  min-width: 160px;
-  padding: 4px;
-  background: var(--ra-color-bg-surface, #fff);
-  border: 1px solid var(--ra-color-border-default, #d0d7de);
-  border-radius: var(--ra-radius-md, 6px);
-  box-shadow: var(--ra-shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.12));
-  margin-top: 4px;
-}
+  .rrte-menubar__dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 50;
+    min-width: 160px;
+    padding: 4px;
+    background: var(--ra-color-bg-surface, #fff);
+    border: 1px solid var(--ra-color-border-default, #d0d7de);
+    border-radius: var(--ra-radius-md, 6px);
+    box-shadow: var(--ra-shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.12));
+    margin-top: 4px;
+  }
 
-.rrte-menubar__dropdown--colors {
-  display: flex;
-  gap: 4px;
-  padding: 8px;
-  min-width: auto;
-  flex-wrap: wrap;
-  align-items: center;
-}
+  .rrte-menubar__dropdown--colors {
+    display: flex;
+    gap: 4px;
+    padding: 8px;
+    min-width: auto;
+    flex-wrap: wrap;
+    align-items: center;
+  }
 
-.rrte-menubar__dropdown--link {
-  display: flex;
-  gap: 4px;
-  padding: 8px;
-  min-width: 280px;
-  align-items: center;
-}
+  .rrte-menubar__dropdown--link {
+    display: flex;
+    gap: 4px;
+    padding: 8px;
+    min-width: 280px;
+    align-items: center;
+  }
 
-.rrte-menubar__dropdown-item {
-  display: block;
-  width: 100%;
-  padding: 5px 10px;
-  font-size: 13px;
-  text-align: left;
-  border: none;
-  border-radius: var(--ra-radius-sm, 3px);
-  background: transparent;
-  color: var(--ra-color-text-secondary, #57606a);
-  cursor: pointer;
-  transition: all 0.1s ease;
-}
+  .rrte-menubar__dropdown-item {
+    display: block;
+    width: 100%;
+    padding: 5px 10px;
+    font-size: 13px;
+    text-align: left;
+    border: none;
+    border-radius: var(--ra-radius-sm, 3px);
+    background: transparent;
+    color: var(--ra-color-text-secondary, #57606a);
+    cursor: pointer;
+    transition: all 0.1s ease;
+  }
 
-.rrte-menubar__dropdown-item:hover {
-  background: var(--ra-color-bg-muted, #f3f4f6);
-  color: var(--ra-color-text-primary, #24292f);
-}
+  .rrte-menubar__dropdown-item:hover {
+    background: var(--ra-color-bg-muted, #f3f4f6);
+    color: var(--ra-color-text-primary, #24292f);
+  }
 
-.rrte-menubar__dropdown-item--danger {
-  color: var(--ra-color-danger, #cf222e);
-}
+  .rrte-menubar__dropdown-item--danger {
+    color: var(--ra-color-danger, #cf222e);
+  }
 
-.rrte-menubar__dropdown-item--danger:hover {
-  background: #fef2f2;
-}
+  .rrte-menubar__dropdown-item--danger:hover {
+    background: #fef2f2;
+  }
 
-.rrte-menubar__dropdown-sep {
-  height: 1px;
-  background: var(--ra-color-border-light, #e5e7eb);
-  margin: 4px 0;
-}
+  .rrte-menubar__dropdown-sep {
+    height: 1px;
+    background: var(--ra-color-border-light, #e5e7eb);
+    margin: 4px 0;
+  }
 
-/* Color swatch */
-.rrte-color-swatch {
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  cursor: pointer;
-  border: 1px solid var(--ra-color-border-light, #e5e7eb);
-  transition: transform 0.1s ease;
-}
+  /* Color swatch */
+  .rrte-color-swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 1px solid var(--ra-color-border-light, #e5e7eb);
+    transition: transform 0.1s ease;
+  }
 
-.rrte-color-swatch:hover {
-  transform: scale(1.15);
-}
+  .rrte-color-swatch:hover {
+    transform: scale(1.15);
+  }
 
-.rrte-color-clear {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  border: 1px solid var(--ra-color-border-light, #e5e7eb);
-  background: var(--ra-color-bg-surface, #fff);
-  cursor: pointer;
-  color: var(--ra-color-text-secondary, #57606a);
-}
+  .rrte-color-clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    border: 1px solid var(--ra-color-border-light, #e5e7eb);
+    background: var(--ra-color-bg-surface, #fff);
+    cursor: pointer;
+    color: var(--ra-color-text-secondary, #57606a);
+  }
 
-.rrte-color-clear:hover {
-  background: var(--ra-color-bg-muted, #f3f4f6);
-}
+  .rrte-color-clear:hover {
+    background: var(--ra-color-bg-muted, #f3f4f6);
+  }
 
-/* Link input */
-.rrte-link-input {
-  flex: 1;
-  padding: 4px 8px;
-  font-size: 13px;
-  border: 1px solid var(--ra-color-border-default, #d0d7de);
-  border-radius: var(--ra-radius-sm, 4px);
-  outline: none;
-}
+  /* Link input */
+  .rrte-link-input {
+    flex: 1;
+    padding: 4px 8px;
+    font-size: 13px;
+    border: 1px solid var(--ra-color-border-default, #d0d7de);
+    border-radius: var(--ra-radius-sm, 4px);
+    outline: none;
+  }
 
-.rrte-link-input:focus {
-  border-color: var(--ra-color-brand-primary, #0969da);
-}
+  .rrte-link-input:focus {
+    border-color: var(--ra-color-brand-primary, #0969da);
+  }
 
-.rrte-link-confirm {
-  padding: 4px 10px;
-  font-size: 12px;
-  border: none;
-  border-radius: var(--ra-radius-sm, 4px);
-  background: var(--ra-color-brand-primary, #0969da);
-  color: #fff;
-  cursor: pointer;
-  transition: opacity 0.15s;
-}
+  .rrte-link-confirm {
+    padding: 4px 10px;
+    font-size: 12px;
+    border: none;
+    border-radius: var(--ra-radius-sm, 4px);
+    background: var(--ra-color-brand-primary, #0969da);
+    color: #fff;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
 
-.rrte-link-confirm:hover {
-  opacity: 0.9;
-}
+  .rrte-link-confirm:hover {
+    opacity: 0.9;
+  }
 
-.rrte-link-remove {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 4px 8px;
-  font-size: 12px;
-  border: none;
-  border-radius: var(--ra-radius-sm, 4px);
-  background: transparent;
-  color: var(--ra-color-danger, #cf222e);
-  cursor: pointer;
-}
+  .rrte-link-remove {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 8px;
+    font-size: 12px;
+    border: none;
+    border-radius: var(--ra-radius-sm, 4px);
+    background: transparent;
+    color: var(--ra-color-danger, #cf222e);
+    cursor: pointer;
+  }
 
-.rrte-link-remove:hover {
-  background: #fef2f2;
-}
+  .rrte-link-remove:hover {
+    background: #fef2f2;
+  }
 </style>

@@ -75,6 +75,8 @@ export interface FormFieldSchema {
   disabled?: boolean | ((model: Record<string, unknown>) => boolean)
   component?: Component
   componentProps?: Record<string, unknown>
+  /** Map custom component events to other model fields, e.g. { 'uploaded-url': 'avatar' }. */
+  componentEventMap?: Record<string, string>
   /** When type is 'button-group', allow multiple selection */
   buttonGroupMultiple?: boolean
   /** Group key this field belongs to (used with FormRendererProps.groups) */

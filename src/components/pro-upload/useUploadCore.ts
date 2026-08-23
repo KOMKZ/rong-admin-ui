@@ -43,6 +43,7 @@ interface UploadCoreOptions {
   emit: {
     change: (list: ProUploadFileItem[]) => void
     updateValue: (list: ProUploadFileItem[]) => void
+    updateModelValue: (list: ProUploadFileItem[]) => void
     success: (file: ProUploadFileItem, response: unknown) => void
     error: (file: ProUploadFileItem, err: Error) => void
     exceed: (info: {
@@ -61,10 +62,10 @@ export function useUploadCore(options: UploadCoreOptions) {
   const abortControllers = new Map<string, AbortController>()
   let activeUploads = 0
 
-  const isControlled = computed(() => props.value !== undefined)
+  const isControlled = computed(() => props.modelValue !== undefined || props.value !== undefined)
 
   watch(
-    () => props.value,
+    () => props.modelValue ?? props.value,
     (val) => {
       if (val !== undefined) {
         fileList.value = val
@@ -76,6 +77,7 @@ export function useUploadCore(options: UploadCoreOptions) {
   function syncList(list: ProUploadFileItem[]) {
     fileList.value = list
     emit.updateValue(list)
+    emit.updateModelValue(list)
     emit.change(list)
   }
 
@@ -102,7 +104,7 @@ export function useUploadCore(options: UploadCoreOptions) {
     }
     const fd = new FormData()
     fd.append('file', file)
-    if (props.storage) fd.append('type', props.storage)
+    if (props.storage) fd.append('storage', props.storage)
     if (props.businessId) fd.append('business_id', props.businessId)
     if (props.businessType) fd.append('business_type', props.businessType)
     return fd
@@ -117,10 +119,12 @@ export function useUploadCore(options: UploadCoreOptions) {
       unknown
     >
     return {
-      fileId: (data.id ?? data.file_id) as number | undefined,
-      storageId: (data.storage_id ?? data.storageId) as string | undefined,
-      url: data.url as string | undefined,
-      name: (data.original_name ?? data.original_filename) as string | undefined,
+      fileId: (data.id ?? data.ID ?? data.file_id) as number | undefined,
+      storageId: (data.storage_id ?? data.StorageID ?? data.storageId) as string | undefined,
+      url: (data.url ?? data.URL) as string | undefined,
+      name: (data.original_name ?? data.original_filename ?? data.OriginalFilename) as
+        | string
+        | undefined,
     }
   }
 
@@ -207,7 +211,11 @@ export function useUploadCore(options: UploadCoreOptions) {
 
   function defaultUploadRequest(options: ProUploadRequestOptions) {
     const xhr = new XMLHttpRequest()
-    xhr.open('POST', '/api/admin/files/upload')
+    xhr.open(props.method ?? 'POST', props.action ?? '/api/files/upload')
+    xhr.withCredentials = props.withCredentials ?? false
+    for (const [key, value] of Object.entries(props.headers ?? {})) {
+      xhr.setRequestHeader(key, value)
+    }
 
     xhr.upload.addEventListener('progress', (e) => {
       if (e.lengthComputable) {
@@ -283,6 +291,36 @@ export function useUploadCore(options: UploadCoreOptions) {
     return { valid: true }
   }
 
+  function validateTransformedFile(file: File): {
+    valid: boolean
+    type?: 'size' | 'accept'
+    limit?: number | string
+  } {
+    if (props.maxSizeMB !== undefined) {
+      const maxBytes = props.maxSizeMB * 1024 * 1024
+      if (file.size > maxBytes) {
+        return { valid: false, type: 'size', limit: props.maxSizeMB }
+      }
+    }
+
+    if (props.accept) {
+      const ext = getExtension(file.name)
+      const accepts = props.accept.split(',').map((s) => s.trim().toLowerCase())
+      const matchesExt = accepts.some((a) => a.startsWith('.') && ext === a)
+      const matchesMime = accepts.some((a) => {
+        if (a.endsWith('/*')) {
+          return file.type.startsWith(a.replace('/*', '/'))
+        }
+        return file.type === a
+      })
+      if (!matchesExt && !matchesMime) {
+        return { valid: false, type: 'accept', limit: props.accept }
+      }
+    }
+
+    return { valid: true }
+  }
+
   /* ─── Public API ─── */
 
   async function addFiles(files: File[]) {
@@ -305,7 +343,26 @@ export function useUploadCore(options: UploadCoreOptions) {
         }
       }
 
-      toAdd.push(createFileItem(file, 'queued'))
+      let uploadFile = file
+      if (props.transformFile) {
+        try {
+          uploadFile = await props.transformFile(file, getPayloadContext())
+        } catch {
+          continue
+        }
+      }
+
+      const transformedValidation = validateTransformedFile(uploadFile)
+      if (!transformedValidation.valid) {
+        emit.exceed({
+          type: transformedValidation.type!,
+          file: uploadFile,
+          limit: transformedValidation.limit!,
+        })
+        continue
+      }
+
+      toAdd.push(createFileItem(uploadFile, 'queued'))
     }
 
     if (toAdd.length === 0) return

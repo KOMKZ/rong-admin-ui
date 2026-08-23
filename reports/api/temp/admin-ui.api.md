@@ -6,6 +6,7 @@
 
 import { AllowedComponentProps } from 'vue';
 import { App } from 'vue';
+import { ColDef } from 'ag-grid-community';
 import { Component } from 'vue';
 import { ComponentCustomProperties } from 'vue';
 import { ComponentCustomProps } from 'vue';
@@ -30,25 +31,37 @@ import { ExtractThemeOverrides } from 'naive-ui/es/_mixins/use-theme';
 import { FormInst } from 'naive-ui';
 import { FormRules } from 'naive-ui';
 import { FormValidateMessages } from 'naive-ui/es/form/src/interface';
+import { FormValidationStatus } from 'naive-ui';
 import { FuncOrRecordOrUndef } from 'naive-ui/es/upload/src/interface';
+import { FunctionalComponent } from 'vue';
 import { GlobalComponents } from 'vue';
 import { GlobalDirectives } from 'vue';
 import { GlobalThemeOverrides } from 'naive-ui';
+import { ICellEditorParams } from 'ag-grid-community';
+import { ICellRendererParams } from 'ag-grid-community';
 import { ImageGroupProps } from 'naive-ui';
 import { InputHTMLAttributes } from 'vue';
+import { InputSlots } from 'naive-ui';
 import { LabelAlign } from 'naive-ui/es/form/src/interface';
 import { LabelPlacement } from 'naive-ui/es/form/src/interface';
 import { ListType } from 'naive-ui/es/upload/src/interface';
+import { LucideIcon as LucideIcon_2 } from 'lucide-vue-next';
 import { MaybeArray } from 'naive-ui/es/_utils';
 import { NAlert } from 'naive-ui';
+import { NBadge } from 'naive-ui';
 import { NBreadcrumb } from 'naive-ui';
 import { NBreadcrumbItem } from 'naive-ui';
 import { NButton } from 'naive-ui';
 import { NCard } from 'naive-ui';
+import { NCheckbox } from 'naive-ui';
+import { NCheckboxGroup } from 'naive-ui';
+import { NCollapse } from 'naive-ui';
+import { NCollapseItem } from 'naive-ui';
 import { NConfigProvider } from 'naive-ui';
 import { NDialogProvider } from 'naive-ui';
 import { NDivider } from 'naive-ui';
 import { NDropdown } from 'naive-ui';
+import { NEmpty } from 'naive-ui';
 import { nextTick } from 'vue';
 import { NForm } from 'naive-ui';
 import { NFormItem } from 'naive-ui';
@@ -63,12 +76,19 @@ import { NLayoutHeader } from 'naive-ui';
 import { NLayoutSider } from 'naive-ui';
 import { NMenu } from 'naive-ui';
 import { NMessageProvider } from 'naive-ui';
+import { NPagination } from 'naive-ui';
 import { NPopconfirm } from 'naive-ui';
+import { NPopover } from 'naive-ui';
+import { NProgress } from 'naive-ui';
 import { NSelect } from 'naive-ui';
 import { NSpace } from 'naive-ui';
 import { NStatistic } from 'naive-ui';
+import { NStep } from 'naive-ui';
+import { NSteps } from 'naive-ui';
 import { NSwitch } from 'naive-ui';
 import { NTag } from 'naive-ui';
+import { NTimeline } from 'naive-ui';
+import { NTimelineItem } from 'naive-ui';
 import { NTooltip } from 'naive-ui';
 import { OnBeforeUpload } from 'naive-ui/es/upload/src/interface';
 import { OnCleanup } from '@vue/reactivity';
@@ -76,6 +96,7 @@ import { OnError } from 'naive-ui/es/upload/src/interface';
 import { OnPreview } from 'naive-ui/es/upload/src/interface';
 import { OnRetry } from 'naive-ui/es/upload/src/interface';
 import { OnUpdateFileList } from 'naive-ui/es/upload/src/interface';
+import { OnUpdateValue } from 'naive-ui/es/input/src/interface';
 import { PropType } from 'vue';
 import { PublicProps } from 'vue';
 import { Ref } from 'vue';
@@ -83,10 +104,17 @@ import { RenderIcon } from 'naive-ui/es/upload/src/interface';
 import { Router } from 'vue-router';
 import { RouteRecordRaw } from 'vue-router';
 import { RtlItem } from 'naive-ui/es/config-provider/src/internal-interface';
+import { ScrollbarInst } from 'naive-ui/es/_internal';
+import { ScrollBy } from 'naive-ui/es/_internal/scrollbar/src/Scrollbar';
+import { ScrollTo } from 'naive-ui/es/_internal/scrollbar/src/Scrollbar';
 import { ShallowUnwrapRef } from 'vue';
 import { ShouldUseThumbnailUrl } from 'naive-ui/es/upload/src/interface';
 import { Size } from 'naive-ui/es/form/src/interface';
+import { Size as Size_2 } from 'naive-ui/es/input/src/interface';
 import { Slot } from 'vue';
+import { SlotsType } from 'vue';
+import { SVGAttributes } from 'vue';
+import { TextareaHTMLAttributes } from 'vue';
 import { Theme } from 'naive-ui/es/_mixins';
 import { ThemeCommonVars } from 'naive-ui';
 import { UploadFileInfo } from 'naive-ui';
@@ -96,9 +124,26 @@ import { UploadOnFinish } from 'naive-ui';
 import { UploadOnRemove } from 'naive-ui';
 import { UploadSettledFileInfo } from 'naive-ui';
 import { VNode } from 'vue';
+import { VNodeChild } from 'vue';
 import { VNodeProps } from 'vue';
 import { WatchOptions } from 'vue';
 import { WatchStopHandle } from 'vue';
+
+// @public
+export interface AgentProgress {
+    // (undocumented)
+    agentAvatar?: string;
+    // (undocumented)
+    agentId?: number;
+    // (undocumented)
+    agentName?: string;
+    // (undocumented)
+    currentStep?: number;
+    // (undocumented)
+    status: 'idle' | 'running' | 'done';
+    // (undocumented)
+    totalNodes?: number;
+}
 
 // @public (undocumented)
 export interface ApiResponse<T = unknown> {
@@ -178,6 +223,24 @@ export interface AppErrorHandler {
 }
 
 // @public (undocumented)
+export interface AppMenuItem {
+    // (undocumented)
+    children?: AppMenuItem[];
+    // (undocumented)
+    hidden?: boolean;
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    meta?: Record<string, unknown>;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    path: string;
+    // (undocumented)
+    title: string;
+}
+
+// @public (undocumented)
 export interface AppPlugin {
     // (undocumented)
     install: (app: App, options?: Record<string, unknown>) => void | Promise<void>;
@@ -207,6 +270,14 @@ export interface AppShellProps {
     sidebarCollapsed?: boolean;
     // (undocumented)
     sidebarWidth?: number;
+}
+
+// @public (undocumented)
+export interface ArticleFolderAdapterOptions {
+    // (undocumented)
+    baseUrl: string;
+    // (undocumented)
+    httpClient: TreeHttpClient;
 }
 
 // @public
@@ -255,6 +326,62 @@ export interface AuthStorageKeys {
 }
 
 // @public (undocumented)
+export interface BatchAction {
+    // (undocumented)
+    confirmMessage?: string;
+    // (undocumented)
+    danger?: boolean;
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label: string;
+}
+
+// @public (undocumented)
+export interface BatchActionBarEmits {
+    // (undocumented)
+    action: [key: string, selectedKeys: (string | number)[]];
+    // (undocumented)
+    clear: [];
+}
+
+// @public (undocumented)
+export interface BatchActionBarExpose {
+    // (undocumented)
+    clear: () => void;
+}
+
+// @public (undocumented)
+export interface BatchActionBarProps {
+    // (undocumented)
+    actions: BatchAction[];
+    // (undocumented)
+    clearLabel?: string;
+    // (undocumented)
+    countTemplate?: string;
+    // (undocumented)
+    selectedCount: number;
+    // (undocumented)
+    selectedKeys?: (string | number)[];
+    // (undocumented)
+    visible?: boolean;
+}
+
+// @public (undocumented)
+export interface BatchActionBarSlots {
+    // (undocumented)
+    extra?: (params: {
+        selectedCount: number;
+    }) => VNode;
+    // (undocumented)
+    prefix?: () => VNode;
+}
+
+// @public (undocumented)
 export function bootstrapApp(config: AppBootstrapConfig): Promise<AppContext>;
 
 // @public (undocumented)
@@ -278,6 +405,216 @@ export interface BreadcrumbProps {
     // (undocumented)
     items: BreadcrumbItem[];
 }
+
+// @public (undocumented)
+export function canAccessRoute(uiAuth: UIAuthPayload | null, routePath: string): boolean;
+
+// @public (undocumented)
+export function canvasToBlob(canvas: HTMLCanvasElement, outputType: ImageCropOutputType, quality?: number): Promise<Blob>;
+
+// @public (undocumented)
+export function canvasToFile(canvas: HTMLCanvasElement, sourceFile: File, options?: ImageCropOptions): Promise<File>;
+
+// @public (undocumented)
+export interface ChatConversation {
+    // (undocumented)
+    admin_id: number;
+    // (undocumented)
+    compaction_count?: number;
+    // (undocumented)
+    created_at: string;
+    // (undocumented)
+    favorite?: boolean;
+    // (undocumented)
+    id: number;
+    // (undocumented)
+    last_compaction_at?: string;
+    // (undocumented)
+    message_count: number;
+    // (undocumented)
+    model: string;
+    // (undocumented)
+    pinned?: boolean;
+    // (undocumented)
+    provider_id: number;
+    // (undocumented)
+    status: 'active' | 'archived' | 'deleted';
+    // (undocumented)
+    summary: string;
+    // (undocumented)
+    system_prompt: string;
+    // (undocumented)
+    title: string;
+    // (undocumented)
+    token_usage: number;
+    // (undocumented)
+    updated_at: string;
+}
+
+// @public (undocumented)
+export interface ChatMessage {
+    // (undocumented)
+    content: string;
+    // (undocumented)
+    conversation_id: number;
+    // (undocumented)
+    created_at: string;
+    // (undocumented)
+    feedback?: string;
+    // (undocumented)
+    id: number;
+    // (undocumented)
+    metadata?: Record<string, unknown>;
+    // (undocumented)
+    parent_message_id?: number;
+    // (undocumented)
+    role: 'system' | 'user' | 'assistant' | 'tool';
+    // (undocumented)
+    status: 'active' | 'deleted';
+    // (undocumented)
+    token_count: number;
+}
+
+// @public (undocumented)
+export interface ChatSSEOptions {
+    // (undocumented)
+    body: Record<string, unknown>;
+    // (undocumented)
+    headers?: Record<string, string>;
+    // (undocumented)
+    onChunk: (chunk: SSEChunk) => void;
+    // (undocumented)
+    onDone: () => void;
+    // (undocumented)
+    onError: (error: Error) => void;
+    // (undocumented)
+    url: string;
+}
+
+// @public (undocumented)
+export interface CheckButtonGroupEmits {
+    // (undocumented)
+    'update:modelValue': [value: (string | number)[] | string | number | null];
+    // (undocumented)
+    change: [value: (string | number)[] | string | number | null];
+}
+
+// @public (undocumented)
+export interface CheckButtonGroupExpose {
+    // (undocumented)
+    clearAll: () => void;
+    // (undocumented)
+    getSelected: () => (string | number)[];
+    // (undocumented)
+    selectAll: () => void;
+}
+
+// @public (undocumented)
+export interface CheckButtonGroupProps {
+    // (undocumented)
+    block?: boolean;
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    modelValue: (string | number)[] | string | number | null;
+    // (undocumented)
+    multiple?: boolean;
+    // (undocumented)
+    options: CheckButtonOption[];
+    // (undocumented)
+    size?: 'small' | 'medium' | 'large';
+}
+
+// @public (undocumented)
+export interface CheckButtonOption {
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    value: string | number;
+}
+
+// @public (undocumented)
+export interface CheckCardGroupEmits {
+    // (undocumented)
+    'update:modelValue': [value: (string | number)[] | string | number | null];
+    // (undocumented)
+    change: [value: (string | number)[] | string | number | null];
+}
+
+// @public (undocumented)
+export interface CheckCardGroupExpose {
+    // (undocumented)
+    clearAll: () => void;
+    // (undocumented)
+    getSelected: () => (string | number)[];
+    // (undocumented)
+    selectAll: () => void;
+}
+
+// @public (undocumented)
+export interface CheckCardGroupProps {
+    // (undocumented)
+    bordered?: boolean;
+    // (undocumented)
+    cardMinWidth?: number;
+    // (undocumented)
+    columns?: number | 'auto';
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    gap?: number;
+    // (undocumented)
+    modelValue: (string | number)[] | string | number | null;
+    // (undocumented)
+    multiple?: boolean;
+    // (undocumented)
+    options: CheckCardOption[];
+    // (undocumented)
+    size?: 'small' | 'medium' | 'large';
+}
+
+// @public (undocumented)
+export interface CheckCardGroupSlots {
+    // (undocumented)
+    card?: (params: {
+        option: CheckCardOption;
+        checked: boolean;
+        disabled: boolean;
+    }) => VNode;
+    // (undocumented)
+    extra?: (params: {
+        option: CheckCardOption;
+    }) => VNode;
+}
+
+// @public (undocumented)
+export interface CheckCardOption {
+    // (undocumented)
+    avatar?: string;
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    extra?: string;
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    tag?: string;
+    // (undocumented)
+    tagType?: 'default' | 'success' | 'warning' | 'error' | 'info';
+    // (undocumented)
+    title: string;
+    // (undocumented)
+    value: string | number;
+}
+
+// @public (undocumented)
+export type CheckDeleteFn = (id: string | number) => Promise<DeleteConstraint>;
 
 // @public
 export interface ChunkedUploadStrategy {
@@ -317,6 +654,83 @@ export interface ChunkUploadOptions {
     signal?: AbortSignal;
 }
 
+// @public (undocumented)
+export function cloneGraph(graph: WorkflowGraph): WorkflowGraph;
+
+// @public (undocumented)
+export interface CodeVerifyEmits {
+    // (undocumented)
+    'update:modelValue': [value: string];
+    // (undocumented)
+    complete: [code: string];
+    // (undocumented)
+    send: [];
+}
+
+// @public (undocumented)
+export interface CodeVerifyExpose {
+    // (undocumented)
+    clear: () => void;
+    // (undocumented)
+    focus: () => void;
+    // (undocumented)
+    getRemaining: () => number;
+    // (undocumented)
+    resetCountdown: () => void;
+    // (undocumented)
+    startCountdown: () => void;
+}
+
+// @public (undocumented)
+export interface CodeVerifyProps {
+    // (undocumented)
+    autoFocus?: boolean;
+    // (undocumented)
+    codeLength?: number;
+    // (undocumented)
+    countdown?: number;
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    inputWidth?: number | string;
+    // (undocumented)
+    modelValue: string;
+    // (undocumented)
+    placeholder?: string;
+    // (undocumented)
+    resendLabel?: string;
+    // (undocumented)
+    sending?: boolean;
+    // (undocumented)
+    sendingLabel?: string;
+    // (undocumented)
+    sendLabel?: string;
+    // (undocumented)
+    size?: 'small' | 'medium' | 'large';
+}
+
+// @public (undocumented)
+export interface CollapsiblePanelExpose {
+    // (undocumented)
+    expanded: Ref<boolean>;
+    // (undocumented)
+    toggle: () => void;
+}
+
+// @public (undocumented)
+export interface CollapsiblePanelProps {
+    // (undocumented)
+    badge?: string | number;
+    // (undocumented)
+    bordered?: boolean;
+    // (undocumented)
+    defaultExpanded?: boolean;
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    title: string;
+}
+
 // @public
 export function colorVar(token: SemanticColorToken): string;
 
@@ -328,6 +742,57 @@ export interface ColumnConfigItem {
     order: number;
     // (undocumented)
     visible: boolean;
+}
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_14" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const ColumnEditDrawer: DefineComponent<__VLS_Props_14, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+save: (form: ColumnEditForm) => any;
+"update:visible": (v: boolean) => any;
+}, string, PublicProps, Readonly<__VLS_Props_14> & Readonly<{
+onSave?: ((form: ColumnEditForm) => any) | undefined;
+"onUpdate:visible"?: ((v: boolean) => any) | undefined;
+}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, any>;
+
+// @public (undocumented)
+export interface ColumnPreset {
+    // (undocumented)
+    fixed?: 'left' | 'right' | false;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    visible: boolean;
+}
+
+// @public (undocumented)
+export interface CommandGroup {
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    items: CommandItem[];
+    // (undocumented)
+    label: string;
+}
+
+// @public (undocumented)
+export interface CommandItem {
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    group?: string;
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    shortcut?: string;
 }
 
 // @public (undocumented)
@@ -347,13 +812,51 @@ export function createAdminRouterPipeline(options: RouterPipelineOptions): Route
 export function createAppConfig(input?: Partial<AppConfigInput>): AppConfigContext;
 
 // @public (undocumented)
+export function createArticleFolderAdapter(options: ArticleFolderAdapterOptions): {
+    requestHooks: TreeRequestHooks;
+    checkDelete: CheckDeleteFn;
+};
+
+// @public (undocumented)
+export function createDashboardExportPayload(dashboard: DashboardDefinition, layout: DashboardLayoutItem[]): DashboardExportPayload;
+
+// @public (undocumented)
+export function createDefaultGraph(): WorkflowGraph;
+
+// @public (undocumented)
+export function createDevtoolsPlugin(options?: DevtoolsPluginOptions): AppPlugin;
+
+// @public (undocumented)
 export function createErrorHandler(logger?: ErrorLogger): AppErrorHandler;
+
+// @public (undocumented)
+export interface CreateHighlightInput {
+    // (undocumented)
+    color: string;
+    // (undocumented)
+    note?: string;
+    // (undocumented)
+    serialized_range: string;
+    // (undocumented)
+    sort_order: number;
+    // (undocumented)
+    source_id?: number;
+    // (undocumented)
+    source_key: string;
+    // (undocumented)
+    source_type: string;
+    // (undocumented)
+    text: string;
+}
 
 // @public (undocumented)
 export function createHttpClient(config: HttpClientConfig): HttpClient;
 
 // @public (undocumented)
 export function createLayoutProvider(initial?: Partial<LayoutConfig>): LayoutContext;
+
+// @public (undocumented)
+export function createMenuSource(options?: MenuSourceOptions): MenuSourceInstance;
 
 // @public (undocumented)
 export function createPermissionDirective(policy: PermissionPolicy): Directive<HTMLElement, PermissionDirectiveBinding>;
@@ -425,7 +928,282 @@ export interface CrudFormDialogProps {
 // @public (undocumented)
 export type CrudMode = 'create' | 'edit' | 'view';
 
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_13" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const CustomHeader: DefineComponent<__VLS_Props_13, {
+init: typeof init;
+refresh: typeof refresh;
+destroy: typeof destroy;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_13> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
 export { darkTheme }
+
+// @public (undocumented)
+export type DashboardBreakpoint = 'lg' | 'md' | 'sm';
+
+// @public (undocumented)
+export interface DashboardBuilderAdapter {
+    // (undocumented)
+    listWidgets: () => Promise<DashboardWidgetDefinition[]>;
+    // (undocumented)
+    loadLayout: () => Promise<DashboardLayoutItem[]>;
+    // (undocumented)
+    saveLayout: (layout: DashboardLayoutItem[]) => Promise<void>;
+}
+
+// @public (undocumented)
+export interface DashboardBuilderEmits {
+    // (undocumented)
+    (e: 'layout-change', layout: DashboardLayoutItem[]): void;
+    // (undocumented)
+    (e: 'saved', layout: DashboardLayoutItem[]): void;
+    // (undocumented)
+    (e: 'error', error: Error): void;
+}
+
+// @public (undocumented)
+export interface DashboardBuilderExpose {
+    // (undocumented)
+    getLayout: () => DashboardLayoutItem[];
+    // (undocumented)
+    reload: () => Promise<void>;
+    // (undocumented)
+    save: () => Promise<void>;
+    // (undocumented)
+    toggleEditing: (next?: boolean) => void;
+}
+
+// @public (undocumented)
+export interface DashboardBuilderProps {
+    // (undocumented)
+    adapter: DashboardBuilderAdapter;
+    // (undocumented)
+    breakpointColumns?: Partial<DashboardResponsiveColumns>;
+    // (undocumented)
+    columns?: number;
+    // (undocumented)
+    defaultEditing?: boolean;
+    // (undocumented)
+    editing?: boolean | null;
+    // (undocumented)
+    readonly?: boolean;
+    // (undocumented)
+    widgetRegistry?: Record<string, Component | DashboardWidgetRegistryEntry>;
+}
+
+// @public (undocumented)
+export interface DashboardDefinition {
+    // (undocumented)
+    createdAt?: string;
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    isEntry?: boolean;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    sortOrder?: number;
+    // (undocumented)
+    status?: string;
+    // (undocumented)
+    updatedAt?: string;
+}
+
+// @public (undocumented)
+export interface DashboardExportPayload {
+    // (undocumented)
+    dashboard: DashboardDefinition;
+    // (undocumented)
+    exportedAt: string;
+    // (undocumented)
+    layout: DashboardLayoutItem[];
+    // (undocumented)
+    version: string;
+}
+
+// @public (undocumented)
+export interface DashboardLayoutItem {
+    // (undocumented)
+    config?: Record<string, unknown>;
+    // (undocumented)
+    h: number;
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    responsive?: Partial<Record<DashboardBreakpoint, DashboardRect>>;
+    // (undocumented)
+    type: string;
+    // (undocumented)
+    w: number;
+    // (undocumented)
+    x?: number;
+    // (undocumented)
+    y?: number;
+}
+
+// @public (undocumented)
+export interface DashboardRect {
+    // (undocumented)
+    h: number;
+    // (undocumented)
+    w: number;
+    // (undocumented)
+    x: number;
+    // (undocumented)
+    y: number;
+}
+
+// @public (undocumented)
+export interface DashboardResponsiveColumns {
+    // (undocumented)
+    lg: number;
+    // (undocumented)
+    md: number;
+    // (undocumented)
+    sm: number;
+}
+
+// @public (undocumented)
+export interface DashboardRouteOption {
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    openMode?: 'in_app' | 'new_tab';
+    // (undocumented)
+    value: string;
+}
+
+// @public (undocumented)
+export interface DashboardSizePreset {
+    // (undocumented)
+    h: number;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    w: number;
+}
+
+// @public (undocumented)
+export interface DashboardWidgetDefinition {
+    // (undocumented)
+    allowMultiple?: boolean;
+    // (undocumented)
+    defaultConfig?: Record<string, unknown>;
+    // (undocumented)
+    defaultSize?: {
+        w: number;
+        h: number;
+    };
+    // (undocumented)
+    defaultVisible?: boolean;
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    editorOptions?: Record<string, unknown>;
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    maxSize?: {
+        w: number;
+        h: number;
+    };
+    // (undocumented)
+    minSize?: {
+        w: number;
+        h: number;
+    };
+    // (undocumented)
+    sizePresets?: DashboardSizePreset[];
+    // (undocumented)
+    title: string;
+    // (undocumented)
+    type: string;
+}
+
+// @public (undocumented)
+export interface DashboardWidgetRegistryEntry {
+    // (undocumented)
+    editor?: Component;
+    // (undocumented)
+    renderer: Component;
+}
+
+// @public (undocumented)
+export interface DashboardWorkspaceAdapter {
+    // (undocumented)
+    createDashboard: (input: {
+        name: string;
+        description?: string;
+    }) => Promise<DashboardDefinition>;
+    // (undocumented)
+    deleteDashboard: (dashboardId: string) => Promise<void>;
+    // (undocumented)
+    listDashboards: () => Promise<DashboardDefinition[]>;
+    // (undocumented)
+    listWidgets: () => Promise<DashboardWidgetDefinition[]>;
+    // (undocumented)
+    loadLayout: (dashboardId: string) => Promise<DashboardLayoutItem[]>;
+    // (undocumented)
+    saveLayout: (dashboardId: string, layout: DashboardLayoutItem[]) => Promise<void>;
+    // (undocumented)
+    updateDashboard?: (input: {
+        dashboardId: string;
+        name: string;
+        description?: string;
+    }) => Promise<DashboardDefinition>;
+}
+
+// @public (undocumented)
+export interface DataGridColumn {
+    // (undocumented)
+    editable?: boolean;
+    // (undocumented)
+    field: string;
+    // (undocumented)
+    filterable?: boolean;
+    // (undocumented)
+    headerName: string;
+    // (undocumented)
+    options?: string[];
+    // (undocumented)
+    sortable?: boolean;
+    // (undocumented)
+    type?: DataGridColumnType;
+    // (undocumented)
+    width?: number;
+}
+
+// @public (undocumented)
+export type DataGridColumnType = 'text' | 'number' | 'date' | 'datetime' | 'year' | 'select' | 'multiselect' | 'boolean';
+
+// @public (undocumented)
+export interface DataGridLocale {
+    // (undocumented)
+    addColumn?: string;
+    // (undocumented)
+    addRow?: string;
+    // (undocumented)
+    deleteColumn?: string;
+    // (undocumented)
+    deleteRow?: string;
+    // (undocumented)
+    export?: string;
+    // (undocumented)
+    filter?: string;
+    // (undocumented)
+    loading?: string;
+    // (undocumented)
+    noRowsToShow?: string;
+    // (undocumented)
+    search?: string;
+}
 
 // @public (undocumented)
 export type DataTableAction = Component & {
@@ -436,6 +1214,14 @@ export type DataTableAction = Component & {
     disabled?: boolean | ((row: Record<string, unknown>) => boolean);
     onClick: (row: Record<string, unknown>) => void;
 };
+
+// @public (undocumented)
+export interface DataTableBatchPayload<T = Record<string, unknown>> {
+    // (undocumented)
+    selectedKeys: DataTableRowKey[];
+    // (undocumented)
+    selectedRows: T[];
+}
 
 // @public (undocumented)
 export interface DataTableColumn<T = Record<string, unknown>> {
@@ -482,8 +1268,29 @@ export interface DataTableEmits<T = Record<string, unknown>> {
     // (undocumented)
     'update:sort': [sort: DataTableSortState];
     // (undocumented)
+    batchAction: [key: string, selectedKeys: DataTableRowKey[], selectedRows: T[]];
+    // (undocumented)
+    batchDelete: [payload: DataTableBatchPayload<T>];
+    // (undocumented)
+    export: [payload: DataTableExportPayload<T>];
+    // (undocumented)
     rowClick: [row: T, index: number];
 }
+
+// @public (undocumented)
+export interface DataTableExportPayload<T = Record<string, unknown>> {
+    // (undocumented)
+    columns: DataTableColumn<T>[];
+    // (undocumented)
+    rows: T[];
+    // (undocumented)
+    scope: DataTableExportScope;
+    // (undocumented)
+    selectedKeys: DataTableRowKey[];
+}
+
+// @public (undocumented)
+export type DataTableExportScope = 'all' | 'selected';
 
 // @public (undocumented)
 export interface DataTableExpose {
@@ -531,6 +1338,8 @@ export interface DataTablePagination {
 
 // @public (undocumented)
 export interface DataTableProps<T = Record<string, unknown>> {
+    batchDeletable?: boolean;
+    batchDeleteHandler?: (payload: DataTableBatchPayload<T>) => void | Promise<void>;
     // (undocumented)
     bordered?: boolean;
     // (undocumented)
@@ -545,12 +1354,16 @@ export interface DataTableProps<T = Record<string, unknown>> {
     defaultSort?: DataTableSortState;
     // (undocumented)
     emptyText?: string;
+    exportable?: boolean;
+    exportHandler?: (payload: DataTableExportPayload<T>) => void | Promise<void>;
+    exportSelected?: boolean;
     // (undocumented)
     loading?: boolean;
     // (undocumented)
     maxHeight?: number | string;
     // (undocumented)
     pagination?: DataTablePagination | false;
+    remote?: boolean;
     // (undocumented)
     rowKey?: string | ((row: T) => DataTableRowKey);
     // (undocumented)
@@ -602,6 +1415,41 @@ export interface DataTableSortState {
     order: 'ascend' | 'descend' | false;
 }
 
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_20" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const DateTimeCellEditor: DefineComponent<__VLS_Props_20, {
+getValue: typeof getValue_3;
+isCancelBeforeStart: typeof isCancelBeforeStart_3;
+isCancelAfterEnd: typeof isCancelAfterEnd_3;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_20> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {
+inputRef: HTMLInputElement;
+}, HTMLInputElement>;
+
+// @public (undocumented)
+export const DEFAULT_I18N: TreeI18n;
+
+// @public (undocumented)
+export const DEFAULT_LOCALE: DataGridLocale;
+
+// @public (undocumented)
+export const DEFAULT_TREE_SELECT_I18N: TreeSelectI18n;
+
+// @public (undocumented)
+export const defaultImageCropLocale: Required<ImageCropLocale>;
+
+// @public (undocumented)
+export interface DeleteConstraint {
+    // (undocumented)
+    articleCount?: number;
+    // (undocumented)
+    canDelete: boolean;
+    // (undocumented)
+    childCount?: number;
+    // (undocumented)
+    reason?: string;
+}
+
 // @public (undocumented)
 export interface DemoSectionProps {
     // (undocumented)
@@ -610,6 +1458,90 @@ export interface DemoSectionProps {
     description?: string;
     // (undocumented)
     title: string;
+}
+
+// @public (undocumented)
+export interface DescriptionGroup {
+    // (undocumented)
+    collapsible?: boolean;
+    // (undocumented)
+    defaultCollapsed?: boolean;
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    items: DescriptionItem[];
+    // (undocumented)
+    title?: string;
+}
+
+// @public (undocumented)
+export interface DescriptionItem {
+    // (undocumented)
+    copyable?: boolean;
+    // (undocumented)
+    emptyText?: string;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    render?: () => VNode;
+    // (undocumented)
+    span?: number;
+    // (undocumented)
+    value?: string | number | boolean | null;
+}
+
+// @public (undocumented)
+export interface DescriptionsPanelExpose {
+    // (undocumented)
+    collapseAll: () => void;
+    // (undocumented)
+    expandAll: () => void;
+    // (undocumented)
+    toggleGroup: (index: number) => void;
+}
+
+// @public (undocumented)
+export interface DescriptionsPanelProps {
+    // (undocumented)
+    bordered?: boolean;
+    // (undocumented)
+    colon?: boolean;
+    // (undocumented)
+    columns?: number | {
+        xs?: number;
+        sm?: number;
+        md?: number;
+        lg?: number;
+        xl?: number;
+    };
+    // (undocumented)
+    emptyText?: string;
+    // (undocumented)
+    groups?: DescriptionGroup[];
+    // (undocumented)
+    items?: DescriptionItem[];
+    // (undocumented)
+    labelWidth?: number | string;
+    // (undocumented)
+    layout?: 'horizontal' | 'vertical';
+    // (undocumented)
+    size?: 'small' | 'medium' | 'large';
+    // (undocumented)
+    title?: string;
+}
+
+// @public (undocumented)
+export interface DescriptionsPanelSlots {
+    // (undocumented)
+    [key: `item-${string}`]: (params: {
+        item: DescriptionItem;
+    }) => VNode;
+    // (undocumented)
+    extra?: () => VNode;
+    // (undocumented)
+    title?: () => VNode;
 }
 
 // @public (undocumented)
@@ -622,6 +1554,26 @@ export interface DesignConfig {
     fontSize: number;
     // (undocumented)
     primaryColor: string;
+}
+
+// @public (undocumented)
+export interface DevtoolsPluginOptions {
+    // (undocumented)
+    enabled?: boolean;
+    // (undocumented)
+    getRouteContext?: () => DevtoolsRouteContext | null | undefined;
+}
+
+// @public (undocumented)
+export interface DevtoolsRouteContext {
+    // (undocumented)
+    fullPath?: string;
+    // (undocumented)
+    name?: string;
+    // (undocumented)
+    path?: string;
+    // (undocumented)
+    title?: string;
 }
 
 // @public (undocumented)
@@ -671,7 +1623,162 @@ export interface DiscreteApiProvider {
 }
 
 // @public (undocumented)
+export interface DocDirectory {
+    // (undocumented)
+    children?: DocDirectory[];
+    // (undocumented)
+    directory: string;
+    // (undocumented)
+    file_count: number;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    path: string;
+}
+
+// @public (undocumented)
+export interface DocFileContent {
+    // (undocumented)
+    content: string;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    path: string;
+    // (undocumented)
+    size: number;
+}
+
+// @public (undocumented)
+export interface DocFileItem {
+    // (undocumented)
+    directory: string;
+    // (undocumented)
+    is_dir: boolean;
+    // (undocumented)
+    mod_time: number;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    path: string;
+    // (undocumented)
+    size: number;
+    // (undocumented)
+    title?: string;
+}
+
+// @public (undocumented)
+export interface DocListDirectoriesResponse {
+    // (undocumented)
+    directories: DocDirectory[];
+    // (undocumented)
+    total: number;
+}
+
+// @public (undocumented)
+export interface DocListFilesResponse {
+    // (undocumented)
+    directories: Record<string, number>;
+    // (undocumented)
+    files: DocFileItem[];
+    // (undocumented)
+    order: DocSortOrder;
+    // (undocumented)
+    sort_by?: DocSortBy;
+    // (undocumented)
+    total: number;
+}
+
+// @public (undocumented)
+export interface DocsApiAdapter {
+    // (undocumented)
+    getDirectories: () => Promise<DocListDirectoriesResponse>;
+    // (undocumented)
+    getFileContent: (dir: string, path: string) => Promise<DocFileContent>;
+    // (undocumented)
+    getFileList: (order: DocSortOrder, sortBy?: DocSortBy) => Promise<DocListFilesResponse>;
+}
+
+// @public (undocumented)
+export type DocSortBy = 'mod_time' | 'name';
+
+// @public (undocumented)
+export type DocSortOrder = 'desc' | 'asc';
+
+// @public (undocumented)
+export interface DrawerFormError {
+    // (undocumented)
+    field?: string;
+    // (undocumented)
+    message: string;
+}
+
+// @public (undocumented)
+export type DrawerPlacement = 'left' | 'right';
+
+// @public (undocumented)
+export type DrawerWidth = 'small' | 'medium' | 'large' | 'full' | number;
+
+// @public (undocumented)
+export interface DropInfo {
+    // (undocumented)
+    dragNodeId: string | number;
+    // (undocumented)
+    isLegal: boolean;
+    // (undocumented)
+    position: DropPosition;
+    // (undocumented)
+    reason?: TreeErrorCode;
+    // (undocumented)
+    targetNodeId: string | number;
+}
+
+// @public (undocumented)
+export type DropPosition = 'before' | 'inside' | 'after';
+
+// @public (undocumented)
+export type DurationToken = 'instant' | 'fast' | 'normal' | 'slow' | 'slower';
+
+// @public (undocumented)
+export function durationVar(token: DurationToken): string;
+
+// @public (undocumented)
 export type DynamicRouteLoader = () => Promise<RouteRecordRaw[]>;
+
+// @public (undocumented)
+export type EaseToken = 'default' | 'in' | 'out' | 'bounce';
+
+// @public (undocumented)
+export function easeVar(token: EaseToken): string;
+
+// @public (undocumented)
+export type EmptyStateSize = 'small' | 'medium' | 'large';
+
+// @public (undocumented)
+export interface EntityExecutionPanelEmits {
+    // (undocumented)
+    'update:show': [value: boolean];
+}
+
+// @public (undocumented)
+export interface EntityExecutionPanelExpose {
+    // (undocumented)
+    getTimeline: () => InstanceType<typeof RFlowTimeline> | null;
+}
+
+// @public (undocumented)
+export interface EntityExecutionPanelProps {
+    // (undocumented)
+    entityId?: number | null;
+    // (undocumented)
+    entityType: EntityExecutionType;
+    // (undocumented)
+    fetchGraph?: (id: number) => Promise<FlowData>;
+    // (undocumented)
+    show: boolean;
+}
+
+// @public (undocumented)
+export type EntityExecutionType = 'agent' | 'team';
 
 // @public (undocumented)
 export interface ErrorLogEntry {
@@ -705,10 +1812,66 @@ export interface ErrorStrategyConfig {
     onCustom?: (error: RequestError) => void;
 }
 
+// @public (undocumented)
+export type ExportFormat = 'csv' | 'xlsx';
+
+// @public (undocumented)
+export interface ExportFormatOption {
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    value: ExportFormat;
+}
+
+// @public (undocumented)
+export interface ExportTaskSnapshot {
+    // (undocumented)
+    progress: number;
+    // (undocumented)
+    status: ExportTaskStatus;
+    // (undocumented)
+    statusMessage?: string;
+}
+
+// @public (undocumented)
+export type ExportTaskStatus = 'pending' | 'running' | 'success' | 'failed' | 'cancelled';
+
+// @public
+export interface FetchFallbackEvent {
+    // (undocumented)
+    reason: string;
+    // (undocumented)
+    type: 'fetch_fallback';
+    // (undocumented)
+    url: string;
+}
+
+// @public
+export interface FetchProgress {
+    // (undocumented)
+    domain?: string;
+    fetchMethod?: 'http' | 'playwright';
+    // (undocumented)
+    latencyMs?: number;
+    // (undocumented)
+    status: 'idle' | 'fetching' | 'done';
+    // (undocumented)
+    statusCode?: number;
+}
+
 // @public
 export interface FieldDependency {
     effect: (depValues: Record<string, unknown>, currentSchema: FormFieldSchema) => Partial<FormFieldSchema> | void;
     fields: string[];
+}
+
+// @public (undocumented)
+export interface FileUploadAdapter {
+    // (undocumented)
+    upload: (file: File) => Promise<{
+        url: string;
+        name?: string;
+    }>;
 }
 
 // @public (undocumented)
@@ -787,10 +1950,220 @@ export interface FileUploadSlots {
 }
 
 // @public (undocumented)
-export type FontSizeToken = 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl';
+export interface FilterBarProEmits {
+    // (undocumented)
+    'update:modelValue': [values: Record<string, unknown>];
+    // (undocumented)
+    deleteScheme: [id: string];
+    // (undocumented)
+    loadScheme: [scheme: FilterScheme];
+    // (undocumented)
+    reset: [];
+    // (undocumented)
+    saveScheme: [scheme: Omit<FilterScheme, 'id' | 'createdAt'>];
+    // (undocumented)
+    search: [values: Record<string, unknown>];
+    // (undocumented)
+    toggleAdvanced: [expanded: boolean];
+}
+
+// @public (undocumented)
+export interface FilterBarProExpose {
+    // (undocumented)
+    getValues: () => Record<string, unknown>;
+    // (undocumented)
+    reset: () => void;
+    // (undocumented)
+    search: () => void;
+    // (undocumented)
+    setValues: (values: Record<string, unknown>) => void;
+    // (undocumented)
+    toggleAdvanced: (expanded?: boolean) => void;
+}
+
+// @public (undocumented)
+export interface FilterBarProProps {
+    // (undocumented)
+    advancedLabel?: string;
+    // (undocumented)
+    collapsible?: boolean;
+    // (undocumented)
+    cols?: number;
+    // (undocumented)
+    defaultCollapsed?: boolean;
+    // (undocumented)
+    maxVisibleFields?: number;
+    // (undocumented)
+    modelValue: Record<string, unknown>;
+    // (undocumented)
+    quickFilters?: QuickFilter[];
+    // (undocumented)
+    resetLabel?: string;
+    // (undocumented)
+    savedSchemes?: FilterScheme[];
+    // (undocumented)
+    saveSchemeLabel?: string;
+    // (undocumented)
+    schema: FormFieldSchema[];
+    // (undocumented)
+    searchLabel?: string;
+    // (undocumented)
+    storageKey?: string;
+}
+
+// @public (undocumented)
+export interface FilterBarProSlots {
+    // (undocumented)
+    afterActions?: () => VNode;
+    // (undocumented)
+    beforeActions?: () => VNode;
+    // (undocumented)
+    extra?: () => VNode;
+    // (undocumented)
+    quickFilter?: (params: {
+        filter: QuickFilter;
+        active: boolean;
+    }) => VNode;
+}
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_15" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const FilterDrawer: DefineComponent<__VLS_Props_15, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+apply: (c: FilterCondition[]) => any;
+"update:visible": (v: boolean) => any;
+"update:conditions": (c: FilterCondition[]) => any;
+}, string, PublicProps, Readonly<__VLS_Props_15> & Readonly<{
+onApply?: ((c: FilterCondition[]) => any) | undefined;
+"onUpdate:visible"?: ((v: boolean) => any) | undefined;
+"onUpdate:conditions"?: ((c: FilterCondition[]) => any) | undefined;
+}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, any>;
+
+// Warning: (ae-forgotten-export) The symbol "MenuLike" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export function filterMenusByVisibleNames<T>(menus: MenuLike<T>[], uiAuth: UIAuthPayload | null): MenuLike<T>[];
+
+// @public (undocumented)
+export interface FilterScheme {
+    // (undocumented)
+    createdAt: number;
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    values: Record<string, unknown>;
+}
+
+// @public (undocumented)
+export interface FlowData {
+    // (undocumented)
+    edges: FlowEdge[];
+    // (undocumented)
+    nodes: FlowNode[];
+}
+
+// @public (undocumented)
+export interface FlowEdge {
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    label?: string;
+    // (undocumented)
+    source: string;
+    // (undocumented)
+    target: string;
+    // (undocumented)
+    type?: string;
+}
+
+// @public (undocumented)
+export interface FlowNode {
+    // (undocumented)
+    data?: Record<string, unknown>;
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    position: {
+        x: number;
+        y: number;
+    };
+    // (undocumented)
+    type: string;
+}
+
+// @public (undocumented)
+export interface FlowTimelineEvent {
+    // (undocumented)
+    detail?: string;
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    node_id: string;
+    // (undocumented)
+    timestamp: number;
+    // (undocumented)
+    type: 'node_enter' | 'node_exit' | 'tool_call' | 'tool_result';
+}
+
+// @public (undocumented)
+export interface FolderDTO {
+    // (undocumented)
+    created_at: string;
+    // (undocumented)
+    depth: number;
+    // (undocumented)
+    id: number;
+    // (undocumented)
+    item_count: number;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    parent_id: number | null;
+    // (undocumented)
+    path: string;
+    // (undocumented)
+    sort_order: number;
+    // (undocumented)
+    total_item_count: number;
+    // (undocumented)
+    updated_at: string;
+}
+
+// @public (undocumented)
+export interface FolderNodeDTO {
+    // (undocumented)
+    children?: FolderNodeDTO[];
+    // (undocumented)
+    depth: number;
+    // (undocumented)
+    id: number;
+    // (undocumented)
+    item_count: number;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    parent_id: number | null;
+    // (undocumented)
+    sort_order: number;
+    // (undocumented)
+    total_item_count: number;
+}
+
+// @public (undocumented)
+export type FontSizeToken = '2xs' | 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl';
 
 // @public
 export function fontSizeVar(token: FontSizeToken): string;
+
+// @public (undocumented)
+export type FontWeightToken = 'normal' | 'medium' | 'semibold' | 'bold';
+
+// @public
+export function fontWeightVar(token: FontWeightToken): string;
 
 // @public
 export interface FormFieldGroup {
@@ -835,6 +2208,7 @@ export interface FormFieldRule {
 // @public (undocumented)
 export interface FormFieldSchema {
     asyncOptions?: AsyncOptionsLoader;
+    buttonGroupMultiple?: boolean;
     // (undocumented)
     component?: Component;
     // (undocumented)
@@ -864,7 +2238,7 @@ export interface FormFieldSchema {
 }
 
 // @public (undocumented)
-export type FormFieldType = 'input' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'switch' | 'date' | 'daterange' | 'number' | 'upload' | 'custom';
+export type FormFieldType = 'input' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'switch' | 'date' | 'daterange' | 'number' | 'upload' | 'button-group' | 'custom';
 
 // @public (undocumented)
 export interface FormRendererEmits {
@@ -933,10 +2307,119 @@ export interface FormRendererSlots {
 }
 
 // @public (undocumented)
+export interface FormTableColumn {
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    schema: FormFieldSchema;
+    // (undocumented)
+    title: string;
+    // (undocumented)
+    width?: number | string;
+}
+
+// @public (undocumented)
+export interface FormTableEmits {
+    // (undocumented)
+    'update:modelValue': [rows: FormTableRow[]];
+    // (undocumented)
+    add: [];
+    // (undocumented)
+    remove: [index: number, row: FormTableRow];
+    // (undocumented)
+    validate: [results: FormTableValidateResult[]];
+}
+
+// @public (undocumented)
+export interface FormTableExpose {
+    // (undocumented)
+    addRow: (defaults?: Record<string, unknown>) => void;
+    // (undocumented)
+    clearAll: () => void;
+    // (undocumented)
+    getRows: () => FormTableRow[];
+    // (undocumented)
+    removeRow: (index: number) => void;
+    // (undocumented)
+    resetRow: (index: number) => void;
+    // (undocumented)
+    validate: () => Promise<FormTableValidateResult[]>;
+}
+
+// @public (undocumented)
+export interface FormTableProps {
+    // (undocumented)
+    addable?: boolean;
+    // (undocumented)
+    addLabel?: string;
+    // (undocumented)
+    columns: FormTableColumn[];
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    emptyText?: string;
+    // (undocumented)
+    maxRows?: number;
+    // (undocumented)
+    minRows?: number;
+    // (undocumented)
+    modelValue: FormTableRow[];
+    // (undocumented)
+    removable?: boolean;
+    // (undocumented)
+    rowKey?: string;
+    // (undocumented)
+    showIndex?: boolean;
+    // (undocumented)
+    size?: 'small' | 'medium' | 'large';
+    // (undocumented)
+    sortable?: boolean;
+}
+
+// @public (undocumented)
+export interface FormTableRow {
+    // (undocumented)
+    [field: string]: unknown;
+    // (undocumented)
+    _key: string;
+}
+
+// @public (undocumented)
+export interface FormTableSlots {
+    // (undocumented)
+    actions?: (params: {
+        row: FormTableRow;
+        index: number;
+    }) => VNode;
+    // (undocumented)
+    footer?: () => VNode;
+    // (undocumented)
+    header?: () => VNode;
+}
+
+// @public (undocumented)
+export interface FormTableValidateResult {
+    // (undocumented)
+    field: string;
+    // (undocumented)
+    message?: string;
+    // (undocumented)
+    rowIndex: number;
+    // (undocumented)
+    valid: boolean;
+}
+
+// @public (undocumented)
 export function getActiveThemeProvider(): ThemeProviderInstance | null;
 
 // @public (undocumented)
 export function getDiscreteApi(): DiscreteApiProvider;
+
+// @public (undocumented)
+export function getIcon(name: string): LucideIcon_2 | undefined;
+
+// @public (undocumented)
+export function getIconNames(): string[];
 
 // @public (undocumented)
 export function getPreset(name: ThemePresetName, mode: 'light' | 'dark'): ThemePreset;
@@ -945,6 +2428,77 @@ export function getPreset(name: ThemePresetName, mode: 'light' | 'dark'): ThemeP
 export function getPresetNames(): ThemePresetName[];
 
 export { GlobalThemeOverrides }
+
+// @public (undocumented)
+export function hasElementPermission(uiAuth: UIAuthPayload | null, routePath: string, permissionCode: string): boolean;
+
+// @public (undocumented)
+export function hasPageAction(uiAuth: UIAuthPayload | null, routePath: string, actionID: string): boolean;
+
+// @public (undocumented)
+export type HeightToken = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+
+// @public (undocumented)
+export function heightVar(token: HeightToken): string;
+
+// @public (undocumented)
+export interface HighlightApiAdapter {
+    // (undocumented)
+    batchDelete: (query: HighlightSourceQuery) => Promise<void>;
+    // (undocumented)
+    copyText: (query: HighlightSourceQuery) => Promise<{
+        text: string;
+    }>;
+    // (undocumented)
+    createHighlight: (input: CreateHighlightInput) => Promise<HighlightItem>;
+    // (undocumented)
+    deleteHighlight: (id: number) => Promise<void>;
+    // (undocumented)
+    listHighlights: (query: HighlightSourceQuery) => Promise<{
+        items: HighlightItem[];
+    }>;
+    // (undocumented)
+    updateHighlight: (id: number, data: Partial<Pick<HighlightItem, 'color' | 'note' | 'sort_order'>>) => Promise<void>;
+}
+
+// @public (undocumented)
+export type HighlightColor = 'yellow' | 'green' | 'blue' | 'pink' | 'orange';
+
+// @public (undocumented)
+export interface HighlightItem {
+    // (undocumented)
+    color: string;
+    // (undocumented)
+    created_at: string;
+    // (undocumented)
+    id: number;
+    // (undocumented)
+    note: string;
+    // (undocumented)
+    serialized_range: string;
+    // (undocumented)
+    sort_order: number;
+    // (undocumented)
+    source_id?: number;
+    // (undocumented)
+    source_key: string;
+    // (undocumented)
+    source_type: string;
+    // (undocumented)
+    text: string;
+    // (undocumented)
+    updated_at: string;
+}
+
+// @public (undocumented)
+export interface HighlightSourceQuery {
+    // (undocumented)
+    source_id?: number;
+    // (undocumented)
+    source_key: string;
+    // (undocumented)
+    source_type: string;
+}
 
 // @public (undocumented)
 export interface HttpClient {
@@ -977,8 +2531,218 @@ export interface HttpClientConfig {
 // @public (undocumented)
 export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
+// @public (undocumented)
+export interface IconButtonEmits {
+    // (undocumented)
+    click: [event: MouseEvent];
+}
+
+// @public (undocumented)
+export interface IconButtonProps {
+    // (undocumented)
+    ariaLabel?: string;
+    // (undocumented)
+    circle?: boolean;
+    // (undocumented)
+    danger?: boolean;
+    // (undocumented)
+    dashed?: boolean;
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    ghost?: boolean;
+    // (undocumented)
+    icon: string;
+    // (undocumented)
+    loading?: boolean;
+    // (undocumented)
+    size?: 'tiny' | 'small' | 'medium' | 'large';
+    // (undocumented)
+    tooltip?: string;
+    // (undocumented)
+    type?: 'default' | 'primary' | 'info' | 'success' | 'warning' | 'error';
+}
+
+// @public (undocumented)
+export type IconColor = 'inherit' | 'primary' | 'secondary' | 'tertiary' | 'brand' | 'success' | 'warning' | 'danger' | 'info' | string;
+
+// @public (undocumented)
+export const iconRegistry: Record<string, LucideIcon_2>;
+
+// @public (undocumented)
+export interface IconRegistryEntry {
+    // (undocumented)
+    aliases?: string[];
+    // (undocumented)
+    component: LucideIcon;
+}
+
+// @public (undocumented)
+export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | number;
+
+// @public (undocumented)
+export interface ImageCropLocale {
+    // (undocumented)
+    cancelText?: string;
+    // (undocumented)
+    confirmText?: string;
+    // (undocumented)
+    exportFailed?: string;
+    // (undocumented)
+    invalidImage?: string;
+    // (undocumented)
+    moveDownText?: string;
+    // (undocumented)
+    moveLeftText?: string;
+    // (undocumented)
+    moveRightText?: string;
+    // (undocumented)
+    moveUpText?: string;
+    // (undocumented)
+    resetText?: string;
+    // (undocumented)
+    rotateLeftText?: string;
+    // (undocumented)
+    rotateRightText?: string;
+    // (undocumented)
+    title?: string;
+    // (undocumented)
+    zoomInText?: string;
+    // (undocumented)
+    zoomOutText?: string;
+}
+
+// @public (undocumented)
+export interface ImageCropOptions {
+    aspectRatio?: number;
+    circularPreview?: boolean;
+    cropBoxHeight?: number;
+    cropBoxWidth?: number;
+    minHeight?: number;
+    minWidth?: number;
+    outputHeight?: number;
+    outputQuality?: number;
+    outputType?: ImageCropOutputType;
+    outputWidth?: number;
+}
+
+// @public (undocumented)
+export type ImageCropOutputType = 'image/jpeg' | 'image/png' | 'image/webp';
+
+// @public (undocumented)
+export interface ImageCropResult {
+    // (undocumented)
+    canvas: HTMLCanvasElement;
+    // (undocumented)
+    file: File;
+    // (undocumented)
+    sourceFile: File;
+}
+
+// @public (undocumented)
+export interface ImageCropUploadEmits {
+    // (undocumented)
+    (e: 'change', fileList: ProUploadFileItem[]): void;
+    // (undocumented)
+    (e: 'update:value', fileList: ProUploadFileItem[]): void;
+    // (undocumented)
+    (e: 'update:modelValue', fileList: ProUploadFileItem[]): void;
+    // (undocumented)
+    (e: 'success', file: ProUploadFileItem, response: unknown): void;
+    // (undocumented)
+    (e: 'error', file: ProUploadFileItem, error: Error): void;
+    // (undocumented)
+    (e: 'preview', file: ProUploadFileItem): void;
+    // (undocumented)
+    (e: 'remove', file: ProUploadFileItem): void;
+    // (undocumented)
+    (e: 'exceed', info: {
+        type: 'count' | 'size' | 'accept';
+        file: File;
+        limit: number | string;
+    }): void;
+    // (undocumented)
+    (e: 'crop-success', result: ImageCropResult): void;
+    // (undocumented)
+    (e: 'crop-cancel', file: File): void;
+    // (undocumented)
+    (e: 'crop-error', error: Error): void;
+}
+
+// @public (undocumented)
+export interface ImageCropUploadProps extends ProUploadProps {
+    crop?: boolean;
+    cropLocale?: Partial<ImageCropLocale>;
+    cropOptions?: ImageCropOptions;
+}
+
+// @public (undocumented)
+export interface ImageUploadAdapter {
+    // (undocumented)
+    upload: (file: File) => Promise<string>;
+}
+
+// @public (undocumented)
+export interface IndexProgressProps {
+    // (undocumented)
+    borderRadius?: number;
+    // (undocumented)
+    height?: number;
+    // (undocumented)
+    indexed: number;
+    // (undocumented)
+    showLabel?: boolean;
+    // (undocumented)
+    status?: IndexStatus;
+    // (undocumented)
+    total: number;
+}
+
+// @public (undocumented)
+export type IndexStatus = 'idle' | 'indexing' | 'completed' | 'failed';
+
 // @public
 export function installAppConfig(app: App, input?: Partial<AppConfigInput>): AppConfigContext;
+
+// @public (undocumented)
+export function isFetchFallbackToolEvent(e: ToolCallEvent): e is FetchFallbackEvent;
+
+// @public (undocumented)
+export function isImageFile(file: File): boolean;
+
+// @public (undocumented)
+export function isToolInvocationEvent(e: ToolCallEvent): e is ToolInvocationEvent;
+
+// @public (undocumented)
+export type KpiGridCols = 1 | 2 | 3 | 4 | 6;
+
+// @public (undocumented)
+export interface KpiItem extends RStatCardProps {
+    // (undocumented)
+    key: string;
+}
+
+// @public (undocumented)
+export interface LanguageOption {
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    value: string;
+}
+
+// @public (undocumented)
+export interface LanguageSelectorEmits {
+    // (undocumented)
+    'update:modelValue': [value: string];
+}
+
+// @public (undocumented)
+export interface LanguageSelectorProps {
+    // (undocumented)
+    modelValue: string;
+    // (undocumented)
+    options: LanguageOption[];
+}
 
 // @public (undocumented)
 export interface LayoutActions {
@@ -1059,6 +2823,12 @@ export interface LayoutSlots {
 }
 
 // @public (undocumented)
+export type LineHeightToken = 'none' | 'tight' | 'snug' | 'base' | 'relaxed' | 'loose';
+
+// @public
+export function lineHeightVar(token: LineHeightToken): string;
+
+// @public (undocumented)
 export interface LoadingBarApi {
     // (undocumented)
     error: () => void;
@@ -1072,6 +2842,47 @@ export interface LoadingBarApi {
 export function loadRouteModules(modules: Record<string, {
     default: RouteModuleConfig;
 }>): RouteRecordRaw[];
+
+// @public (undocumented)
+export type LucideIcon = FunctionalComponent<SVGAttributes>;
+
+// @public (undocumented)
+export type MarkdownEditorViewMode = 'split' | 'edit' | 'preview';
+
+// @public (undocumented)
+export type MarkdownPreviewTheme = 'github' | 'github-dark';
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_10" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const MarkdownToc: DefineComponent<__VLS_Props_10, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+"scroll-to": (id: string) => any;
+}, string, PublicProps, Readonly<__VLS_Props_10> & Readonly<{
+"onScroll-to"?: ((id: string) => any) | undefined;
+}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+// @public
+export interface MCPProgress {
+    // (undocumented)
+    serverName?: string;
+    // (undocumented)
+    status: 'idle' | 'calling' | 'done';
+    // (undocumented)
+    toolName?: string;
+}
+
+// @public
+export interface MCPServerOption {
+    // (undocumented)
+    server_display_name: string;
+    // (undocumented)
+    server_name: string;
+    // (undocumented)
+    tools: Array<{
+        name: string;
+        description: string;
+    }>;
+}
 
 // @public (undocumented)
 export interface MenuDataItem {
@@ -1121,6 +2932,113 @@ export interface MenuItem {
     meta?: Record<string, unknown>;
     // (undocumented)
     path?: string;
+}
+
+// @public (undocumented)
+export interface MenuPreset {
+    // (undocumented)
+    createdAt?: number;
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    items: MenuPresetItem[];
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    readonly?: boolean;
+    // (undocumented)
+    updatedAt?: number;
+}
+
+// @public (undocumented)
+export interface MenuPresetEditorEmits {
+    // (undocumented)
+    'create-preset': [name: string];
+    // (undocumented)
+    'delete-preset': [presetId: string];
+    // (undocumented)
+    'save-preset': [payload: MenuPresetSavePayload];
+    // (undocumented)
+    'set-default-preset': [presetId: string];
+    // (undocumented)
+    'update:activePresetId': [presetId: string];
+}
+
+// @public (undocumented)
+export interface MenuPresetEditorProps {
+    // (undocumented)
+    activePresetId: string;
+    // (undocumented)
+    defaultPresetId?: string;
+    // (undocumented)
+    loading?: boolean;
+    // (undocumented)
+    presets: MenuPreset[];
+}
+
+// @public (undocumented)
+export interface MenuPresetItem {
+    // (undocumented)
+    children?: MenuPresetItem[];
+    // (undocumented)
+    hidden?: boolean;
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    id: string | number;
+    // (undocumented)
+    meta?: Record<string, unknown>;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    orderNum?: number;
+    // (undocumented)
+    parentId: string | number | null;
+    // (undocumented)
+    path: string;
+}
+
+// @public (undocumented)
+export interface MenuPresetSavePayload {
+    // (undocumented)
+    items: MenuPresetItem[];
+    // (undocumented)
+    presetId: string;
+}
+
+// @public (undocumented)
+export interface MenuSourceInstance {
+    // (undocumented)
+    error: Readonly<Ref<unknown>>;
+    // (undocumented)
+    load: () => Promise<AppMenuItem[]>;
+    // (undocumented)
+    loading: Readonly<Ref<boolean>>;
+    // (undocumented)
+    menus: ComputedRef<AppMenuItem[]>;
+    // (undocumented)
+    mode: Ref<MenuSourceMode>;
+    // (undocumented)
+    reset: () => void;
+    // (undocumented)
+    setLocalMenus: (menus: AppMenuItem[]) => void;
+    // (undocumented)
+    setMode: (mode: MenuSourceMode) => void;
+    // (undocumented)
+    setRemoteMenus: (menus: AppMenuItem[]) => void;
+}
+
+// @public (undocumented)
+export type MenuSourceMode = 'local' | 'remote';
+
+// @public (undocumented)
+export interface MenuSourceOptions {
+    // (undocumented)
+    loadRemoteMenus?: () => Promise<AppMenuItem[]>;
+    // (undocumented)
+    localMenus?: AppMenuItem[];
+    // (undocumented)
+    mode?: MenuSourceMode;
 }
 
 // @public (undocumented)
@@ -1205,10 +3123,28 @@ export interface ModalDialogSlots {
 // @public (undocumented)
 export type ModalPreset = 'dialog' | 'confirm' | 'info' | 'success' | 'warning' | 'error';
 
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_17" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const MultiSelectCellEditor: DefineComponent<__VLS_Props_17, {
+getValue: typeof getValue_2;
+isCancelBeforeStart: typeof isCancelBeforeStart_2;
+isCancelAfterEnd: typeof isCancelAfterEnd_2;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_17> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {
+wrapRef: HTMLDivElement;
+}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_19" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const MultiSelectCellRenderer: DefineComponent<__VLS_Props_19, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_19> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
 export { NAlert }
 
 // @public (undocumented)
 export type NavMode = 'vertical' | 'horizontal' | 'horizontal-mix';
+
+export { NBadge }
 
 export { NBreadcrumb }
 
@@ -1218,6 +3154,14 @@ export { NButton }
 
 export { NCard }
 
+export { NCheckbox }
+
+export { NCheckboxGroup }
+
+export { NCollapse }
+
+export { NCollapseItem }
+
 export { NConfigProvider }
 
 export { NDialogProvider }
@@ -1225,6 +3169,8 @@ export { NDialogProvider }
 export { NDivider }
 
 export { NDropdown }
+
+export { NEmpty }
 
 export { NForm }
 
@@ -1253,6 +3199,15 @@ export { NMenu }
 export { NMessageProvider }
 
 // @public (undocumented)
+export function normalizeCropFileName(fileName: string, outputType: ImageCropOutputType): string;
+
+// @public (undocumented)
+export function normalizeMenuTree(items: AppMenuItem[]): AppMenuItem[];
+
+// @public (undocumented)
+export function normalizeRouteQuickActionsConfig(value: unknown): RouteQuickActionsWidgetConfig;
+
+// @public (undocumented)
 export interface NotificationApi {
     // (undocumented)
     error: (options: NotificationOptions_2) => void;
@@ -1262,6 +3217,68 @@ export interface NotificationApi {
     success: (options: NotificationOptions_2) => void;
     // (undocumented)
     warning: (options: NotificationOptions_2) => void;
+}
+
+// @public (undocumented)
+export interface NotificationCenterEmits {
+    // (undocumented)
+    'clear-all': [];
+    // (undocumented)
+    'read-all': [];
+    // (undocumented)
+    'update:notifications': [notifications: NotificationItem[]];
+    // (undocumented)
+    action: [item: NotificationItem];
+    // (undocumented)
+    dismiss: [id: string];
+    // (undocumented)
+    read: [id: string];
+}
+
+// @public (undocumented)
+export interface NotificationCenterExpose {
+    // (undocumented)
+    clearAll: () => void;
+    // (undocumented)
+    dismiss: (id: string) => void;
+    // (undocumented)
+    markAllRead: () => void;
+    // (undocumented)
+    markRead: (id: string) => void;
+    // (undocumented)
+    push: (item: Omit<NotificationItem, 'id' | 'timestamp' | 'read'>) => string;
+    // (undocumented)
+    unreadCount: number;
+}
+
+// @public (undocumented)
+export interface NotificationCenterProps {
+    // (undocumented)
+    maxVisible?: number;
+    // (undocumented)
+    notifications: NotificationItem[];
+    placement?: 'bottom-end' | 'bottom-start' | 'bottom';
+    showBadge?: boolean;
+}
+
+// @public (undocumented)
+export interface NotificationItem {
+    // (undocumented)
+    actionLabel?: string;
+    // (undocumented)
+    description?: string;
+    duration?: number;
+    // (undocumented)
+    id: string;
+    onAction?: () => void;
+    // (undocumented)
+    read: boolean;
+    // (undocumented)
+    timestamp: number;
+    // (undocumented)
+    title: string;
+    // (undocumented)
+    type: NotificationType;
 }
 
 // @public (undocumented)
@@ -1275,7 +3292,16 @@ interface NotificationOptions_2 {
 }
 export { NotificationOptions_2 as NotificationOptions }
 
+// @public (undocumented)
+export type NotificationType = 'success' | 'warning' | 'error' | 'info';
+
+export { NPagination }
+
 export { NPopconfirm }
+
+export { NPopover }
+
+export { NProgress }
 
 export { NSelect }
 
@@ -1283,14 +3309,148 @@ export { NSpace }
 
 export { NStatistic }
 
+export { NStep }
+
+export { NSteps }
+
 export { NSwitch }
 
 export { NTag }
 
+export { NTimeline }
+
+export { NTimelineItem }
+
 export { NTooltip }
 
 // @public (undocumented)
+export interface OpsChartPlaceholderProps {
+    // (undocumented)
+    height?: string;
+    // (undocumented)
+    label?: string;
+}
+
+// @public (undocumented)
+export interface OpsPanelEmits {
+    // (undocumented)
+    'update:tab': [value: string];
+}
+
+// @public (undocumented)
+export interface OpsPanelProps {
+    // (undocumented)
+    tab: string;
+}
+
+// @public (undocumented)
 export type PageAnimateType = 'fade' | 'slide-left' | 'slide-right' | 'zoom' | 'none';
+
+// @public (undocumented)
+export interface PageHeaderEmits {
+    // (undocumented)
+    (e: 'back'): void;
+    // (undocumented)
+    (e: 'navigate', path: string): void;
+}
+
+// @public (undocumented)
+export interface PageHeaderProps {
+    // (undocumented)
+    backUrl?: string;
+    // (undocumented)
+    breadcrumbs?: BreadcrumbItem[];
+    // (undocumented)
+    description?: string;
+    // Warning: (ae-forgotten-export) The symbol "PageHeaderStatus" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    status?: PageHeaderStatus;
+    // (undocumented)
+    statusLabel?: string;
+    // (undocumented)
+    sticky?: boolean;
+    // (undocumented)
+    title: string;
+}
+
+// @public (undocumented)
+export interface PageSkeletonProps {
+    // (undocumented)
+    animated?: boolean;
+    // (undocumented)
+    columns?: number;
+    // (undocumented)
+    mode: SkeletonMode;
+    // (undocumented)
+    rows?: number;
+    // (undocumented)
+    showHeader?: boolean;
+    // (undocumented)
+    showPagination?: boolean;
+    // (undocumented)
+    showToolbar?: boolean;
+}
+
+// @public (undocumented)
+export function parseDashboardImportPayload(text: string): DashboardExportPayload;
+
+// @public (undocumented)
+export interface PasswordRule {
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    test: (value: string) => boolean;
+}
+
+// @public (undocumented)
+export interface PasswordStrengthEmits {
+    // (undocumented)
+    'update:modelValue': [value: string];
+    // (undocumented)
+    levelChange: [level: PasswordStrengthLevel, score: number];
+}
+
+// @public (undocumented)
+export interface PasswordStrengthExpose {
+    // (undocumented)
+    focus: () => void;
+    // (undocumented)
+    getLevel: () => PasswordStrengthLevel;
+    // (undocumented)
+    getPassedRules: () => string[];
+    // (undocumented)
+    getScore: () => number;
+}
+
+// @public (undocumented)
+export type PasswordStrengthLevel = 'weak' | 'fair' | 'good' | 'strong' | 'excellent';
+
+// @public (undocumented)
+export interface PasswordStrengthProps {
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    maxLength?: number;
+    // (undocumented)
+    minLength?: number;
+    // (undocumented)
+    modelValue: string;
+    // (undocumented)
+    placeholder?: string;
+    // (undocumented)
+    rules?: PasswordRule[];
+    // (undocumented)
+    showLevel?: boolean;
+    // (undocumented)
+    showRules?: boolean;
+    // (undocumented)
+    showScore?: boolean;
+    // (undocumented)
+    size?: 'small' | 'medium' | 'large';
+}
 
 // @public (undocumented)
 export interface PermissionDirectiveBinding {
@@ -1389,6 +3549,8 @@ export const primitiveColors: {
     readonly amber: readonly ["#fffbeb", "#fef3c7", "#fde68a", "#fcd34d", "#fbbf24", "#f0a020", "#d4891a", "#b87315", "#925a0f", "#6b420b"];
     readonly red: readonly ["#fef2f2", "#fee2e2", "#fecaca", "#fca5a5", "#f87171", "#d03050", "#b52a46", "#99233c", "#7d1d31", "#611727"];
     readonly teal: readonly ["#f0fdfa", "#ccfbf1", "#99f6e4", "#5eead4", "#2dd4bf", "#14b8a6", "#0f9688", "#0d7a6f", "#0a5e55", "#07423c"];
+    readonly cyan: readonly ["#ecfeff", "#cffafe", "#a5f3fc", "#67e8f9", "#22d3ee", "#06b6d4", "#0891b2", "#0e7490", "#155e75", "#164e63"];
+    readonly violet: readonly ["#f5f3ff", "#ede9fe", "#ddd6fe", "#c4b5fd", "#a78bfa", "#8b5cf6", "#7c3aed", "#6d28d9", "#5b21b6", "#4c1d95"];
 };
 
 // @public (undocumented)
@@ -1420,6 +3582,117 @@ export interface ProjectConfig {
 }
 
 // @public (undocumented)
+export interface ProListAction {
+    // (undocumented)
+    danger?: boolean;
+    // (undocumented)
+    disabled?: boolean | ((item: Record<string, unknown>) => boolean);
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label: string;
+}
+
+// @public (undocumented)
+export interface ProListEmits<T = Record<string, unknown>> {
+    // (undocumented)
+    'update:checkedKeys': [keys: (string | number)[]];
+    // (undocumented)
+    'update:page': [page: number];
+    // (undocumented)
+    'update:pageSize': [size: number];
+    // (undocumented)
+    'update:viewMode': [mode: ProListViewMode];
+    // (undocumented)
+    action: [key: string, item: T];
+    // (undocumented)
+    itemClick: [item: T];
+}
+
+// @public (undocumented)
+export interface ProListExpose {
+    // (undocumented)
+    clearSelection: () => void;
+    // (undocumented)
+    toggleViewMode: () => void;
+}
+
+// @public (undocumented)
+export interface ProListPagination {
+    // (undocumented)
+    page: number;
+    // (undocumented)
+    pageSize: number;
+    // (undocumented)
+    pageSizes?: number[];
+    // (undocumented)
+    total: number;
+}
+
+// @public (undocumented)
+export interface ProListProps<T = Record<string, unknown>> {
+    // (undocumented)
+    actions?: ProListAction[];
+    // (undocumented)
+    cardMinWidth?: number;
+    // (undocumented)
+    checkedKeys?: (string | number)[];
+    // (undocumented)
+    data: T[];
+    // (undocumented)
+    emptyIcon?: string;
+    // (undocumented)
+    emptyText?: string;
+    // (undocumented)
+    grid?: {
+        xs?: number;
+        sm?: number;
+        md?: number;
+        lg?: number;
+        xl?: number;
+    };
+    // (undocumented)
+    loading?: boolean;
+    // (undocumented)
+    pagination?: ProListPagination | false;
+    // (undocumented)
+    rowKey?: string | ((row: T) => string | number);
+    // (undocumented)
+    selectable?: boolean;
+    // (undocumented)
+    viewMode?: ProListViewMode;
+}
+
+// @public (undocumented)
+export interface ProListSlots<T = Record<string, unknown>> {
+    // (undocumented)
+    actions?: (params: {
+        item: T;
+    }) => VNode;
+    // (undocumented)
+    card?: (params: {
+        item: T;
+        index: number;
+    }) => VNode;
+    // (undocumented)
+    empty?: () => VNode;
+    // (undocumented)
+    header?: () => VNode;
+    // (undocumented)
+    headerExtra?: () => VNode;
+    // (undocumented)
+    listItem?: (params: {
+        item: T;
+        index: number;
+    }) => VNode;
+}
+
+// @public (undocumented)
+export type ProListViewMode = 'card' | 'list';
+
+// @public (undocumented)
 export interface PropsTableProps {
     // (undocumented)
     rows: PropsTableRow[];
@@ -1439,6 +3712,318 @@ export interface PropsTableRow {
     required?: boolean;
     // (undocumented)
     type: string;
+}
+
+// @public (undocumented)
+export interface ProTreeEditorEmits {
+    // (undocumented)
+    'update:checkedKeys': [keys: (string | number)[]];
+    // (undocumented)
+    'update:selectedKey': [key: string | number | null];
+    // (undocumented)
+    dataChange: [event: TreeDataChangeEvent];
+    // (undocumented)
+    requestError: [event: TreeRequestEvent, error: TreeError];
+    // (undocumented)
+    requestStart: [event: TreeRequestEvent];
+    // (undocumented)
+    requestSuccess: [event: TreeRequestEvent];
+    // (undocumented)
+    select: [node: TreeNodeData];
+}
+
+// @public (undocumented)
+export interface ProTreeEditorExpose {
+    // (undocumented)
+    collapseAll: () => void;
+    // (undocumented)
+    createNode: (parentId?: string | number | null) => void;
+    // (undocumented)
+    deleteNode: (id: string | number) => Promise<void>;
+    // (undocumented)
+    expandAll: () => void;
+    // (undocumented)
+    getTreeData: () => TreeNodeData[];
+    // (undocumented)
+    moveNode: (id: string | number, newParentId: string | number | null) => Promise<void>;
+    // (undocumented)
+    refreshNode: (id: string | number) => Promise<void>;
+    // (undocumented)
+    reload: () => Promise<void>;
+    // (undocumented)
+    renameNode: (id: string | number) => void;
+    // (undocumented)
+    setKeyword: (keyword: string) => void;
+}
+
+// @public (undocumented)
+export interface ProTreeEditorProps {
+    // (undocumented)
+    batch?: TreeBatchConfig | false;
+    // (undocumented)
+    checkDelete?: CheckDeleteFn;
+    // (undocumented)
+    checkedKeys?: (string | number)[];
+    // (undocumented)
+    data?: TreeNodeData[];
+    // (undocumented)
+    defaultExpandLevel?: number;
+    // (undocumented)
+    density?: TreeDensity;
+    // (undocumented)
+    draggable?: boolean;
+    // (undocumented)
+    i18n?: TreeI18n;
+    // (undocumented)
+    icons?: TreeNodeIcons;
+    // (undocumented)
+    lazyLoad?: boolean;
+    // (undocumented)
+    maxDepth?: number;
+    // (undocumented)
+    optimistic?: boolean;
+    // (undocumented)
+    requestHooks?: TreeRequestHooks;
+    // (undocumented)
+    requestMode?: TreeRequestMode;
+    // (undocumented)
+    selectable?: boolean;
+    // (undocumented)
+    selectedKey?: string | number | null;
+    // (undocumented)
+    showBreadcrumb?: boolean;
+    // (undocumented)
+    showCounts?: boolean;
+}
+
+// @public (undocumented)
+export interface ProTreeEditorSlots {
+    // (undocumented)
+    'node-actions'?: (params: {
+        node: TreeNodeData;
+    }) => VNode;
+    // (undocumented)
+    'node-extra'?: (params: {
+        node: TreeNodeData;
+    }) => VNode;
+    // (undocumented)
+    'node-icon'?: (params: {
+        node: TreeNodeData;
+        expanded: boolean;
+    }) => VNode;
+    // (undocumented)
+    'node-label'?: (params: {
+        node: TreeNodeData;
+    }) => VNode;
+    // (undocumented)
+    'toolbar-extra'?: () => VNode;
+    // (undocumented)
+    empty?: () => VNode;
+    // (undocumented)
+    loading?: () => VNode;
+    // (undocumented)
+    toolbar?: () => VNode;
+}
+
+// @public (undocumented)
+export const proUploadDefaultLocale: ProUploadLocale;
+
+// @public (undocumented)
+export interface ProUploadEmits {
+    // (undocumented)
+    (e: 'change', fileList: ProUploadFileItem[]): void;
+    // (undocumented)
+    (e: 'update:value', fileList: ProUploadFileItem[]): void;
+    // (undocumented)
+    (e: 'update:modelValue', fileList: ProUploadFileItem[]): void;
+    // (undocumented)
+    (e: 'success', file: ProUploadFileItem, response: unknown): void;
+    // (undocumented)
+    (e: 'error', file: ProUploadFileItem, error: Error): void;
+    // (undocumented)
+    (e: 'preview', file: ProUploadFileItem): void;
+    // (undocumented)
+    (e: 'remove', file: ProUploadFileItem): void;
+    // (undocumented)
+    (e: 'exceed', info: {
+        type: 'count' | 'size' | 'accept';
+        file: File;
+        limit: number | string;
+    }): void;
+}
+
+// @public (undocumented)
+export interface ProUploadExpose {
+    // (undocumented)
+    abort: (uid: string) => void;
+    // (undocumented)
+    clear: () => void;
+    // (undocumented)
+    getFileList: () => ProUploadFileItem[];
+    // (undocumented)
+    retry: (uid: string) => void;
+    // (undocumented)
+    submit: () => void;
+}
+
+// @public (undocumented)
+export interface ProUploadFileItem {
+    // (undocumented)
+    error?: string;
+    // (undocumented)
+    fileId?: number;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    progress: number;
+    raw?: File;
+    _retryCount?: number;
+    // (undocumented)
+    size: number;
+    // (undocumented)
+    status: ProUploadFileStatus;
+    // (undocumented)
+    storageId?: string;
+    // (undocumented)
+    thumbUrl?: string;
+    // (undocumented)
+    type: string;
+    // (undocumented)
+    uid: string;
+    // (undocumented)
+    url?: string;
+}
+
+// @public (undocumented)
+export type ProUploadFileStatus = 'pending' | 'queued' | 'uploading' | 'success' | 'error';
+
+// @public (undocumented)
+export interface ProUploadLocale {
+    // (undocumented)
+    clickHint?: string;
+    // (undocumented)
+    deleteLabel?: string;
+    // (undocumented)
+    dropHint?: string;
+    // (undocumented)
+    exceedCount?: string;
+    // (undocumented)
+    exceedSize?: string;
+    // (undocumented)
+    invalidType?: string;
+    // (undocumented)
+    previewLabel?: string;
+    // (undocumented)
+    removeConfirm?: string;
+    // (undocumented)
+    retryLabel?: string;
+    // (undocumented)
+    uploadFailed?: string;
+}
+
+// @public (undocumented)
+export interface ProUploadPayloadContext {
+    // (undocumented)
+    businessId?: string;
+    // (undocumented)
+    businessType?: string;
+    // (undocumented)
+    category?: string;
+    // (undocumented)
+    storage?: string;
+}
+
+// @public (undocumented)
+export interface ProUploadProps {
+    accept?: string;
+    action?: string;
+    beforeUpload?: (file: File) => boolean | Promise<boolean>;
+    buildUploadPayload?: (file: File, ctx: ProUploadPayloadContext) => FormData;
+    businessId?: string;
+    businessType?: string;
+    category?: string;
+    concurrency?: number;
+    customRequest?: (options: ProUploadRequestOptions) => void;
+    disabled?: boolean;
+    draggable?: boolean;
+    headers?: Record<string, string>;
+    listType?: 'text' | 'picture' | 'picture-card';
+    locale?: Partial<ProUploadLocale>;
+    maxCount?: number;
+    maxSizeMB?: number;
+    method?: 'POST' | 'PUT' | 'PATCH';
+    modelValue?: ProUploadFileItem[];
+    multiple?: boolean;
+    parseResponse?: (raw: unknown) => Partial<ProUploadFileItem>;
+    readonly?: boolean;
+    renderItem?: (params: {
+        file: ProUploadFileItem;
+    }) => VNode;
+    retryConfig?: ProUploadRetryConfig;
+    storage?: string;
+    transformFile?: (file: File, ctx: ProUploadPayloadContext) => File | Promise<File>;
+    value?: ProUploadFileItem[];
+    withCredentials?: boolean;
+}
+
+// @public (undocumented)
+export interface ProUploadRawResponse {
+    // (undocumented)
+    [key: string]: unknown;
+    // (undocumented)
+    content_type?: string;
+    // (undocumented)
+    file_id?: number;
+    // (undocumented)
+    file_size?: number;
+    // (undocumented)
+    id?: number;
+    // (undocumented)
+    original_filename?: string;
+    // (undocumented)
+    original_name?: string;
+    // (undocumented)
+    size?: number;
+    // (undocumented)
+    storage_id?: string;
+    // (undocumented)
+    url?: string;
+}
+
+// @public (undocumented)
+export interface ProUploadRequestOptions {
+    // (undocumented)
+    file: File;
+    // (undocumented)
+    formData: FormData;
+    // (undocumented)
+    onError: (error: Error) => void;
+    // (undocumented)
+    onProgress: (percent: number) => void;
+    // (undocumented)
+    onSuccess: (response: unknown) => void;
+    // (undocumented)
+    signal: AbortSignal;
+}
+
+// @public (undocumented)
+export interface ProUploadRetryConfig {
+    // (undocumented)
+    maxRetries?: number;
+    // (undocumented)
+    retryDelay?: number;
+}
+
+// @public (undocumented)
+export interface ProUploadSlots {
+    // (undocumented)
+    fileItem?: (params: {
+        file: ProUploadFileItem;
+    }) => VNode;
+    // (undocumented)
+    tip?: () => VNode;
+    // (undocumented)
+    trigger?: () => VNode;
 }
 
 // @public (undocumented)
@@ -1516,7 +4101,19 @@ export interface QueryTableProps<T = Record<string, unknown>> {
 }
 
 // @public (undocumented)
-export type RadiusToken = 'sm' | 'md' | 'lg' | 'xl' | 'full';
+export interface QuickFilter {
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    value: unknown;
+}
+
+// @public (undocumented)
+export type RadiusToken = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
 
 // @public
 export function radiusVar(token: RadiusToken): string;
@@ -1527,6 +4124,13 @@ export function radiusVar(token: RadiusToken): string;
 //
 // @public (undocumented)
 export const RAppShell: __VLS_WithTemplateSlots_5<typeof __VLS_component_5, __VLS_TemplateResult_5["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_21" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_21" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_21" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RBatchActionBar: __VLS_WithTemplateSlots_21<typeof __VLS_component_21, __VLS_TemplateResult_21["slots"]>;
 
 // @public (undocumented)
 export const RBreadcrumb: DefineComponent<ExtractPropTypes<    {
@@ -1544,6 +4148,3968 @@ required: true;
 }>> & Readonly<{
 onNavigate?: ((path: string) => any) | undefined;
 }>, {}, {}, {}, {}, string, ComponentProvideOptions, true, {}, HTMLElement>;
+
+// Warning: (ae-forgotten-export) The symbol "RChatBranchNavigatorProps" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RChatBranchNavigator: DefineComponent<RChatBranchNavigatorProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+"switch-branch": (direction: "prev" | "next") => any;
+}, string, PublicProps, Readonly<RChatBranchNavigatorProps> & Readonly<{
+"onSwitch-branch"?: ((direction: "prev" | "next") => any) | undefined;
+}>, {
+hasPrev: boolean;
+hasNext: boolean;
+pathLabel: string;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "RChatCanvasProps" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RChatCanvas: DefineComponent<RChatCanvasProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+apply: (content: string) => any;
+"update:visible": (value: boolean) => any;
+}, string, PublicProps, Readonly<RChatCanvasProps> & Readonly<{
+onApply?: ((content: string) => any) | undefined;
+"onUpdate:visible"?: ((value: boolean) => any) | undefined;
+}>, {
+title: string;
+visible: boolean;
+content: string;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "RChatConversationListProps" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RChatConversationList: DefineComponent<RChatConversationListProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+delete: (id: number) => any;
+select: (id: number) => any;
+search: (keyword: string) => any;
+archive: (id: number) => any;
+pin: (id: number) => any;
+create: () => any;
+rename: (id: number, title: string) => any;
+unpin: (id: number) => any;
+favorite: (id: number) => any;
+unfavorite: (id: number) => any;
+}, string, PublicProps, Readonly<RChatConversationListProps> & Readonly<{
+onDelete?: ((id: number) => any) | undefined;
+onSelect?: ((id: number) => any) | undefined;
+onSearch?: ((keyword: string) => any) | undefined;
+onArchive?: ((id: number) => any) | undefined;
+onPin?: ((id: number) => any) | undefined;
+onCreate?: (() => any) | undefined;
+onRename?: ((id: number, title: string) => any) | undefined;
+onUnpin?: ((id: number) => any) | undefined;
+onFavorite?: ((id: number) => any) | undefined;
+onUnfavorite?: ((id: number) => any) | undefined;
+}>, {
+loading: boolean;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {
+editingInputRef: (CreateComponentPublicInstanceWithMixins<Readonly<ExtractPropTypes<    {
+bordered: {
+type: PropType<boolean | undefined>;
+default: undefined;
+};
+type: {
+type: PropType<"text" | "textarea" | "password">;
+default: string;
+};
+placeholder: PropType<string | [string, string]>;
+defaultValue: {
+type: PropType<null | string | [string, string]>;
+default: null;
+};
+value: PropType<null | string | [string, string]>;
+disabled: {
+type: PropType<boolean | undefined>;
+default: undefined;
+};
+size: PropType<Size_2>;
+rows: {
+type: PropType<number | string>;
+default: number;
+};
+round: BooleanConstructor;
+minlength: PropType<number | string>;
+maxlength: PropType<number | string>;
+clearable: BooleanConstructor;
+autosize: {
+type: PropType<boolean | {
+minRows?: number;
+maxRows?: number;
+}>;
+default: boolean;
+};
+pair: BooleanConstructor;
+separator: StringConstructor;
+readonly: {
+type: (StringConstructor | BooleanConstructor)[];
+default: boolean;
+};
+passivelyActivated: BooleanConstructor;
+showPasswordOn: PropType<"mousedown" | "click">;
+stateful: {
+type: BooleanConstructor;
+default: boolean;
+};
+autofocus: BooleanConstructor;
+inputProps: PropType<TextareaHTMLAttributes | InputHTMLAttributes>;
+resizable: {
+type: BooleanConstructor;
+default: boolean;
+};
+showCount: BooleanConstructor;
+loading: {
+type: BooleanConstructor;
+default: undefined;
+};
+allowInput: PropType<(value: string) => boolean>;
+renderCount: PropType<(props: {
+value: string;
+}) => VNodeChild>;
+onMousedown: PropType<(e: MouseEvent) => void>;
+onKeydown: PropType<(e: KeyboardEvent) => void>;
+onKeyup: PropType<(e: KeyboardEvent) => void>;
+onInput: PropType<OnUpdateValue>;
+onFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onClick: PropType<MaybeArray<(e: MouseEvent) => void>>;
+onChange: PropType<OnUpdateValue>;
+onClear: PropType<MaybeArray<(e: MouseEvent) => void>>;
+countGraphemes: PropType<(value: string) => number>;
+status: PropType<FormValidationStatus>;
+'onUpdate:value': PropType<MaybeArray<OnUpdateValue>>;
+onUpdateValue: PropType<MaybeArray<OnUpdateValue>>;
+textDecoration: PropType<string | [string, string]>;
+attrSize: {
+type: NumberConstructor;
+default: number;
+};
+onInputBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onInputFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onDeactivate: PropType<MaybeArray<() => void>>;
+onActivate: PropType<MaybeArray<() => void>>;
+onWrapperFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onWrapperBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+internalDeactivateOnEnter: BooleanConstructor;
+internalForceFocus: BooleanConstructor;
+internalLoadingBeforeSuffix: {
+type: BooleanConstructor;
+default: boolean;
+};
+showPasswordToggle: BooleanConstructor;
+theme: PropType<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>;
+themeOverrides: PropType<ExtractThemeOverrides<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>>;
+builtinThemeOverrides: PropType<ExtractThemeOverrides<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>>;
+}>> & Readonly<{}>, {
+wrapperElRef: Ref<HTMLElement | null, HTMLElement | null>;
+inputElRef: Ref<HTMLInputElement | null, HTMLInputElement | null>;
+inputMirrorElRef: Ref<HTMLElement | null, HTMLElement | null>;
+inputEl2Ref: Ref<HTMLInputElement | null, HTMLInputElement | null>;
+textareaElRef: Ref<HTMLTextAreaElement | null, HTMLTextAreaElement | null>;
+textareaMirrorElRef: Ref<HTMLElement | null, HTMLElement | null>;
+textareaScrollbarInstRef: Ref<    {
+$el: HTMLElement;
+containerRef: HTMLElement | null;
+contentRef: HTMLElement | null;
+containerScrollTop: number;
+syncUnifiedContainer: () => void;
+scrollTo: ScrollTo;
+scrollBy: ScrollBy;
+sync: () => void;
+handleMouseEnterWrapper: () => void;
+handleMouseLeaveWrapper: () => void;
+} | null, ScrollbarInst | {
+$el: HTMLElement;
+containerRef: HTMLElement | null;
+contentRef: HTMLElement | null;
+containerScrollTop: number;
+syncUnifiedContainer: () => void;
+scrollTo: ScrollTo;
+scrollBy: ScrollBy;
+sync: () => void;
+handleMouseEnterWrapper: () => void;
+handleMouseLeaveWrapper: () => void;
+} | null>;
+rtlEnabled: Ref<RtlItem | undefined, RtlItem | undefined> | undefined;
+uncontrolledValue: Ref<string | [string, string] | null, string | [string, string] | null>;
+mergedValue: ComputedRef<string | [string, string] | null>;
+passwordVisible: Ref<boolean, boolean>;
+mergedPlaceholder: ComputedRef<[string, string] | [string]>;
+showPlaceholder1: ComputedRef<string | false>;
+showPlaceholder2: ComputedRef<boolean | "" | undefined>;
+mergedFocus: ComputedRef<boolean>;
+isComposing: Ref<boolean, boolean>;
+activated: Ref<boolean, boolean>;
+showClearButton: ComputedRef<boolean>;
+mergedSize: ComputedRef<"tiny" | "small" | "medium" | "large">;
+mergedDisabled: ComputedRef<boolean>;
+textDecorationStyle: ComputedRef<string[] | {
+textDecoration: string;
+}[]>;
+mergedClsPrefix: Ref<string, string>;
+mergedBordered: ComputedRef<boolean>;
+mergedShowPasswordOn: ComputedRef<"click" | "mousedown" | undefined>;
+placeholderStyle: Ref<    {
+top: string;
+}, {
+top: string;
+} | {
+top: string;
+}>;
+mergedStatus: ComputedRef<FormValidationStatus | undefined>;
+textAreaScrollContainerWidth: Ref<number | undefined, number | undefined>;
+handleTextAreaScroll: (e: Event) => void;
+handleCompositionStart: () => void;
+handleCompositionEnd: (e: CompositionEvent) => void;
+handleInput: (e: InputEvent | CompositionEvent | Event, index?: 0 | 1, event?: string) => void;
+handleInputBlur: (e: FocusEvent) => void;
+handleInputFocus: (e: FocusEvent, index: number) => void;
+handleWrapperBlur: (e: FocusEvent) => void;
+handleWrapperFocus: (e: FocusEvent) => void;
+handleMouseEnter: () => void;
+handleMouseLeave: () => void;
+handleMouseDown: (e: MouseEvent) => void;
+handleChange: (e: Event, index?: 0 | 1) => void;
+handleClick: (e: MouseEvent) => void;
+handleClear: (e: MouseEvent) => void;
+handlePasswordToggleClick: () => void;
+handlePasswordToggleMousedown: (e: MouseEvent) => void;
+handleWrapperKeydown: (e: KeyboardEvent) => void;
+handleWrapperKeyup: (e: KeyboardEvent) => void;
+handleTextAreaMirrorResize: () => void;
+getTextareaScrollContainer: () => HTMLTextAreaElement | null;
+mergedTheme: ComputedRef<    {
+common: ThemeCommonVars;
+self: {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+};
+peers: {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+};
+peerOverrides: {
+Scrollbar?: {
+peers?: {
+[x: string]: any;
+} | undefined;
+} | undefined;
+};
+}>;
+cssVars: ComputedRef<    {
+"--n-bezier": string;
+"--n-count-text-color": string;
+"--n-count-text-color-disabled": string;
+"--n-color": string;
+"--n-font-size": string;
+"--n-font-weight": string;
+"--n-border-radius": string;
+"--n-height": string;
+"--n-padding-left": string;
+"--n-padding-right": string;
+"--n-text-color": string;
+"--n-caret-color": string;
+"--n-text-decoration-color": string;
+"--n-border": string;
+"--n-border-disabled": string;
+"--n-border-hover": string;
+"--n-border-focus": string;
+"--n-placeholder-color": string;
+"--n-placeholder-color-disabled": string;
+"--n-icon-size": string;
+"--n-line-height-textarea": string;
+"--n-color-disabled": string;
+"--n-color-focus": string;
+"--n-text-color-disabled": string;
+"--n-box-shadow-focus": string;
+"--n-loading-color": string;
+"--n-caret-color-warning": string;
+"--n-color-focus-warning": string;
+"--n-box-shadow-focus-warning": string;
+"--n-border-warning": string;
+"--n-border-focus-warning": string;
+"--n-border-hover-warning": string;
+"--n-loading-color-warning": string;
+"--n-caret-color-error": string;
+"--n-color-focus-error": string;
+"--n-box-shadow-focus-error": string;
+"--n-border-error": string;
+"--n-border-focus-error": string;
+"--n-border-hover-error": string;
+"--n-loading-color-error": string;
+"--n-clear-color": string;
+"--n-clear-size": string;
+"--n-clear-color-hover": string;
+"--n-clear-color-pressed": string;
+"--n-icon-color": string;
+"--n-icon-color-hover": string;
+"--n-icon-color-pressed": string;
+"--n-icon-color-disabled": string;
+"--n-suffix-text-color": string;
+}> | undefined;
+themeClass: Ref<string, string> | undefined;
+onRender: (() => void) | undefined;
+isCompositing: Ref<boolean>;
+blur: () => void;
+clear: () => void;
+focus: () => void;
+select: () => void;
+activate: () => void;
+deactivate: () => void;
+scrollTo: (options: ScrollToOptions) => void;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, PublicProps, {
+disabled: boolean | undefined;
+type: "text" | "textarea" | "password";
+bordered: boolean | undefined;
+clearable: boolean;
+defaultValue: string | [string, string] | null;
+loading: boolean;
+round: boolean;
+resizable: boolean;
+stateful: boolean;
+pair: boolean;
+rows: string | number;
+autosize: boolean | {
+minRows?: number;
+maxRows?: number;
+};
+readonly: string | boolean;
+passivelyActivated: boolean;
+autofocus: boolean;
+showCount: boolean;
+attrSize: number;
+internalDeactivateOnEnter: boolean;
+internalForceFocus: boolean;
+internalLoadingBeforeSuffix: boolean;
+showPasswordToggle: boolean;
+}, true, {}, SlotsType<InputSlots>, GlobalComponents, GlobalDirectives, string, {}, any, ComponentProvideOptions, {
+P: {};
+B: {};
+D: {};
+C: {};
+M: {};
+Defaults: {};
+}, Readonly<ExtractPropTypes<    {
+bordered: {
+type: PropType<boolean | undefined>;
+default: undefined;
+};
+type: {
+type: PropType<"text" | "textarea" | "password">;
+default: string;
+};
+placeholder: PropType<string | [string, string]>;
+defaultValue: {
+type: PropType<null | string | [string, string]>;
+default: null;
+};
+value: PropType<null | string | [string, string]>;
+disabled: {
+type: PropType<boolean | undefined>;
+default: undefined;
+};
+size: PropType<Size_2>;
+rows: {
+type: PropType<number | string>;
+default: number;
+};
+round: BooleanConstructor;
+minlength: PropType<number | string>;
+maxlength: PropType<number | string>;
+clearable: BooleanConstructor;
+autosize: {
+type: PropType<boolean | {
+minRows?: number;
+maxRows?: number;
+}>;
+default: boolean;
+};
+pair: BooleanConstructor;
+separator: StringConstructor;
+readonly: {
+type: (StringConstructor | BooleanConstructor)[];
+default: boolean;
+};
+passivelyActivated: BooleanConstructor;
+showPasswordOn: PropType<"mousedown" | "click">;
+stateful: {
+type: BooleanConstructor;
+default: boolean;
+};
+autofocus: BooleanConstructor;
+inputProps: PropType<TextareaHTMLAttributes | InputHTMLAttributes>;
+resizable: {
+type: BooleanConstructor;
+default: boolean;
+};
+showCount: BooleanConstructor;
+loading: {
+type: BooleanConstructor;
+default: undefined;
+};
+allowInput: PropType<(value: string) => boolean>;
+renderCount: PropType<(props: {
+value: string;
+}) => VNodeChild>;
+onMousedown: PropType<(e: MouseEvent) => void>;
+onKeydown: PropType<(e: KeyboardEvent) => void>;
+onKeyup: PropType<(e: KeyboardEvent) => void>;
+onInput: PropType<OnUpdateValue>;
+onFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onClick: PropType<MaybeArray<(e: MouseEvent) => void>>;
+onChange: PropType<OnUpdateValue>;
+onClear: PropType<MaybeArray<(e: MouseEvent) => void>>;
+countGraphemes: PropType<(value: string) => number>;
+status: PropType<FormValidationStatus>;
+'onUpdate:value': PropType<MaybeArray<OnUpdateValue>>;
+onUpdateValue: PropType<MaybeArray<OnUpdateValue>>;
+textDecoration: PropType<string | [string, string]>;
+attrSize: {
+type: NumberConstructor;
+default: number;
+};
+onInputBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onInputFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onDeactivate: PropType<MaybeArray<() => void>>;
+onActivate: PropType<MaybeArray<() => void>>;
+onWrapperFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onWrapperBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+internalDeactivateOnEnter: BooleanConstructor;
+internalForceFocus: BooleanConstructor;
+internalLoadingBeforeSuffix: {
+type: BooleanConstructor;
+default: boolean;
+};
+showPasswordToggle: BooleanConstructor;
+theme: PropType<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>;
+themeOverrides: PropType<ExtractThemeOverrides<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>>;
+builtinThemeOverrides: PropType<ExtractThemeOverrides<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>>;
+}>> & Readonly<{}>, {
+wrapperElRef: Ref<HTMLElement | null, HTMLElement | null>;
+inputElRef: Ref<HTMLInputElement | null, HTMLInputElement | null>;
+inputMirrorElRef: Ref<HTMLElement | null, HTMLElement | null>;
+inputEl2Ref: Ref<HTMLInputElement | null, HTMLInputElement | null>;
+textareaElRef: Ref<HTMLTextAreaElement | null, HTMLTextAreaElement | null>;
+textareaMirrorElRef: Ref<HTMLElement | null, HTMLElement | null>;
+textareaScrollbarInstRef: Ref<    {
+$el: HTMLElement;
+containerRef: HTMLElement | null;
+contentRef: HTMLElement | null;
+containerScrollTop: number;
+syncUnifiedContainer: () => void;
+scrollTo: ScrollTo;
+scrollBy: ScrollBy;
+sync: () => void;
+handleMouseEnterWrapper: () => void;
+handleMouseLeaveWrapper: () => void;
+} | null, ScrollbarInst | {
+$el: HTMLElement;
+containerRef: HTMLElement | null;
+contentRef: HTMLElement | null;
+containerScrollTop: number;
+syncUnifiedContainer: () => void;
+scrollTo: ScrollTo;
+scrollBy: ScrollBy;
+sync: () => void;
+handleMouseEnterWrapper: () => void;
+handleMouseLeaveWrapper: () => void;
+} | null>;
+rtlEnabled: Ref<RtlItem | undefined, RtlItem | undefined> | undefined;
+uncontrolledValue: Ref<string | [string, string] | null, string | [string, string] | null>;
+mergedValue: ComputedRef<string | [string, string] | null>;
+passwordVisible: Ref<boolean, boolean>;
+mergedPlaceholder: ComputedRef<[string, string] | [string]>;
+showPlaceholder1: ComputedRef<string | false>;
+showPlaceholder2: ComputedRef<boolean | "" | undefined>;
+mergedFocus: ComputedRef<boolean>;
+isComposing: Ref<boolean, boolean>;
+activated: Ref<boolean, boolean>;
+showClearButton: ComputedRef<boolean>;
+mergedSize: ComputedRef<"tiny" | "small" | "medium" | "large">;
+mergedDisabled: ComputedRef<boolean>;
+textDecorationStyle: ComputedRef<string[] | {
+textDecoration: string;
+}[]>;
+mergedClsPrefix: Ref<string, string>;
+mergedBordered: ComputedRef<boolean>;
+mergedShowPasswordOn: ComputedRef<"click" | "mousedown" | undefined>;
+placeholderStyle: Ref<    {
+top: string;
+}, {
+top: string;
+} | {
+top: string;
+}>;
+mergedStatus: ComputedRef<FormValidationStatus | undefined>;
+textAreaScrollContainerWidth: Ref<number | undefined, number | undefined>;
+handleTextAreaScroll: (e: Event) => void;
+handleCompositionStart: () => void;
+handleCompositionEnd: (e: CompositionEvent) => void;
+handleInput: (e: InputEvent | CompositionEvent | Event, index?: 0 | 1, event?: string) => void;
+handleInputBlur: (e: FocusEvent) => void;
+handleInputFocus: (e: FocusEvent, index: number) => void;
+handleWrapperBlur: (e: FocusEvent) => void;
+handleWrapperFocus: (e: FocusEvent) => void;
+handleMouseEnter: () => void;
+handleMouseLeave: () => void;
+handleMouseDown: (e: MouseEvent) => void;
+handleChange: (e: Event, index?: 0 | 1) => void;
+handleClick: (e: MouseEvent) => void;
+handleClear: (e: MouseEvent) => void;
+handlePasswordToggleClick: () => void;
+handlePasswordToggleMousedown: (e: MouseEvent) => void;
+handleWrapperKeydown: (e: KeyboardEvent) => void;
+handleWrapperKeyup: (e: KeyboardEvent) => void;
+handleTextAreaMirrorResize: () => void;
+getTextareaScrollContainer: () => HTMLTextAreaElement | null;
+mergedTheme: ComputedRef<    {
+common: ThemeCommonVars;
+self: {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+};
+peers: {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+};
+peerOverrides: {
+Scrollbar?: {
+peers?: {
+[x: string]: any;
+} | undefined;
+} | undefined;
+};
+}>;
+cssVars: ComputedRef<    {
+"--n-bezier": string;
+"--n-count-text-color": string;
+"--n-count-text-color-disabled": string;
+"--n-color": string;
+"--n-font-size": string;
+"--n-font-weight": string;
+"--n-border-radius": string;
+"--n-height": string;
+"--n-padding-left": string;
+"--n-padding-right": string;
+"--n-text-color": string;
+"--n-caret-color": string;
+"--n-text-decoration-color": string;
+"--n-border": string;
+"--n-border-disabled": string;
+"--n-border-hover": string;
+"--n-border-focus": string;
+"--n-placeholder-color": string;
+"--n-placeholder-color-disabled": string;
+"--n-icon-size": string;
+"--n-line-height-textarea": string;
+"--n-color-disabled": string;
+"--n-color-focus": string;
+"--n-text-color-disabled": string;
+"--n-box-shadow-focus": string;
+"--n-loading-color": string;
+"--n-caret-color-warning": string;
+"--n-color-focus-warning": string;
+"--n-box-shadow-focus-warning": string;
+"--n-border-warning": string;
+"--n-border-focus-warning": string;
+"--n-border-hover-warning": string;
+"--n-loading-color-warning": string;
+"--n-caret-color-error": string;
+"--n-color-focus-error": string;
+"--n-box-shadow-focus-error": string;
+"--n-border-error": string;
+"--n-border-focus-error": string;
+"--n-border-hover-error": string;
+"--n-loading-color-error": string;
+"--n-clear-color": string;
+"--n-clear-size": string;
+"--n-clear-color-hover": string;
+"--n-clear-color-pressed": string;
+"--n-icon-color": string;
+"--n-icon-color-hover": string;
+"--n-icon-color-pressed": string;
+"--n-icon-color-disabled": string;
+"--n-suffix-text-color": string;
+}> | undefined;
+themeClass: Ref<string, string> | undefined;
+onRender: (() => void) | undefined;
+isCompositing: Ref<boolean>;
+blur: () => void;
+clear: () => void;
+focus: () => void;
+select: () => void;
+activate: () => void;
+deactivate: () => void;
+scrollTo: (options: ScrollToOptions) => void;
+}, {}, {}, {}, {
+disabled: boolean | undefined;
+type: "text" | "textarea" | "password";
+bordered: boolean | undefined;
+clearable: boolean;
+defaultValue: string | [string, string] | null;
+loading: boolean;
+round: boolean;
+resizable: boolean;
+stateful: boolean;
+pair: boolean;
+rows: string | number;
+autosize: boolean | {
+minRows?: number;
+maxRows?: number;
+};
+readonly: string | boolean;
+passivelyActivated: boolean;
+autofocus: boolean;
+showCount: boolean;
+attrSize: number;
+internalDeactivateOnEnter: boolean;
+internalForceFocus: boolean;
+internalLoadingBeforeSuffix: boolean;
+showPasswordToggle: boolean;
+}> | null)[];
+}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "RChatEmptyStateProps" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RChatEmptyState: DefineComponent<RChatEmptyStateProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+start: () => any;
+"select-prompt": (prompt: string) => any;
+}, string, PublicProps, Readonly<RChatEmptyStateProps> & Readonly<{
+onStart?: (() => any) | undefined;
+"onSelect-prompt"?: ((prompt: string) => any) | undefined;
+}>, {
+description: string;
+title: string;
+suggestions: string[];
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "RChatInputProps" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RChatInput: DefineComponent<RChatInputProps, {
+focus: typeof focus_2;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+stop: () => any;
+"send-with-mcp": (content: string, mcpContext: {
+server_name: string;
+} | null, attachments?: string[] | undefined) => any;
+"update:webSearchEnabled": (value: boolean) => any;
+}, string, PublicProps, Readonly<RChatInputProps> & Readonly<{
+onStop?: (() => any) | undefined;
+"onSend-with-mcp"?: ((content: string, mcpContext: {
+server_name: string;
+} | null, attachments?: string[] | undefined) => any) | undefined;
+"onUpdate:webSearchEnabled"?: ((value: boolean) => any) | undefined;
+}>, {
+disabled: boolean;
+loading: boolean;
+placeholder: string;
+maxLength: number;
+isStreaming: boolean;
+webSearchEnabled: boolean;
+mcpServers: MCPServerOption[];
+stagedAttachmentUrls: string[];
+}, {}, {}, {}, string, ComponentProvideOptions, false, {
+fileInputRef: HTMLInputElement;
+mcpSelectorRef: CreateComponentPublicInstanceWithMixins<Readonly<RChatMCPSelectorProps> & Readonly<{
+onClose?: (() => any) | undefined;
+onSelect?: ((serverName: string) => any) | undefined;
+}>, {
+handleParentKeydown: (e: KeyboardEvent) => boolean;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+close: () => any;
+select: (serverName: string) => any;
+}, PublicProps, {}, false, {}, {}, GlobalComponents, GlobalDirectives, string, {
+listRef: HTMLDivElement;
+}, HTMLDivElement, ComponentProvideOptions, {
+P: {};
+B: {};
+D: {};
+C: {};
+M: {};
+Defaults: {};
+}, Readonly<RChatMCPSelectorProps> & Readonly<{
+onClose?: (() => any) | undefined;
+onSelect?: ((serverName: string) => any) | undefined;
+}>, {
+handleParentKeydown: (e: KeyboardEvent) => boolean;
+}, {}, {}, {}, {}> | null;
+inputRef: CreateComponentPublicInstanceWithMixins<Readonly<ExtractPropTypes<    {
+bordered: {
+type: PropType<boolean | undefined>;
+default: undefined;
+};
+type: {
+type: PropType<"text" | "textarea" | "password">;
+default: string;
+};
+placeholder: PropType<string | [string, string]>;
+defaultValue: {
+type: PropType<null | string | [string, string]>;
+default: null;
+};
+value: PropType<null | string | [string, string]>;
+disabled: {
+type: PropType<boolean | undefined>;
+default: undefined;
+};
+size: PropType<Size_2>;
+rows: {
+type: PropType<number | string>;
+default: number;
+};
+round: BooleanConstructor;
+minlength: PropType<number | string>;
+maxlength: PropType<number | string>;
+clearable: BooleanConstructor;
+autosize: {
+type: PropType<boolean | {
+minRows?: number;
+maxRows?: number;
+}>;
+default: boolean;
+};
+pair: BooleanConstructor;
+separator: StringConstructor;
+readonly: {
+type: (StringConstructor | BooleanConstructor)[];
+default: boolean;
+};
+passivelyActivated: BooleanConstructor;
+showPasswordOn: PropType<"mousedown" | "click">;
+stateful: {
+type: BooleanConstructor;
+default: boolean;
+};
+autofocus: BooleanConstructor;
+inputProps: PropType<TextareaHTMLAttributes | InputHTMLAttributes>;
+resizable: {
+type: BooleanConstructor;
+default: boolean;
+};
+showCount: BooleanConstructor;
+loading: {
+type: BooleanConstructor;
+default: undefined;
+};
+allowInput: PropType<(value: string) => boolean>;
+renderCount: PropType<(props: {
+value: string;
+}) => VNodeChild>;
+onMousedown: PropType<(e: MouseEvent) => void>;
+onKeydown: PropType<(e: KeyboardEvent) => void>;
+onKeyup: PropType<(e: KeyboardEvent) => void>;
+onInput: PropType<OnUpdateValue>;
+onFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onClick: PropType<MaybeArray<(e: MouseEvent) => void>>;
+onChange: PropType<OnUpdateValue>;
+onClear: PropType<MaybeArray<(e: MouseEvent) => void>>;
+countGraphemes: PropType<(value: string) => number>;
+status: PropType<FormValidationStatus>;
+'onUpdate:value': PropType<MaybeArray<OnUpdateValue>>;
+onUpdateValue: PropType<MaybeArray<OnUpdateValue>>;
+textDecoration: PropType<string | [string, string]>;
+attrSize: {
+type: NumberConstructor;
+default: number;
+};
+onInputBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onInputFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onDeactivate: PropType<MaybeArray<() => void>>;
+onActivate: PropType<MaybeArray<() => void>>;
+onWrapperFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onWrapperBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+internalDeactivateOnEnter: BooleanConstructor;
+internalForceFocus: BooleanConstructor;
+internalLoadingBeforeSuffix: {
+type: BooleanConstructor;
+default: boolean;
+};
+showPasswordToggle: BooleanConstructor;
+theme: PropType<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>;
+themeOverrides: PropType<ExtractThemeOverrides<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>>;
+builtinThemeOverrides: PropType<ExtractThemeOverrides<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>>;
+}>> & Readonly<{}>, {
+wrapperElRef: Ref<HTMLElement | null, HTMLElement | null>;
+inputElRef: Ref<HTMLInputElement | null, HTMLInputElement | null>;
+inputMirrorElRef: Ref<HTMLElement | null, HTMLElement | null>;
+inputEl2Ref: Ref<HTMLInputElement | null, HTMLInputElement | null>;
+textareaElRef: Ref<HTMLTextAreaElement | null, HTMLTextAreaElement | null>;
+textareaMirrorElRef: Ref<HTMLElement | null, HTMLElement | null>;
+textareaScrollbarInstRef: Ref<    {
+$el: HTMLElement;
+containerRef: HTMLElement | null;
+contentRef: HTMLElement | null;
+containerScrollTop: number;
+syncUnifiedContainer: () => void;
+scrollTo: ScrollTo;
+scrollBy: ScrollBy;
+sync: () => void;
+handleMouseEnterWrapper: () => void;
+handleMouseLeaveWrapper: () => void;
+} | null, ScrollbarInst | {
+$el: HTMLElement;
+containerRef: HTMLElement | null;
+contentRef: HTMLElement | null;
+containerScrollTop: number;
+syncUnifiedContainer: () => void;
+scrollTo: ScrollTo;
+scrollBy: ScrollBy;
+sync: () => void;
+handleMouseEnterWrapper: () => void;
+handleMouseLeaveWrapper: () => void;
+} | null>;
+rtlEnabled: Ref<RtlItem | undefined, RtlItem | undefined> | undefined;
+uncontrolledValue: Ref<string | [string, string] | null, string | [string, string] | null>;
+mergedValue: ComputedRef<string | [string, string] | null>;
+passwordVisible: Ref<boolean, boolean>;
+mergedPlaceholder: ComputedRef<[string, string] | [string]>;
+showPlaceholder1: ComputedRef<string | false>;
+showPlaceholder2: ComputedRef<boolean | "" | undefined>;
+mergedFocus: ComputedRef<boolean>;
+isComposing: Ref<boolean, boolean>;
+activated: Ref<boolean, boolean>;
+showClearButton: ComputedRef<boolean>;
+mergedSize: ComputedRef<"tiny" | "small" | "medium" | "large">;
+mergedDisabled: ComputedRef<boolean>;
+textDecorationStyle: ComputedRef<string[] | {
+textDecoration: string;
+}[]>;
+mergedClsPrefix: Ref<string, string>;
+mergedBordered: ComputedRef<boolean>;
+mergedShowPasswordOn: ComputedRef<"click" | "mousedown" | undefined>;
+placeholderStyle: Ref<    {
+top: string;
+}, {
+top: string;
+} | {
+top: string;
+}>;
+mergedStatus: ComputedRef<FormValidationStatus | undefined>;
+textAreaScrollContainerWidth: Ref<number | undefined, number | undefined>;
+handleTextAreaScroll: (e: Event) => void;
+handleCompositionStart: () => void;
+handleCompositionEnd: (e: CompositionEvent) => void;
+handleInput: (e: InputEvent | CompositionEvent | Event, index?: 0 | 1, event?: string) => void;
+handleInputBlur: (e: FocusEvent) => void;
+handleInputFocus: (e: FocusEvent, index: number) => void;
+handleWrapperBlur: (e: FocusEvent) => void;
+handleWrapperFocus: (e: FocusEvent) => void;
+handleMouseEnter: () => void;
+handleMouseLeave: () => void;
+handleMouseDown: (e: MouseEvent) => void;
+handleChange: (e: Event, index?: 0 | 1) => void;
+handleClick: (e: MouseEvent) => void;
+handleClear: (e: MouseEvent) => void;
+handlePasswordToggleClick: () => void;
+handlePasswordToggleMousedown: (e: MouseEvent) => void;
+handleWrapperKeydown: (e: KeyboardEvent) => void;
+handleWrapperKeyup: (e: KeyboardEvent) => void;
+handleTextAreaMirrorResize: () => void;
+getTextareaScrollContainer: () => HTMLTextAreaElement | null;
+mergedTheme: ComputedRef<    {
+common: ThemeCommonVars;
+self: {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+};
+peers: {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+};
+peerOverrides: {
+Scrollbar?: {
+peers?: {
+[x: string]: any;
+} | undefined;
+} | undefined;
+};
+}>;
+cssVars: ComputedRef<    {
+"--n-bezier": string;
+"--n-count-text-color": string;
+"--n-count-text-color-disabled": string;
+"--n-color": string;
+"--n-font-size": string;
+"--n-font-weight": string;
+"--n-border-radius": string;
+"--n-height": string;
+"--n-padding-left": string;
+"--n-padding-right": string;
+"--n-text-color": string;
+"--n-caret-color": string;
+"--n-text-decoration-color": string;
+"--n-border": string;
+"--n-border-disabled": string;
+"--n-border-hover": string;
+"--n-border-focus": string;
+"--n-placeholder-color": string;
+"--n-placeholder-color-disabled": string;
+"--n-icon-size": string;
+"--n-line-height-textarea": string;
+"--n-color-disabled": string;
+"--n-color-focus": string;
+"--n-text-color-disabled": string;
+"--n-box-shadow-focus": string;
+"--n-loading-color": string;
+"--n-caret-color-warning": string;
+"--n-color-focus-warning": string;
+"--n-box-shadow-focus-warning": string;
+"--n-border-warning": string;
+"--n-border-focus-warning": string;
+"--n-border-hover-warning": string;
+"--n-loading-color-warning": string;
+"--n-caret-color-error": string;
+"--n-color-focus-error": string;
+"--n-box-shadow-focus-error": string;
+"--n-border-error": string;
+"--n-border-focus-error": string;
+"--n-border-hover-error": string;
+"--n-loading-color-error": string;
+"--n-clear-color": string;
+"--n-clear-size": string;
+"--n-clear-color-hover": string;
+"--n-clear-color-pressed": string;
+"--n-icon-color": string;
+"--n-icon-color-hover": string;
+"--n-icon-color-pressed": string;
+"--n-icon-color-disabled": string;
+"--n-suffix-text-color": string;
+}> | undefined;
+themeClass: Ref<string, string> | undefined;
+onRender: (() => void) | undefined;
+isCompositing: Ref<boolean>;
+blur: () => void;
+clear: () => void;
+focus: () => void;
+select: () => void;
+activate: () => void;
+deactivate: () => void;
+scrollTo: (options: ScrollToOptions) => void;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, PublicProps, {
+disabled: boolean | undefined;
+type: "text" | "textarea" | "password";
+bordered: boolean | undefined;
+clearable: boolean;
+defaultValue: string | [string, string] | null;
+loading: boolean;
+round: boolean;
+resizable: boolean;
+stateful: boolean;
+pair: boolean;
+rows: string | number;
+autosize: boolean | {
+minRows?: number;
+maxRows?: number;
+};
+readonly: string | boolean;
+passivelyActivated: boolean;
+autofocus: boolean;
+showCount: boolean;
+attrSize: number;
+internalDeactivateOnEnter: boolean;
+internalForceFocus: boolean;
+internalLoadingBeforeSuffix: boolean;
+showPasswordToggle: boolean;
+}, true, {}, SlotsType<InputSlots>, GlobalComponents, GlobalDirectives, string, {}, any, ComponentProvideOptions, {
+P: {};
+B: {};
+D: {};
+C: {};
+M: {};
+Defaults: {};
+}, Readonly<ExtractPropTypes<    {
+bordered: {
+type: PropType<boolean | undefined>;
+default: undefined;
+};
+type: {
+type: PropType<"text" | "textarea" | "password">;
+default: string;
+};
+placeholder: PropType<string | [string, string]>;
+defaultValue: {
+type: PropType<null | string | [string, string]>;
+default: null;
+};
+value: PropType<null | string | [string, string]>;
+disabled: {
+type: PropType<boolean | undefined>;
+default: undefined;
+};
+size: PropType<Size_2>;
+rows: {
+type: PropType<number | string>;
+default: number;
+};
+round: BooleanConstructor;
+minlength: PropType<number | string>;
+maxlength: PropType<number | string>;
+clearable: BooleanConstructor;
+autosize: {
+type: PropType<boolean | {
+minRows?: number;
+maxRows?: number;
+}>;
+default: boolean;
+};
+pair: BooleanConstructor;
+separator: StringConstructor;
+readonly: {
+type: (StringConstructor | BooleanConstructor)[];
+default: boolean;
+};
+passivelyActivated: BooleanConstructor;
+showPasswordOn: PropType<"mousedown" | "click">;
+stateful: {
+type: BooleanConstructor;
+default: boolean;
+};
+autofocus: BooleanConstructor;
+inputProps: PropType<TextareaHTMLAttributes | InputHTMLAttributes>;
+resizable: {
+type: BooleanConstructor;
+default: boolean;
+};
+showCount: BooleanConstructor;
+loading: {
+type: BooleanConstructor;
+default: undefined;
+};
+allowInput: PropType<(value: string) => boolean>;
+renderCount: PropType<(props: {
+value: string;
+}) => VNodeChild>;
+onMousedown: PropType<(e: MouseEvent) => void>;
+onKeydown: PropType<(e: KeyboardEvent) => void>;
+onKeyup: PropType<(e: KeyboardEvent) => void>;
+onInput: PropType<OnUpdateValue>;
+onFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onClick: PropType<MaybeArray<(e: MouseEvent) => void>>;
+onChange: PropType<OnUpdateValue>;
+onClear: PropType<MaybeArray<(e: MouseEvent) => void>>;
+countGraphemes: PropType<(value: string) => number>;
+status: PropType<FormValidationStatus>;
+'onUpdate:value': PropType<MaybeArray<OnUpdateValue>>;
+onUpdateValue: PropType<MaybeArray<OnUpdateValue>>;
+textDecoration: PropType<string | [string, string]>;
+attrSize: {
+type: NumberConstructor;
+default: number;
+};
+onInputBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onInputFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onDeactivate: PropType<MaybeArray<() => void>>;
+onActivate: PropType<MaybeArray<() => void>>;
+onWrapperFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onWrapperBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+internalDeactivateOnEnter: BooleanConstructor;
+internalForceFocus: BooleanConstructor;
+internalLoadingBeforeSuffix: {
+type: BooleanConstructor;
+default: boolean;
+};
+showPasswordToggle: BooleanConstructor;
+theme: PropType<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>;
+themeOverrides: PropType<ExtractThemeOverrides<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>>;
+builtinThemeOverrides: PropType<ExtractThemeOverrides<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>>;
+}>> & Readonly<{}>, {
+wrapperElRef: Ref<HTMLElement | null, HTMLElement | null>;
+inputElRef: Ref<HTMLInputElement | null, HTMLInputElement | null>;
+inputMirrorElRef: Ref<HTMLElement | null, HTMLElement | null>;
+inputEl2Ref: Ref<HTMLInputElement | null, HTMLInputElement | null>;
+textareaElRef: Ref<HTMLTextAreaElement | null, HTMLTextAreaElement | null>;
+textareaMirrorElRef: Ref<HTMLElement | null, HTMLElement | null>;
+textareaScrollbarInstRef: Ref<    {
+$el: HTMLElement;
+containerRef: HTMLElement | null;
+contentRef: HTMLElement | null;
+containerScrollTop: number;
+syncUnifiedContainer: () => void;
+scrollTo: ScrollTo;
+scrollBy: ScrollBy;
+sync: () => void;
+handleMouseEnterWrapper: () => void;
+handleMouseLeaveWrapper: () => void;
+} | null, ScrollbarInst | {
+$el: HTMLElement;
+containerRef: HTMLElement | null;
+contentRef: HTMLElement | null;
+containerScrollTop: number;
+syncUnifiedContainer: () => void;
+scrollTo: ScrollTo;
+scrollBy: ScrollBy;
+sync: () => void;
+handleMouseEnterWrapper: () => void;
+handleMouseLeaveWrapper: () => void;
+} | null>;
+rtlEnabled: Ref<RtlItem | undefined, RtlItem | undefined> | undefined;
+uncontrolledValue: Ref<string | [string, string] | null, string | [string, string] | null>;
+mergedValue: ComputedRef<string | [string, string] | null>;
+passwordVisible: Ref<boolean, boolean>;
+mergedPlaceholder: ComputedRef<[string, string] | [string]>;
+showPlaceholder1: ComputedRef<string | false>;
+showPlaceholder2: ComputedRef<boolean | "" | undefined>;
+mergedFocus: ComputedRef<boolean>;
+isComposing: Ref<boolean, boolean>;
+activated: Ref<boolean, boolean>;
+showClearButton: ComputedRef<boolean>;
+mergedSize: ComputedRef<"tiny" | "small" | "medium" | "large">;
+mergedDisabled: ComputedRef<boolean>;
+textDecorationStyle: ComputedRef<string[] | {
+textDecoration: string;
+}[]>;
+mergedClsPrefix: Ref<string, string>;
+mergedBordered: ComputedRef<boolean>;
+mergedShowPasswordOn: ComputedRef<"click" | "mousedown" | undefined>;
+placeholderStyle: Ref<    {
+top: string;
+}, {
+top: string;
+} | {
+top: string;
+}>;
+mergedStatus: ComputedRef<FormValidationStatus | undefined>;
+textAreaScrollContainerWidth: Ref<number | undefined, number | undefined>;
+handleTextAreaScroll: (e: Event) => void;
+handleCompositionStart: () => void;
+handleCompositionEnd: (e: CompositionEvent) => void;
+handleInput: (e: InputEvent | CompositionEvent | Event, index?: 0 | 1, event?: string) => void;
+handleInputBlur: (e: FocusEvent) => void;
+handleInputFocus: (e: FocusEvent, index: number) => void;
+handleWrapperBlur: (e: FocusEvent) => void;
+handleWrapperFocus: (e: FocusEvent) => void;
+handleMouseEnter: () => void;
+handleMouseLeave: () => void;
+handleMouseDown: (e: MouseEvent) => void;
+handleChange: (e: Event, index?: 0 | 1) => void;
+handleClick: (e: MouseEvent) => void;
+handleClear: (e: MouseEvent) => void;
+handlePasswordToggleClick: () => void;
+handlePasswordToggleMousedown: (e: MouseEvent) => void;
+handleWrapperKeydown: (e: KeyboardEvent) => void;
+handleWrapperKeyup: (e: KeyboardEvent) => void;
+handleTextAreaMirrorResize: () => void;
+getTextareaScrollContainer: () => HTMLTextAreaElement | null;
+mergedTheme: ComputedRef<    {
+common: ThemeCommonVars;
+self: {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+};
+peers: {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+};
+peerOverrides: {
+Scrollbar?: {
+peers?: {
+[x: string]: any;
+} | undefined;
+} | undefined;
+};
+}>;
+cssVars: ComputedRef<    {
+"--n-bezier": string;
+"--n-count-text-color": string;
+"--n-count-text-color-disabled": string;
+"--n-color": string;
+"--n-font-size": string;
+"--n-font-weight": string;
+"--n-border-radius": string;
+"--n-height": string;
+"--n-padding-left": string;
+"--n-padding-right": string;
+"--n-text-color": string;
+"--n-caret-color": string;
+"--n-text-decoration-color": string;
+"--n-border": string;
+"--n-border-disabled": string;
+"--n-border-hover": string;
+"--n-border-focus": string;
+"--n-placeholder-color": string;
+"--n-placeholder-color-disabled": string;
+"--n-icon-size": string;
+"--n-line-height-textarea": string;
+"--n-color-disabled": string;
+"--n-color-focus": string;
+"--n-text-color-disabled": string;
+"--n-box-shadow-focus": string;
+"--n-loading-color": string;
+"--n-caret-color-warning": string;
+"--n-color-focus-warning": string;
+"--n-box-shadow-focus-warning": string;
+"--n-border-warning": string;
+"--n-border-focus-warning": string;
+"--n-border-hover-warning": string;
+"--n-loading-color-warning": string;
+"--n-caret-color-error": string;
+"--n-color-focus-error": string;
+"--n-box-shadow-focus-error": string;
+"--n-border-error": string;
+"--n-border-focus-error": string;
+"--n-border-hover-error": string;
+"--n-loading-color-error": string;
+"--n-clear-color": string;
+"--n-clear-size": string;
+"--n-clear-color-hover": string;
+"--n-clear-color-pressed": string;
+"--n-icon-color": string;
+"--n-icon-color-hover": string;
+"--n-icon-color-pressed": string;
+"--n-icon-color-disabled": string;
+"--n-suffix-text-color": string;
+}> | undefined;
+themeClass: Ref<string, string> | undefined;
+onRender: (() => void) | undefined;
+isCompositing: Ref<boolean>;
+blur: () => void;
+clear: () => void;
+focus: () => void;
+select: () => void;
+activate: () => void;
+deactivate: () => void;
+scrollTo: (options: ScrollToOptions) => void;
+}, {}, {}, {}, {
+disabled: boolean | undefined;
+type: "text" | "textarea" | "password";
+bordered: boolean | undefined;
+clearable: boolean;
+defaultValue: string | [string, string] | null;
+loading: boolean;
+round: boolean;
+resizable: boolean;
+stateful: boolean;
+pair: boolean;
+rows: string | number;
+autosize: boolean | {
+minRows?: number;
+maxRows?: number;
+};
+readonly: string | boolean;
+passivelyActivated: boolean;
+autofocus: boolean;
+showCount: boolean;
+attrSize: number;
+internalDeactivateOnEnter: boolean;
+internalForceFocus: boolean;
+internalLoadingBeforeSuffix: boolean;
+showPasswordToggle: boolean;
+}> | null;
+}, any>;
+
+// Warning: (ae-forgotten-export) The symbol "RChatMarkdownRendererProps" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RChatMarkdownRenderer: DefineComponent<RChatMarkdownRendererProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<RChatMarkdownRendererProps> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_32" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_31" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_31" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RChatMessage: __VLS_WithTemplateSlots_32<typeof __VLS_component_31, __VLS_TemplateResult_31["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_31" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_30" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_30" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RChatMessageList: __VLS_WithTemplateSlots_31<typeof __VLS_component_30, __VLS_TemplateResult_30["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "RChatModelSelectorProps" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RChatModelSelector: DefineComponent<RChatModelSelectorProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+change: (payload: {
+tier: TierKey;
+model: string;
+}) => any;
+"update:modelValue": (value: string) => any;
+}, string, PublicProps, Readonly<RChatModelSelectorProps> & Readonly<{
+onChange?: ((payload: {
+tier: TierKey;
+model: string;
+}) => any) | undefined;
+"onUpdate:modelValue"?: ((value: string) => any) | undefined;
+}>, {
+disabled: boolean;
+tierModels: Partial<Record<TierKey, string>>;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, any>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_30" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_29" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_29" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RChatPanel: __VLS_WithTemplateSlots_30<typeof __VLS_component_29, __VLS_TemplateResult_29["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "RChatStreamRendererProps" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RChatStreamRenderer: DefineComponent<RChatStreamRendererProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<RChatStreamRendererProps> & Readonly<{}>, {
+streaming: boolean;
+isThinking: boolean;
+toolCallName: string;
+searchProgress: SearchProgress;
+fetchProgress: FetchProgress;
+mcpProgress: MCPProgress;
+agentProgress: AgentProgress;
+toolCallEvents: ToolCallEvent[];
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+// @public (undocumented)
+export const RCheckButtonGroup: DefineComponent<ExtractPropTypes<    {
+options: {
+type: PropType<CheckButtonOption[]>;
+required: true;
+};
+modelValue: {
+type: PropType<(string | number)[] | string | number | null>;
+default: null;
+};
+multiple: {
+type: BooleanConstructor;
+default: boolean;
+};
+size: {
+type: PropType<"small" | "medium" | "large">;
+default: string;
+};
+disabled: {
+type: BooleanConstructor;
+default: boolean;
+};
+block: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>, {
+selectAll: () => void;
+clearAll: () => void;
+getSelected: () => (string | number)[];
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+change: (value: string | number | (string | number)[] | null) => any;
+"update:modelValue": (value: string | number | (string | number)[] | null) => any;
+}, string, PublicProps, Readonly<ExtractPropTypes<    {
+options: {
+type: PropType<CheckButtonOption[]>;
+required: true;
+};
+modelValue: {
+type: PropType<(string | number)[] | string | number | null>;
+default: null;
+};
+multiple: {
+type: BooleanConstructor;
+default: boolean;
+};
+size: {
+type: PropType<"small" | "medium" | "large">;
+default: string;
+};
+disabled: {
+type: BooleanConstructor;
+default: boolean;
+};
+block: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>> & Readonly<{
+onChange?: ((value: string | number | (string | number)[] | null) => any) | undefined;
+"onUpdate:modelValue"?: ((value: string | number | (string | number)[] | null) => any) | undefined;
+}>, {
+size: "small" | "medium" | "large";
+disabled: boolean;
+block: boolean;
+multiple: boolean;
+modelValue: string | number | (string | number)[] | null;
+}, {}, {}, {}, string, ComponentProvideOptions, true, {}, HTMLDivElement>;
+
+// @public (undocumented)
+export const RCheckCardGroup: DefineComponent<ExtractPropTypes<    {
+options: {
+type: PropType<CheckCardOption[]>;
+required: true;
+};
+modelValue: {
+type: PropType<(string | number)[] | string | number | null>;
+default: null;
+};
+multiple: {
+type: BooleanConstructor;
+default: boolean;
+};
+columns: {
+type: PropType<number | "auto">;
+default: string;
+};
+cardMinWidth: {
+type: NumberConstructor;
+default: number;
+};
+gap: {
+type: NumberConstructor;
+default: number;
+};
+size: {
+type: PropType<"small" | "medium" | "large">;
+default: string;
+};
+disabled: {
+type: BooleanConstructor;
+default: boolean;
+};
+bordered: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>, {
+selectAll: () => void;
+clearAll: () => void;
+getSelected: () => (string | number)[];
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+change: (value: string | number | (string | number)[] | null) => any;
+"update:modelValue": (value: string | number | (string | number)[] | null) => any;
+}, string, PublicProps, Readonly<ExtractPropTypes<    {
+options: {
+type: PropType<CheckCardOption[]>;
+required: true;
+};
+modelValue: {
+type: PropType<(string | number)[] | string | number | null>;
+default: null;
+};
+multiple: {
+type: BooleanConstructor;
+default: boolean;
+};
+columns: {
+type: PropType<number | "auto">;
+default: string;
+};
+cardMinWidth: {
+type: NumberConstructor;
+default: number;
+};
+gap: {
+type: NumberConstructor;
+default: number;
+};
+size: {
+type: PropType<"small" | "medium" | "large">;
+default: string;
+};
+disabled: {
+type: BooleanConstructor;
+default: boolean;
+};
+bordered: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>> & Readonly<{
+onChange?: ((value: string | number | (string | number)[] | null) => any) | undefined;
+"onUpdate:modelValue"?: ((value: string | number | (string | number)[] | null) => any) | undefined;
+}>, {
+size: "small" | "medium" | "large";
+disabled: boolean;
+bordered: boolean;
+columns: number | "auto";
+multiple: boolean;
+modelValue: string | number | (string | number)[] | null;
+gap: number;
+cardMinWidth: number;
+}, {}, {}, {}, string, ComponentProvideOptions, true, {}, HTMLDivElement>;
+
+// @public (undocumented)
+export const RCodeVerify: DefineComponent<ExtractPropTypes<    {
+modelValue: {
+type: StringConstructor;
+required: true;
+};
+codeLength: {
+type: NumberConstructor;
+default: number;
+};
+countdown: {
+type: NumberConstructor;
+default: number;
+};
+sendLabel: {
+type: StringConstructor;
+default: string;
+};
+sendingLabel: {
+type: StringConstructor;
+default: string;
+};
+resendLabel: {
+type: StringConstructor;
+default: string;
+};
+placeholder: {
+type: StringConstructor;
+default: string;
+};
+disabled: {
+type: BooleanConstructor;
+default: boolean;
+};
+sending: {
+type: BooleanConstructor;
+default: boolean;
+};
+size: {
+type: PropType<"small" | "medium" | "large">;
+default: string;
+};
+inputWidth: {
+type: (StringConstructor | NumberConstructor)[];
+default: undefined;
+};
+autoFocus: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>, {
+startCountdown: typeof startCountdown;
+resetCountdown: typeof resetCountdown;
+focus: () => void;
+clear: () => void;
+getRemaining: () => number;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+send: () => any;
+"update:modelValue": (value: string) => any;
+complete: (code: string) => any;
+}, string, PublicProps, Readonly<ExtractPropTypes<    {
+modelValue: {
+type: StringConstructor;
+required: true;
+};
+codeLength: {
+type: NumberConstructor;
+default: number;
+};
+countdown: {
+type: NumberConstructor;
+default: number;
+};
+sendLabel: {
+type: StringConstructor;
+default: string;
+};
+sendingLabel: {
+type: StringConstructor;
+default: string;
+};
+resendLabel: {
+type: StringConstructor;
+default: string;
+};
+placeholder: {
+type: StringConstructor;
+default: string;
+};
+disabled: {
+type: BooleanConstructor;
+default: boolean;
+};
+sending: {
+type: BooleanConstructor;
+default: boolean;
+};
+size: {
+type: PropType<"small" | "medium" | "large">;
+default: string;
+};
+inputWidth: {
+type: (StringConstructor | NumberConstructor)[];
+default: undefined;
+};
+autoFocus: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>> & Readonly<{
+onSend?: (() => any) | undefined;
+"onUpdate:modelValue"?: ((value: string) => any) | undefined;
+onComplete?: ((code: string) => any) | undefined;
+}>, {
+size: "small" | "medium" | "large";
+disabled: boolean;
+autoFocus: boolean;
+placeholder: string;
+codeLength: number;
+countdown: number;
+sendLabel: string;
+sendingLabel: string;
+resendLabel: string;
+sending: boolean;
+inputWidth: string | number;
+}, {}, {}, {}, string, ComponentProvideOptions, true, {
+codeInputRef: CreateComponentPublicInstanceWithMixins<Readonly<ExtractPropTypes<    {
+bordered: {
+type: PropType<boolean | undefined>;
+default: undefined;
+};
+type: {
+type: PropType<"text" | "textarea" | "password">;
+default: string;
+};
+placeholder: PropType<string | [string, string]>;
+defaultValue: {
+type: PropType<null | string | [string, string]>;
+default: null;
+};
+value: PropType<null | string | [string, string]>;
+disabled: {
+type: PropType<boolean | undefined>;
+default: undefined;
+};
+size: PropType<Size_2>;
+rows: {
+type: PropType<number | string>;
+default: number;
+};
+round: BooleanConstructor;
+minlength: PropType<number | string>;
+maxlength: PropType<number | string>;
+clearable: BooleanConstructor;
+autosize: {
+type: PropType<boolean | {
+minRows?: number;
+maxRows?: number;
+}>;
+default: boolean;
+};
+pair: BooleanConstructor;
+separator: StringConstructor;
+readonly: {
+type: (StringConstructor | BooleanConstructor)[];
+default: boolean;
+};
+passivelyActivated: BooleanConstructor;
+showPasswordOn: PropType<"mousedown" | "click">;
+stateful: {
+type: BooleanConstructor;
+default: boolean;
+};
+autofocus: BooleanConstructor;
+inputProps: PropType<TextareaHTMLAttributes | InputHTMLAttributes>;
+resizable: {
+type: BooleanConstructor;
+default: boolean;
+};
+showCount: BooleanConstructor;
+loading: {
+type: BooleanConstructor;
+default: undefined;
+};
+allowInput: PropType<(value: string) => boolean>;
+renderCount: PropType<(props: {
+value: string;
+}) => VNodeChild>;
+onMousedown: PropType<(e: MouseEvent) => void>;
+onKeydown: PropType<(e: KeyboardEvent) => void>;
+onKeyup: PropType<(e: KeyboardEvent) => void>;
+onInput: PropType<OnUpdateValue>;
+onFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onClick: PropType<MaybeArray<(e: MouseEvent) => void>>;
+onChange: PropType<OnUpdateValue>;
+onClear: PropType<MaybeArray<(e: MouseEvent) => void>>;
+countGraphemes: PropType<(value: string) => number>;
+status: PropType<FormValidationStatus>;
+'onUpdate:value': PropType<MaybeArray<OnUpdateValue>>;
+onUpdateValue: PropType<MaybeArray<OnUpdateValue>>;
+textDecoration: PropType<string | [string, string]>;
+attrSize: {
+type: NumberConstructor;
+default: number;
+};
+onInputBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onInputFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onDeactivate: PropType<MaybeArray<() => void>>;
+onActivate: PropType<MaybeArray<() => void>>;
+onWrapperFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onWrapperBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+internalDeactivateOnEnter: BooleanConstructor;
+internalForceFocus: BooleanConstructor;
+internalLoadingBeforeSuffix: {
+type: BooleanConstructor;
+default: boolean;
+};
+showPasswordToggle: BooleanConstructor;
+theme: PropType<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>;
+themeOverrides: PropType<ExtractThemeOverrides<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>>;
+builtinThemeOverrides: PropType<ExtractThemeOverrides<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>>;
+}>> & Readonly<{}>, {
+wrapperElRef: Ref<HTMLElement | null, HTMLElement | null>;
+inputElRef: Ref<HTMLInputElement | null, HTMLInputElement | null>;
+inputMirrorElRef: Ref<HTMLElement | null, HTMLElement | null>;
+inputEl2Ref: Ref<HTMLInputElement | null, HTMLInputElement | null>;
+textareaElRef: Ref<HTMLTextAreaElement | null, HTMLTextAreaElement | null>;
+textareaMirrorElRef: Ref<HTMLElement | null, HTMLElement | null>;
+textareaScrollbarInstRef: Ref<    {
+$el: HTMLElement;
+containerRef: HTMLElement | null;
+contentRef: HTMLElement | null;
+containerScrollTop: number;
+syncUnifiedContainer: () => void;
+scrollTo: ScrollTo;
+scrollBy: ScrollBy;
+sync: () => void;
+handleMouseEnterWrapper: () => void;
+handleMouseLeaveWrapper: () => void;
+} | null, ScrollbarInst | {
+$el: HTMLElement;
+containerRef: HTMLElement | null;
+contentRef: HTMLElement | null;
+containerScrollTop: number;
+syncUnifiedContainer: () => void;
+scrollTo: ScrollTo;
+scrollBy: ScrollBy;
+sync: () => void;
+handleMouseEnterWrapper: () => void;
+handleMouseLeaveWrapper: () => void;
+} | null>;
+rtlEnabled: Ref<RtlItem | undefined, RtlItem | undefined> | undefined;
+uncontrolledValue: Ref<string | [string, string] | null, string | [string, string] | null>;
+mergedValue: ComputedRef<string | [string, string] | null>;
+passwordVisible: Ref<boolean, boolean>;
+mergedPlaceholder: ComputedRef<[string, string] | [string]>;
+showPlaceholder1: ComputedRef<string | false>;
+showPlaceholder2: ComputedRef<boolean | "" | undefined>;
+mergedFocus: ComputedRef<boolean>;
+isComposing: Ref<boolean, boolean>;
+activated: Ref<boolean, boolean>;
+showClearButton: ComputedRef<boolean>;
+mergedSize: ComputedRef<"tiny" | "small" | "medium" | "large">;
+mergedDisabled: ComputedRef<boolean>;
+textDecorationStyle: ComputedRef<string[] | {
+textDecoration: string;
+}[]>;
+mergedClsPrefix: Ref<string, string>;
+mergedBordered: ComputedRef<boolean>;
+mergedShowPasswordOn: ComputedRef<"click" | "mousedown" | undefined>;
+placeholderStyle: Ref<    {
+top: string;
+}, {
+top: string;
+} | {
+top: string;
+}>;
+mergedStatus: ComputedRef<FormValidationStatus | undefined>;
+textAreaScrollContainerWidth: Ref<number | undefined, number | undefined>;
+handleTextAreaScroll: (e: Event) => void;
+handleCompositionStart: () => void;
+handleCompositionEnd: (e: CompositionEvent) => void;
+handleInput: (e: InputEvent | CompositionEvent | Event, index?: 0 | 1, event?: string) => void;
+handleInputBlur: (e: FocusEvent) => void;
+handleInputFocus: (e: FocusEvent, index: number) => void;
+handleWrapperBlur: (e: FocusEvent) => void;
+handleWrapperFocus: (e: FocusEvent) => void;
+handleMouseEnter: () => void;
+handleMouseLeave: () => void;
+handleMouseDown: (e: MouseEvent) => void;
+handleChange: (e: Event, index?: 0 | 1) => void;
+handleClick: (e: MouseEvent) => void;
+handleClear: (e: MouseEvent) => void;
+handlePasswordToggleClick: () => void;
+handlePasswordToggleMousedown: (e: MouseEvent) => void;
+handleWrapperKeydown: (e: KeyboardEvent) => void;
+handleWrapperKeyup: (e: KeyboardEvent) => void;
+handleTextAreaMirrorResize: () => void;
+getTextareaScrollContainer: () => HTMLTextAreaElement | null;
+mergedTheme: ComputedRef<    {
+common: ThemeCommonVars;
+self: {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+};
+peers: {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+};
+peerOverrides: {
+Scrollbar?: {
+peers?: {
+[x: string]: any;
+} | undefined;
+} | undefined;
+};
+}>;
+cssVars: ComputedRef<    {
+"--n-bezier": string;
+"--n-count-text-color": string;
+"--n-count-text-color-disabled": string;
+"--n-color": string;
+"--n-font-size": string;
+"--n-font-weight": string;
+"--n-border-radius": string;
+"--n-height": string;
+"--n-padding-left": string;
+"--n-padding-right": string;
+"--n-text-color": string;
+"--n-caret-color": string;
+"--n-text-decoration-color": string;
+"--n-border": string;
+"--n-border-disabled": string;
+"--n-border-hover": string;
+"--n-border-focus": string;
+"--n-placeholder-color": string;
+"--n-placeholder-color-disabled": string;
+"--n-icon-size": string;
+"--n-line-height-textarea": string;
+"--n-color-disabled": string;
+"--n-color-focus": string;
+"--n-text-color-disabled": string;
+"--n-box-shadow-focus": string;
+"--n-loading-color": string;
+"--n-caret-color-warning": string;
+"--n-color-focus-warning": string;
+"--n-box-shadow-focus-warning": string;
+"--n-border-warning": string;
+"--n-border-focus-warning": string;
+"--n-border-hover-warning": string;
+"--n-loading-color-warning": string;
+"--n-caret-color-error": string;
+"--n-color-focus-error": string;
+"--n-box-shadow-focus-error": string;
+"--n-border-error": string;
+"--n-border-focus-error": string;
+"--n-border-hover-error": string;
+"--n-loading-color-error": string;
+"--n-clear-color": string;
+"--n-clear-size": string;
+"--n-clear-color-hover": string;
+"--n-clear-color-pressed": string;
+"--n-icon-color": string;
+"--n-icon-color-hover": string;
+"--n-icon-color-pressed": string;
+"--n-icon-color-disabled": string;
+"--n-suffix-text-color": string;
+}> | undefined;
+themeClass: Ref<string, string> | undefined;
+onRender: (() => void) | undefined;
+isCompositing: Ref<boolean>;
+blur: () => void;
+clear: () => void;
+focus: () => void;
+select: () => void;
+activate: () => void;
+deactivate: () => void;
+scrollTo: (options: ScrollToOptions) => void;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, PublicProps, {
+disabled: boolean | undefined;
+type: "text" | "textarea" | "password";
+bordered: boolean | undefined;
+clearable: boolean;
+defaultValue: string | [string, string] | null;
+loading: boolean;
+round: boolean;
+resizable: boolean;
+stateful: boolean;
+pair: boolean;
+rows: string | number;
+autosize: boolean | {
+minRows?: number;
+maxRows?: number;
+};
+readonly: string | boolean;
+passivelyActivated: boolean;
+autofocus: boolean;
+showCount: boolean;
+attrSize: number;
+internalDeactivateOnEnter: boolean;
+internalForceFocus: boolean;
+internalLoadingBeforeSuffix: boolean;
+showPasswordToggle: boolean;
+}, true, {}, SlotsType<InputSlots>, GlobalComponents, GlobalDirectives, string, {}, any, ComponentProvideOptions, {
+P: {};
+B: {};
+D: {};
+C: {};
+M: {};
+Defaults: {};
+}, Readonly<ExtractPropTypes<    {
+bordered: {
+type: PropType<boolean | undefined>;
+default: undefined;
+};
+type: {
+type: PropType<"text" | "textarea" | "password">;
+default: string;
+};
+placeholder: PropType<string | [string, string]>;
+defaultValue: {
+type: PropType<null | string | [string, string]>;
+default: null;
+};
+value: PropType<null | string | [string, string]>;
+disabled: {
+type: PropType<boolean | undefined>;
+default: undefined;
+};
+size: PropType<Size_2>;
+rows: {
+type: PropType<number | string>;
+default: number;
+};
+round: BooleanConstructor;
+minlength: PropType<number | string>;
+maxlength: PropType<number | string>;
+clearable: BooleanConstructor;
+autosize: {
+type: PropType<boolean | {
+minRows?: number;
+maxRows?: number;
+}>;
+default: boolean;
+};
+pair: BooleanConstructor;
+separator: StringConstructor;
+readonly: {
+type: (StringConstructor | BooleanConstructor)[];
+default: boolean;
+};
+passivelyActivated: BooleanConstructor;
+showPasswordOn: PropType<"mousedown" | "click">;
+stateful: {
+type: BooleanConstructor;
+default: boolean;
+};
+autofocus: BooleanConstructor;
+inputProps: PropType<TextareaHTMLAttributes | InputHTMLAttributes>;
+resizable: {
+type: BooleanConstructor;
+default: boolean;
+};
+showCount: BooleanConstructor;
+loading: {
+type: BooleanConstructor;
+default: undefined;
+};
+allowInput: PropType<(value: string) => boolean>;
+renderCount: PropType<(props: {
+value: string;
+}) => VNodeChild>;
+onMousedown: PropType<(e: MouseEvent) => void>;
+onKeydown: PropType<(e: KeyboardEvent) => void>;
+onKeyup: PropType<(e: KeyboardEvent) => void>;
+onInput: PropType<OnUpdateValue>;
+onFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onClick: PropType<MaybeArray<(e: MouseEvent) => void>>;
+onChange: PropType<OnUpdateValue>;
+onClear: PropType<MaybeArray<(e: MouseEvent) => void>>;
+countGraphemes: PropType<(value: string) => number>;
+status: PropType<FormValidationStatus>;
+'onUpdate:value': PropType<MaybeArray<OnUpdateValue>>;
+onUpdateValue: PropType<MaybeArray<OnUpdateValue>>;
+textDecoration: PropType<string | [string, string]>;
+attrSize: {
+type: NumberConstructor;
+default: number;
+};
+onInputBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onInputFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onDeactivate: PropType<MaybeArray<() => void>>;
+onActivate: PropType<MaybeArray<() => void>>;
+onWrapperFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onWrapperBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+internalDeactivateOnEnter: BooleanConstructor;
+internalForceFocus: BooleanConstructor;
+internalLoadingBeforeSuffix: {
+type: BooleanConstructor;
+default: boolean;
+};
+showPasswordToggle: BooleanConstructor;
+theme: PropType<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>;
+themeOverrides: PropType<ExtractThemeOverrides<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>>;
+builtinThemeOverrides: PropType<ExtractThemeOverrides<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>>;
+}>> & Readonly<{}>, {
+wrapperElRef: Ref<HTMLElement | null, HTMLElement | null>;
+inputElRef: Ref<HTMLInputElement | null, HTMLInputElement | null>;
+inputMirrorElRef: Ref<HTMLElement | null, HTMLElement | null>;
+inputEl2Ref: Ref<HTMLInputElement | null, HTMLInputElement | null>;
+textareaElRef: Ref<HTMLTextAreaElement | null, HTMLTextAreaElement | null>;
+textareaMirrorElRef: Ref<HTMLElement | null, HTMLElement | null>;
+textareaScrollbarInstRef: Ref<    {
+$el: HTMLElement;
+containerRef: HTMLElement | null;
+contentRef: HTMLElement | null;
+containerScrollTop: number;
+syncUnifiedContainer: () => void;
+scrollTo: ScrollTo;
+scrollBy: ScrollBy;
+sync: () => void;
+handleMouseEnterWrapper: () => void;
+handleMouseLeaveWrapper: () => void;
+} | null, ScrollbarInst | {
+$el: HTMLElement;
+containerRef: HTMLElement | null;
+contentRef: HTMLElement | null;
+containerScrollTop: number;
+syncUnifiedContainer: () => void;
+scrollTo: ScrollTo;
+scrollBy: ScrollBy;
+sync: () => void;
+handleMouseEnterWrapper: () => void;
+handleMouseLeaveWrapper: () => void;
+} | null>;
+rtlEnabled: Ref<RtlItem | undefined, RtlItem | undefined> | undefined;
+uncontrolledValue: Ref<string | [string, string] | null, string | [string, string] | null>;
+mergedValue: ComputedRef<string | [string, string] | null>;
+passwordVisible: Ref<boolean, boolean>;
+mergedPlaceholder: ComputedRef<[string, string] | [string]>;
+showPlaceholder1: ComputedRef<string | false>;
+showPlaceholder2: ComputedRef<boolean | "" | undefined>;
+mergedFocus: ComputedRef<boolean>;
+isComposing: Ref<boolean, boolean>;
+activated: Ref<boolean, boolean>;
+showClearButton: ComputedRef<boolean>;
+mergedSize: ComputedRef<"tiny" | "small" | "medium" | "large">;
+mergedDisabled: ComputedRef<boolean>;
+textDecorationStyle: ComputedRef<string[] | {
+textDecoration: string;
+}[]>;
+mergedClsPrefix: Ref<string, string>;
+mergedBordered: ComputedRef<boolean>;
+mergedShowPasswordOn: ComputedRef<"click" | "mousedown" | undefined>;
+placeholderStyle: Ref<    {
+top: string;
+}, {
+top: string;
+} | {
+top: string;
+}>;
+mergedStatus: ComputedRef<FormValidationStatus | undefined>;
+textAreaScrollContainerWidth: Ref<number | undefined, number | undefined>;
+handleTextAreaScroll: (e: Event) => void;
+handleCompositionStart: () => void;
+handleCompositionEnd: (e: CompositionEvent) => void;
+handleInput: (e: InputEvent | CompositionEvent | Event, index?: 0 | 1, event?: string) => void;
+handleInputBlur: (e: FocusEvent) => void;
+handleInputFocus: (e: FocusEvent, index: number) => void;
+handleWrapperBlur: (e: FocusEvent) => void;
+handleWrapperFocus: (e: FocusEvent) => void;
+handleMouseEnter: () => void;
+handleMouseLeave: () => void;
+handleMouseDown: (e: MouseEvent) => void;
+handleChange: (e: Event, index?: 0 | 1) => void;
+handleClick: (e: MouseEvent) => void;
+handleClear: (e: MouseEvent) => void;
+handlePasswordToggleClick: () => void;
+handlePasswordToggleMousedown: (e: MouseEvent) => void;
+handleWrapperKeydown: (e: KeyboardEvent) => void;
+handleWrapperKeyup: (e: KeyboardEvent) => void;
+handleTextAreaMirrorResize: () => void;
+getTextareaScrollContainer: () => HTMLTextAreaElement | null;
+mergedTheme: ComputedRef<    {
+common: ThemeCommonVars;
+self: {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+};
+peers: {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+};
+peerOverrides: {
+Scrollbar?: {
+peers?: {
+[x: string]: any;
+} | undefined;
+} | undefined;
+};
+}>;
+cssVars: ComputedRef<    {
+"--n-bezier": string;
+"--n-count-text-color": string;
+"--n-count-text-color-disabled": string;
+"--n-color": string;
+"--n-font-size": string;
+"--n-font-weight": string;
+"--n-border-radius": string;
+"--n-height": string;
+"--n-padding-left": string;
+"--n-padding-right": string;
+"--n-text-color": string;
+"--n-caret-color": string;
+"--n-text-decoration-color": string;
+"--n-border": string;
+"--n-border-disabled": string;
+"--n-border-hover": string;
+"--n-border-focus": string;
+"--n-placeholder-color": string;
+"--n-placeholder-color-disabled": string;
+"--n-icon-size": string;
+"--n-line-height-textarea": string;
+"--n-color-disabled": string;
+"--n-color-focus": string;
+"--n-text-color-disabled": string;
+"--n-box-shadow-focus": string;
+"--n-loading-color": string;
+"--n-caret-color-warning": string;
+"--n-color-focus-warning": string;
+"--n-box-shadow-focus-warning": string;
+"--n-border-warning": string;
+"--n-border-focus-warning": string;
+"--n-border-hover-warning": string;
+"--n-loading-color-warning": string;
+"--n-caret-color-error": string;
+"--n-color-focus-error": string;
+"--n-box-shadow-focus-error": string;
+"--n-border-error": string;
+"--n-border-focus-error": string;
+"--n-border-hover-error": string;
+"--n-loading-color-error": string;
+"--n-clear-color": string;
+"--n-clear-size": string;
+"--n-clear-color-hover": string;
+"--n-clear-color-pressed": string;
+"--n-icon-color": string;
+"--n-icon-color-hover": string;
+"--n-icon-color-pressed": string;
+"--n-icon-color-disabled": string;
+"--n-suffix-text-color": string;
+}> | undefined;
+themeClass: Ref<string, string> | undefined;
+onRender: (() => void) | undefined;
+isCompositing: Ref<boolean>;
+blur: () => void;
+clear: () => void;
+focus: () => void;
+select: () => void;
+activate: () => void;
+deactivate: () => void;
+scrollTo: (options: ScrollToOptions) => void;
+}, {}, {}, {}, {
+disabled: boolean | undefined;
+type: "text" | "textarea" | "password";
+bordered: boolean | undefined;
+clearable: boolean;
+defaultValue: string | [string, string] | null;
+loading: boolean;
+round: boolean;
+resizable: boolean;
+stateful: boolean;
+pair: boolean;
+rows: string | number;
+autosize: boolean | {
+minRows?: number;
+maxRows?: number;
+};
+readonly: string | boolean;
+passivelyActivated: boolean;
+autofocus: boolean;
+showCount: boolean;
+attrSize: number;
+internalDeactivateOnEnter: boolean;
+internalForceFocus: boolean;
+internalLoadingBeforeSuffix: boolean;
+showPasswordToggle: boolean;
+}> | null;
+}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_37" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_36" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_36" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RCollapsiblePanel: __VLS_WithTemplateSlots_37<typeof __VLS_component_36, __VLS_TemplateResult_36["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_7" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RCommandPalette: DefineComponent<__VLS_Props_7, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+select: (item: CommandItem) => any;
+search: (query: string) => any;
+"update:visible": (value: boolean) => any;
+}, string, PublicProps, Readonly<__VLS_Props_7> & Readonly<{
+onSelect?: ((item: CommandItem) => any) | undefined;
+onSearch?: ((query: string) => any) | undefined;
+"onUpdate:visible"?: ((value: boolean) => any) | undefined;
+}>, {
+loading: boolean;
+placeholder: string;
+emptyText: string;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {
+inputRef: HTMLInputElement;
+listRef: HTMLDivElement;
+}, any>;
+
+// @public (undocumented)
+export interface RCommandPaletteEmits {
+    // (undocumented)
+    (e: 'update:visible', value: boolean): void;
+    // (undocumented)
+    (e: 'select', item: CommandItem): void;
+    // (undocumented)
+    (e: 'search', query: string): void;
+}
+
+// @public (undocumented)
+export interface RCommandPaletteProps {
+    // (undocumented)
+    emptyText?: string;
+    // (undocumented)
+    items: CommandItem[];
+    // (undocumented)
+    loading?: boolean;
+    // (undocumented)
+    placeholder?: string;
+    // (undocumented)
+    visible: boolean;
+}
 
 // @public (undocumented)
 export const RCrudFormDialog: DefineComponent<ExtractPropTypes<    {
@@ -2149,16 +8715,117 @@ actions?(_: {}): any;
 }) | null;
 }, any>;
 
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_29" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_28" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_28" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RDashboardBuilder: __VLS_WithTemplateSlots_29<typeof __VLS_component_28, __VLS_TemplateResult_28["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_24" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RDashboardWorkspace: DefineComponent<__VLS_Props_24, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+change: (dashboard: DashboardDefinition) => any;
+error: (error: Error) => any;
+saved: (payload: {
+dashboard: DashboardDefinition;
+layout: DashboardLayoutItem[];
+}) => any;
+"update:activeDashboardId": (dashboardId: string) => any;
+}, string, PublicProps, Readonly<__VLS_Props_24> & Readonly<{
+onChange?: ((dashboard: DashboardDefinition) => any) | undefined;
+onError?: ((error: Error) => any) | undefined;
+onSaved?: ((payload: {
+dashboard: DashboardDefinition;
+layout: DashboardLayoutItem[];
+}) => any) | undefined;
+"onUpdate:activeDashboardId"?: ((dashboardId: string) => any) | undefined;
+}>, {
+readonly: boolean;
+columns: number;
+widgetRegistry: Record<string, Component | DashboardWidgetRegistryEntry>;
+breakpointColumns: Partial<DashboardResponsiveColumns>;
+defaultEditing: boolean;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {
+fileInputRef: HTMLInputElement;
+}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_27" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_26" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_26" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RDataGrid: __VLS_WithTemplateSlots_27<typeof __VLS_component_26, __VLS_TemplateResult_26["slots"]>;
+
+// @public (undocumented)
+export interface RDataGridEmits {
+    // (undocumented)
+    (e: 'update:rows', rows: Record<string, unknown>[]): void;
+    // (undocumented)
+    (e: 'update:columns', columns: DataGridColumn[]): void;
+    // (undocumented)
+    (e: 'cellChange', params: {
+        rowIndex: number;
+        field: string;
+        value: unknown;
+    }): void;
+    // (undocumented)
+    (e: 'rowAdd', row: Record<string, unknown>): void;
+    // (undocumented)
+    (e: 'rowDelete', rows: Record<string, unknown>[]): void;
+    // (undocumented)
+    (e: 'columnAdd', column: DataGridColumn): void;
+    // (undocumented)
+    (e: 'columnDelete', column: DataGridColumn): void;
+    // (undocumented)
+    (e: 'save', data: {
+        columns: DataGridColumn[];
+        rows: Record<string, unknown>[];
+    }): void;
+}
+
+// @public (undocumented)
+export interface RDataGridProps {
+    // (undocumented)
+    allowAddColumn?: boolean;
+    // (undocumented)
+    allowAddRow?: boolean;
+    // (undocumented)
+    allowColumnDrag?: boolean;
+    // (undocumented)
+    allowDelete?: boolean;
+    // (undocumented)
+    allowExport?: boolean;
+    // (undocumented)
+    allowRowDrag?: boolean;
+    // (undocumented)
+    columns: DataGridColumn[];
+    // (undocumented)
+    height?: string | number;
+    // (undocumented)
+    hideToolbar?: boolean;
+    // (undocumented)
+    locale?: DataGridLocale;
+    // (undocumented)
+    readonly?: boolean;
+    // (undocumented)
+    rows: Record<string, unknown>[];
+    // (undocumented)
+    storageKey?: string;
+}
+
 // Warning: (ae-forgotten-export) The symbol "__VLS_PrettifyLocal" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
 export const RDataTable: <T extends Record<string, unknown> = Record<string, unknown>>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_expose?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
     props: __VLS_PrettifyLocal<Pick<Partial<{
         size: "small" | "medium" | "large";
+        remote: boolean;
         loading: boolean;
+        bordered: boolean;
         rowKey: string | ((row: T) => DataTableRowKey);
         pagination: false | DataTablePagination;
-        bordered: boolean;
         striped: boolean;
         singleLine: boolean;
         maxHeight: string | number;
@@ -2169,24 +8836,45 @@ export const RDataTable: <T extends Record<string, unknown> = Record<string, unk
         emptyText: string;
         columnConfigurable: boolean;
         columnStorageKey: string;
+        exportable: boolean;
+        exportSelected: boolean;
+        batchDeletable: boolean;
+        batchActions: BatchAction[];
+        exportSelectedLabel: string;
+        exportSelectedConfirmMessage: string;
+        batchDeleteLabel: string;
+        batchDeleteConfirmMessage: string;
+        exportHandler: (payload: DataTableExportPayload<T>) => void | Promise<void>;
+        batchDeleteHandler: (payload: DataTableBatchPayload<T>) => void | Promise<void>;
     }> & Omit<{
         readonly size: "small" | "medium" | "large";
         readonly data: T[];
-        readonly columns: DataTableColumn<T>[];
         readonly loading: boolean;
+        readonly bordered: boolean;
+        readonly columns: DataTableColumn<T>[];
         readonly rowKey: string | ((row: T) => DataTableRowKey);
         readonly pagination: false | DataTablePagination;
-        readonly bordered: boolean;
         readonly striped: boolean;
         readonly singleLine: boolean;
         readonly selectable: boolean;
         readonly checkedRowKeys: DataTableRowKey[];
         readonly emptyText: string;
         readonly columnConfigurable: boolean;
+        readonly exportable: boolean;
+        readonly exportSelected: boolean;
+        readonly batchDeletable: boolean;
+        readonly batchActions: BatchAction[];
+        readonly exportSelectedLabel: string;
+        readonly exportSelectedConfirmMessage: string;
+        readonly batchDeleteLabel: string;
+        readonly batchDeleteConfirmMessage: string;
+        readonly remote?: boolean | undefined;
         readonly maxHeight?: string | number | undefined;
         readonly scrollX?: string | number | undefined;
         readonly defaultSort?: DataTableSortState | undefined;
         readonly columnStorageKey?: string | undefined;
+        readonly exportHandler?: ((payload: DataTableExportPayload<T>) => void | Promise<void>) | undefined;
+        readonly batchDeleteHandler?: ((payload: DataTableBatchPayload<T>) => void | Promise<void>) | undefined;
         readonly "onUpdate:page"?: ((page: number) => any) | undefined;
         readonly "onUpdate:pageSize"?: ((pageSize: number) => any) | undefined;
         readonly "onUpdate:checkedRowKeys"?: ((keys: DataTableRowKey[]) => any) | undefined;
@@ -2194,7 +8882,10 @@ export const RDataTable: <T extends Record<string, unknown> = Record<string, unk
         readonly "onUpdate:filters"?: ((filters: DataTableFilterState[]) => any) | undefined;
         readonly "onServer-params-change"?: ((params: ServerSideParams) => any) | undefined;
         readonly onRowClick?: ((row: T, index: number) => any) | undefined;
-    } & VNodeProps & AllowedComponentProps & ComponentCustomProps, "size" | "loading" | "rowKey" | "pagination" | "bordered" | "striped" | "singleLine" | "maxHeight" | "scrollX" | "selectable" | "checkedRowKeys" | "defaultSort" | "emptyText" | "columnConfigurable" | "columnStorageKey">, "data" | "columns" | "onUpdate:page" | "onUpdate:pageSize" | "onUpdate:checkedRowKeys" | "onUpdate:sort" | "onUpdate:filters" | "onServer-params-change" | "onRowClick" | ("size" | "loading" | "rowKey" | "pagination" | "bordered" | "striped" | "singleLine" | "maxHeight" | "scrollX" | "selectable" | "checkedRowKeys" | "defaultSort" | "emptyText" | "columnConfigurable" | "columnStorageKey")> & {} & Partial<{}>> & PublicProps;
+        readonly onExport?: ((payload: DataTableExportPayload<T>) => any) | undefined;
+        readonly onBatchDelete?: ((payload: DataTableBatchPayload<T>) => any) | undefined;
+        readonly onBatchAction?: ((key: string, selectedKeys: DataTableRowKey[], selectedRows: T[]) => any) | undefined;
+    } & VNodeProps & AllowedComponentProps & ComponentCustomProps, "size" | "remote" | "loading" | "bordered" | "rowKey" | "pagination" | "striped" | "singleLine" | "maxHeight" | "scrollX" | "selectable" | "checkedRowKeys" | "defaultSort" | "emptyText" | "columnConfigurable" | "columnStorageKey" | "exportable" | "exportSelected" | "batchDeletable" | "batchActions" | "exportSelectedLabel" | "exportSelectedConfirmMessage" | "batchDeleteLabel" | "batchDeleteConfirmMessage" | "exportHandler" | "batchDeleteHandler">, "data" | "columns" | "onUpdate:page" | "onUpdate:pageSize" | "onUpdate:checkedRowKeys" | "onUpdate:sort" | "onUpdate:filters" | "onServer-params-change" | "onRowClick" | "onExport" | "onBatchDelete" | "onBatchAction" | ("size" | "remote" | "loading" | "bordered" | "rowKey" | "pagination" | "striped" | "singleLine" | "maxHeight" | "scrollX" | "selectable" | "checkedRowKeys" | "defaultSort" | "emptyText" | "columnConfigurable" | "columnStorageKey" | "exportable" | "exportSelected" | "batchDeletable" | "batchActions" | "exportSelectedLabel" | "exportSelectedConfirmMessage" | "batchDeleteLabel" | "batchDeleteConfirmMessage" | "exportHandler" | "batchDeleteHandler")> & {} & Partial<{}>> & PublicProps;
     expose(exposed: ShallowUnwrapRef<DataTableExpose>): void;
     attrs: any;
     slots: {
@@ -2207,17 +8898,253 @@ export const RDataTable: <T extends Record<string, unknown> = Record<string, unk
         loading?(_: {}): any;
         summary?(_: {}): any;
     };
-    emit: ((evt: "update:page", page: number) => void) & ((evt: "update:pageSize", pageSize: number) => void) & ((evt: "update:checkedRowKeys", keys: DataTableRowKey[]) => void) & ((evt: "update:sort", sort: DataTableSortState) => void) & ((evt: "update:filters", filters: DataTableFilterState[]) => void) & ((evt: "server-params-change", params: ServerSideParams) => void) & ((evt: "rowClick", row: T, index: number) => void);
+    emit: ((evt: "update:page", page: number) => void) & ((evt: "update:pageSize", pageSize: number) => void) & ((evt: "update:checkedRowKeys", keys: DataTableRowKey[]) => void) & ((evt: "update:sort", sort: DataTableSortState) => void) & ((evt: "update:filters", filters: DataTableFilterState[]) => void) & ((evt: "server-params-change", params: ServerSideParams) => void) & ((evt: "rowClick", row: T, index: number) => void) & ((evt: "export", payload: DataTableExportPayload<T>) => void) & ((evt: "batchDelete", payload: DataTableBatchPayload<T>) => void) & ((evt: "batchAction", key: string, selectedKeys: DataTableRowKey[], selectedRows: T[]) => void);
 }>) => VNode & {
     __ctx?: Awaited<typeof __VLS_setup>;
 };
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_8" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_8" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_8" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_10" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_10" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_10" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RDemoSection: __VLS_WithTemplateSlots_8<typeof __VLS_component_8, __VLS_TemplateResult_8["slots"]>;
+export const RDemoSection: __VLS_WithTemplateSlots_10<typeof __VLS_component_10, __VLS_TemplateResult_10["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_18" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_18" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_18" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RDescriptionsPanel: __VLS_WithTemplateSlots_18<typeof __VLS_component_18, __VLS_TemplateResult_18["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_22" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RDocsBrowser: DefineComponent<__VLS_Props_22, {
+refresh: typeof handleRefresh;
+clearCache: typeof handleClearCache;
+openByTag: typeof syncFromActiveFileTag;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+refresh: () => any;
+"file-select": (file: DocFileItem) => any;
+"file-tag-change": (tag: string) => any;
+"directory-change": (dir: string) => any;
+"cache-clear": () => any;
+}, string, PublicProps, Readonly<__VLS_Props_22> & Readonly<{
+onRefresh?: (() => any) | undefined;
+"onFile-select"?: ((file: DocFileItem) => any) | undefined;
+"onFile-tag-change"?: ((tag: string) => any) | undefined;
+"onDirectory-change"?: ((dir: string) => any) | undefined;
+"onCache-clear"?: (() => any) | undefined;
+}>, {
+height: string;
+enableHighlight: boolean;
+enableToc: boolean;
+enableFullscreen: boolean;
+cacheKey: string;
+enableCache: boolean;
+activeFileTag: string;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+// @public (undocumented)
+export interface RDocsBrowserEmits {
+    // (undocumented)
+    (e: 'file-select', file: DocFileItem): void;
+    // (undocumented)
+    (e: 'file-tag-change', tag: string): void;
+    // (undocumented)
+    (e: 'directory-change', dir: string): void;
+    // (undocumented)
+    (e: 'refresh'): void;
+    // (undocumented)
+    (e: 'cache-clear'): void;
+}
+
+// @public (undocumented)
+export interface RDocsBrowserProps {
+    // (undocumented)
+    activeFileTag?: string;
+    // (undocumented)
+    api: DocsApiAdapter;
+    // (undocumented)
+    cacheKey?: string;
+    // (undocumented)
+    enableCache?: boolean;
+    // (undocumented)
+    enableFullscreen?: boolean;
+    // (undocumented)
+    enableHighlight?: boolean;
+    // (undocumented)
+    enableToc?: boolean;
+    // (undocumented)
+    height?: string;
+    // (undocumented)
+    highlightApi?: HighlightApiAdapter;
+}
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_12" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_12" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_12" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RDrawerForm: __VLS_WithTemplateSlots_12<typeof __VLS_component_12, __VLS_TemplateResult_12["slots"]>;
+
+// @public (undocumented)
+export interface RDrawerFormEmits {
+    // (undocumented)
+    (e: 'update:visible', value: boolean): void;
+    // (undocumented)
+    (e: 'update:model', value: Record<string, unknown>): void;
+    // (undocumented)
+    (e: 'submit', model: Record<string, unknown>): void;
+    // (undocumented)
+    (e: 'cancel'): void;
+    // (undocumented)
+    (e: 'retry'): void;
+}
+
+// @public (undocumented)
+export interface RDrawerFormExpose {
+    // (undocumented)
+    clearErrors: () => void;
+    // (undocumented)
+    resetFields: () => void;
+    // (undocumented)
+    validate: () => Promise<boolean>;
+}
+
+// @public (undocumented)
+export interface RDrawerFormProps {
+    // (undocumented)
+    asyncValidator?: (model: Record<string, unknown>) => Promise<DrawerFormError[]>;
+    // (undocumented)
+    cancelText?: string;
+    // (undocumented)
+    closeOnMaskClick?: boolean;
+    // (undocumented)
+    labelPlacement?: 'left' | 'top';
+    // (undocumented)
+    labelWidth?: number;
+    // (undocumented)
+    loading?: boolean;
+    // (undocumented)
+    model: Record<string, unknown>;
+    // (undocumented)
+    placement?: DrawerPlacement;
+    // (undocumented)
+    retryText?: string;
+    // (undocumented)
+    schema: FormFieldSchema[];
+    // (undocumented)
+    showFooter?: boolean;
+    // (undocumented)
+    submitText?: string;
+    // (undocumented)
+    title: string;
+    // (undocumented)
+    visible: boolean;
+    // (undocumented)
+    width?: DrawerWidth;
+}
+
+// @public (undocumented)
+export function registerIcon(name: string, icon: LucideIcon_2): void;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_13" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_13" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_13" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const REmptyState: __VLS_WithTemplateSlots_13<typeof __VLS_component_13, __VLS_TemplateResult_13["slots"]>;
+
+// @public (undocumented)
+export interface REmptyStateEmits {
+    // (undocumented)
+    (e: 'action'): void;
+}
+
+// @public (undocumented)
+export interface REmptyStateProps {
+    // (undocumented)
+    actionLabel?: string;
+    // (undocumented)
+    actionType?: 'primary' | 'default';
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    size?: EmptyStateSize;
+    // (undocumented)
+    title?: string;
+}
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_30" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const REntityExecutionPanel: DefineComponent<__VLS_Props_30, {
+getTimeline: () => CreateComponentPublicInstanceWithMixins<Readonly<{
+nodes: FlowNode[];
+edges: FlowEdge[];
+height?: string;
+}> & Readonly<{}>, {
+handleEvent: (evt: FlowTimelineEvent) => void;
+connectSSE: (url: string) => void;
+reset: () => void;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, PublicProps, {
+height: string;
+}, false, {}, {}, GlobalComponents, GlobalDirectives, string, {}, HTMLDivElement, ComponentProvideOptions, {
+P: {};
+B: {};
+D: {};
+C: {};
+M: {};
+Defaults: {};
+}, Readonly<{
+nodes: FlowNode[];
+edges: FlowEdge[];
+height?: string;
+}> & Readonly<{}>, {
+handleEvent: (evt: FlowTimelineEvent) => void;
+connectSSE: (url: string) => void;
+reset: () => void;
+}, {}, {}, {}, {
+height: string;
+}> | null;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+"update:show": (value: boolean) => any;
+}, string, PublicProps, Readonly<__VLS_Props_30> & Readonly<{
+"onUpdate:show"?: ((value: boolean) => any) | undefined;
+}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {
+timelineRef: CreateComponentPublicInstanceWithMixins<Readonly<{
+nodes: FlowNode[];
+edges: FlowEdge[];
+height?: string;
+}> & Readonly<{}>, {
+handleEvent: (evt: FlowTimelineEvent) => void;
+connectSSE: (url: string) => void;
+reset: () => void;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, PublicProps, {
+height: string;
+}, false, {}, {}, GlobalComponents, GlobalDirectives, string, {}, HTMLDivElement, ComponentProvideOptions, {
+P: {};
+B: {};
+D: {};
+C: {};
+M: {};
+Defaults: {};
+}, Readonly<{
+nodes: FlowNode[];
+edges: FlowEdge[];
+height?: string;
+}> & Readonly<{}>, {
+handleEvent: (evt: FlowTimelineEvent) => void;
+connectSSE: (url: string) => void;
+reset: () => void;
+}, {}, {}, {}, {
+height: string;
+}> | null;
+}, any>;
 
 // @public (undocumented)
 export interface RequestConfig {
@@ -2241,6 +9168,7 @@ export interface RequestError {
     message: string;
     // (undocumented)
     originalError?: Error;
+    responseBody?: unknown;
     // (undocumented)
     status?: number;
 }
@@ -2282,8 +9210,112 @@ export function resetDiscreteApi(): void;
 // @public
 export function resetThemeProvider(): void;
 
+// Warning: (ae-forgotten-export) The symbol "EnvRecord" needs to be exported by the entry point index.d.ts
+//
+// @public
+export function resolveEnvConfig(env?: EnvRecord): Partial<RuntimeConfig>;
+
+// @public (undocumented)
+export function resolveOutputType(file: File, options?: ImageCropOptions): ImageCropOutputType;
+
 // @public
 export function resolveToken(property: string): string;
+
+// @public (undocumented)
+export type ResultStatus = 'success' | 'error' | 'warning' | 'info' | '403' | '404' | '500';
+
+// @public (undocumented)
+export const RExportButton: DefineComponent<ExtractPropTypes<    {
+label: {
+type: StringConstructor;
+default: string;
+};
+disabled: {
+type: BooleanConstructor;
+default: boolean;
+};
+pollInterval: {
+type: NumberConstructor;
+default: number;
+};
+autoDownload: {
+type: BooleanConstructor;
+default: boolean;
+};
+formats: {
+type: PropType<ExportFormatOption[]>;
+default: () => {
+label: string;
+value: string;
+}[];
+};
+createTask: {
+type: PropType<(format: ExportFormat) => Promise<number | string>>;
+required: true;
+};
+queryTask: {
+type: PropType<(taskId: number | string) => Promise<ExportTaskSnapshot>>;
+required: true;
+};
+downloadTask: {
+type: PropType<(taskId: number | string) => Promise<void>>;
+required: true;
+};
+}>, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+error: (message: string) => any;
+progress: (snapshot: ExportTaskSnapshot) => any;
+success: (taskId: string | number) => any;
+finished: () => any;
+started: (taskId: string | number, format: ExportFormat) => any;
+}, string, PublicProps, Readonly<ExtractPropTypes<    {
+label: {
+type: StringConstructor;
+default: string;
+};
+disabled: {
+type: BooleanConstructor;
+default: boolean;
+};
+pollInterval: {
+type: NumberConstructor;
+default: number;
+};
+autoDownload: {
+type: BooleanConstructor;
+default: boolean;
+};
+formats: {
+type: PropType<ExportFormatOption[]>;
+default: () => {
+label: string;
+value: string;
+}[];
+};
+createTask: {
+type: PropType<(format: ExportFormat) => Promise<number | string>>;
+required: true;
+};
+queryTask: {
+type: PropType<(taskId: number | string) => Promise<ExportTaskSnapshot>>;
+required: true;
+};
+downloadTask: {
+type: PropType<(taskId: number | string) => Promise<void>>;
+required: true;
+};
+}>> & Readonly<{
+onError?: ((message: string) => any) | undefined;
+onProgress?: ((snapshot: ExportTaskSnapshot) => any) | undefined;
+onSuccess?: ((taskId: string | number) => any) | undefined;
+onFinished?: (() => any) | undefined;
+onStarted?: ((taskId: string | number, format: ExportFormat) => any) | undefined;
+}>, {
+disabled: boolean;
+label: string;
+pollInterval: number;
+autoDownload: boolean;
+formats: ExportFormatOption[];
+}, {}, {}, {}, string, ComponentProvideOptions, true, {}, HTMLDivElement>;
 
 // Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_3" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "__VLS_component_3" needs to be exported by the entry point index.d.ts
@@ -2292,6 +9324,38 @@ export function resolveToken(property: string): string;
 // @public (undocumented)
 export const RFileUpload: __VLS_WithTemplateSlots_3<typeof __VLS_component_3, __VLS_TemplateResult_3["slots"]>;
 
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_15" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_15" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_15" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RFilterBarPro: __VLS_WithTemplateSlots_15<typeof __VLS_component_15, __VLS_TemplateResult_15["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_33" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_32" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_32" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RFlowCanvas: __VLS_WithTemplateSlots_33<typeof __VLS_component_32, __VLS_TemplateResult_32["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_34" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_33" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_33" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RFlowEditor: __VLS_WithTemplateSlots_34<typeof __VLS_component_33, __VLS_TemplateResult_33["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_29" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RFlowTimeline: DefineComponent<__VLS_Props_29, {
+handleEvent: typeof handleEvent;
+connectSSE: typeof connectSSE;
+reset: typeof reset;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_29> & Readonly<{}>, {
+height: string;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
 // Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "__VLS_component" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult" needs to be exported by the entry point index.d.ts
@@ -2299,12 +9363,480 @@ export const RFileUpload: __VLS_WithTemplateSlots_3<typeof __VLS_component_3, __
 // @public (undocumented)
 export const RFormRenderer: __VLS_WithTemplateSlots<typeof __VLS_component, __VLS_TemplateResult["slots"]>;
 
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_22" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_22" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_22" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RFormTable: __VLS_WithTemplateSlots_22<typeof __VLS_component_22, __VLS_TemplateResult_22["slots"]>;
+
+// @public (undocumented)
+export interface RichTextEditorI18n {
+    // (undocumented)
+    attachment?: string;
+    // (undocumented)
+    blockquote?: string;
+    // (undocumented)
+    bold?: string;
+    // (undocumented)
+    bulletList?: string;
+    // (undocumented)
+    code?: string;
+    // (undocumented)
+    codeBlock?: string;
+    // (undocumented)
+    gridBlock?: string;
+    // (undocumented)
+    heading?: string;
+    // (undocumented)
+    highlight?: string;
+    // (undocumented)
+    horizontalRule?: string;
+    // (undocumented)
+    image?: string;
+    // (undocumented)
+    insertTable?: string;
+    // (undocumented)
+    italic?: string;
+    // (undocumented)
+    link?: string;
+    // (undocumented)
+    mermaid?: string;
+    // (undocumented)
+    orderedList?: string;
+    // (undocumented)
+    redo?: string;
+    // (undocumented)
+    table?: string;
+    // (undocumented)
+    taskList?: string;
+    // (undocumented)
+    toc?: string;
+    // (undocumented)
+    underline?: string;
+    // (undocumented)
+    undo?: string;
+}
+
+// @public (undocumented)
+export type RichTextEditorTheme = 'classic' | 'minimal' | 'midnight' | 'aurora';
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RIcon: DefineComponent<__VLS_Props, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props> & Readonly<{}>, {
+size: IconSize;
+color: IconColor;
+strokeWidth: number;
+class: string;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLSpanElement>;
+
+// @public (undocumented)
+export const RIconButton: DefineComponent<ExtractPropTypes<    {
+icon: {
+type: StringConstructor;
+required: true;
+};
+tooltip: {
+type: StringConstructor;
+default: string;
+};
+size: {
+type: PropType<"tiny" | "small" | "medium" | "large">;
+default: string;
+};
+type: {
+type: PropType<"default" | "primary" | "info" | "success" | "warning" | "error">;
+default: string;
+};
+danger: {
+type: BooleanConstructor;
+default: boolean;
+};
+loading: {
+type: BooleanConstructor;
+default: boolean;
+};
+disabled: {
+type: BooleanConstructor;
+default: boolean;
+};
+circle: {
+type: BooleanConstructor;
+default: boolean;
+};
+ghost: {
+type: BooleanConstructor;
+default: boolean;
+};
+dashed: {
+type: BooleanConstructor;
+default: boolean;
+};
+ariaLabel: {
+type: StringConstructor;
+default: string;
+};
+}>, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+click: (event: MouseEvent) => any;
+}, string, PublicProps, Readonly<ExtractPropTypes<    {
+icon: {
+type: StringConstructor;
+required: true;
+};
+tooltip: {
+type: StringConstructor;
+default: string;
+};
+size: {
+type: PropType<"tiny" | "small" | "medium" | "large">;
+default: string;
+};
+type: {
+type: PropType<"default" | "primary" | "info" | "success" | "warning" | "error">;
+default: string;
+};
+danger: {
+type: BooleanConstructor;
+default: boolean;
+};
+loading: {
+type: BooleanConstructor;
+default: boolean;
+};
+disabled: {
+type: BooleanConstructor;
+default: boolean;
+};
+circle: {
+type: BooleanConstructor;
+default: boolean;
+};
+ghost: {
+type: BooleanConstructor;
+default: boolean;
+};
+dashed: {
+type: BooleanConstructor;
+default: boolean;
+};
+ariaLabel: {
+type: StringConstructor;
+default: string;
+};
+}>> & Readonly<{
+onClick?: ((event: MouseEvent) => any) | undefined;
+}>, {
+size: "small" | "medium" | "tiny" | "large";
+disabled: boolean;
+circle: boolean;
+danger: boolean;
+tooltip: string;
+loading: boolean;
+type: "error" | "default" | "success" | "warning" | "info" | "primary";
+ghost: boolean;
+dashed: boolean;
+ariaLabel: string;
+}, {}, {}, {}, string, ComponentProvideOptions, true, {}, any>;
+
+// @public (undocumented)
+export interface RIconProps {
+    // (undocumented)
+    class?: string;
+    // (undocumented)
+    color?: IconColor;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    size?: IconSize;
+    // (undocumented)
+    strokeWidth?: number;
+}
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_8" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RImageCropperDialog: DefineComponent<__VLS_Props_8, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+cancel: () => any;
+error: (error: Error) => any;
+confirm: (result: ImageCropResult) => any;
+"update:visible": (value: boolean) => any;
+}, string, PublicProps, Readonly<__VLS_Props_8> & Readonly<{
+onCancel?: (() => any) | undefined;
+onError?: ((error: Error) => any) | undefined;
+onConfirm?: ((result: ImageCropResult) => any) | undefined;
+"onUpdate:visible"?: ((value: boolean) => any) | undefined;
+}>, {
+options: ImageCropOptions;
+file: File;
+locale: Partial<ImageCropLocale>;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {
+cropperHostRef: HTMLDivElement;
+sourceImageRef: HTMLImageElement;
+}, any>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_24" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_24" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_24" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RImageCropUpload: __VLS_WithTemplateSlots_24<typeof __VLS_component_24, __VLS_TemplateResult_24["slots"]>;
+
+// @public (undocumented)
+export const RIndexProgress: DefineComponent<ExtractPropTypes<    {
+total: {
+type: NumberConstructor;
+required: true;
+};
+indexed: {
+type: NumberConstructor;
+required: true;
+};
+status: {
+type: PropType<IndexStatus_2>;
+default: string;
+};
+showLabel: {
+type: BooleanConstructor;
+default: boolean;
+};
+height: {
+type: NumberConstructor;
+default: number;
+};
+borderRadius: {
+type: NumberConstructor;
+default: number;
+};
+}>, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<ExtractPropTypes<    {
+total: {
+type: NumberConstructor;
+required: true;
+};
+indexed: {
+type: NumberConstructor;
+required: true;
+};
+status: {
+type: PropType<IndexStatus_2>;
+default: string;
+};
+showLabel: {
+type: BooleanConstructor;
+default: boolean;
+};
+height: {
+type: NumberConstructor;
+default: number;
+};
+borderRadius: {
+type: NumberConstructor;
+default: number;
+};
+}>> & Readonly<{}>, {
+borderRadius: number;
+height: number;
+status: IndexStatus_2;
+showLabel: boolean;
+}, {}, {}, {}, string, ComponentProvideOptions, true, {}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_3" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RKpiGrid: DefineComponent<__VLS_Props_3, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+"item-click": (key: string) => any;
+}, string, PublicProps, Readonly<__VLS_Props_3> & Readonly<{
+"onItem-click"?: ((key: string) => any) | undefined;
+}>, {
+loading: boolean;
+cols: KpiGridCols;
+gap: number;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+// @public (undocumented)
+export interface RKpiGridEmits {
+    // (undocumented)
+    (e: 'item-click', key: string): void;
+}
+
+// @public (undocumented)
+export interface RKpiGridProps {
+    // (undocumented)
+    cols?: KpiGridCols;
+    // (undocumented)
+    gap?: number;
+    // (undocumented)
+    items: KpiItem[];
+    // (undocumented)
+    loading?: boolean;
+}
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_33" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RLanguageSelector: DefineComponent<__VLS_Props_33, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+"update:modelValue": (value: string) => any;
+}, string, PublicProps, Readonly<__VLS_Props_33> & Readonly<{
+"onUpdate:modelValue"?: ((value: string) => any) | undefined;
+}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, any>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_26" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_25" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_25" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RMarkdownEditor: __VLS_WithTemplateSlots_26<typeof __VLS_component_25, __VLS_TemplateResult_25["slots"]>;
+
+// @public (undocumented)
+export interface RMarkdownEditorEmits {
+    // (undocumented)
+    (e: 'update:modelValue', value: string): void;
+    // (undocumented)
+    (e: 'update:viewMode', mode: MarkdownEditorViewMode): void;
+    // (undocumented)
+    (e: 'save', content: string): void;
+}
+
+// @public (undocumented)
+export interface RMarkdownEditorProps {
+    // (undocumented)
+    defaultSplitRatio?: number;
+    // (undocumented)
+    height?: string | number;
+    // (undocumented)
+    modelValue?: string;
+    // (undocumented)
+    placeholder?: string;
+    // (undocumented)
+    previewScale?: number;
+    // (undocumented)
+    readonly?: boolean;
+    // (undocumented)
+    showModeToggle?: boolean;
+    // (undocumented)
+    showScaleControl?: boolean;
+    // (undocumented)
+    viewMode?: MarkdownEditorViewMode;
+}
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_9" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RMarkdownPreview: DefineComponent<__VLS_Props_9, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_9> & Readonly<{}>, {
+scale: number;
+content: string;
+theme: MarkdownPreviewTheme;
+enableMermaid: boolean;
+enableHighlight: boolean;
+highlightTheme: string;
+enableRunButton: boolean;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {
+containerRef: HTMLDivElement;
+canvasRef: HTMLDivElement;
+}, any>;
+
+// @public (undocumented)
+export interface RMarkdownPreviewProps {
+    // (undocumented)
+    content: string;
+    // (undocumented)
+    enableHighlight?: boolean;
+    // (undocumented)
+    enableMermaid?: boolean;
+    // (undocumented)
+    highlightTheme?: string;
+    // (undocumented)
+    scale?: number;
+    // (undocumented)
+    theme?: MarkdownPreviewTheme;
+}
+
+// @public (undocumented)
+export const RMenuPresetEditor: DefineComponent<MenuPresetEditorProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+"update:activePresetId": (presetId: string) => any;
+"create-preset": (name: string) => any;
+"delete-preset": (presetId: string) => any;
+"set-default-preset": (presetId: string) => any;
+"save-preset": (payload: MenuPresetSavePayload) => any;
+}, string, PublicProps, Readonly<MenuPresetEditorProps> & Readonly<{
+"onUpdate:activePresetId"?: ((presetId: string) => any) | undefined;
+"onCreate-preset"?: ((name: string) => any) | undefined;
+"onDelete-preset"?: ((presetId: string) => any) | undefined;
+"onSet-default-preset"?: ((presetId: string) => any) | undefined;
+"onSave-preset"?: ((payload: MenuPresetSavePayload) => any) | undefined;
+}>, {
+loading: boolean;
+defaultPresetId: string;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
 // Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_2" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "__VLS_component_2" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_2" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
 export const RModalDialog: __VLS_WithTemplateSlots_2<typeof __VLS_component_2, __VLS_TemplateResult_2["slots"]>;
+
+// @public (undocumented)
+export const RNotificationCenter: DefineComponent<ExtractPropTypes<    {
+notifications: {
+type: PropType<NotificationItem[]>;
+required: true;
+};
+maxVisible: {
+type: NumberConstructor;
+default: number;
+};
+showBadge: {
+type: BooleanConstructor;
+default: boolean;
+};
+placement: {
+type: PropType<"bottom-end" | "bottom-start" | "bottom">;
+default: string;
+};
+}>, {
+push: (item: Omit<NotificationItem, "id" | "timestamp" | "read">) => string;
+markRead: (id: string) => void;
+markAllRead: () => void;
+dismiss: (id: string) => void;
+clearAll: () => void;
+unreadCount: number;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+action: (item: NotificationItem) => any;
+read: (id: string) => any;
+"update:notifications": (notifications: NotificationItem[]) => any;
+"read-all": () => any;
+dismiss: (id: string) => any;
+"clear-all": () => any;
+}, string, PublicProps, Readonly<ExtractPropTypes<    {
+notifications: {
+type: PropType<NotificationItem[]>;
+required: true;
+};
+maxVisible: {
+type: NumberConstructor;
+default: number;
+};
+showBadge: {
+type: BooleanConstructor;
+default: boolean;
+};
+placement: {
+type: PropType<"bottom-end" | "bottom-start" | "bottom">;
+default: string;
+};
+}>> & Readonly<{
+onAction?: ((item: NotificationItem) => any) | undefined;
+onRead?: ((id: string) => any) | undefined;
+"onUpdate:notifications"?: ((notifications: NotificationItem[]) => any) | undefined;
+"onRead-all"?: (() => any) | undefined;
+onDismiss?: ((id: string) => any) | undefined;
+"onClear-all"?: (() => any) | undefined;
+}>, {
+placement: "bottom-start" | "bottom" | "bottom-end";
+maxVisible: number;
+showBadge: boolean;
+}, {}, {}, {}, string, ComponentProvideOptions, true, {}, any>;
 
 // @public (undocumented)
 export interface RongAdminAppInstance {
@@ -2377,6 +9909,20 @@ export interface RongAdminPresetOptions {
     };
 }
 
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_36" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_35" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_35" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const ROpsChartPlaceholder: __VLS_WithTemplateSlots_36<typeof __VLS_component_35, __VLS_TemplateResult_35["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_35" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_34" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_34" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const ROpsPanel: __VLS_WithTemplateSlots_35<typeof __VLS_component_34, __VLS_TemplateResult_34["slots"]>;
+
 // @public (undocumented)
 export interface RouteGeneratorOptions {
     // (undocumented)
@@ -2388,6 +9934,9 @@ export interface RouteGeneratorOptions {
     // (undocumented)
     viewModules: Record<string, () => Promise<Component>>;
 }
+
+// @public (undocumented)
+export type RouteMenuSource = RouteRecordRaw[];
 
 // @public (undocumented)
 export interface RouteMeta {
@@ -2428,6 +9977,34 @@ export interface RouteModuleConfig {
 }
 
 // @public (undocumented)
+export interface RouteQuickActionItem {
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    openMode?: 'in_app' | 'new_tab';
+    // (undocumented)
+    route: string;
+}
+
+// @public (undocumented)
+export interface RouteQuickActionsEditorOptions {
+    // (undocumented)
+    routeOptions: DashboardRouteOption[];
+}
+
+// @public (undocumented)
+export interface RouteQuickActionsWidgetConfig {
+    // (undocumented)
+    actions: RouteQuickActionItem[];
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    title?: string;
+}
+
+// @public (undocumented)
 export interface RouterContext {
     // (undocumented)
     addDynamicRoutes: (routes: RouteRecordRaw[]) => void;
@@ -2436,6 +10013,9 @@ export interface RouterContext {
     // (undocumented)
     router: Router;
 }
+
+// @public (undocumented)
+export function routeRecordsToMenuTree(routes: RouteRecordRaw[]): AppMenuItem[];
 
 // @public (undocumented)
 export interface RouterGuardHooks {
@@ -2497,6 +10077,1339 @@ export interface RouterSetupConfig {
     whiteList: string[];
 }
 
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_8" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_8" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_8" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RPageHeader: __VLS_WithTemplateSlots_8<typeof __VLS_component_8, __VLS_TemplateResult_8["slots"]>;
+
+// @public (undocumented)
+export const RPageSkeleton: DefineComponent<ExtractPropTypes<    {
+mode: {
+type: PropType<SkeletonMode>;
+required: true;
+};
+rows: {
+type: NumberConstructor;
+default: number;
+};
+animated: {
+type: BooleanConstructor;
+default: boolean;
+};
+columns: {
+type: NumberConstructor;
+default: number;
+};
+showHeader: {
+type: BooleanConstructor;
+default: boolean;
+};
+showToolbar: {
+type: BooleanConstructor;
+default: boolean;
+};
+showPagination: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<ExtractPropTypes<    {
+mode: {
+type: PropType<SkeletonMode>;
+required: true;
+};
+rows: {
+type: NumberConstructor;
+default: number;
+};
+animated: {
+type: BooleanConstructor;
+default: boolean;
+};
+columns: {
+type: NumberConstructor;
+default: number;
+};
+showHeader: {
+type: BooleanConstructor;
+default: boolean;
+};
+showToolbar: {
+type: BooleanConstructor;
+default: boolean;
+};
+showPagination: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>> & Readonly<{}>, {
+columns: number;
+animated: boolean;
+rows: number;
+showToolbar: boolean;
+showHeader: boolean;
+showPagination: boolean;
+}, {}, {}, {}, string, ComponentProvideOptions, true, {}, HTMLDivElement>;
+
+// @public (undocumented)
+export const RPasswordStrength: DefineComponent<ExtractPropTypes<    {
+modelValue: {
+type: StringConstructor;
+required: true;
+};
+rules: {
+type: PropType<PasswordRule[]>;
+default: () => PasswordRule[];
+};
+showRules: {
+type: BooleanConstructor;
+default: boolean;
+};
+showScore: {
+type: BooleanConstructor;
+default: boolean;
+};
+showLevel: {
+type: BooleanConstructor;
+default: boolean;
+};
+minLength: {
+type: NumberConstructor;
+default: number;
+};
+maxLength: {
+type: NumberConstructor;
+default: number;
+};
+placeholder: {
+type: StringConstructor;
+default: string;
+};
+disabled: {
+type: BooleanConstructor;
+default: boolean;
+};
+size: {
+type: PropType<"small" | "medium" | "large">;
+default: string;
+};
+}>, {
+getLevel: () => PasswordStrengthLevel;
+getScore: () => number;
+getPassedRules: () => string[];
+focus: () => void;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+"update:modelValue": (value: string) => any;
+levelChange: (level: PasswordStrengthLevel, score: number) => any;
+}, string, PublicProps, Readonly<ExtractPropTypes<    {
+modelValue: {
+type: StringConstructor;
+required: true;
+};
+rules: {
+type: PropType<PasswordRule[]>;
+default: () => PasswordRule[];
+};
+showRules: {
+type: BooleanConstructor;
+default: boolean;
+};
+showScore: {
+type: BooleanConstructor;
+default: boolean;
+};
+showLevel: {
+type: BooleanConstructor;
+default: boolean;
+};
+minLength: {
+type: NumberConstructor;
+default: number;
+};
+maxLength: {
+type: NumberConstructor;
+default: number;
+};
+placeholder: {
+type: StringConstructor;
+default: string;
+};
+disabled: {
+type: BooleanConstructor;
+default: boolean;
+};
+size: {
+type: PropType<"small" | "medium" | "large">;
+default: string;
+};
+}>> & Readonly<{
+"onUpdate:modelValue"?: ((value: string) => any) | undefined;
+onLevelChange?: ((level: PasswordStrengthLevel, score: number) => any) | undefined;
+}>, {
+size: "small" | "medium" | "large";
+disabled: boolean;
+placeholder: string;
+rules: PasswordRule[];
+showRules: boolean;
+showScore: boolean;
+showLevel: boolean;
+minLength: number;
+maxLength: number;
+}, {}, {}, {}, string, ComponentProvideOptions, true, {
+inputRef: CreateComponentPublicInstanceWithMixins<Readonly<ExtractPropTypes<    {
+bordered: {
+type: PropType<boolean | undefined>;
+default: undefined;
+};
+type: {
+type: PropType<"text" | "textarea" | "password">;
+default: string;
+};
+placeholder: PropType<string | [string, string]>;
+defaultValue: {
+type: PropType<null | string | [string, string]>;
+default: null;
+};
+value: PropType<null | string | [string, string]>;
+disabled: {
+type: PropType<boolean | undefined>;
+default: undefined;
+};
+size: PropType<Size_2>;
+rows: {
+type: PropType<number | string>;
+default: number;
+};
+round: BooleanConstructor;
+minlength: PropType<number | string>;
+maxlength: PropType<number | string>;
+clearable: BooleanConstructor;
+autosize: {
+type: PropType<boolean | {
+minRows?: number;
+maxRows?: number;
+}>;
+default: boolean;
+};
+pair: BooleanConstructor;
+separator: StringConstructor;
+readonly: {
+type: (StringConstructor | BooleanConstructor)[];
+default: boolean;
+};
+passivelyActivated: BooleanConstructor;
+showPasswordOn: PropType<"mousedown" | "click">;
+stateful: {
+type: BooleanConstructor;
+default: boolean;
+};
+autofocus: BooleanConstructor;
+inputProps: PropType<TextareaHTMLAttributes | InputHTMLAttributes>;
+resizable: {
+type: BooleanConstructor;
+default: boolean;
+};
+showCount: BooleanConstructor;
+loading: {
+type: BooleanConstructor;
+default: undefined;
+};
+allowInput: PropType<(value: string) => boolean>;
+renderCount: PropType<(props: {
+value: string;
+}) => VNodeChild>;
+onMousedown: PropType<(e: MouseEvent) => void>;
+onKeydown: PropType<(e: KeyboardEvent) => void>;
+onKeyup: PropType<(e: KeyboardEvent) => void>;
+onInput: PropType<OnUpdateValue>;
+onFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onClick: PropType<MaybeArray<(e: MouseEvent) => void>>;
+onChange: PropType<OnUpdateValue>;
+onClear: PropType<MaybeArray<(e: MouseEvent) => void>>;
+countGraphemes: PropType<(value: string) => number>;
+status: PropType<FormValidationStatus>;
+'onUpdate:value': PropType<MaybeArray<OnUpdateValue>>;
+onUpdateValue: PropType<MaybeArray<OnUpdateValue>>;
+textDecoration: PropType<string | [string, string]>;
+attrSize: {
+type: NumberConstructor;
+default: number;
+};
+onInputBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onInputFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onDeactivate: PropType<MaybeArray<() => void>>;
+onActivate: PropType<MaybeArray<() => void>>;
+onWrapperFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onWrapperBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+internalDeactivateOnEnter: BooleanConstructor;
+internalForceFocus: BooleanConstructor;
+internalLoadingBeforeSuffix: {
+type: BooleanConstructor;
+default: boolean;
+};
+showPasswordToggle: BooleanConstructor;
+theme: PropType<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>;
+themeOverrides: PropType<ExtractThemeOverrides<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>>;
+builtinThemeOverrides: PropType<ExtractThemeOverrides<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>>;
+}>> & Readonly<{}>, {
+wrapperElRef: Ref<HTMLElement | null, HTMLElement | null>;
+inputElRef: Ref<HTMLInputElement | null, HTMLInputElement | null>;
+inputMirrorElRef: Ref<HTMLElement | null, HTMLElement | null>;
+inputEl2Ref: Ref<HTMLInputElement | null, HTMLInputElement | null>;
+textareaElRef: Ref<HTMLTextAreaElement | null, HTMLTextAreaElement | null>;
+textareaMirrorElRef: Ref<HTMLElement | null, HTMLElement | null>;
+textareaScrollbarInstRef: Ref<    {
+$el: HTMLElement;
+containerRef: HTMLElement | null;
+contentRef: HTMLElement | null;
+containerScrollTop: number;
+syncUnifiedContainer: () => void;
+scrollTo: ScrollTo;
+scrollBy: ScrollBy;
+sync: () => void;
+handleMouseEnterWrapper: () => void;
+handleMouseLeaveWrapper: () => void;
+} | null, ScrollbarInst | {
+$el: HTMLElement;
+containerRef: HTMLElement | null;
+contentRef: HTMLElement | null;
+containerScrollTop: number;
+syncUnifiedContainer: () => void;
+scrollTo: ScrollTo;
+scrollBy: ScrollBy;
+sync: () => void;
+handleMouseEnterWrapper: () => void;
+handleMouseLeaveWrapper: () => void;
+} | null>;
+rtlEnabled: Ref<RtlItem | undefined, RtlItem | undefined> | undefined;
+uncontrolledValue: Ref<string | [string, string] | null, string | [string, string] | null>;
+mergedValue: ComputedRef<string | [string, string] | null>;
+passwordVisible: Ref<boolean, boolean>;
+mergedPlaceholder: ComputedRef<[string, string] | [string]>;
+showPlaceholder1: ComputedRef<string | false>;
+showPlaceholder2: ComputedRef<boolean | "" | undefined>;
+mergedFocus: ComputedRef<boolean>;
+isComposing: Ref<boolean, boolean>;
+activated: Ref<boolean, boolean>;
+showClearButton: ComputedRef<boolean>;
+mergedSize: ComputedRef<"tiny" | "small" | "medium" | "large">;
+mergedDisabled: ComputedRef<boolean>;
+textDecorationStyle: ComputedRef<string[] | {
+textDecoration: string;
+}[]>;
+mergedClsPrefix: Ref<string, string>;
+mergedBordered: ComputedRef<boolean>;
+mergedShowPasswordOn: ComputedRef<"click" | "mousedown" | undefined>;
+placeholderStyle: Ref<    {
+top: string;
+}, {
+top: string;
+} | {
+top: string;
+}>;
+mergedStatus: ComputedRef<FormValidationStatus | undefined>;
+textAreaScrollContainerWidth: Ref<number | undefined, number | undefined>;
+handleTextAreaScroll: (e: Event) => void;
+handleCompositionStart: () => void;
+handleCompositionEnd: (e: CompositionEvent) => void;
+handleInput: (e: InputEvent | CompositionEvent | Event, index?: 0 | 1, event?: string) => void;
+handleInputBlur: (e: FocusEvent) => void;
+handleInputFocus: (e: FocusEvent, index: number) => void;
+handleWrapperBlur: (e: FocusEvent) => void;
+handleWrapperFocus: (e: FocusEvent) => void;
+handleMouseEnter: () => void;
+handleMouseLeave: () => void;
+handleMouseDown: (e: MouseEvent) => void;
+handleChange: (e: Event, index?: 0 | 1) => void;
+handleClick: (e: MouseEvent) => void;
+handleClear: (e: MouseEvent) => void;
+handlePasswordToggleClick: () => void;
+handlePasswordToggleMousedown: (e: MouseEvent) => void;
+handleWrapperKeydown: (e: KeyboardEvent) => void;
+handleWrapperKeyup: (e: KeyboardEvent) => void;
+handleTextAreaMirrorResize: () => void;
+getTextareaScrollContainer: () => HTMLTextAreaElement | null;
+mergedTheme: ComputedRef<    {
+common: ThemeCommonVars;
+self: {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+};
+peers: {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+};
+peerOverrides: {
+Scrollbar?: {
+peers?: {
+[x: string]: any;
+} | undefined;
+} | undefined;
+};
+}>;
+cssVars: ComputedRef<    {
+"--n-bezier": string;
+"--n-count-text-color": string;
+"--n-count-text-color-disabled": string;
+"--n-color": string;
+"--n-font-size": string;
+"--n-font-weight": string;
+"--n-border-radius": string;
+"--n-height": string;
+"--n-padding-left": string;
+"--n-padding-right": string;
+"--n-text-color": string;
+"--n-caret-color": string;
+"--n-text-decoration-color": string;
+"--n-border": string;
+"--n-border-disabled": string;
+"--n-border-hover": string;
+"--n-border-focus": string;
+"--n-placeholder-color": string;
+"--n-placeholder-color-disabled": string;
+"--n-icon-size": string;
+"--n-line-height-textarea": string;
+"--n-color-disabled": string;
+"--n-color-focus": string;
+"--n-text-color-disabled": string;
+"--n-box-shadow-focus": string;
+"--n-loading-color": string;
+"--n-caret-color-warning": string;
+"--n-color-focus-warning": string;
+"--n-box-shadow-focus-warning": string;
+"--n-border-warning": string;
+"--n-border-focus-warning": string;
+"--n-border-hover-warning": string;
+"--n-loading-color-warning": string;
+"--n-caret-color-error": string;
+"--n-color-focus-error": string;
+"--n-box-shadow-focus-error": string;
+"--n-border-error": string;
+"--n-border-focus-error": string;
+"--n-border-hover-error": string;
+"--n-loading-color-error": string;
+"--n-clear-color": string;
+"--n-clear-size": string;
+"--n-clear-color-hover": string;
+"--n-clear-color-pressed": string;
+"--n-icon-color": string;
+"--n-icon-color-hover": string;
+"--n-icon-color-pressed": string;
+"--n-icon-color-disabled": string;
+"--n-suffix-text-color": string;
+}> | undefined;
+themeClass: Ref<string, string> | undefined;
+onRender: (() => void) | undefined;
+isCompositing: Ref<boolean>;
+blur: () => void;
+clear: () => void;
+focus: () => void;
+select: () => void;
+activate: () => void;
+deactivate: () => void;
+scrollTo: (options: ScrollToOptions) => void;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, PublicProps, {
+disabled: boolean | undefined;
+type: "text" | "textarea" | "password";
+bordered: boolean | undefined;
+clearable: boolean;
+defaultValue: string | [string, string] | null;
+loading: boolean;
+round: boolean;
+resizable: boolean;
+stateful: boolean;
+pair: boolean;
+rows: string | number;
+autosize: boolean | {
+minRows?: number;
+maxRows?: number;
+};
+readonly: string | boolean;
+passivelyActivated: boolean;
+autofocus: boolean;
+showCount: boolean;
+attrSize: number;
+internalDeactivateOnEnter: boolean;
+internalForceFocus: boolean;
+internalLoadingBeforeSuffix: boolean;
+showPasswordToggle: boolean;
+}, true, {}, SlotsType<InputSlots>, GlobalComponents, GlobalDirectives, string, {}, any, ComponentProvideOptions, {
+P: {};
+B: {};
+D: {};
+C: {};
+M: {};
+Defaults: {};
+}, Readonly<ExtractPropTypes<    {
+bordered: {
+type: PropType<boolean | undefined>;
+default: undefined;
+};
+type: {
+type: PropType<"text" | "textarea" | "password">;
+default: string;
+};
+placeholder: PropType<string | [string, string]>;
+defaultValue: {
+type: PropType<null | string | [string, string]>;
+default: null;
+};
+value: PropType<null | string | [string, string]>;
+disabled: {
+type: PropType<boolean | undefined>;
+default: undefined;
+};
+size: PropType<Size_2>;
+rows: {
+type: PropType<number | string>;
+default: number;
+};
+round: BooleanConstructor;
+minlength: PropType<number | string>;
+maxlength: PropType<number | string>;
+clearable: BooleanConstructor;
+autosize: {
+type: PropType<boolean | {
+minRows?: number;
+maxRows?: number;
+}>;
+default: boolean;
+};
+pair: BooleanConstructor;
+separator: StringConstructor;
+readonly: {
+type: (StringConstructor | BooleanConstructor)[];
+default: boolean;
+};
+passivelyActivated: BooleanConstructor;
+showPasswordOn: PropType<"mousedown" | "click">;
+stateful: {
+type: BooleanConstructor;
+default: boolean;
+};
+autofocus: BooleanConstructor;
+inputProps: PropType<TextareaHTMLAttributes | InputHTMLAttributes>;
+resizable: {
+type: BooleanConstructor;
+default: boolean;
+};
+showCount: BooleanConstructor;
+loading: {
+type: BooleanConstructor;
+default: undefined;
+};
+allowInput: PropType<(value: string) => boolean>;
+renderCount: PropType<(props: {
+value: string;
+}) => VNodeChild>;
+onMousedown: PropType<(e: MouseEvent) => void>;
+onKeydown: PropType<(e: KeyboardEvent) => void>;
+onKeyup: PropType<(e: KeyboardEvent) => void>;
+onInput: PropType<OnUpdateValue>;
+onFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onClick: PropType<MaybeArray<(e: MouseEvent) => void>>;
+onChange: PropType<OnUpdateValue>;
+onClear: PropType<MaybeArray<(e: MouseEvent) => void>>;
+countGraphemes: PropType<(value: string) => number>;
+status: PropType<FormValidationStatus>;
+'onUpdate:value': PropType<MaybeArray<OnUpdateValue>>;
+onUpdateValue: PropType<MaybeArray<OnUpdateValue>>;
+textDecoration: PropType<string | [string, string]>;
+attrSize: {
+type: NumberConstructor;
+default: number;
+};
+onInputBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onInputFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onDeactivate: PropType<MaybeArray<() => void>>;
+onActivate: PropType<MaybeArray<() => void>>;
+onWrapperFocus: PropType<MaybeArray<(e: FocusEvent) => void>>;
+onWrapperBlur: PropType<MaybeArray<(e: FocusEvent) => void>>;
+internalDeactivateOnEnter: BooleanConstructor;
+internalForceFocus: BooleanConstructor;
+internalLoadingBeforeSuffix: {
+type: BooleanConstructor;
+default: boolean;
+};
+showPasswordToggle: BooleanConstructor;
+theme: PropType<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>;
+themeOverrides: PropType<ExtractThemeOverrides<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>>;
+builtinThemeOverrides: PropType<ExtractThemeOverrides<Theme<"Input", {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+}, {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+}>>>;
+}>> & Readonly<{}>, {
+wrapperElRef: Ref<HTMLElement | null, HTMLElement | null>;
+inputElRef: Ref<HTMLInputElement | null, HTMLInputElement | null>;
+inputMirrorElRef: Ref<HTMLElement | null, HTMLElement | null>;
+inputEl2Ref: Ref<HTMLInputElement | null, HTMLInputElement | null>;
+textareaElRef: Ref<HTMLTextAreaElement | null, HTMLTextAreaElement | null>;
+textareaMirrorElRef: Ref<HTMLElement | null, HTMLElement | null>;
+textareaScrollbarInstRef: Ref<    {
+$el: HTMLElement;
+containerRef: HTMLElement | null;
+contentRef: HTMLElement | null;
+containerScrollTop: number;
+syncUnifiedContainer: () => void;
+scrollTo: ScrollTo;
+scrollBy: ScrollBy;
+sync: () => void;
+handleMouseEnterWrapper: () => void;
+handleMouseLeaveWrapper: () => void;
+} | null, ScrollbarInst | {
+$el: HTMLElement;
+containerRef: HTMLElement | null;
+contentRef: HTMLElement | null;
+containerScrollTop: number;
+syncUnifiedContainer: () => void;
+scrollTo: ScrollTo;
+scrollBy: ScrollBy;
+sync: () => void;
+handleMouseEnterWrapper: () => void;
+handleMouseLeaveWrapper: () => void;
+} | null>;
+rtlEnabled: Ref<RtlItem | undefined, RtlItem | undefined> | undefined;
+uncontrolledValue: Ref<string | [string, string] | null, string | [string, string] | null>;
+mergedValue: ComputedRef<string | [string, string] | null>;
+passwordVisible: Ref<boolean, boolean>;
+mergedPlaceholder: ComputedRef<[string, string] | [string]>;
+showPlaceholder1: ComputedRef<string | false>;
+showPlaceholder2: ComputedRef<boolean | "" | undefined>;
+mergedFocus: ComputedRef<boolean>;
+isComposing: Ref<boolean, boolean>;
+activated: Ref<boolean, boolean>;
+showClearButton: ComputedRef<boolean>;
+mergedSize: ComputedRef<"tiny" | "small" | "medium" | "large">;
+mergedDisabled: ComputedRef<boolean>;
+textDecorationStyle: ComputedRef<string[] | {
+textDecoration: string;
+}[]>;
+mergedClsPrefix: Ref<string, string>;
+mergedBordered: ComputedRef<boolean>;
+mergedShowPasswordOn: ComputedRef<"click" | "mousedown" | undefined>;
+placeholderStyle: Ref<    {
+top: string;
+}, {
+top: string;
+} | {
+top: string;
+}>;
+mergedStatus: ComputedRef<FormValidationStatus | undefined>;
+textAreaScrollContainerWidth: Ref<number | undefined, number | undefined>;
+handleTextAreaScroll: (e: Event) => void;
+handleCompositionStart: () => void;
+handleCompositionEnd: (e: CompositionEvent) => void;
+handleInput: (e: InputEvent | CompositionEvent | Event, index?: 0 | 1, event?: string) => void;
+handleInputBlur: (e: FocusEvent) => void;
+handleInputFocus: (e: FocusEvent, index: number) => void;
+handleWrapperBlur: (e: FocusEvent) => void;
+handleWrapperFocus: (e: FocusEvent) => void;
+handleMouseEnter: () => void;
+handleMouseLeave: () => void;
+handleMouseDown: (e: MouseEvent) => void;
+handleChange: (e: Event, index?: 0 | 1) => void;
+handleClick: (e: MouseEvent) => void;
+handleClear: (e: MouseEvent) => void;
+handlePasswordToggleClick: () => void;
+handlePasswordToggleMousedown: (e: MouseEvent) => void;
+handleWrapperKeydown: (e: KeyboardEvent) => void;
+handleWrapperKeyup: (e: KeyboardEvent) => void;
+handleTextAreaMirrorResize: () => void;
+getTextareaScrollContainer: () => HTMLTextAreaElement | null;
+mergedTheme: ComputedRef<    {
+common: ThemeCommonVars;
+self: {
+fontWeight: string;
+countTextColorDisabled: string;
+countTextColor: string;
+heightTiny: string;
+heightSmall: string;
+heightMedium: string;
+heightLarge: string;
+fontSizeTiny: string;
+fontSizeSmall: string;
+fontSizeMedium: string;
+fontSizeLarge: string;
+lineHeight: string;
+lineHeightTextarea: string;
+borderRadius: string;
+iconSize: string;
+groupLabelColor: string;
+groupLabelTextColor: string;
+textColor: string;
+textColorDisabled: string;
+textDecorationColor: string;
+caretColor: string;
+placeholderColor: string;
+placeholderColorDisabled: string;
+color: string;
+colorDisabled: string;
+colorFocus: string;
+groupLabelBorder: string;
+border: string;
+borderHover: string;
+borderDisabled: string;
+borderFocus: string;
+boxShadowFocus: string;
+loadingColor: string;
+loadingColorWarning: string;
+borderWarning: string;
+borderHoverWarning: string;
+colorFocusWarning: string;
+borderFocusWarning: string;
+boxShadowFocusWarning: string;
+caretColorWarning: string;
+loadingColorError: string;
+borderError: string;
+borderHoverError: string;
+colorFocusError: string;
+borderFocusError: string;
+boxShadowFocusError: string;
+caretColorError: string;
+clearColor: string;
+clearColorHover: string;
+clearColorPressed: string;
+iconColor: string;
+iconColorDisabled: string;
+iconColorHover: string;
+iconColorPressed: string;
+suffixTextColor: string;
+paddingTiny: string;
+paddingSmall: string;
+paddingMedium: string;
+paddingLarge: string;
+clearSize: string;
+};
+peers: {
+Scrollbar: Theme<"Scrollbar", {
+height: string;
+width: string;
+borderRadius: string;
+color: string;
+colorHover: string;
+railInsetHorizontalBottom: string;
+railInsetHorizontalTop: string;
+railInsetVerticalRight: string;
+railInsetVerticalLeft: string;
+railColor: string;
+}, any>;
+};
+peerOverrides: {
+Scrollbar?: {
+peers?: {
+[x: string]: any;
+} | undefined;
+} | undefined;
+};
+}>;
+cssVars: ComputedRef<    {
+"--n-bezier": string;
+"--n-count-text-color": string;
+"--n-count-text-color-disabled": string;
+"--n-color": string;
+"--n-font-size": string;
+"--n-font-weight": string;
+"--n-border-radius": string;
+"--n-height": string;
+"--n-padding-left": string;
+"--n-padding-right": string;
+"--n-text-color": string;
+"--n-caret-color": string;
+"--n-text-decoration-color": string;
+"--n-border": string;
+"--n-border-disabled": string;
+"--n-border-hover": string;
+"--n-border-focus": string;
+"--n-placeholder-color": string;
+"--n-placeholder-color-disabled": string;
+"--n-icon-size": string;
+"--n-line-height-textarea": string;
+"--n-color-disabled": string;
+"--n-color-focus": string;
+"--n-text-color-disabled": string;
+"--n-box-shadow-focus": string;
+"--n-loading-color": string;
+"--n-caret-color-warning": string;
+"--n-color-focus-warning": string;
+"--n-box-shadow-focus-warning": string;
+"--n-border-warning": string;
+"--n-border-focus-warning": string;
+"--n-border-hover-warning": string;
+"--n-loading-color-warning": string;
+"--n-caret-color-error": string;
+"--n-color-focus-error": string;
+"--n-box-shadow-focus-error": string;
+"--n-border-error": string;
+"--n-border-focus-error": string;
+"--n-border-hover-error": string;
+"--n-loading-color-error": string;
+"--n-clear-color": string;
+"--n-clear-size": string;
+"--n-clear-color-hover": string;
+"--n-clear-color-pressed": string;
+"--n-icon-color": string;
+"--n-icon-color-hover": string;
+"--n-icon-color-pressed": string;
+"--n-icon-color-disabled": string;
+"--n-suffix-text-color": string;
+}> | undefined;
+themeClass: Ref<string, string> | undefined;
+onRender: (() => void) | undefined;
+isCompositing: Ref<boolean>;
+blur: () => void;
+clear: () => void;
+focus: () => void;
+select: () => void;
+activate: () => void;
+deactivate: () => void;
+scrollTo: (options: ScrollToOptions) => void;
+}, {}, {}, {}, {
+disabled: boolean | undefined;
+type: "text" | "textarea" | "password";
+bordered: boolean | undefined;
+clearable: boolean;
+defaultValue: string | [string, string] | null;
+loading: boolean;
+round: boolean;
+resizable: boolean;
+stateful: boolean;
+pair: boolean;
+rows: string | number;
+autosize: boolean | {
+minRows?: number;
+maxRows?: number;
+};
+readonly: string | boolean;
+passivelyActivated: boolean;
+autofocus: boolean;
+showCount: boolean;
+attrSize: number;
+internalDeactivateOnEnter: boolean;
+internalForceFocus: boolean;
+internalLoadingBeforeSuffix: boolean;
+showPasswordToggle: boolean;
+}> | null;
+}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_19" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_19" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_19" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RProList: __VLS_WithTemplateSlots_19<typeof __VLS_component_19, __VLS_TemplateResult_19["slots"]>;
+
 // @public (undocumented)
 export const RPropsTable: DefineComponent<ExtractPropTypes<    {
 title: {
@@ -2519,6 +11432,217 @@ required: true;
 }>> & Readonly<{}>, {
 title: string;
 }, {}, {}, {}, string, ComponentProvideOptions, true, {}, HTMLElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_25" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RProTreeEditor: __VLS_WithTemplateSlots_25<DefineComponent<ExtractPropTypes<    {
+data: {
+type: PropType<TreeNodeData[]>;
+default: () => never[];
+};
+defaultExpandLevel: {
+type: NumberConstructor;
+default: number;
+};
+density: {
+type: PropType<TreeDensity>;
+default: string;
+};
+requestMode: {
+type: PropType<TreeRequestMode>;
+default: string;
+};
+requestHooks: {
+type: PropType<TreeRequestHooks>;
+default: () => {};
+};
+checkDelete: {
+type: PropType<CheckDeleteFn>;
+default: undefined;
+};
+selectable: {
+type: BooleanConstructor;
+default: boolean;
+};
+checkedKeys: {
+type: PropType<(string | number)[]>;
+default: () => never[];
+};
+selectedKey: {
+type: PropType<string | number | null>;
+default: null;
+};
+optimistic: {
+type: BooleanConstructor;
+default: boolean;
+};
+draggable: {
+type: BooleanConstructor;
+default: boolean;
+};
+maxDepth: {
+type: NumberConstructor;
+default: number;
+};
+showCounts: {
+type: BooleanConstructor;
+default: boolean;
+};
+showBreadcrumb: {
+type: BooleanConstructor;
+default: boolean;
+};
+icons: {
+type: PropType<TreeNodeIcons>;
+default: () => {};
+};
+i18n: {
+type: PropType<TreeI18n>;
+default: () => {};
+};
+batch: {
+type: PropType<TreeBatchConfig | false>;
+default: boolean;
+};
+lazyLoad: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>, {
+reload: () => Promise<void>;
+refreshNode: (id: string | number) => Promise<void>;
+expandAll: () => void;
+collapseAll: () => void;
+createNode: (parentId?: string | number | null) => void;
+renameNode: (id: string | number) => void;
+deleteNode: (id: string | number) => Promise<void>;
+moveNode: (id: string | number, newParentId: string | number | null) => Promise<void>;
+setKeyword: (keyword: string) => void;
+getTreeData: () => TreeNodeData[];
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+select: (node: TreeNodeData) => any;
+"update:checkedKeys": (keys: (string | number)[]) => any;
+"update:selectedKey": (key: string | number | null) => any;
+requestStart: (event: TreeRequestEvent) => any;
+requestSuccess: (event: TreeRequestEvent) => any;
+requestError: (event: TreeRequestEvent, error: TreeError) => any;
+dataChange: (event: TreeDataChangeEvent) => any;
+}, string, PublicProps, Readonly<ExtractPropTypes<    {
+data: {
+type: PropType<TreeNodeData[]>;
+default: () => never[];
+};
+defaultExpandLevel: {
+type: NumberConstructor;
+default: number;
+};
+density: {
+type: PropType<TreeDensity>;
+default: string;
+};
+requestMode: {
+type: PropType<TreeRequestMode>;
+default: string;
+};
+requestHooks: {
+type: PropType<TreeRequestHooks>;
+default: () => {};
+};
+checkDelete: {
+type: PropType<CheckDeleteFn>;
+default: undefined;
+};
+selectable: {
+type: BooleanConstructor;
+default: boolean;
+};
+checkedKeys: {
+type: PropType<(string | number)[]>;
+default: () => never[];
+};
+selectedKey: {
+type: PropType<string | number | null>;
+default: null;
+};
+optimistic: {
+type: BooleanConstructor;
+default: boolean;
+};
+draggable: {
+type: BooleanConstructor;
+default: boolean;
+};
+maxDepth: {
+type: NumberConstructor;
+default: number;
+};
+showCounts: {
+type: BooleanConstructor;
+default: boolean;
+};
+showBreadcrumb: {
+type: BooleanConstructor;
+default: boolean;
+};
+icons: {
+type: PropType<TreeNodeIcons>;
+default: () => {};
+};
+i18n: {
+type: PropType<TreeI18n>;
+default: () => {};
+};
+batch: {
+type: PropType<TreeBatchConfig | false>;
+default: boolean;
+};
+lazyLoad: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>> & Readonly<{
+onSelect?: ((node: TreeNodeData) => any) | undefined;
+"onUpdate:checkedKeys"?: ((keys: (string | number)[]) => any) | undefined;
+"onUpdate:selectedKey"?: ((key: string | number | null) => any) | undefined;
+onRequestStart?: ((event: TreeRequestEvent) => any) | undefined;
+onRequestSuccess?: ((event: TreeRequestEvent) => any) | undefined;
+onRequestError?: ((event: TreeRequestEvent, error: TreeError) => any) | undefined;
+onDataChange?: ((event: TreeDataChangeEvent) => any) | undefined;
+}>, {
+showBreadcrumb: boolean;
+data: TreeNodeData[];
+draggable: boolean;
+selectable: boolean;
+checkedKeys: (string | number)[];
+i18n: TreeI18n;
+batch: false | TreeBatchConfig;
+density: TreeDensity;
+icons: TreeNodeIcons;
+showCounts: boolean;
+selectedKey: string | number | null;
+defaultExpandLevel: number;
+requestMode: TreeRequestMode;
+requestHooks: TreeRequestHooks;
+checkDelete: CheckDeleteFn;
+optimistic: boolean;
+maxDepth: number;
+lazyLoad: boolean;
+}, {}, {}, {}, string, ComponentProvideOptions, true, {
+treeContainerRef: HTMLDivElement;
+}, HTMLDivElement>, {
+    toolbar?(_: {}): any;
+    'toolbar-extra'?(_: {}): any;
+    loading?(_: {}): any;
+    empty?(_: {}): any;
+}>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_23" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_23" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_23" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RProUpload: __VLS_WithTemplateSlots_23<typeof __VLS_component_23, __VLS_TemplateResult_23["slots"]>;
 
 // @public (undocumented)
 export const RQualityPanel: DefineComponent<ExtractPropTypes<    {
@@ -2550,86 +11674,298 @@ title: string;
 // @public (undocumented)
 export const RQueryTable: __VLS_WithTemplateSlots_4<typeof __VLS_component_4, __VLS_TemplateResult_4["slots"]>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_7" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_7" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_7" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_14" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_14" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_14" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RShowcaseLayout: __VLS_WithTemplateSlots_7<typeof __VLS_component_7, __VLS_TemplateResult_7["slots"]>;
+export const RResultState: __VLS_WithTemplateSlots_14<typeof __VLS_component_14, __VLS_TemplateResult_14["slots"]>;
 
 // @public (undocumented)
-export const RSideNav: DefineComponent<ExtractPropTypes<    {
-menus: {
-type: PropType<MenuItem[]>;
-required: true;
-};
-collapsed: {
-type: BooleanConstructor;
-default: boolean;
-};
-activeKey: {
-type: StringConstructor;
-default: string;
-};
-logo: {
-type: StringConstructor;
-default: string;
-};
-title: {
-type: StringConstructor;
-default: string;
-};
-collapsedWidth: {
-type: NumberConstructor;
-default: number;
-};
-expandedWidth: {
-type: NumberConstructor;
-default: number;
-};
-}>, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
-select: (key: string) => any;
-"update:collapsed": (collapsed: boolean) => any;
-}, string, PublicProps, Readonly<ExtractPropTypes<    {
-menus: {
-type: PropType<MenuItem[]>;
-required: true;
-};
-collapsed: {
-type: BooleanConstructor;
-default: boolean;
-};
-activeKey: {
-type: StringConstructor;
-default: string;
-};
-logo: {
-type: StringConstructor;
-default: string;
-};
-title: {
-type: StringConstructor;
-default: string;
-};
-collapsedWidth: {
-type: NumberConstructor;
-default: number;
-};
-expandedWidth: {
-type: NumberConstructor;
-default: number;
-};
-}>> & Readonly<{
-onSelect?: ((key: string) => any) | undefined;
-"onUpdate:collapsed"?: ((collapsed: boolean) => any) | undefined;
+export interface RResultStateEmits {
+    // (undocumented)
+    (e: 'primary-action'): void;
+    // (undocumented)
+    (e: 'secondary-action'): void;
+}
+
+// @public (undocumented)
+export interface RResultStateProps {
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    showIcon?: boolean;
+    // (undocumented)
+    status: ResultStatus;
+    // (undocumented)
+    title?: string;
+}
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_12" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RRichTextEditor: DefineComponent<__VLS_Props_12, {
+getEditor: () => unknown;
+getHTML: () => string;
+getJSON: () => unknown;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+blur: () => any;
+focus: () => any;
+"update:modelValue": (value: string) => any;
+ready: (editor: unknown) => any;
+}, string, PublicProps, Readonly<__VLS_Props_12> & Readonly<{
+onBlur?: (() => any) | undefined;
+onFocus?: (() => any) | undefined;
+"onUpdate:modelValue"?: ((value: string) => any) | undefined;
+onReady?: ((editor: unknown) => any) | undefined;
 }>, {
+readonly: boolean;
+height: string | number;
+bordered: boolean;
+theme: RichTextEditorTheme;
+placeholder: string;
+toolbar: ToolbarConfig | false;
+maxHeight: string | number;
+modelValue: string;
+preview: boolean;
+i18n: RichTextEditorI18n;
+extensions: TiptapExtension[];
+imageUploadAdapter: ImageUploadAdapter;
+fileUploadAdapter: FileUploadAdapter;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {
+editorScrollRef: HTMLDivElement;
+}, HTMLDivElement>;
+
+// @public (undocumented)
+export interface RRichTextEditorEmits {
+    // (undocumented)
+    (e: 'update:modelValue', value: string): void;
+    // (undocumented)
+    (e: 'focus'): void;
+    // (undocumented)
+    (e: 'blur'): void;
+    // (undocumented)
+    (e: 'ready', editor: unknown): void;
+}
+
+// @public (undocumented)
+export interface RRichTextEditorExpose {
+    // (undocumented)
+    getEditor: () => unknown;
+    // (undocumented)
+    getHTML: () => string;
+    // (undocumented)
+    getJSON: () => unknown;
+}
+
+// @public (undocumented)
+export interface RRichTextEditorProps {
+    // (undocumented)
+    bordered?: boolean;
+    // (undocumented)
+    extensions?: TiptapExtension[];
+    // (undocumented)
+    fileUploadAdapter?: FileUploadAdapter;
+    // (undocumented)
+    height?: string | number;
+    // (undocumented)
+    i18n?: RichTextEditorI18n;
+    // (undocumented)
+    imageUploadAdapter?: ImageUploadAdapter;
+    // (undocumented)
+    maxHeight?: string | number;
+    // (undocumented)
+    modelValue?: string;
+    // (undocumented)
+    placeholder?: string;
+    // (undocumented)
+    preview?: boolean;
+    // (undocumented)
+    readonly?: boolean;
+    // (undocumented)
+    theme?: RichTextEditorTheme;
+    // (undocumented)
+    toolbar?: ToolbarConfig | false;
+}
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_26" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RRouteQuickActionsEditor: DefineComponent<__VLS_Props_26, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+"update:modelValue": (value: Record<string, unknown>) => any;
+}, string, PublicProps, Readonly<__VLS_Props_26> & Readonly<{
+"onUpdate:modelValue"?: ((value: Record<string, unknown>) => any) | undefined;
+}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_25" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RRouteQuickActionsWidget: DefineComponent<__VLS_Props_25, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_25> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+// @public (undocumented)
+export const RSettingsManager: DefineComponent<SettingsManagerProps, {
+reload: () => Promise<void>;
+getValues: () => Record<string, string>;
+getDirtyFields: () => Array<{
+key: string;
+value: string;
+}>;
+resetDirty: () => void;
+saveAll: () => Promise<void>;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+error: (error: Error) => any;
+saved: (key: string, value: string) => any;
+"batch-saved": (fields: {
+key: string;
+value: string;
+}[]) => any;
+loaded: (groups: SettingsGroup[]) => any;
+}, string, PublicProps, Readonly<SettingsManagerProps> & Readonly<{
+onError?: ((error: Error) => any) | undefined;
+onSaved?: ((key: string, value: string) => any) | undefined;
+"onBatch-saved"?: ((fields: {
+key: string;
+value: string;
+}[]) => any) | undefined;
+onLoaded?: ((groups: SettingsGroup[]) => any) | undefined;
+}>, {
+description: string;
 title: string;
-logo: string;
-collapsed: boolean;
-collapsedWidth: number;
-activeKey: string;
-expandedWidth: number;
-}, {}, {}, {}, string, ComponentProvideOptions, true, {}, HTMLElement>;
+layout: "vertical" | "card";
+showSearch: boolean;
+showGroupNav: boolean;
+saveMode: "field" | "batch";
+customUploadRequest: (options: ProUploadRequestOptions) => void;
+parseUploadResponse: (raw: unknown) => {
+url: string;
+storageId?: string;
+};
+}, {}, {}, {}, string, ComponentProvideOptions, false, {
+contentEl: HTMLDivElement;
+}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_9" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_9" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_9" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RShowcaseLayout: __VLS_WithTemplateSlots_9<typeof __VLS_component_9, __VLS_TemplateResult_9["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_6" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_6" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_6" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RSideNav: __VLS_WithTemplateSlots_6<typeof __VLS_component_6, __VLS_TemplateResult_6["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_11" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_11" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_11" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RStatCard: __VLS_WithTemplateSlots_11<typeof __VLS_component_11, __VLS_TemplateResult_11["slots"]>;
+
+// @public (undocumented)
+export interface RStatCardEmits {
+    // (undocumented)
+    (e: 'click'): void;
+}
+
+// @public (undocumented)
+export interface RStatCardProps {
+    // (undocumented)
+    clickable?: boolean;
+    // (undocumented)
+    compare?: StatCardCompare;
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    iconColor?: string;
+    // (undocumented)
+    loading?: boolean;
+    // (undocumented)
+    prefix?: string;
+    // (undocumented)
+    size?: StatCardSize;
+    // (undocumented)
+    suffix?: string;
+    // (undocumented)
+    title: string;
+    // (undocumented)
+    trend?: StatCardTrend;
+    // (undocumented)
+    trendLabel?: string;
+    // (undocumented)
+    trendValue?: string;
+    // (undocumented)
+    value: string | number;
+    // (undocumented)
+    variant?: StatCardVariant;
+}
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_20" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_20" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_20" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RStepForm: __VLS_WithTemplateSlots_20<typeof __VLS_component_20, __VLS_TemplateResult_20["slots"]>;
+
+// @public (undocumented)
+export const RStepProgress: DefineComponent<ExtractPropTypes<    {
+steps: {
+type: PropType<StepItem_2[]>;
+required: true;
+};
+currentStep: {
+type: NumberConstructor;
+default: number;
+};
+totalSteps: {
+type: NumberConstructor;
+default: number;
+};
+compact: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<ExtractPropTypes<    {
+steps: {
+type: PropType<StepItem_2[]>;
+required: true;
+};
+currentStep: {
+type: NumberConstructor;
+default: number;
+};
+totalSteps: {
+type: NumberConstructor;
+default: number;
+};
+compact: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>> & Readonly<{}>, {
+compact: boolean;
+currentStep: number;
+totalSteps: number;
+}, {}, {}, {}, string, ComponentProvideOptions, true, {}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_17" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_17" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_17" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RTableCard: __VLS_WithTemplateSlots_17<typeof __VLS_component_17, __VLS_TemplateResult_17["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_16" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_16" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_16" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RTableToolbarPro: __VLS_WithTemplateSlots_16<typeof __VLS_component_16, __VLS_TemplateResult_16["slots"]>;
 
 // @public (undocumented)
 export const RTabsView: DefineComponent<ExtractPropTypes<    {
@@ -2677,12 +12013,148 @@ showContextMenu: boolean;
 scrollRef: HTMLDivElement;
 }, HTMLDivElement>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_6" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_6" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_6" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_32" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RTopbar: __VLS_WithTemplateSlots_6<typeof __VLS_component_6, __VLS_TemplateResult_6["slots"]>;
+export const RTemplateBrowser: DefineComponent<__VLS_Props_32, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+select: (item: RTemplateBrowserItem) => any;
+}, string, PublicProps, Readonly<__VLS_Props_32> & Readonly<{
+onSelect?: ((item: RTemplateBrowserItem) => any) | undefined;
+}>, {
+loading: boolean;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+// @public
+export interface RTemplateBrowserItem {
+    // (undocumented)
+    avg_rating?: number;
+    // (undocumented)
+    category?: string;
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    id: number;
+    // (undocumented)
+    name: string;
+    tags?: string | string[];
+    // (undocumented)
+    usage_count?: number;
+}
+
+// @public (undocumented)
+export const RTimelineView: DefineComponent<ExtractPropTypes<    {
+entries: {
+type: PropType<TimelineEntry_2[]>;
+required: true;
+};
+totalMs: {
+type: NumberConstructor;
+default: number;
+};
+showDetail: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<ExtractPropTypes<    {
+entries: {
+type: PropType<TimelineEntry_2[]>;
+required: true;
+};
+totalMs: {
+type: NumberConstructor;
+default: number;
+};
+showDetail: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>> & Readonly<{}>, {
+totalMs: number;
+showDetail: boolean;
+}, {}, {}, {}, string, ComponentProvideOptions, true, {}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_7" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_7" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_7" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RTopbar: __VLS_WithTemplateSlots_7<typeof __VLS_component_7, __VLS_TemplateResult_7["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_28" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_27" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_27" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RTreeSelect: __VLS_WithTemplateSlots_28<typeof __VLS_component_27, __VLS_TemplateResult_27["slots"]>;
+
+// @public (undocumented)
+export interface RTreeSelectEmits {
+    // (undocumented)
+    'update:modelValue': [value: string | number | null];
+    // (undocumented)
+    clear: [];
+    // (undocumented)
+    select: [node: TreeSelectNode | null];
+}
+
+// @public (undocumented)
+export interface RTreeSelectExpose {
+    // (undocumented)
+    close: () => void;
+    // (undocumented)
+    getSelectedNode: () => TreeSelectNode | null;
+    // (undocumented)
+    open: () => void;
+    // (undocumented)
+    reload: () => Promise<void>;
+}
+
+// @public (undocumented)
+export interface RTreeSelectProps {
+    // (undocumented)
+    clearable?: boolean;
+    // (undocumented)
+    defaultExpandLevel?: number;
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    i18n?: TreeSelectI18n;
+    // (undocumented)
+    loadData?: TreeSelectLoadFn;
+    // (undocumented)
+    maxHeight?: number | string;
+    // (undocumented)
+    modelValue: string | number | null;
+    // (undocumented)
+    options?: TreeSelectNode[];
+    // (undocumented)
+    placeholder?: string;
+    // (undocumented)
+    searchable?: boolean;
+    // (undocumented)
+    size?: TreeSelectSize;
+}
+
+// @public (undocumented)
+export interface RTreeSelectSlots {
+    // (undocumented)
+    'node-icon'?: (params: {
+        node: TreeSelectNode;
+        expanded: boolean;
+    }) => VNode;
+    // (undocumented)
+    'node-label'?: (params: {
+        node: TreeSelectNode;
+        depth: number;
+    }) => VNode;
+    // (undocumented)
+    empty?: () => VNode;
+    // (undocumented)
+    trigger?: (params: {
+        selectedNode: TreeSelectNode | null;
+        open: boolean;
+    }) => VNode;
+}
 
 // @public (undocumented)
 export interface RuntimeConfig {
@@ -2699,7 +12171,89 @@ export interface RuntimeConfig {
 }
 
 // @public (undocumented)
-export type SemanticColorToken = 'bg-page' | 'bg-surface' | 'bg-elevated' | 'bg-overlay' | 'bg-muted' | 'bg-code' | 'text-primary' | 'text-secondary' | 'text-tertiary' | 'text-inverse' | 'text-code' | 'border-default' | 'border-light' | 'border-strong' | 'brand-primary' | 'brand-hover' | 'brand-active' | 'brand-light' | 'success' | 'success-bg' | 'success-text' | 'success-border' | 'warning' | 'warning-bg' | 'warning-text' | 'warning-border' | 'danger' | 'danger-bg' | 'danger-text' | 'danger-border' | 'focus-ring';
+export const RWorkflowDesigner: DefineComponent<RWorkflowDesignerProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+change: (graph: WorkflowGraph) => any;
+"update:modelValue": (graph: WorkflowGraph) => any;
+validate: (issues: WorkflowValidationIssue[]) => any;
+}, string, PublicProps, Readonly<RWorkflowDesignerProps> & Readonly<{
+onChange?: ((graph: WorkflowGraph) => any) | undefined;
+"onUpdate:modelValue"?: ((graph: WorkflowGraph) => any) | undefined;
+onValidate?: ((issues: WorkflowValidationIssue[]) => any) | undefined;
+}>, {
+readonly: boolean;
+height: string;
+approverDataSource: WorkflowApproverDataSource;
+panelResizable: boolean;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {
+canvasRef: HTMLDivElement;
+}, HTMLDivElement>;
+
+// @public (undocumented)
+export interface RWorkflowDesignerEmits {
+    // (undocumented)
+    (e: 'update:modelValue', graph: WorkflowGraph): void;
+    // (undocumented)
+    (e: 'change', graph: WorkflowGraph): void;
+    // (undocumented)
+    (e: 'validate', issues: WorkflowValidationIssue[]): void;
+}
+
+// @public (undocumented)
+export interface RWorkflowDesignerProps {
+    // (undocumented)
+    approverDataSource?: WorkflowApproverDataSource;
+    // (undocumented)
+    height?: string;
+    // (undocumented)
+    modelValue: WorkflowGraph;
+    // (undocumented)
+    panelResizable?: boolean;
+    // (undocumented)
+    readonly?: boolean;
+}
+
+// @public (undocumented)
+export interface SearchProgress {
+    // (undocumented)
+    provider?: string;
+    // (undocumented)
+    query?: string;
+    // (undocumented)
+    resultCount?: number;
+    // (undocumented)
+    status: 'idle' | 'searching' | 'done';
+}
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_16" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const SelectCellEditor: DefineComponent<__VLS_Props_16, {
+getValue: typeof getValue;
+isCancelBeforeStart: typeof isCancelBeforeStart;
+isCancelAfterEnd: typeof isCancelAfterEnd;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_16> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {
+wrapRef: HTMLDivElement;
+}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_18" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const SelectCellRenderer: DefineComponent<__VLS_Props_18, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_18> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+// @public (undocumented)
+export type SemanticColorToken = 'bg-page' | 'bg-surface' | 'bg-surface-secondary' | 'bg-surface-tertiary' | 'bg-elevated' | 'bg-elevated-soft' | 'bg-overlay' | 'bg-muted' | 'bg-code' | 'bg-hover' | 'bg-active' | 'text-primary' | 'text-secondary' | 'text-tertiary' | 'text-quaternary' | 'text-inverse' | 'text-code' | 'text-link' | 'text-link-hover' | 'border-default' | 'border-light' | 'border-strong' | 'border-interactive' | 'border-focus' | 'brand-primary' | 'brand-hover' | 'brand-active' | 'brand-light' | 'brand-subtle' | 'success' | 'success-bg' | 'success-text' | 'success-border' | 'warning' | 'warning-bg' | 'warning-text' | 'warning-border' | 'danger' | 'danger-bg' | 'danger-text' | 'danger-border' | 'info' | 'info-bg' | 'info-text' | 'info-border' | 'focus-ring' | 'text-on-brand';
+
+// @public (undocumented)
+export interface SerializedRange {
+    // (undocumented)
+    endContainerPath: string;
+    // (undocumented)
+    endOffset: number;
+    // (undocumented)
+    startContainerPath: string;
+    // (undocumented)
+    startOffset: number;
+}
 
 // @public
 export interface ServerSideParams {
@@ -2715,7 +12269,151 @@ export interface ServerSideParams {
 }
 
 // @public (undocumented)
-export type ShadowToken = 'sm' | 'md' | 'lg' | 'xl';
+export interface SettingsField {
+    accept?: string;
+    // (undocumented)
+    component?: string;
+    // (undocumented)
+    componentParams?: Record<string, unknown>;
+    // (undocumented)
+    customComponent?: Component;
+    // (undocumented)
+    customComponentProps?: Record<string, unknown>;
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label: string;
+    maxCount?: number;
+    maxSizeMB?: number;
+    // (undocumented)
+    options?: SettingsFieldOption[];
+    // (undocumented)
+    placeholder?: string;
+    // (undocumented)
+    rules?: SettingsFieldRule[];
+    // (undocumented)
+    type: SettingsFieldType;
+    // (undocumented)
+    value: string;
+}
+
+// @public (undocumented)
+export interface SettingsFieldOption {
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    value: string | number | boolean;
+}
+
+// @public (undocumented)
+export interface SettingsFieldRule {
+    // (undocumented)
+    message?: string;
+    // (undocumented)
+    pattern?: RegExp;
+    // (undocumented)
+    required?: boolean;
+    // (undocumented)
+    validator?: (value: string) => boolean | string | Promise<boolean | string>;
+}
+
+// @public (undocumented)
+export type SettingsFieldType = 'input' | 'textarea' | 'select' | 'switch' | 'number' | 'color' | 'date' | 'time' | 'datetime' | 'radio' | 'image' | 'custom';
+
+// @public (undocumented)
+export interface SettingsGroup {
+    // (undocumented)
+    collapsible?: boolean;
+    // (undocumented)
+    defaultCollapsed?: boolean;
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    fields: SettingsField[];
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label: string;
+}
+
+// @public (undocumented)
+export interface SettingsManagerAdapter {
+    // (undocumented)
+    fetchGroups: () => Promise<SettingsGroup[]>;
+    // (undocumented)
+    saveBatch?: (fields: Array<{
+        key: string;
+        value: string;
+    }>) => Promise<void>;
+    // (undocumented)
+    saveField: (key: string, value: string) => Promise<void>;
+}
+
+// @public (undocumented)
+export interface SettingsManagerEmits {
+    // (undocumented)
+    'batch-saved': [fields: Array<{
+        key: string;
+        value: string;
+    }>];
+    // (undocumented)
+    error: [error: Error];
+    // (undocumented)
+    loaded: [groups: SettingsGroup[]];
+    // (undocumented)
+    saved: [key: string, value: string];
+}
+
+// @public (undocumented)
+export interface SettingsManagerExpose {
+    // (undocumented)
+    getDirtyFields: () => Array<{
+        key: string;
+        value: string;
+    }>;
+    // (undocumented)
+    getValues: () => Record<string, string>;
+    // (undocumented)
+    reload: () => Promise<void>;
+    // (undocumented)
+    resetDirty: () => void;
+    // (undocumented)
+    saveAll: () => Promise<void>;
+}
+
+// @public (undocumented)
+export interface SettingsManagerProps {
+    // (undocumented)
+    adapter: SettingsManagerAdapter;
+    customUploadRequest?: (options: ProUploadRequestOptions) => void;
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    layout?: 'vertical' | 'card';
+    parseUploadResponse?: (raw: unknown) => {
+        url: string;
+        storageId?: string;
+    };
+    // (undocumented)
+    saveMode?: 'field' | 'batch';
+    // (undocumented)
+    showGroupNav?: boolean;
+    // (undocumented)
+    showSearch?: boolean;
+    // (undocumented)
+    title?: string;
+}
+
+// @public (undocumented)
+export type ShadowToken = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'card' | 'inner';
 
 // @public
 export function shadowVar(token: ShadowToken): string;
@@ -2759,10 +12457,226 @@ export interface SideNavProps {
 }
 
 // @public (undocumented)
-export type SpacingToken = '1' | '2' | '3' | '4' | '5' | '6' | '8' | '10' | '12';
+export type SkeletonMode = 'list' | 'detail' | 'form';
+
+// @public (undocumented)
+export type SpacingToken = '0' | 'px' | '0-5' | '1' | '1-5' | '2' | '2-5' | '3' | '4' | '5' | '6' | '8' | '10' | '12' | '16' | '20' | '24';
 
 // @public
 export function spacingVar(token: SpacingToken): string;
+
+// @public (undocumented)
+export interface SSEChunk {
+    code?: string;
+    // (undocumented)
+    content?: string;
+    // (undocumented)
+    domain?: string;
+    event_type?: 'chunk' | 'search_start' | 'search_done' | 'fetch_start' | 'fetch_done' | 'fetch_fallback' | 'mcp_tool_start' | 'mcp_tool_done' | 'tool_call' | 'tool_result' | 'usage' | 'error';
+    fetch_method?: 'http' | 'playwright';
+    // (undocumented)
+    finish_reason?: string;
+    // (undocumented)
+    index?: number;
+    // (undocumented)
+    input_cost?: number;
+    // (undocumented)
+    input_tokens?: number;
+    // (undocumented)
+    latency_ms?: number;
+    // (undocumented)
+    message?: string;
+    // (undocumented)
+    output_cost?: number;
+    // (undocumented)
+    output_tokens?: number;
+    // (undocumented)
+    provider?: string;
+    // (undocumented)
+    query?: string;
+    reason?: string;
+    // (undocumented)
+    result_count?: number;
+    server_name?: string;
+    // (undocumented)
+    status_code?: number;
+    // (undocumented)
+    tool_args?: string;
+    tool_calls?: Array<{
+        id?: string;
+        name?: string;
+        arguments?: string;
+    }>;
+    // (undocumented)
+    tool_name?: string;
+    // (undocumented)
+    tool_summary?: string;
+    // (undocumented)
+    total_cost?: number;
+    // (undocumented)
+    total_tokens?: number;
+    type?: string;
+    url?: string;
+}
+
+// @public
+export interface SSEError {
+    // (undocumented)
+    code: 'token_budget' | 'rate_limit' | 'content_filter' | 'provider_error' | string;
+    // (undocumented)
+    message: string;
+    // (undocumented)
+    type: 'error';
+}
+
+// @public (undocumented)
+export interface StatCardCompare {
+    // (undocumented)
+    currentValue: number;
+    // (undocumented)
+    period: StatCardComparePeriod;
+    // (undocumented)
+    periodLabel?: string;
+    // (undocumented)
+    previousValue: number;
+}
+
+// @public (undocumented)
+export type StatCardComparePeriod = 'day' | 'week' | 'month' | 'quarter' | 'year' | 'custom';
+
+// @public (undocumented)
+export type StatCardSize = 'small' | 'medium' | 'large';
+
+// @public (undocumented)
+export type StatCardTrend = 'up' | 'down' | 'flat';
+
+// @public (undocumented)
+export type StatCardVariant = 'default' | 'outlined' | 'filled';
+
+// @public (undocumented)
+export interface StepDefinition {
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    schema?: FormFieldSchema[];
+    // (undocumented)
+    title: string;
+    // (undocumented)
+    validate?: (values: Record<string, unknown>) => Promise<boolean | string>;
+}
+
+// @public (undocumented)
+export interface StepFormEmits {
+    // (undocumented)
+    'update:currentStep': [step: number];
+    // (undocumented)
+    'update:modelValue': [values: Record<string, unknown>];
+    // (undocumented)
+    finish: [values: Record<string, unknown>];
+    // (undocumented)
+    next: [step: number, values: Record<string, unknown>];
+    // (undocumented)
+    prev: [step: number];
+    // (undocumented)
+    stepValidateError: [step: number, error: string];
+}
+
+// @public (undocumented)
+export interface StepFormExpose {
+    // (undocumented)
+    getCurrentValues: () => Record<string, unknown>;
+    // (undocumented)
+    goTo: (step: number) => void;
+    // (undocumented)
+    next: () => Promise<boolean>;
+    // (undocumented)
+    prev: () => void;
+    // (undocumented)
+    reset: () => void;
+    // (undocumented)
+    submit: () => Promise<boolean>;
+}
+
+// @public (undocumented)
+export interface StepFormProps {
+    // (undocumented)
+    currentStep?: number;
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    finishButtonLabel?: string;
+    // (undocumented)
+    labelWidth?: number | string;
+    // (undocumented)
+    modelValue: Record<string, unknown>;
+    // (undocumented)
+    nextButtonLabel?: string;
+    // (undocumented)
+    prevButtonLabel?: string;
+    // (undocumented)
+    showStepDescription?: boolean;
+    // (undocumented)
+    steps: StepDefinition[];
+    // (undocumented)
+    submitButtonLabel?: string;
+}
+
+// @public (undocumented)
+export interface StepFormSlots {
+    // (undocumented)
+    [key: `step-${string}`]: (params: {
+        step: StepDefinition;
+        values: Record<string, unknown>;
+        isLast: boolean;
+    }) => VNode;
+    // (undocumented)
+    actions?: (params: {
+        currentStep: number;
+        isFirst: boolean;
+        isLast: boolean;
+        next: () => void;
+        prev: () => void;
+        submit: () => void;
+    }) => VNode;
+    // (undocumented)
+    finishResult?: (params: {
+        values: Record<string, unknown>;
+    }) => VNode;
+}
+
+// @public (undocumented)
+export interface StepItem {
+    // (undocumented)
+    durationMs?: number;
+    // (undocumented)
+    label: string;
+    // Warning: (ae-forgotten-export) The symbol "StepStatus_3" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    status: StepStatus_3;
+}
+
+// @public (undocumented)
+export interface StepProgressProps {
+    // (undocumented)
+    compact?: boolean;
+    // (undocumented)
+    currentStep?: number;
+    // (undocumented)
+    steps: StepItem[];
+    // (undocumented)
+    totalSteps?: number;
+}
+
+// @public
+export type StepProgressStatus = StepStatus_3;
+
+// @public (undocumented)
+export type StepStatus = 'wait' | 'process' | 'finish' | 'error';
 
 // @public (undocumented)
 export interface TabItem {
@@ -2778,6 +12692,139 @@ export interface TabItem {
     label: string;
     // (undocumented)
     path: string;
+}
+
+// @public (undocumented)
+export interface TableCardEmits {
+    // (undocumented)
+    'update:columnPresets': [presets: ColumnPreset[]];
+    // (undocumented)
+    'update:density': [density: TableDensity];
+    // (undocumented)
+    'update:fullscreen': [fullscreen: boolean];
+    // (undocumented)
+    action: [key: string];
+    // (undocumented)
+    export: [];
+    // (undocumented)
+    refresh: [];
+}
+
+// @public (undocumented)
+export interface TableCardProps {
+    // (undocumented)
+    actions?: TableToolbarAction[];
+    // (undocumented)
+    columnConfigurable?: boolean;
+    // (undocumented)
+    columnPresets?: ColumnPreset[];
+    // (undocumented)
+    currentDensity?: TableDensity;
+    // (undocumented)
+    dataTestid?: string;
+    // (undocumented)
+    densitySwitchable?: boolean;
+    // (undocumented)
+    exportable?: boolean;
+    // (undocumented)
+    exportConfirmMessage?: string;
+    // (undocumented)
+    exportLabel?: string;
+    // (undocumented)
+    fullscreenable?: boolean;
+    // (undocumented)
+    loading?: boolean;
+    // (undocumented)
+    refreshable?: boolean;
+    // (undocumented)
+    title?: string;
+}
+
+// @public (undocumented)
+export type TableDensity = 'compact' | 'default' | 'comfortable';
+
+// @public (undocumented)
+export interface TableToolbarAction {
+    // (undocumented)
+    confirmMessage?: string;
+    // (undocumented)
+    confirmTitle?: string;
+    // (undocumented)
+    danger?: boolean;
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    negativeText?: string;
+    // (undocumented)
+    positiveText?: string;
+}
+
+// @public (undocumented)
+export interface TableToolbarProEmits {
+    // (undocumented)
+    'update:columnPresets': [presets: ColumnPreset[]];
+    // (undocumented)
+    'update:density': [density: TableDensity];
+    // (undocumented)
+    'update:fullscreen': [fullscreen: boolean];
+    // (undocumented)
+    action: [key: string];
+    // (undocumented)
+    export: [];
+    // (undocumented)
+    refresh: [];
+}
+
+// @public (undocumented)
+export interface TableToolbarProExpose {
+    // (undocumented)
+    resetColumns: () => void;
+    // (undocumented)
+    toggleFullscreen: () => void;
+}
+
+// @public (undocumented)
+export interface TableToolbarProProps {
+    // (undocumented)
+    actions?: TableToolbarAction[];
+    // (undocumented)
+    columnConfigurable?: boolean;
+    // (undocumented)
+    columnPresets?: ColumnPreset[];
+    // (undocumented)
+    currentDensity?: TableDensity;
+    // (undocumented)
+    densitySwitchable?: boolean;
+    // (undocumented)
+    exportable?: boolean;
+    // (undocumented)
+    exportConfirmMessage?: string;
+    // (undocumented)
+    exportLabel?: string;
+    // (undocumented)
+    fullscreenable?: boolean;
+    // (undocumented)
+    loading?: boolean;
+    // (undocumented)
+    refreshable?: boolean;
+    // (undocumented)
+    title?: string;
+}
+
+// @public (undocumented)
+export interface TableToolbarProSlots {
+    // (undocumented)
+    extra?: () => VNode;
+    // (undocumented)
+    prefix?: () => VNode;
+    // (undocumented)
+    title?: () => VNode;
 }
 
 // @public (undocumented)
@@ -2818,7 +12865,7 @@ export interface ThemePreset {
 }
 
 // @public (undocumented)
-export type ThemePresetName = 'enterprise-blue' | 'teal-ops' | 'graphite-pro';
+export type ThemePresetName = 'enterprise-blue' | 'teal-ops' | 'graphite-pro' | 'cloud-ops' | 'slate-pro' | 'hirezy-soft';
 
 // @public (undocumented)
 export const themePresets: Record<ThemePresetName, {
@@ -2858,6 +12905,50 @@ export interface ThemeProviderOptions {
     // (undocumented)
     storageKey?: string;
 }
+
+// @public (undocumented)
+export interface TimelineEntry {
+    // (undocumented)
+    durationMs: number;
+    // (undocumented)
+    endMs: number;
+    // (undocumented)
+    error?: string;
+    // (undocumented)
+    input?: Record<string, unknown>;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    nodeId: string;
+    // (undocumented)
+    output?: Record<string, unknown>;
+    // (undocumented)
+    startMs: number;
+    // (undocumented)
+    status: TimelineEntryStatus;
+    // (undocumented)
+    tokenUsage?: {
+        inputTokens: number;
+        outputTokens: number;
+        totalTokens: number;
+    };
+}
+
+// @public (undocumented)
+export type TimelineEntryStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
+
+// @public (undocumented)
+export interface TimelineViewProps {
+    // (undocumented)
+    entries: TimelineEntry[];
+    // (undocumented)
+    showDetail?: boolean;
+    // (undocumented)
+    totalMs?: number;
+}
+
+// @public (undocumented)
+export type TiptapExtension = unknown;
 
 // @public (undocumented)
 export interface TokenManagerInstance {
@@ -2911,6 +13002,75 @@ export interface TokenStorage {
     set: (key: string, value: string) => void;
 }
 
+// @public
+export interface TokenUsage {
+    // (undocumented)
+    inputCost?: number;
+    // (undocumented)
+    inputTokens: number;
+    // (undocumented)
+    outputCost?: number;
+    // (undocumented)
+    outputTokens: number;
+    // (undocumented)
+    totalCost?: number;
+    // (undocumented)
+    totalTokens: number;
+}
+
+// @public (undocumented)
+export interface ToolbarConfig {
+    // (undocumented)
+    blockquote?: boolean;
+    // (undocumented)
+    bold?: boolean;
+    // (undocumented)
+    bulletList?: boolean;
+    // (undocumented)
+    codeBlock?: boolean;
+    // (undocumented)
+    heading?: boolean | number[];
+    // (undocumented)
+    highlight?: boolean;
+    // (undocumented)
+    horizontalRule?: boolean;
+    // (undocumented)
+    image?: boolean;
+    // (undocumented)
+    italic?: boolean;
+    // (undocumented)
+    link?: boolean;
+    // (undocumented)
+    orderedList?: boolean;
+    // (undocumented)
+    redo?: boolean;
+    // (undocumented)
+    strike?: boolean;
+    // (undocumented)
+    table?: boolean;
+    // (undocumented)
+    taskList?: boolean;
+    // (undocumented)
+    underline?: boolean;
+    // (undocumented)
+    undo?: boolean;
+}
+
+// @public (undocumented)
+export type ToolCallEvent = ToolInvocationEvent | FetchFallbackEvent;
+
+// @public
+export interface ToolInvocationEvent {
+    // (undocumented)
+    args?: string;
+    // (undocumented)
+    latencyMs?: number;
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    result?: string;
+}
+
 // @public (undocumented)
 export interface TopbarEmits {
     // (undocumented)
@@ -2932,10 +13092,251 @@ export interface TopbarProps {
 }
 
 // @public (undocumented)
-export type TransitionToken = 'fast' | 'base' | 'slow';
+export type TransitionToken = 'fast' | 'base' | 'slow' | 'slower';
 
 // @public
 export function transitionVar(token: TransitionToken): string;
+
+// @public (undocumented)
+export interface TreeBatchConfig {
+    // (undocumented)
+    enableDelete?: boolean;
+    // (undocumented)
+    enableMove?: boolean;
+}
+
+// @public (undocumented)
+export interface TreeDataChangeEvent {
+    // (undocumented)
+    node?: TreeNodeData;
+    // (undocumented)
+    nodes: TreeNodeData[];
+    // (undocumented)
+    type: 'create' | 'update' | 'delete' | 'move' | 'reorder';
+}
+
+// @public (undocumented)
+export type TreeDensity = 'compact' | 'default' | 'comfortable';
+
+// @public (undocumented)
+export interface TreeError {
+    // (undocumented)
+    code: TreeErrorCode;
+    // (undocumented)
+    message: string;
+    // (undocumented)
+    nodeId?: string | number;
+    // (undocumented)
+    raw?: unknown;
+}
+
+// @public (undocumented)
+export type TreeErrorCode = 'DUPLICATE_NAME' | 'INVALID_NAME' | 'PARENT_NOT_FOUND' | 'CIRCULAR_REFERENCE' | 'MAX_DEPTH_EXCEEDED' | 'HAS_CHILDREN' | 'FOLDER_HAS_ARTICLES' | 'NOT_FOUND' | 'NETWORK_ERROR' | 'UNKNOWN';
+
+// @public (undocumented)
+export interface TreeHttpClient {
+    // (undocumented)
+    delete: <T>(url: string) => Promise<T>;
+    // (undocumented)
+    get: <T>(url: string) => Promise<T>;
+    // (undocumented)
+    post: <T>(url: string, data?: unknown) => Promise<T>;
+    // (undocumented)
+    put: <T>(url: string, data?: unknown) => Promise<T>;
+}
+
+// @public (undocumented)
+export interface TreeI18n {
+    // (undocumented)
+    batchDelete?: string;
+    // (undocumented)
+    batchMove?: string;
+    // (undocumented)
+    batchSelect?: string;
+    // (undocumented)
+    cancel?: string;
+    // (undocumented)
+    collapseAll?: string;
+    // (undocumented)
+    confirm?: string;
+    // (undocumented)
+    confirmDelete?: string;
+    // (undocumented)
+    confirmDeleteWithArticles?: string;
+    // (undocumented)
+    confirmDeleteWithChildren?: string;
+    // (undocumented)
+    delete?: string;
+    // (undocumented)
+    deleteSuccess?: string;
+    // (undocumented)
+    duplicateName?: string;
+    // (undocumented)
+    errorDefault?: string;
+    // (undocumented)
+    expandAll?: string;
+    // (undocumented)
+    invalidName?: string;
+    // (undocumented)
+    items?: string;
+    // (undocumented)
+    loading?: string;
+    // (undocumented)
+    maxDepthExceeded?: string;
+    // (undocumented)
+    move?: string;
+    // (undocumented)
+    newFolder?: string;
+    // (undocumented)
+    newSubFolder?: string;
+    // (undocumented)
+    noData?: string;
+    // (undocumented)
+    refresh?: string;
+    // (undocumented)
+    rename?: string;
+    // (undocumented)
+    retry?: string;
+    // (undocumented)
+    search?: string;
+    // (undocumented)
+    selected?: string;
+}
+
+// @public (undocumented)
+export interface TreeNodeData {
+    // (undocumented)
+    [key: string]: unknown;
+    // (undocumented)
+    children?: TreeNodeData[];
+    // (undocumented)
+    depth: number;
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    id: string | number;
+    // (undocumented)
+    itemCount?: number;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    parentId: string | number | null;
+    // (undocumented)
+    sortOrder: number;
+    // (undocumented)
+    totalItemCount?: number;
+}
+
+// @public (undocumented)
+export interface TreeNodeIcons {
+    // (undocumented)
+    folder?: string;
+    // (undocumented)
+    folderOpen?: string;
+    // (undocumented)
+    leaf?: string;
+    // (undocumented)
+    loading?: string;
+    // (undocumented)
+    locked?: string;
+}
+
+// @public (undocumented)
+export type TreeNodeState = 'default' | 'hover' | 'selected' | 'focused' | 'editing' | 'dragging' | 'drop-target' | 'drop-target-invalid' | 'disabled' | 'error';
+
+// @public (undocumented)
+export interface TreeRequestEvent {
+    // (undocumented)
+    action: string;
+    // (undocumented)
+    nodeId?: string | number;
+}
+
+// @public (undocumented)
+export interface TreeRequestHooks {
+    // (undocumented)
+    create?: (params: {
+        parentId: string | number | null;
+        name: string;
+    }) => Promise<TreeNodeData>;
+    // (undocumented)
+    delete?: (id: string | number) => Promise<void>;
+    // (undocumented)
+    loadChildren?: (parentId: string | number) => Promise<TreeNodeData[]>;
+    // (undocumented)
+    loadTree?: () => Promise<TreeNodeData[]>;
+    // (undocumented)
+    move?: (params: {
+        id: string | number;
+        newParentId: string | number | null;
+    }) => Promise<void>;
+    // (undocumented)
+    reorder?: (params: {
+        id: string | number;
+        newOrder: number;
+    }) => Promise<void>;
+    // (undocumented)
+    update?: (params: {
+        id: string | number;
+        name: string;
+    }) => Promise<TreeNodeData>;
+}
+
+// @public (undocumented)
+export type TreeRequestMode = 'auto' | 'manual';
+
+// @public (undocumented)
+export interface TreeSelectI18n {
+    // (undocumented)
+    clear?: string;
+    // (undocumented)
+    loading?: string;
+    // (undocumented)
+    noData?: string;
+    // (undocumented)
+    placeholder?: string;
+    // (undocumented)
+    search?: string;
+}
+
+// @public (undocumented)
+export type TreeSelectLoadFn = () => Promise<TreeSelectNode[]>;
+
+// @public (undocumented)
+export interface TreeSelectNode {
+    [key: string]: unknown;
+    // (undocumented)
+    children?: TreeSelectNode[];
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    id: string | number;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    parentId: string | number | null;
+}
+
+// @public (undocumented)
+export type TreeSelectSize = 'small' | 'medium' | 'large';
+
+// @public (undocumented)
+export interface UIAuthPayload {
+    // (undocumented)
+    element_permissions: Record<string, string[]>;
+    // (undocumented)
+    menus?: AppMenuItem[];
+    // (undocumented)
+    page_actions?: Record<string, string[]>;
+    // (undocumented)
+    visible_menus: string[];
+    // (undocumented)
+    visible_routes: string[];
+}
 
 // @public (undocumented)
 export interface UILibraryAdapter {
@@ -2960,7 +13361,7 @@ export interface UploadFile {
     // (undocumented)
     size?: number;
     // (undocumented)
-    status: 'pending' | 'uploading' | 'success' | 'error' | 'paused';
+    status: 'pending' | 'uploading' | 'success' | 'error' | 'paused' | 'removed';
     // (undocumented)
     thumbUrl?: string;
     totalChunks?: number;
@@ -2998,7 +13399,259 @@ export interface UploadRequestOptions {
 export function useAppConfig(): AppConfigContext;
 
 // @public (undocumented)
+export function useAuthorizedMenu<T>(rawMenus: Ref<MenuLike<T>[]>, uiAuth: Ref<UIAuthPayload | null>): ComputedRef<MenuLike<T>[]>;
+
+// @public (undocumented)
+export function useChatSSE(): {
+    isStreaming: Ref<boolean, boolean>;
+    streamContent: Ref<string, string>;
+    streamToolCallName: Ref<string, string>;
+    searchProgress: Ref<    {
+    status: "idle" | "searching" | "done";
+    query?: string | undefined;
+    resultCount?: number | undefined;
+    provider?: string | undefined;
+    }, SearchProgress | {
+    status: "idle" | "searching" | "done";
+    query?: string | undefined;
+    resultCount?: number | undefined;
+    provider?: string | undefined;
+    }>;
+    fetchProgress: Ref<    {
+    status: "idle" | "fetching" | "done";
+    domain?: string | undefined;
+    statusCode?: number | undefined;
+    latencyMs?: number | undefined;
+    fetchMethod?: "http" | "playwright" | undefined;
+    }, FetchProgress | {
+    status: "idle" | "fetching" | "done";
+    domain?: string | undefined;
+    statusCode?: number | undefined;
+    latencyMs?: number | undefined;
+    fetchMethod?: "http" | "playwright" | undefined;
+    }>;
+    mcpProgress: Ref<    {
+    status: "idle" | "calling" | "done";
+    serverName?: string | undefined;
+    toolName?: string | undefined;
+    }, MCPProgress | {
+    status: "idle" | "calling" | "done";
+    serverName?: string | undefined;
+    toolName?: string | undefined;
+    }>;
+    agentProgress: Ref<    {
+    status: "idle" | "running" | "done";
+    agentId?: number | undefined;
+    agentName?: string | undefined;
+    agentAvatar?: string | undefined;
+    totalNodes?: number | undefined;
+    currentStep?: number | undefined;
+    }, AgentProgress | {
+    status: "idle" | "running" | "done";
+    agentId?: number | undefined;
+    agentName?: string | undefined;
+    agentAvatar?: string | undefined;
+    totalNodes?: number | undefined;
+    currentStep?: number | undefined;
+    }>;
+    toolCallEvents: Ref<({
+    name: string;
+    args?: string | undefined;
+    result?: string | undefined;
+    latencyMs?: number | undefined;
+    } | {
+    type: "fetch_fallback";
+    url: string;
+    reason: string;
+    })[], ToolCallEvent[] | ({
+    name: string;
+    args?: string | undefined;
+    result?: string | undefined;
+    latencyMs?: number | undefined;
+    } | {
+    type: "fetch_fallback";
+    url: string;
+    reason: string;
+    })[]>;
+    tokenUsage: Ref<    {
+    inputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+    inputCost?: number | undefined;
+    outputCost?: number | undefined;
+    totalCost?: number | undefined;
+    } | null, TokenUsage | {
+    inputTokens: number;
+    outputTokens: number;
+    totalTokens: number;
+    inputCost?: number | undefined;
+    outputCost?: number | undefined;
+    totalCost?: number | undefined;
+    } | null>;
+    contextError: Ref<    {
+    type: "error";
+    code: "token_budget" | "rate_limit" | "content_filter" | "provider_error" | string;
+    message: string;
+    } | null, SSEError | {
+    type: "error";
+    code: "token_budget" | "rate_limit" | "content_filter" | "provider_error" | string;
+    message: string;
+    } | null>;
+    error: Ref<Error | null, Error | null>;
+    startStream: (options: ChatSSEOptions) => Promise<void>;
+    stopStream: () => void;
+};
+
+// @public (undocumented)
+export function useElementAuth(uiAuth: Ref<UIAuthPayload | null>): {
+    canDo: (permissionCode: string) => boolean;
+};
+
+// @public
+export function useEntityApi(entityType: 'agent' | 'team'): {
+    baseUrl: string;
+    getById: (id: number) => string;
+    getRuns: (id: number) => string;
+    getTestRuns: (id: number) => string;
+    getTestRun: (id: number) => string;
+    getGraph: (id: number) => string;
+};
+
+// @public (undocumented)
 export function useLayout(): LayoutContext;
+
+// @public (undocumented)
+export function usePageActions(uiAuth: Ref<UIAuthPayload | null>): {
+    allowedActions: ComputedRef<Set<string>>;
+    isActionAllowed: (actionID: string) => boolean;
+};
+
+// Warning: (ae-forgotten-export) The symbol "UseTreeDataOptions" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export function useTreeData(options: UseTreeDataOptions): {
+    treeData: Ref<{
+        [x: string]: unknown;
+        id: string | number;
+        label: string;
+        parentId: string | number | null;
+        sortOrder: number;
+        depth: number;
+        itemCount?: number | undefined;
+        totalItemCount?: number | undefined;
+        icon?: string | undefined;
+        disabled?: boolean | undefined;
+        children?: /*elided*/ any[] | undefined;
+    }[], TreeNodeData[] | {
+        [x: string]: unknown;
+        id: string | number;
+        label: string;
+        parentId: string | number | null;
+        sortOrder: number;
+        depth: number;
+        itemCount?: number | undefined;
+        totalItemCount?: number | undefined;
+        icon?: string | undefined;
+        disabled?: boolean | undefined;
+        children?: /*elided*/ any[] | undefined;
+    }[]>;
+    flatNodes: ComputedRef<TreeNodeData[]>;
+    loading: Ref<boolean, boolean>;
+    loadingNodeIds: Ref<Set<string | number> & Omit<Set<string | number>, keyof Set<any>>, Set<string | number> | (Set<string | number> & Omit<Set<string | number>, keyof Set<any>>)>;
+    expandedKeys: Ref<Set<string | number> & Omit<Set<string | number>, keyof Set<any>>, Set<string | number> | (Set<string | number> & Omit<Set<string | number>, keyof Set<any>>)>;
+    editingNodeId: Ref<string | number | null, string | number | null>;
+    errorState: Ref<{
+        code: TreeErrorCode;
+        message: string;
+        nodeId?: string | number | undefined;
+        raw?: unknown;
+    } | null, TreeError | {
+        code: TreeErrorCode;
+        message: string;
+        nodeId?: string | number | undefined;
+        raw?: unknown;
+    } | null>;
+    operationErrors: Ref<Map<string | number, {
+        code: TreeErrorCode;
+        message: string;
+        nodeId?: string | number | undefined;
+        raw?: unknown;
+    }> & Omit<Map<string | number, TreeError>, keyof Map<any, any>>, Map<string | number, TreeError> | (Map<string | number, {
+        code: TreeErrorCode;
+        message: string;
+        nodeId?: string | number | undefined;
+        raw?: unknown;
+    }> & Omit<Map<string | number, TreeError>, keyof Map<any, any>>)>;
+    loadTree: () => Promise<void>;
+    loadChildren: (parentId: string | number) => Promise<void>;
+    createNode: (parentId: string | number | null, name: string) => Promise<TreeNodeData | null>;
+    updateNode: (id: string | number, name: string) => Promise<TreeNodeData | null>;
+    deleteNode: (id: string | number) => Promise<void>;
+    moveNode: (id: string | number, newParentId: string | number | null) => Promise<void>;
+    reorderNode: (id: string | number, newOrder: number) => Promise<void>;
+    toggleExpand: (id: string | number) => void;
+    expandAll: () => void;
+    collapseAll: () => void;
+    startEditing: (id: string | number) => void;
+    cancelEditing: () => void;
+    clearError: (nodeId: string | number) => void;
+    refreshNode: (id: string | number) => Promise<void>;
+    findNode: (id: string | number) => TreeNodeData | null;
+    isDescendantOf: (nodeId: string | number, ancestorId: string | number) => boolean;
+};
+
+// Warning: (ae-forgotten-export) The symbol "UseTreeDndOptions" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export function useTreeDnd(options: UseTreeDndOptions): {
+    dragNodeId: Ref<string | number | null, string | number | null>;
+    dropTargetId: Ref<string | number | null, string | number | null>;
+    dropPosition: Ref<DropPosition | null, DropPosition | null>;
+    dropLegal: Ref<boolean, boolean>;
+    onDragStart: (nodeId: string | number) => void;
+    onDragOver: (targetId: string | number, position: DropPosition) => void;
+    onDragEnd: () => void;
+    onDragCancel: () => void;
+    getDropIndicator: (nodeId: string | number) => {
+        isTarget: boolean;
+        position: DropPosition | null;
+        legal: boolean;
+        reason?: TreeErrorCode;
+    };
+    validateDrop: (dragId: string | number, targetId: string | number, position: DropPosition) => {
+        legal: boolean;
+        reason?: TreeErrorCode;
+    };
+};
+
+// Warning: (ae-forgotten-export) The symbol "UseTreeKeyboardOptions" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export function useTreeKeyboard(options: UseTreeKeyboardOptions): {
+    handleKeyDown: (event: KeyboardEvent) => void;
+};
+
+// Warning: (ae-forgotten-export) The symbol "UseTreeSearchOptions" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export function useTreeSearch(options: UseTreeSearchOptions): {
+    keyword: Ref<string, string>;
+    matchedNodeIds: ComputedRef<Set<string | number>>;
+    visibleNodeIds: ComputedRef<Set<string | number> | null>;
+    setKeyword: (kw: string) => void;
+    isNodeVisible: (nodeId: string | number) => boolean;
+    isMatch: (nodeId: string | number) => boolean;
+    getHighlightRanges: (text: string) => Array<{
+        start: number;
+        end: number;
+    }>;
+};
+
+// @public (undocumented)
+export function validateImageDimensions(image: HTMLImageElement, options?: ImageCropOptions): boolean;
+
+// @public (undocumented)
+export function validateWorkflowGraph(graph: WorkflowGraph): WorkflowValidationIssue[];
 
 // @public (undocumented)
 export interface WebsiteConfig {
@@ -3014,9 +13667,122 @@ export interface WebsiteConfig {
     title: string;
 }
 
+// @public (undocumented)
+export function withAutoLayout(graph: WorkflowGraph): WorkflowGraph;
+
+// @public (undocumented)
+export interface WorkflowEdge {
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    label?: string;
+    // (undocumented)
+    source: string;
+    // (undocumented)
+    target: string;
+}
+
+// @public (undocumented)
+export interface WorkflowGraph {
+    // (undocumented)
+    edges: WorkflowEdge[];
+    // (undocumented)
+    meta?: Record<string, unknown>;
+    // (undocumented)
+    nodes: WorkflowNode[];
+}
+
+// @public (undocumented)
+export interface WorkflowNode {
+    // (undocumented)
+    config?: Record<string, unknown>;
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    type: WorkflowNodeType;
+    // (undocumented)
+    x: number;
+    // (undocumented)
+    y: number;
+}
+
+// @public (undocumented)
+export interface WorkflowNodeTemplate {
+    // (undocumented)
+    hint: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    type: WorkflowNodeType;
+}
+
+// @public (undocumented)
+export type WorkflowNodeType = 'start' | 'approval' | 'condition' | 'cc' | 'parallel' | 'end';
+
+// @public (undocumented)
+export interface WorkflowValidationIssue {
+    // (undocumented)
+    code: string;
+    // (undocumented)
+    level: 'error' | 'warning';
+    // (undocumented)
+    message: string;
+}
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_21" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const YearCellEditor: DefineComponent<__VLS_Props_21, {
+getValue: typeof getValue_4;
+isCancelBeforeStart: typeof isCancelBeforeStart_4;
+isCancelAfterEnd: typeof isCancelAfterEnd_4;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_21> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {
+inputRef: HTMLInputElement;
+}, HTMLInputElement>;
+
+// @public (undocumented)
+export type ZIndexToken = 'dropdown' | 'sticky' | 'fixed' | 'modal-backdrop' | 'modal' | 'popover' | 'tooltip' | 'command-palette';
+
+// @public
+export function zIndexVar(token: ZIndexToken): string;
+
 // Warnings were encountered during analysis:
 //
-// src/components/layout/RTabsView.vue:523:45 - (ae-forgotten-export) The symbol "scrollToActive" needs to be exported by the entry point index.d.ts
+// src/components/chat/RChatInput.vue:454:36 - (ae-forgotten-export) The symbol "RChatMCPSelectorProps" needs to be exported by the entry point index.d.ts
+// src/components/chat/RChatInput.vue:610:4 - (ae-forgotten-export) The symbol "focus_2" needs to be exported by the entry point index.d.ts
+// src/components/chat/RChatModelSelector.vue:106:4 - (ae-forgotten-export) The symbol "TierKey" needs to be exported by the entry point index.d.ts
+// src/components/code-verify/RCodeVerify.vue:391:67 - (ae-forgotten-export) The symbol "startCountdown" needs to be exported by the entry point index.d.ts
+// src/components/code-verify/RCodeVerify.vue:391:67 - (ae-forgotten-export) The symbol "resetCountdown" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/ColumnEditDrawer.vue:300:5 - (ae-forgotten-export) The symbol "ColumnEditForm" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/CustomHeader.vue:165:4 - (ae-forgotten-export) The symbol "init" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/CustomHeader.vue:165:4 - (ae-forgotten-export) The symbol "refresh" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/CustomHeader.vue:165:4 - (ae-forgotten-export) The symbol "destroy" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/DateTimeCellEditor.vue:130:4 - (ae-forgotten-export) The symbol "getValue_3" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/DateTimeCellEditor.vue:130:4 - (ae-forgotten-export) The symbol "isCancelBeforeStart_3" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/DateTimeCellEditor.vue:130:4 - (ae-forgotten-export) The symbol "isCancelAfterEnd_3" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/FilterDrawer.vue:342:5 - (ae-forgotten-export) The symbol "FilterCondition" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/MultiSelectCellEditor.vue:318:4 - (ae-forgotten-export) The symbol "getValue_2" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/MultiSelectCellEditor.vue:318:4 - (ae-forgotten-export) The symbol "isCancelBeforeStart_2" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/MultiSelectCellEditor.vue:318:4 - (ae-forgotten-export) The symbol "isCancelAfterEnd_2" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/SelectCellEditor.vue:208:4 - (ae-forgotten-export) The symbol "getValue" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/SelectCellEditor.vue:208:4 - (ae-forgotten-export) The symbol "isCancelBeforeStart" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/SelectCellEditor.vue:208:4 - (ae-forgotten-export) The symbol "isCancelAfterEnd" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/YearCellEditor.vue:89:4 - (ae-forgotten-export) The symbol "getValue_4" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/YearCellEditor.vue:89:4 - (ae-forgotten-export) The symbol "isCancelBeforeStart_4" needs to be exported by the entry point index.d.ts
+// src/components/data-grid/components/YearCellEditor.vue:89:4 - (ae-forgotten-export) The symbol "isCancelAfterEnd_4" needs to be exported by the entry point index.d.ts
+// src/components/docs-browser/RDocsBrowser.vue:3541:4 - (ae-forgotten-export) The symbol "handleRefresh" needs to be exported by the entry point index.d.ts
+// src/components/docs-browser/RDocsBrowser.vue:3541:4 - (ae-forgotten-export) The symbol "handleClearCache" needs to be exported by the entry point index.d.ts
+// src/components/docs-browser/RDocsBrowser.vue:3541:4 - (ae-forgotten-export) The symbol "syncFromActiveFileTag" needs to be exported by the entry point index.d.ts
+// src/components/flow/RFlowTimeline.vue:396:4 - (ae-forgotten-export) The symbol "handleEvent" needs to be exported by the entry point index.d.ts
+// src/components/flow/RFlowTimeline.vue:396:4 - (ae-forgotten-export) The symbol "connectSSE" needs to be exported by the entry point index.d.ts
+// src/components/flow/RFlowTimeline.vue:396:4 - (ae-forgotten-export) The symbol "reset" needs to be exported by the entry point index.d.ts
+// src/components/index-progress/RIndexProgress.vue:97:73 - (ae-forgotten-export) The symbol "IndexStatus_2" needs to be exported by the entry point index.d.ts
+// src/components/layout/RTabsView.vue:523:47 - (ae-forgotten-export) The symbol "scrollToActive" needs to be exported by the entry point index.d.ts
+// src/components/step-progress/RStepProgress.vue:98:4 - (ae-forgotten-export) The symbol "StepItem_2" needs to be exported by the entry point index.d.ts
+// src/components/timeline-view/RTimelineView.vue:109:4 - (ae-forgotten-export) The symbol "TimelineEntry_2" needs to be exported by the entry point index.d.ts
+// src/components/workflow-designer/RWorkflowDesigner.vue:2138:19 - (ae-forgotten-export) The symbol "WorkflowApproverDataSource" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

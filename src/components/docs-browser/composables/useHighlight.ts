@@ -68,7 +68,10 @@ export function useHighlight(options: {
     }
   }
 
-  async function updateHighlight(id: number, data: Partial<Pick<HighlightItem, 'color' | 'note' | 'sort_order'>>) {
+  async function updateHighlight(
+    id: number,
+    data: Partial<Pick<HighlightItem, 'color' | 'note' | 'sort_order'>>,
+  ) {
     if (!options.api.value) return
     try {
       await options.api.value.updateHighlight(id, data)

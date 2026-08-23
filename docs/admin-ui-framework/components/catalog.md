@@ -2,9 +2,9 @@
 
 ## 组件分层
 
-| 层级 | 定位 | 组件 |
-|------|------|------|
-| business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RFileUpload, RProTreeEditor, RDashboardBuilder, RDashboardWorkspace |
+| 层级             | 定位     | 组件                                                                                                                                       |
+| ---------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RFileUpload, RProUpload, RImageCropUpload, RProTreeEditor, RDashboardBuilder, RDashboardWorkspace |
 
 ## 组件清单
 
@@ -41,6 +41,14 @@
 - **测试**: `tests/components/file-upload.test.ts` (11 tests)
 - **a11y**: `tests/components/a11y.test.ts` (2 tests)
 - **消费方调用**: `rong-admin-webdemo/src/stories/FileUploadStory.vue`
+
+### RImageCropUpload
+
+- **文件**: `src/components/image-crop-upload/RImageCropUpload.vue`
+- **契约**: `src/components/image-crop-upload/types.ts`
+- **规格文档**: `components/spec-image-crop-upload.md`
+- **测试**: `tests/components/image-crop-upload.test.ts`, `tests/components/image-crop-upload-utils.test.ts`
+- **消费方调用**: `hrise-admin-web/src/views/admin/components/AdminAvatarUpload.vue`
 
 ### RProTreeEditor
 

@@ -69,7 +69,11 @@ describe('RProUpload', () => {
   describe('File validation', () => {
     it('emits exceed on file count limit', async () => {
       const wrapper = mount(RProUpload, {
-        props: { maxCount: 2, multiple: true, value: [createExistingItem(), createExistingItem({ uid: 'existing-2', name: 'b.jpg' })] },
+        props: {
+          maxCount: 2,
+          multiple: true,
+          value: [createExistingItem(), createExistingItem({ uid: 'existing-2', name: 'b.jpg' })],
+        },
       })
       const input = wrapper.find('[data-testid="pro-upload-input"]')
       const file = createMockFile()
@@ -167,7 +171,7 @@ describe('RProUpload', () => {
       const callArgs = customRequest.mock.calls[0][0]
       expect(callArgs.file).toBeInstanceOf(File)
       expect(callArgs.formData).toBeInstanceOf(FormData)
-      expect(callArgs.formData.get('type')).toBe('avatar')
+      expect(callArgs.formData.get('storage')).toBe('avatar')
       expect(callArgs.formData.get('business_id')).toBe('123')
       expect(callArgs.formData.get('business_type')).toBe('user')
       expect(typeof callArgs.onProgress).toBe('function')
@@ -194,10 +198,10 @@ describe('RProUpload', () => {
       capturedOptions.onSuccess({
         code: 0,
         data: {
-          id: 42,
-          storage_id: 'local:avatar@abc.jpg',
-          url: '/api/admin/files/storage/local:avatar@abc.jpg',
-          original_name: 'photo.jpg',
+          ID: 42,
+          StorageID: 'local:avatar@abc.jpg',
+          URL: '/api/files/storage/local:avatar@abc.jpg',
+          OriginalFilename: 'photo.jpg',
           size: 1024,
           content_type: 'image/jpeg',
         },
@@ -283,6 +287,92 @@ describe('RProUpload', () => {
     })
   })
 
+  describe('transformFile', () => {
+    it('transforms file before building upload payload', async () => {
+      const customRequest = vi.fn()
+      const transformedFile = createMockFile('cropped.jpg', 512, 'image/jpeg')
+      const transformFile = vi.fn(async () => transformedFile)
+
+      const wrapper = mount(RProUpload, {
+        props: {
+          customRequest,
+          transformFile,
+          storage: 'avatar',
+          businessId: 'admin-1',
+          businessType: 'admin_avatar',
+        },
+      })
+
+      const input = wrapper.find('[data-testid="pro-upload-input"]')
+      const file = createMockFile('source.png', 1024, 'image/png')
+      Object.defineProperty(input.element, 'files', { value: [file], writable: true })
+      await input.trigger('change')
+      await flushPromises()
+
+      expect(transformFile).toHaveBeenCalledWith(file, {
+        storage: 'avatar',
+        category: undefined,
+        businessId: 'admin-1',
+        businessType: 'admin_avatar',
+      })
+      expect(customRequest).toHaveBeenCalledTimes(1)
+      const callArgs = customRequest.mock.calls[0][0]
+      expect(callArgs.file.name).toBe(transformedFile.name)
+      expect(callArgs.file.type).toBe(transformedFile.type)
+      expect(callArgs.formData.get('file')).toMatchObject({
+        name: transformedFile.name,
+        type: transformedFile.type,
+      })
+    })
+
+    it('validates transformed file before queueing upload', async () => {
+      const customRequest = vi.fn()
+      const transformedFile = createMockFile('oversized.jpg', 2 * 1024 * 1024, 'image/jpeg')
+
+      const wrapper = mount(RProUpload, {
+        props: {
+          customRequest,
+          maxSizeMB: 1,
+          transformFile: async () => transformedFile,
+        },
+      })
+
+      const input = wrapper.find('[data-testid="pro-upload-input"]')
+      const file = createMockFile('source.jpg', 1024, 'image/jpeg')
+      Object.defineProperty(input.element, 'files', { value: [file], writable: true })
+      await input.trigger('change')
+      await flushPromises()
+
+      expect(customRequest).not.toHaveBeenCalled()
+      expect(wrapper.emitted('exceed')?.[0]?.[0]).toMatchObject({
+        type: 'size',
+        file: transformedFile,
+        limit: 1,
+      })
+    })
+
+    it('skips file when transform rejects', async () => {
+      const customRequest = vi.fn()
+      const wrapper = mount(RProUpload, {
+        props: {
+          customRequest,
+          transformFile: async () => {
+            throw new Error('cancelled')
+          },
+        },
+      })
+
+      const input = wrapper.find('[data-testid="pro-upload-input"]')
+      const file = createMockFile('source.jpg', 1024, 'image/jpeg')
+      Object.defineProperty(input.element, 'files', { value: [file], writable: true })
+      await input.trigger('change')
+      await flushPromises()
+
+      expect(customRequest).not.toHaveBeenCalled()
+      expect(wrapper.emitted('update:value')).toBeUndefined()
+    })
+  })
+
   describe('Remove file', () => {
     it('emits remove and updates list', async () => {
       const existing = createExistingItem()
@@ -359,6 +449,25 @@ describe('RProUpload', () => {
       await thumb.trigger('click')
 
       expect(wrapper.emitted('preview')?.[0]?.[0]).toMatchObject({ uid: 'existing-1' })
+    })
+
+    it('uses server url before local thumbnail for image preview', async () => {
+      const existing = createExistingItem({
+        url: 'https://cdn.example.com/avatar.jpg',
+        thumbUrl: 'blob:local-preview',
+      })
+      const wrapper = mount(RProUpload, {
+        props: { value: [existing] },
+        attachTo: document.body,
+      })
+
+      await wrapper.find('.rpu-item__thumb').trigger('click')
+      await flushPromises()
+
+      const previewImages = document.body.querySelectorAll<HTMLImageElement>('.rpu__preview-img')
+      const previewImage = previewImages[previewImages.length - 1]
+      expect(previewImage?.getAttribute('src')).toBe('https://cdn.example.com/avatar.jpg')
+      wrapper.unmount()
     })
   })
 
@@ -592,7 +701,9 @@ describe('RProUpload', () => {
       const wrapper = mount(RProUpload, {
         props: {
           customRequest,
-          beforeUpload: () => { throw new Error('validation error') },
+          beforeUpload: () => {
+            throw new Error('validation error')
+          },
         },
       })
 

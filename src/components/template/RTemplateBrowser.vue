@@ -1,48 +1,51 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { NCard, NTag, NRate, NAvatar, NSpin, NEmpty } from 'naive-ui'
-import type { RTemplateBrowserItem } from './types'
+  import { computed } from 'vue'
+  import { NCard, NTag, NRate, NAvatar, NSpin, NEmpty } from 'naive-ui'
+  import type { RTemplateBrowserItem } from './types'
 
-const props = withDefaults(
-  defineProps<{
-    templates: RTemplateBrowserItem[]
-    loading?: boolean
-    onSelect?: (item: RTemplateBrowserItem) => void
-  }>(),
-  {
-    loading: false,
-  },
-)
+  const props = withDefaults(
+    defineProps<{
+      templates: RTemplateBrowserItem[]
+      loading?: boolean
+      onSelect?: (item: RTemplateBrowserItem) => void
+    }>(),
+    {
+      loading: false,
+    },
+  )
 
-const emit = defineEmits<{
-  select: [item: RTemplateBrowserItem]
-}>()
+  const emit = defineEmits<{
+    select: [item: RTemplateBrowserItem]
+  }>()
 
-function parseTags(raw: RTemplateBrowserItem['tags']): string[] {
-  if (raw == null) return []
-  if (Array.isArray(raw)) return raw.filter(Boolean).map(String)
-  const s = String(raw).trim()
-  if (!s) return []
-  try {
-    const j = JSON.parse(s) as unknown
-    if (Array.isArray(j)) return j.map((x) => String(x)).filter(Boolean)
-  } catch {
-    /* ignore */
+  function parseTags(raw: RTemplateBrowserItem['tags']): string[] {
+    if (raw == null) return []
+    if (Array.isArray(raw)) return raw.filter(Boolean).map(String)
+    const s = String(raw).trim()
+    if (!s) return []
+    try {
+      const j = JSON.parse(s) as unknown
+      if (Array.isArray(j)) return j.map((x) => String(x)).filter(Boolean)
+    } catch {
+      /* ignore */
+    }
+    return s
+      .split(/[,，]/)
+      .map((x) => x.trim())
+      .filter(Boolean)
   }
-  return s.split(/[,，]/).map((x) => x.trim()).filter(Boolean)
-}
 
-function truncate(s: string, max: number): string {
-  if (s.length <= max) return s
-  return `${s.slice(0, max)}…`
-}
+  function truncate(s: string, max: number): string {
+    if (s.length <= max) return s
+    return `${s.slice(0, max)}…`
+  }
 
-const list = computed(() => props.templates)
+  const list = computed(() => props.templates)
 
-function handleCardClick(t: RTemplateBrowserItem) {
-  emit('select', t)
-  props.onSelect?.(t)
-}
+  function handleCardClick(t: RTemplateBrowserItem) {
+    emit('select', t)
+    props.onSelect?.(t)
+  }
 </script>
 
 <template>
@@ -68,18 +71,17 @@ function handleCardClick(t: RTemplateBrowserItem) {
           </div>
           <p class="rtemplate-browser__desc">{{ truncate(t.description || '', 120) }}</p>
           <div v-if="parseTags(t.tags).length" class="rtemplate-browser__tags">
-            <NTag v-for="tag in parseTags(t.tags).slice(0, 4)" :key="tag" size="tiny" :bordered="false">
+            <NTag
+              v-for="tag in parseTags(t.tags).slice(0, 4)"
+              :key="tag"
+              size="tiny"
+              :bordered="false"
+            >
               {{ tag }}
             </NTag>
           </div>
           <div class="rtemplate-browser__footer">
-            <NRate
-              :value="t.avg_rating ?? 0"
-              readonly
-              allow-half
-              size="small"
-              :count="5"
-            />
+            <NRate :value="t.avg_rating ?? 0" readonly allow-half size="small" :count="5" />
             <span class="rtemplate-browser__usage">{{ t.usage_count ?? 0 }} 次使用</span>
           </div>
         </NCard>
@@ -90,95 +92,97 @@ function handleCardClick(t: RTemplateBrowserItem) {
 </template>
 
 <style scoped>
-.rtemplate-browser__grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: 1fr;
-}
-
-@media (min-width: 640px) {
   .rtemplate-browser__grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr;
   }
-}
 
-@media (min-width: 1024px) {
-  .rtemplate-browser__grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+  @media (min-width: 640px) {
+    .rtemplate-browser__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
   }
-}
 
-@media (min-width: 1440px) {
-  .rtemplate-browser__grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  @media (min-width: 1024px) {
+    .rtemplate-browser__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
   }
-}
 
-.rtemplate-browser__card {
-  cursor: pointer;
-  transition: box-shadow 0.15s ease, transform 0.15s ease;
-}
+  @media (min-width: 1440px) {
+    .rtemplate-browser__grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
 
-.rtemplate-browser__card:hover {
-  transform: translateY(-2px);
-}
+  .rtemplate-browser__card {
+    cursor: pointer;
+    transition:
+      box-shadow 0.15s ease,
+      transform 0.15s ease;
+  }
 
-.rtemplate-browser__head {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin-bottom: 8px;
-}
+  .rtemplate-browser__card:hover {
+    transform: translateY(-2px);
+  }
 
-.rtemplate-browser__avatar {
-  flex-shrink: 0;
-  background: linear-gradient(135deg, #6b93f5, #9b7cf0);
-  color: #fff;
-  font-weight: 600;
-}
+  .rtemplate-browser__head {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
 
-.rtemplate-browser__meta {
-  min-width: 0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
+  .rtemplate-browser__avatar {
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #6b93f5, #9b7cf0);
+    color: #fff;
+    font-weight: 600;
+  }
 
-.rtemplate-browser__title {
-  font-weight: 600;
-  font-size: 15px;
-  line-height: 1.3;
-  color: var(--ra-color-text-primary, #1e2235);
-}
+  .rtemplate-browser__meta {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
 
-.rtemplate-browser__desc {
-  margin: 0 0 8px;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--ra-color-text-secondary, #5c6178);
-  min-height: 3.9em;
-}
+  .rtemplate-browser__title {
+    font-weight: 600;
+    font-size: 15px;
+    line-height: 1.3;
+    color: var(--ra-color-text-primary, #1e2235);
+  }
 
-.rtemplate-browser__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 8px;
-}
+  .rtemplate-browser__desc {
+    margin: 0 0 8px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ra-color-text-secondary, #5c6178);
+    min-height: 3.9em;
+  }
 
-.rtemplate-browser__footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding-top: 4px;
-  border-top: 1px solid var(--ra-color-border-light, #eef0f6);
-}
+  .rtemplate-browser__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 8px;
+  }
 
-.rtemplate-browser__usage {
-  font-size: 12px;
-  color: var(--ra-color-text-tertiary, #6e7389);
-  white-space: nowrap;
-}
+  .rtemplate-browser__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 4px;
+    border-top: 1px solid var(--ra-color-border-light, #eef0f6);
+  }
+
+  .rtemplate-browser__usage {
+    font-size: 12px;
+    color: var(--ra-color-text-tertiary, #6e7389);
+    white-space: nowrap;
+  }
 </style>

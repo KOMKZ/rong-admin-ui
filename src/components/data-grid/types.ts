@@ -58,6 +58,19 @@ export interface RDataGridEmits {
   (e: 'save', data: { columns: DataGridColumn[]; rows: Record<string, unknown>[] }): void
 }
 
+export interface RDataGridExpose {
+  getGridApi: () => unknown
+  getAllRows: () => Record<string, unknown>[]
+  addRow: () => void
+  addColumn: () => void
+  deleteSelectedRows: () => void
+  exportCsv: () => void
+  getTableData: () => {
+    columns: DataGridColumn[]
+    rows: Record<string, unknown>[]
+  }
+}
+
 export const DEFAULT_LOCALE: DataGridLocale = {
   noRowsToShow: '暂无数据',
   loading: '加载中...',

@@ -8,6 +8,6 @@
     "noUnusedParameters": false,
     "types": ["node"]
   },
-  "include": ["dist/**/*.d.ts"],
+  "include": ["dist/index.d.ts"],
   "exclude": []
 }

@@ -1,76 +1,76 @@
 <script lang="ts" setup>
-import { NodeViewWrapper, nodeViewProps } from '@tiptap/vue-3'
-import { ref, watch, onMounted, computed } from 'vue'
-import { Play, Pencil, Copy, Trash2 } from 'lucide-vue-next'
+  import { NodeViewWrapper, nodeViewProps } from '@tiptap/vue-3'
+  import { ref, watch, onMounted, computed } from 'vue'
+  import { Play, Pencil, Copy, Trash2 } from 'lucide-vue-next'
 
-const props = defineProps(nodeViewProps)
-const isEditable = computed(() => props.editor?.isEditable ?? true)
+  const props = defineProps(nodeViewProps)
+  const isEditable = computed(() => props.editor?.isEditable ?? true)
 
-const code = ref(props.node.attrs.code || 'graph TD;\nA-->B;')
-const svgContent = ref('')
-const errorMessage = ref('')
-const showEditor = ref(false)
-const isRendering = ref(false)
+  const code = ref(props.node.attrs.code || 'graph TD;\nA-->B;')
+  const svgContent = ref('')
+  const errorMessage = ref('')
+  const showEditor = ref(false)
+  const isRendering = ref(false)
 
-const renderDiagram = async () => {
-  isRendering.value = true
-  try {
-    const mermaid = (await import('mermaid')).default
-    mermaid.initialize({ startOnLoad: false, securityLevel: 'loose' })
-    const id = `mermaid-${Math.random().toString(36).slice(2, 9)}`
-    const { svg } = await mermaid.render(id, code.value)
-    svgContent.value = svg
-    errorMessage.value = ''
-  } catch (error: any) {
-    errorMessage.value = error?.message || '渲染失败，请检查语法'
-  } finally {
-    isRendering.value = false
+  const renderDiagram = async () => {
+    isRendering.value = true
+    try {
+      const mermaid = (await import('mermaid')).default
+      mermaid.initialize({ startOnLoad: false, securityLevel: 'loose' })
+      const id = `mermaid-${Math.random().toString(36).slice(2, 9)}`
+      const { svg } = await mermaid.render(id, code.value)
+      svgContent.value = svg
+      errorMessage.value = ''
+    } catch (error: any) {
+      errorMessage.value = error?.message || '渲染失败，请检查语法'
+    } finally {
+      isRendering.value = false
+    }
   }
-}
 
-let renderTimer: ReturnType<typeof setTimeout> | null = null
-function scheduleRender() {
-  if (renderTimer) clearTimeout(renderTimer)
-  renderTimer = setTimeout(renderDiagram, 300)
-}
-
-function toggleEdit() {
-  showEditor.value = !showEditor.value
-}
-
-async function copyCode() {
-  try {
-    await navigator.clipboard.writeText(code.value)
-  } catch {
-    /* ignore */
+  let renderTimer: ReturnType<typeof setTimeout> | null = null
+  function scheduleRender() {
+    if (renderTimer) clearTimeout(renderTimer)
+    renderTimer = setTimeout(renderDiagram, 300)
   }
-}
 
-watch(
-  () => props.node.attrs.code,
-  (val) => {
-    if (val !== code.value) code.value = val
-  },
-)
+  function toggleEdit() {
+    showEditor.value = !showEditor.value
+  }
 
-watch(
-  code,
-  (val) => {
-    props.updateAttributes({ code: val })
-    scheduleRender()
-  },
-  { immediate: true },
-)
+  async function copyCode() {
+    try {
+      await navigator.clipboard.writeText(code.value)
+    } catch {
+      /* ignore */
+    }
+  }
 
-watch(
-  isEditable,
-  (val) => {
-    if (!val) showEditor.value = false
-  },
-  { immediate: true },
-)
+  watch(
+    () => props.node.attrs.code,
+    (val) => {
+      if (val !== code.value) code.value = val
+    },
+  )
 
-onMounted(renderDiagram)
+  watch(
+    code,
+    (val) => {
+      props.updateAttributes({ code: val })
+      scheduleRender()
+    },
+    { immediate: true },
+  )
+
+  watch(
+    isEditable,
+    (val) => {
+      if (!val) showEditor.value = false
+    },
+    { immediate: true },
+  )
+
+  onMounted(renderDiagram)
 </script>
 
 <template>
@@ -119,109 +119,109 @@ onMounted(renderDiagram)
 </template>
 
 <style>
-.rte-mermaid-block {
-  border: 1px solid var(--ra-color-border-default, #e5e7eb);
-  border-radius: var(--ra-radius-lg, 8px);
-  padding: 12px;
-  background: var(--ra-color-bg-muted, #f8fafc);
-  margin: 16px 0;
-}
+  .rte-mermaid-block {
+    border: 1px solid var(--ra-color-border-default, #e5e7eb);
+    border-radius: var(--ra-radius-lg, 8px);
+    padding: 12px;
+    background: var(--ra-color-bg-muted, #f8fafc);
+    margin: 16px 0;
+  }
 
-.rte-mermaid-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 10px;
-}
+  .rte-mermaid-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
 
-.rte-mermaid-toolbar__left,
-.rte-mermaid-toolbar__right {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-}
+  .rte-mermaid-toolbar__left,
+  .rte-mermaid-toolbar__right {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
 
-.rte-mermaid-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  font-size: 12px;
-  border: 1px solid var(--ra-color-border-default, #d0d7de);
-  border-radius: var(--ra-radius-md, 4px);
-  background: var(--ra-color-bg-surface, #fff);
-  color: var(--ra-color-text-secondary, #57606a);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
+  .rte-mermaid-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+    border: 1px solid var(--ra-color-border-default, #d0d7de);
+    border-radius: var(--ra-radius-md, 4px);
+    background: var(--ra-color-bg-surface, #fff);
+    color: var(--ra-color-text-secondary, #57606a);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
 
-.rte-mermaid-btn:hover:not(:disabled) {
-  background: var(--ra-color-bg-muted, #f3f4f6);
-  color: var(--ra-color-text-primary, #24292f);
-}
+  .rte-mermaid-btn:hover:not(:disabled) {
+    background: var(--ra-color-bg-muted, #f3f4f6);
+    color: var(--ra-color-text-primary, #24292f);
+  }
 
-.rte-mermaid-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+  .rte-mermaid-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 
-.rte-mermaid-btn--primary {
-  background: var(--ra-color-brand-primary, #0969da);
-  color: #fff;
-  border-color: var(--ra-color-brand-primary, #0969da);
-}
+  .rte-mermaid-btn--primary {
+    background: var(--ra-color-brand-primary, #0969da);
+    color: #fff;
+    border-color: var(--ra-color-brand-primary, #0969da);
+  }
 
-.rte-mermaid-btn--primary:hover:not(:disabled) {
-  background: var(--ra-color-brand-primary-hover, #0860c4);
-  color: #fff;
-}
+  .rte-mermaid-btn--primary:hover:not(:disabled) {
+    background: var(--ra-color-brand-primary-hover, #0860c4);
+    color: #fff;
+  }
 
-.rte-mermaid-btn--ghost {
-  border: none;
-  background: transparent;
-  padding: 4px 6px;
-}
+  .rte-mermaid-btn--ghost {
+    border: none;
+    background: transparent;
+    padding: 4px 6px;
+  }
 
-.rte-mermaid-btn--danger:hover {
-  color: var(--ra-color-danger, #cf222e);
-}
+  .rte-mermaid-btn--danger:hover {
+    color: var(--ra-color-danger, #cf222e);
+  }
 
-.rte-mermaid-textarea {
-  width: 100%;
-  min-height: 120px;
-  font-family: 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
-  font-size: 13px;
-  border-radius: var(--ra-radius-md, 6px);
-  border: 1px solid var(--ra-color-border-default, #d1d5db);
-  padding: 10px;
-  background: var(--ra-color-bg-surface, #fff);
-  resize: vertical;
-  margin-bottom: 12px;
-  outline: none;
-  box-sizing: border-box;
-}
+  .rte-mermaid-textarea {
+    width: 100%;
+    min-height: 120px;
+    font-family: 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
+    font-size: 13px;
+    border-radius: var(--ra-radius-md, 6px);
+    border: 1px solid var(--ra-color-border-default, #d1d5db);
+    padding: 10px;
+    background: var(--ra-color-bg-surface, #fff);
+    resize: vertical;
+    margin-bottom: 12px;
+    outline: none;
+    box-sizing: border-box;
+  }
 
-.rte-mermaid-textarea:focus {
-  border-color: var(--ra-color-brand-primary, #0969da);
-  box-shadow: 0 0 0 2px var(--ra-color-focus-ring, rgba(9, 105, 218, 0.3));
-}
+  .rte-mermaid-textarea:focus {
+    border-color: var(--ra-color-brand-primary, #0969da);
+    box-shadow: 0 0 0 2px var(--ra-color-focus-ring, rgba(9, 105, 218, 0.3));
+  }
 
-.rte-mermaid-preview {
-  border-radius: var(--ra-radius-md, 6px);
-  background: var(--ra-color-bg-surface, #fff);
-  padding: 16px;
-  min-height: 100px;
-  border: 1px solid var(--ra-color-border-light, #e2e8f0);
-  overflow: auto;
-}
+  .rte-mermaid-preview {
+    border-radius: var(--ra-radius-md, 6px);
+    background: var(--ra-color-bg-surface, #fff);
+    padding: 16px;
+    min-height: 100px;
+    border: 1px solid var(--ra-color-border-light, #e2e8f0);
+    overflow: auto;
+  }
 
-.rte-mermaid-preview--error {
-  border-color: var(--ra-color-danger, #f87171);
-  background: #fef2f2;
-}
+  .rte-mermaid-preview--error {
+    border-color: var(--ra-color-danger, #f87171);
+    background: #fef2f2;
+  }
 
-.rte-mermaid-error {
-  color: var(--ra-color-danger, #b91c1c);
-  font-size: 13px;
-}
+  .rte-mermaid-error {
+    color: var(--ra-color-danger, #b91c1c);
+    font-size: 13px;
+  }
 </style>

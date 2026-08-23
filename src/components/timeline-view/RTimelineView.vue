@@ -1,37 +1,44 @@
 <script lang="ts" setup>
-import { type PropType } from 'vue'
-import { NTimeline, NTimelineItem, NText, NTag, NSpace } from 'naive-ui'
+  import { type PropType } from 'vue'
+  import { NTimeline, NTimelineItem, NText, NTag, NSpace } from 'naive-ui'
 
-export type TimelineEntryStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped'
+  export type TimelineEntryStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped'
 
-export interface TimelineEntry {
-  nodeId: string
-  label: string
-  status: TimelineEntryStatus
-  startMs: number
-  endMs: number
-  durationMs: number
-  error?: string
-  input?: Record<string, unknown>
-  output?: Record<string, unknown>
-  tokenUsage?: { inputTokens: number; outputTokens: number; totalTokens: number }
-}
-
-defineProps({
-  entries: { type: Array as PropType<TimelineEntry[]>, required: true },
-  totalMs: { type: Number, default: 0 },
-  showDetail: { type: Boolean, default: false },
-})
-
-function statusType(s: TimelineEntryStatus): 'default' | 'info' | 'success' | 'error' | 'warning' {
-  switch (s) {
-    case 'running': return 'info'
-    case 'completed': return 'success'
-    case 'failed': return 'error'
-    case 'skipped': return 'warning'
-    default: return 'default'
+  export interface TimelineEntry {
+    nodeId: string
+    label: string
+    status: TimelineEntryStatus
+    startMs: number
+    endMs: number
+    durationMs: number
+    error?: string
+    input?: Record<string, unknown>
+    output?: Record<string, unknown>
+    tokenUsage?: { inputTokens: number; outputTokens: number; totalTokens: number }
   }
-}
+
+  defineProps({
+    entries: { type: Array as PropType<TimelineEntry[]>, required: true },
+    totalMs: { type: Number, default: 0 },
+    showDetail: { type: Boolean, default: false },
+  })
+
+  function statusType(
+    s: TimelineEntryStatus,
+  ): 'default' | 'info' | 'success' | 'error' | 'warning' {
+    switch (s) {
+      case 'running':
+        return 'info'
+      case 'completed':
+        return 'success'
+      case 'failed':
+        return 'error'
+      case 'skipped':
+        return 'warning'
+      default:
+        return 'default'
+    }
+  }
 </script>
 
 <template>
@@ -60,7 +67,8 @@ function statusType(s: TimelineEntryStatus): 'default' | 'info' | 'success' | 'e
         <template v-if="showDetail" #default>
           <div v-if="entry.tokenUsage" class="r-timeline-view__tokens">
             <NText depth="3" style="font-size: 11px">
-              Tokens: {{ entry.tokenUsage.inputTokens }} in / {{ entry.tokenUsage.outputTokens }} out
+              Tokens: {{ entry.tokenUsage.inputTokens }} in /
+              {{ entry.tokenUsage.outputTokens }} out
             </NText>
           </div>
           <div v-if="entry.error" class="r-timeline-view__error">
@@ -73,10 +81,10 @@ function statusType(s: TimelineEntryStatus): 'default' | 'info' | 'success' | 'e
 </template>
 
 <style scoped>
-.r-timeline-view__tokens {
-  margin-top: 2px;
-}
-.r-timeline-view__error {
-  margin-top: 2px;
-}
+  .r-timeline-view__tokens {
+    margin-top: 2px;
+  }
+  .r-timeline-view__error {
+    margin-top: 2px;
+  }
 </style>

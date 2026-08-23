@@ -10,7 +10,6 @@
       '--r-docs-print-mermaid-max-width': printSettings.mermaidAutoFit
         ? '100%'
         : `calc(100% * ${printSettings.mermaidScale / 100})`,
-      '--r-docs-academic-section-gap': academicSectionGapPt,
     }"
     data-testid="docs-browser"
   >
@@ -315,7 +314,11 @@
       <div
         class="r-docs-content-wrapper"
         :class="{ 'r-docs-content-wrapper--brush': highlight.highlightMode.value }"
-        :style="highlight.highlightMode.value ? { '--r-docs-selection-color': highlight.COLOR_MAP[highlight.activeColor.value] } : undefined"
+        :style="
+          highlight.highlightMode.value
+            ? { '--r-docs-selection-color': highlight.COLOR_MAP[highlight.activeColor.value] }
+            : undefined
+        "
         @mouseup="handleTextSelection"
         @click="handleHighlightClick"
       >
@@ -344,15 +347,29 @@
               @click.stop
             >
               <span class="r-docs-highlight-popover__text" :title="highlightPopover.text">
-                {{ highlightPopover.text.length > 20 ? highlightPopover.text.slice(0, 20) + '…' : highlightPopover.text }}
+                {{
+                  highlightPopover.text.length > 20
+                    ? highlightPopover.text.slice(0, 20) + '…'
+                    : highlightPopover.text
+                }}
               </span>
               <button
                 class="r-docs-highlight-popover__btn r-docs-highlight-popover__btn--note"
                 title="备注"
                 @click="handlePopoverNote"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="M12 20h9" />
+                  <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                 </svg>
               </button>
               <button
@@ -360,8 +377,20 @@
                 title="删除高亮"
                 @click="handlePopoverDelete"
               >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <polyline points="3 6 5 6 21 6" />
+                  <path
+                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                  />
                 </svg>
               </button>
             </div>
@@ -423,7 +452,9 @@
         <div class="r-docs-print-dialog" role="dialog" aria-modal="true" aria-label="导出 PDF 设置">
           <div class="r-docs-print-dialog__header">
             <h3>导出 PDF 设置</h3>
-            <button class="r-docs-print-close" aria-label="关闭" @click="closePrintDialog">×</button>
+            <button class="r-docs-print-close" aria-label="关闭" @click="closePrintDialog">
+              ×
+            </button>
           </div>
 
           <div class="r-docs-print-section">
@@ -459,7 +490,7 @@
           </div>
 
           <div class="r-docs-print-section">
-            <p class="r-docs-print-section__title">排版模板</p>
+            <p class="r-docs-print-section__title">打印主题</p>
             <div class="r-docs-print-grid">
               <label>
                 <input v-model="printSettings.theme" type="radio" value="paper" />
@@ -472,70 +503,6 @@
               <label>
                 <input v-model="printSettings.theme" type="radio" value="github" />
                 GitHub 风格
-              </label>
-              <label>
-                <input v-model="printSettings.theme" type="radio" value="academic" />
-                学术论文（双栏紧凑）
-              </label>
-            </div>
-          </div>
-
-          <div v-if="printSettings.theme === 'academic'" class="r-docs-print-section">
-            <p class="r-docs-print-section__title">表格字号（学术论文）</p>
-            <div class="r-docs-print-grid">
-              <label>
-                <input v-model="printSettings.academicTableSize" type="radio" value="auto" />
-                自动（按列数+内容长度）
-              </label>
-              <label>
-                <input
-                  v-model.number="printSettings.academicTableSize"
-                  type="radio"
-                  :value="9"
-                />
-                9pt
-              </label>
-              <label>
-                <input
-                  v-model.number="printSettings.academicTableSize"
-                  type="radio"
-                  :value="8"
-                />
-                8pt
-              </label>
-              <label>
-                <input
-                  v-model.number="printSettings.academicTableSize"
-                  type="radio"
-                  :value="7"
-                />
-                7pt（推荐紧凑表格）
-              </label>
-              <label>
-                <input
-                  v-model.number="printSettings.academicTableSize"
-                  type="radio"
-                  :value="6"
-                />
-                6pt（极紧凑）
-              </label>
-            </div>
-          </div>
-
-          <div v-if="printSettings.theme === 'academic'" class="r-docs-print-section">
-            <p class="r-docs-print-section__title">章节间距（学术论文）</p>
-            <div class="r-docs-print-grid">
-              <label>
-                <input v-model="printSettings.academicSectionGap" type="radio" value="compact" />
-                紧凑
-              </label>
-              <label>
-                <input v-model="printSettings.academicSectionGap" type="radio" value="normal" />
-                标准（推荐）
-              </label>
-              <label>
-                <input v-model="printSettings.academicSectionGap" type="radio" value="loose" />
-                宽松
               </label>
             </div>
           </div>
@@ -595,1839 +562,1540 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick, toRef } from 'vue'
-import { MarkdownToc } from '../markdown-preview'
-import DirectorySidebar from './components/DirectorySidebar.vue'
-import FileList from './components/FileList.vue'
-import ContentViewer from './components/ContentViewer.vue'
-import HighlightToolbar from './components/HighlightToolbar.vue'
-import HighlightPanel from './components/HighlightPanel.vue'
-import { useHighlight } from './composables/useHighlight'
-import type {
-  DocsApiAdapter,
-  HighlightApiAdapter,
-  DocDirectory,
-  DocFileItem,
-  DocFileContent,
-  DocSortBy,
-  DocSortOrder,
-  HighlightColor,
-  SerializedRange,
-} from './types'
+  import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick, toRef } from 'vue'
+  import { MarkdownToc } from '../markdown-preview'
+  import DirectorySidebar from './components/DirectorySidebar.vue'
+  import FileList from './components/FileList.vue'
+  import ContentViewer from './components/ContentViewer.vue'
+  import HighlightToolbar from './components/HighlightToolbar.vue'
+  import HighlightPanel from './components/HighlightPanel.vue'
+  import { useHighlight } from './composables/useHighlight'
+  import type {
+    DocsApiAdapter,
+    HighlightApiAdapter,
+    DocDirectory,
+    DocFileItem,
+    DocFileContent,
+    DocSortBy,
+    DocSortOrder,
+    HighlightColor,
+    SerializedRange,
+  } from './types'
 
-const props = withDefaults(
-  defineProps<{
-    api: DocsApiAdapter
-    highlightApi?: HighlightApiAdapter
-    cacheKey?: string
-    height?: string
-    enableToc?: boolean
-    enableCache?: boolean
-    enableFullscreen?: boolean
-    enableHighlight?: boolean
-    activeFileTag?: string
-  }>(),
-  {
-    cacheKey: 'r-docs-cache-v1',
-    height: 'calc(100vh - 64px)',
-    enableToc: true,
-    enableCache: true,
-    enableFullscreen: true,
-    enableHighlight: false,
-    activeFileTag: '',
-  },
-)
+  const props = withDefaults(
+    defineProps<{
+      api: DocsApiAdapter
+      highlightApi?: HighlightApiAdapter
+      cacheKey?: string
+      height?: string
+      enableToc?: boolean
+      enableCache?: boolean
+      enableFullscreen?: boolean
+      enableHighlight?: boolean
+      activeFileTag?: string
+    }>(),
+    {
+      cacheKey: 'r-docs-cache-v1',
+      height: 'calc(100vh - 64px)',
+      enableToc: true,
+      enableCache: true,
+      enableFullscreen: true,
+      enableHighlight: false,
+      activeFileTag: '',
+    },
+  )
 
-type PrintOrientation = 'portrait' | 'landscape'
-type PrintMarginPreset = 'narrow' | 'normal' | 'wide'
-type PrintThemePreset = 'paper' | 'ink' | 'github' | 'academic'
-type PrintMermaidScale = 100 | 90 | 80
-type PrintAcademicTableSize = 'auto' | 9 | 8 | 7 | 6
-type PrintAcademicSectionGap = 'compact' | 'normal' | 'loose'
+  type PrintOrientation = 'portrait' | 'landscape'
+  type PrintMarginPreset = 'narrow' | 'normal' | 'wide'
+  type PrintThemePreset = 'paper' | 'ink' | 'github'
+  type PrintMermaidScale = 100 | 90 | 80
 
-type PrintSettings = {
-  orientation: PrintOrientation
-  marginPreset: PrintMarginPreset
-  theme: PrintThemePreset
-  mermaidScale: PrintMermaidScale
-  mermaidAutoFit: boolean
-  academicTableSize: PrintAcademicTableSize
-  academicSectionGap: PrintAcademicSectionGap
-}
-
-const ACADEMIC_SECTION_GAP_PT: Record<PrintAcademicSectionGap, string> = {
-  compact: '12pt',
-  normal: '20pt',
-  loose: '30pt',
-}
-
-const PRINT_SETTINGS_STORAGE_KEY = 'r-docs-print-settings-v1'
-
-const emit = defineEmits<{
-  (e: 'file-select', file: DocFileItem): void
-  (e: 'file-tag-change', tag: string): void
-  (e: 'directory-change', dir: string): void
-  (e: 'refresh'): void
-  (e: 'cache-clear'): void
-}>()
-
-// --- 状态 ---
-const fileListLoading = ref(false)
-const contentLoading = ref(false)
-const loadError = ref<string | null>(null)
-const files = ref<DocFileItem[]>([])
-const directories = ref<DocDirectory[]>([])
-const activeDir = ref('')
-const selectedFile = ref<DocFileItem | null>(null)
-const fileContent = ref<DocFileContent | null>(null)
-const isCached = ref(false)
-const isFullscreen = ref(false)
-const sortBy = ref<DocSortBy>('mod_time')
-const sortOrder = ref<DocSortOrder>('desc')
-const tocVisible = ref(false)
-const expandedDirKeys = ref<Set<string>>(new Set())
-const fileCache = ref<Record<string, DocFileContent>>({})
-const printDialogVisible = ref(false)
-const isPrinting = ref(false)
-const printSettings = ref<PrintSettings>({
-  orientation: 'portrait',
-  marginPreset: 'narrow',
-  theme: 'paper',
-  mermaidScale: 90,
-  mermaidAutoFit: true,
-  academicTableSize: 'auto',
-  academicSectionGap: 'normal',
-})
-let printStyleEl: HTMLStyleElement | null = null
-
-const academicSectionGapPt = computed(
-  () => ACADEMIC_SECTION_GAP_PT[printSettings.value.academicSectionGap] ?? ACADEMIC_SECTION_GAP_PT.normal,
-)
-
-// --- 高亮 ---
-const highlightSourceKey = computed(() => {
-  if (!selectedFile.value) return ''
-  return `${selectedFile.value.directory}::${selectedFile.value.path}`
-})
-
-const highlight = useHighlight({
-  api: toRef(props, 'highlightApi'),
-  sourceType: ref('doc'),
-  sourceId: ref(undefined),
-  sourceKey: highlightSourceKey,
-})
-
-const showHighlight = computed(() => props.enableHighlight && props.highlightApi)
-
-const highlightPopover = reactive({
-  visible: false,
-  highlightId: 0,
-  text: '',
-  top: 0,
-  left: 0,
-})
-
-function handleHighlightClick(e: MouseEvent) {
-  const target = (e.target as HTMLElement)?.closest?.('.r-docs-highlight-mark') as HTMLElement | null
-  if (!target || !showHighlight.value) {
-    dismissPopover()
-    return
+  type PrintSettings = {
+    orientation: PrintOrientation
+    marginPreset: PrintMarginPreset
+    theme: PrintThemePreset
+    mermaidScale: PrintMermaidScale
+    mermaidAutoFit: boolean
   }
-  const idStr = target.dataset.highlightId
-  if (!idStr) return
 
-  const id = Number(idStr)
-  const item = highlight.highlights.value.find(h => h.id === id)
-  if (!item) return
+  const PRINT_SETTINGS_STORAGE_KEY = 'r-docs-print-settings-v1'
 
-  const rect = target.getBoundingClientRect()
-  highlightPopover.highlightId = id
-  highlightPopover.text = item.text
-  highlightPopover.top = rect.top - 40
-  highlightPopover.left = rect.left + rect.width / 2
-  highlightPopover.visible = true
-}
+  const emit = defineEmits<{
+    (e: 'file-select', file: DocFileItem): void
+    (e: 'file-tag-change', tag: string): void
+    (e: 'directory-change', dir: string): void
+    (e: 'refresh'): void
+    (e: 'cache-clear'): void
+  }>()
 
-function dismissPopover() {
-  highlightPopover.visible = false
-}
-
-function handlePopoverDelete() {
-  const id = highlightPopover.highlightId
-  dismissPopover()
-  handleDeleteHighlight(id)
-  showToast('已删除高亮', 'info')
-}
-
-function handlePopoverNote() {
-  const id = highlightPopover.highlightId
-  dismissPopover()
-  highlight.panelVisible.value = true
-  nextTick(() => highlight.startEditNote(id))
-}
-
-function onDocumentClick(e: MouseEvent) {
-  if (!highlightPopover.visible) return
-  const popoverEl = document.querySelector('.r-docs-highlight-popover')
-  if (popoverEl && popoverEl.contains(e.target as Node)) return
-  dismissPopover()
-}
-
-onMounted(() => document.addEventListener('click', onDocumentClick, true))
-onUnmounted(() => document.removeEventListener('click', onDocumentClick, true))
-
-let skipNextRestoreWatch = false
-
-function collectOverlappingHighlightIds(range: Range): number[] {
-  const ids = new Set<number>()
-  const marks = document.querySelectorAll<HTMLElement>('.r-docs-highlight-mark[data-highlight-id]')
-  for (const mark of marks) {
-    if (!range.intersectsNode(mark)) continue
-    const id = Number(mark.dataset.highlightId)
-    if (id) ids.add(id)
-  }
-  return Array.from(ids)
-}
-
-function removeHighlightMarksById(ids: Set<number>) {
-  const marks = document.querySelectorAll('.r-docs-highlight-mark[data-highlight-id]')
-  for (const mark of marks) {
-    const id = Number((mark as HTMLElement).dataset.highlightId)
-    if (!ids.has(id)) continue
-    const parent = mark.parentNode
-    if (!parent) continue
-    while (mark.firstChild) parent.insertBefore(mark.firstChild, mark)
-    parent.removeChild(mark)
-    parent.normalize()
-  }
-}
-
-function handleTextSelection() {
-  if (!highlight.highlightMode.value || !showHighlight.value) return
-
-  const selection = window.getSelection()
-  if (!selection || selection.isCollapsed || !selection.rangeCount) return
-
-  const range = selection.getRangeAt(0)
-  const text = selection.toString().trim()
-  if (!text) return
-
-  const contentBody = document.querySelector('.r-docs-content-body')
-  if (!contentBody || !contentBody.contains(range.commonAncestorContainer)) return
-
-  const overlappingIds = collectOverlappingHighlightIds(range)
-
-  if (overlappingIds.length > 0) {
-    skipNextRestoreWatch = true
-    const deletePromises = overlappingIds.map(id => highlight.deleteHighlight(id))
-    Promise.all(deletePromises).then(() => {
-      removeHighlightMarksById(new Set(overlappingIds))
-      createAndApplyHighlight(text, contentBody, selection)
-    })
-  } else {
-    createAndApplyHighlight(text, contentBody, selection)
-  }
-}
-
-function createAndApplyHighlight(text: string, contentBody: Element, selection: Selection) {
-  const range = selection.getRangeAt(0)
-  const serialized = serializeRange(range, contentBody)
-  if (!serialized) return
-
-  skipNextRestoreWatch = true
-  highlight.createHighlight(text, serialized).then((item) => {
-    if (item) {
-      applyHighlightMark(range, item.color, item.id)
-      selection.removeAllRanges()
-    }
+  // --- 状态 ---
+  const fileListLoading = ref(false)
+  const contentLoading = ref(false)
+  const loadError = ref<string | null>(null)
+  const files = ref<DocFileItem[]>([])
+  const directories = ref<DocDirectory[]>([])
+  const activeDir = ref('')
+  const selectedFile = ref<DocFileItem | null>(null)
+  const fileContent = ref<DocFileContent | null>(null)
+  const isCached = ref(false)
+  const isFullscreen = ref(false)
+  const sortBy = ref<DocSortBy>('mod_time')
+  const sortOrder = ref<DocSortOrder>('desc')
+  const tocVisible = ref(false)
+  const expandedDirKeys = ref<Set<string>>(new Set())
+  const fileCache = ref<Record<string, DocFileContent>>({})
+  const printDialogVisible = ref(false)
+  const isPrinting = ref(false)
+  const printSettings = ref<PrintSettings>({
+    orientation: 'portrait',
+    marginPreset: 'narrow',
+    theme: 'paper',
+    mermaidScale: 90,
+    mermaidAutoFit: true,
   })
-}
+  let printStyleEl: HTMLStyleElement | null = null
 
-function serializeRange(range: Range, root: Element): SerializedRange | null {
-  try {
-    return {
-      startContainerPath: getNodePath(range.startContainer, root),
-      startOffset: range.startOffset,
-      endContainerPath: getNodePath(range.endContainer, root),
-      endOffset: range.endOffset,
+  // --- 高亮 ---
+  const highlightSourceKey = computed(() => {
+    if (!selectedFile.value) return ''
+    return `${selectedFile.value.directory}::${selectedFile.value.path}`
+  })
+
+  const highlight = useHighlight({
+    api: toRef(props, 'highlightApi'),
+    sourceType: ref('doc'),
+    sourceId: ref(undefined),
+    sourceKey: highlightSourceKey,
+  })
+
+  const showHighlight = computed(() => props.enableHighlight && props.highlightApi)
+
+  const highlightPopover = reactive({
+    visible: false,
+    highlightId: 0,
+    text: '',
+    top: 0,
+    left: 0,
+  })
+
+  function handleHighlightClick(e: MouseEvent) {
+    const target = (e.target as HTMLElement)?.closest?.(
+      '.r-docs-highlight-mark',
+    ) as HTMLElement | null
+    if (!target || !showHighlight.value) {
+      dismissPopover()
+      return
     }
-  } catch {
-    return null
+    const idStr = target.dataset.highlightId
+    if (!idStr) return
+
+    const id = Number(idStr)
+    const item = highlight.highlights.value.find((h) => h.id === id)
+    if (!item) return
+
+    const rect = target.getBoundingClientRect()
+    highlightPopover.highlightId = id
+    highlightPopover.text = item.text
+    highlightPopover.top = rect.top - 40
+    highlightPopover.left = rect.left + rect.width / 2
+    highlightPopover.visible = true
   }
-}
 
-function getNodePath(node: Node, root: Element): string {
-  const path: number[] = []
-  let current: Node | null = node
-  while (current && current !== root) {
-    const parent: Node | null = current.parentNode
-    if (!parent) break
-    const children = Array.from(parent.childNodes)
-    path.unshift(children.indexOf(current as ChildNode))
-    current = parent
+  function dismissPopover() {
+    highlightPopover.visible = false
   }
-  return path.join('/')
-}
 
-function createMarkElement(color: string, bgColor: string, highlightId?: number): HTMLElement {
-  const mark = document.createElement('mark')
-  mark.className = 'r-docs-highlight-mark'
-  mark.dataset.highlightColor = color
-  if (highlightId != null) mark.dataset.highlightId = String(highlightId)
-  mark.style.background = bgColor
-  mark.style.borderRadius = '2px'
-  mark.style.padding = '0 1px'
-  return mark
-}
+  function handlePopoverDelete() {
+    const id = highlightPopover.highlightId
+    dismissPopover()
+    handleDeleteHighlight(id)
+    showToast('已删除高亮', 'info')
+  }
 
-function applyHighlightMark(range: Range, color: string, highlightId?: number) {
-  const bgColor = highlight.COLOR_MAP[color as HighlightColor] || highlight.COLOR_MAP.yellow
+  function handlePopoverNote() {
+    const id = highlightPopover.highlightId
+    dismissPopover()
+    highlight.panelVisible.value = true
+    nextTick(() => highlight.startEditNote(id))
+  }
 
-  try {
-    const mark = createMarkElement(color, bgColor, highlightId)
-    range.surroundContents(mark)
-  } catch {
-    const treeWalker = document.createTreeWalker(
-      range.commonAncestorContainer,
-      NodeFilter.SHOW_TEXT,
-      {
-        acceptNode(node) {
-          const r = document.createRange()
-          r.selectNodeContents(node)
-          return range.compareBoundaryPoints(Range.END_TO_START, r) < 0 &&
-            range.compareBoundaryPoints(Range.START_TO_END, r) > 0
-            ? NodeFilter.FILTER_ACCEPT
-            : NodeFilter.FILTER_REJECT
-        },
-      },
+  function onDocumentClick(e: MouseEvent) {
+    if (!highlightPopover.visible) return
+    const popoverEl = document.querySelector('.r-docs-highlight-popover')
+    if (popoverEl && popoverEl.contains(e.target as Node)) return
+    dismissPopover()
+  }
+
+  onMounted(() => document.addEventListener('click', onDocumentClick, true))
+  onUnmounted(() => document.removeEventListener('click', onDocumentClick, true))
+
+  let skipNextRestoreWatch = false
+
+  function collectOverlappingHighlightIds(range: Range): number[] {
+    const ids = new Set<number>()
+    const marks = document.querySelectorAll<HTMLElement>(
+      '.r-docs-highlight-mark[data-highlight-id]',
     )
-
-    const textNodes: Text[] = []
-    while (treeWalker.nextNode()) {
-      textNodes.push(treeWalker.currentNode as Text)
+    for (const mark of marks) {
+      if (!range.intersectsNode(mark)) continue
+      const id = Number(mark.dataset.highlightId)
+      if (id) ids.add(id)
     }
-
-    for (const textNode of textNodes) {
-      const mark = createMarkElement(color, bgColor, highlightId)
-      const nodeRange = document.createRange()
-      if (textNode === range.startContainer) {
-        nodeRange.setStart(textNode, range.startOffset)
-        nodeRange.setEnd(textNode, textNode.length)
-      } else if (textNode === range.endContainer) {
-        nodeRange.setStart(textNode, 0)
-        nodeRange.setEnd(textNode, range.endOffset)
-      } else {
-        nodeRange.selectNodeContents(textNode)
-      }
-      nodeRange.surroundContents(mark)
-    }
+    return Array.from(ids)
   }
-}
 
-function restoreHighlights() {
-  removeAllHighlightMarks()
-  const contentBody = document.querySelector('.r-docs-content-body')
-  if (!contentBody) return
-
-  for (const item of highlight.highlights.value) {
-    try {
-      const serialized: SerializedRange = JSON.parse(item.serialized_range)
-      const range = deserializeRange(serialized, contentBody)
-      if (range) {
-        applyHighlightMark(range, item.color, item.id)
-      }
-    } catch {
-      // skip broken ranges
-    }
-  }
-}
-
-function deserializeRange(serialized: SerializedRange, root: Element): Range | null {
-  try {
-    const startNode = resolveNodePath(serialized.startContainerPath, root)
-    const endNode = resolveNodePath(serialized.endContainerPath, root)
-    if (!startNode || !endNode) return null
-    const range = document.createRange()
-    range.setStart(startNode, serialized.startOffset)
-    range.setEnd(endNode, serialized.endOffset)
-    return range
-  } catch {
-    return null
-  }
-}
-
-function resolveNodePath(path: string, root: Element): Node | null {
-  if (!path) return root
-  const indices = path.split('/').map(Number)
-  let current: Node = root
-  for (const idx of indices) {
-    if (isNaN(idx) || !current.childNodes[idx]) return null
-    current = current.childNodes[idx]
-  }
-  return current
-}
-
-function removeAllHighlightMarks() {
-  const marks = document.querySelectorAll('.r-docs-highlight-mark')
-  marks.forEach((mark) => {
-    const parent = mark.parentNode
-    if (parent) {
-      while (mark.firstChild) {
-        parent.insertBefore(mark.firstChild, mark)
-      }
+  function removeHighlightMarksById(ids: Set<number>) {
+    const marks = document.querySelectorAll('.r-docs-highlight-mark[data-highlight-id]')
+    for (const mark of marks) {
+      const id = Number((mark as HTMLElement).dataset.highlightId)
+      if (!ids.has(id)) continue
+      const parent = mark.parentNode
+      if (!parent) continue
+      while (mark.firstChild) parent.insertBefore(mark.firstChild, mark)
       parent.removeChild(mark)
       parent.normalize()
     }
+  }
+
+  function handleTextSelection() {
+    if (!highlight.highlightMode.value || !showHighlight.value) return
+
+    const selection = window.getSelection()
+    if (!selection || selection.isCollapsed || !selection.rangeCount) return
+
+    const range = selection.getRangeAt(0)
+    const text = selection.toString().trim()
+    if (!text) return
+
+    const contentBody = document.querySelector('.r-docs-content-body')
+    if (!contentBody || !contentBody.contains(range.commonAncestorContainer)) return
+
+    const overlappingIds = collectOverlappingHighlightIds(range)
+
+    if (overlappingIds.length > 0) {
+      skipNextRestoreWatch = true
+      const deletePromises = overlappingIds.map((id) => highlight.deleteHighlight(id))
+      Promise.all(deletePromises).then(() => {
+        removeHighlightMarksById(new Set(overlappingIds))
+        createAndApplyHighlight(text, contentBody, selection)
+      })
+    } else {
+      createAndApplyHighlight(text, contentBody, selection)
+    }
+  }
+
+  function createAndApplyHighlight(text: string, contentBody: Element, selection: Selection) {
+    const range = selection.getRangeAt(0)
+    const serialized = serializeRange(range, contentBody)
+    if (!serialized) return
+
+    skipNextRestoreWatch = true
+    highlight.createHighlight(text, serialized).then((item) => {
+      if (item) {
+        applyHighlightMark(range, item.color, item.id)
+        selection.removeAllRanges()
+      }
+    })
+  }
+
+  function serializeRange(range: Range, root: Element): SerializedRange | null {
+    try {
+      return {
+        startContainerPath: getNodePath(range.startContainer, root),
+        startOffset: range.startOffset,
+        endContainerPath: getNodePath(range.endContainer, root),
+        endOffset: range.endOffset,
+      }
+    } catch {
+      return null
+    }
+  }
+
+  function getNodePath(node: Node, root: Element): string {
+    const path: number[] = []
+    let current: Node | null = node
+    while (current && current !== root) {
+      const parent: Node | null = current.parentNode
+      if (!parent) break
+      const children: Node[] = Array.from(parent.childNodes)
+      path.unshift(children.indexOf(current))
+      current = parent
+    }
+    return path.join('/')
+  }
+
+  function createMarkElement(color: string, bgColor: string, highlightId?: number): HTMLElement {
+    const mark = document.createElement('mark')
+    mark.className = 'r-docs-highlight-mark'
+    mark.dataset.highlightColor = color
+    if (highlightId != null) mark.dataset.highlightId = String(highlightId)
+    mark.style.background = bgColor
+    mark.style.borderRadius = '2px'
+    mark.style.padding = '0 1px'
+    return mark
+  }
+
+  function applyHighlightMark(range: Range, color: string, highlightId?: number) {
+    const bgColor = highlight.COLOR_MAP[color as HighlightColor] || highlight.COLOR_MAP.yellow
+
+    try {
+      const mark = createMarkElement(color, bgColor, highlightId)
+      range.surroundContents(mark)
+    } catch {
+      const treeWalker = document.createTreeWalker(
+        range.commonAncestorContainer,
+        NodeFilter.SHOW_TEXT,
+        {
+          acceptNode(node) {
+            const r = document.createRange()
+            r.selectNodeContents(node)
+            return range.compareBoundaryPoints(Range.END_TO_START, r) < 0 &&
+              range.compareBoundaryPoints(Range.START_TO_END, r) > 0
+              ? NodeFilter.FILTER_ACCEPT
+              : NodeFilter.FILTER_REJECT
+          },
+        },
+      )
+
+      const textNodes: Text[] = []
+      while (treeWalker.nextNode()) {
+        textNodes.push(treeWalker.currentNode as Text)
+      }
+
+      for (const textNode of textNodes) {
+        const mark = createMarkElement(color, bgColor, highlightId)
+        const nodeRange = document.createRange()
+        if (textNode === range.startContainer) {
+          nodeRange.setStart(textNode, range.startOffset)
+          nodeRange.setEnd(textNode, textNode.length)
+        } else if (textNode === range.endContainer) {
+          nodeRange.setStart(textNode, 0)
+          nodeRange.setEnd(textNode, range.endOffset)
+        } else {
+          nodeRange.selectNodeContents(textNode)
+        }
+        nodeRange.surroundContents(mark)
+      }
+    }
+  }
+
+  function restoreHighlights() {
+    removeAllHighlightMarks()
+    const contentBody = document.querySelector('.r-docs-content-body')
+    if (!contentBody) return
+
+    for (const item of highlight.highlights.value) {
+      try {
+        const serialized: SerializedRange = JSON.parse(item.serialized_range)
+        const range = deserializeRange(serialized, contentBody)
+        if (range) {
+          applyHighlightMark(range, item.color, item.id)
+        }
+      } catch {
+        // skip broken ranges
+      }
+    }
+  }
+
+  function deserializeRange(serialized: SerializedRange, root: Element): Range | null {
+    try {
+      const startNode = resolveNodePath(serialized.startContainerPath, root)
+      const endNode = resolveNodePath(serialized.endContainerPath, root)
+      if (!startNode || !endNode) return null
+      const range = document.createRange()
+      range.setStart(startNode, serialized.startOffset)
+      range.setEnd(endNode, serialized.endOffset)
+      return range
+    } catch {
+      return null
+    }
+  }
+
+  function resolveNodePath(path: string, root: Element): Node | null {
+    if (!path) return root
+    const indices = path.split('/').map(Number)
+    let current: Node = root
+    for (const idx of indices) {
+      if (isNaN(idx) || !current.childNodes[idx]) return null
+      current = current.childNodes[idx]
+    }
+    return current
+  }
+
+  function removeAllHighlightMarks() {
+    const marks = document.querySelectorAll('.r-docs-highlight-mark')
+    marks.forEach((mark) => {
+      const parent = mark.parentNode
+      if (parent) {
+        while (mark.firstChild) {
+          parent.insertBefore(mark.firstChild, mark)
+        }
+        parent.removeChild(mark)
+        parent.normalize()
+      }
+    })
+  }
+
+  async function handleCopyAllHighlights() {
+    const text = await highlight.copyAllHighlights()
+    if (text) {
+      await navigator.clipboard.writeText(text)
+      showToast('已复制到剪贴板', 'success')
+    }
+  }
+
+  async function handleClearAllHighlights() {
+    skipNextRestoreWatch = true
+    await highlight.clearAllHighlights()
+    removeAllHighlightMarks()
+    showToast('已清除全部高亮', 'info')
+  }
+
+  async function handleDeleteHighlight(id: number) {
+    skipNextRestoreWatch = true
+    await highlight.deleteHighlight(id)
+    restoreHighlights()
+  }
+
+  let pendingRestore = false
+
+  watch(highlightSourceKey, async (newKey, oldKey) => {
+    if (!newKey || !showHighlight.value) return
+    if (newKey === oldKey) return
+    removeAllHighlightMarks()
+    pendingRestore = true
+    await highlight.loadHighlights()
+    await nextTick()
+    scheduleRestore()
   })
-}
 
-async function handleCopyAllHighlights() {
-  const text = await highlight.copyAllHighlights()
-  if (text) {
-    await navigator.clipboard.writeText(text)
-    showToast('已复制到剪贴板', 'success')
-  }
-}
+  watch(
+    () => fileContent.value,
+    () => {
+      if (!showHighlight.value || !pendingRestore) return
+      nextTick(() => scheduleRestore())
+    },
+    { flush: 'post' },
+  )
 
-async function handleClearAllHighlights() {
-  skipNextRestoreWatch = true
-  await highlight.clearAllHighlights()
-  removeAllHighlightMarks()
-  showToast('已清除全部高亮', 'info')
-}
+  watch(
+    () => highlight.highlights.value.length,
+    () => {
+      if (!showHighlight.value) return
+      if (skipNextRestoreWatch) {
+        skipNextRestoreWatch = false
+        return
+      }
+      nextTick(() => scheduleRestore())
+    },
+    { flush: 'post' },
+  )
 
-async function handleDeleteHighlight(id: number) {
-  skipNextRestoreWatch = true
-  await highlight.deleteHighlight(id)
-  restoreHighlights()
-}
-
-let pendingRestore = false
-
-watch(highlightSourceKey, async (newKey, oldKey) => {
-  if (!newKey || !showHighlight.value) return
-  if (newKey === oldKey) return
-  removeAllHighlightMarks()
-  pendingRestore = true
-  await highlight.loadHighlights()
-  await nextTick()
-  scheduleRestore()
-})
-
-watch(() => fileContent.value, () => {
-  if (!showHighlight.value || !pendingRestore) return
-  nextTick(() => scheduleRestore())
-}, { flush: 'post' })
-
-watch(() => highlight.highlights.value.length, () => {
-  if (!showHighlight.value) return
-  if (skipNextRestoreWatch) {
-    skipNextRestoreWatch = false
-    return
-  }
-  nextTick(() => scheduleRestore())
-}, { flush: 'post' })
-
-function scheduleRestore() {
-  if (!highlight.highlights.value.length) {
+  function scheduleRestore() {
+    if (!highlight.highlights.value.length) {
+      pendingRestore = false
+      return
+    }
+    const contentBody = document.querySelector('.r-docs-content-body')
+    if (!contentBody || !contentBody.textContent?.trim()) {
+      setTimeout(scheduleRestore, 200)
+      return
+    }
     pendingRestore = false
-    return
+    restoreHighlights()
   }
-  const contentBody = document.querySelector('.r-docs-content-body')
-  if (!contentBody || !contentBody.textContent?.trim()) {
-    setTimeout(scheduleRestore, 200)
-    return
+
+  // --- 折叠状态 ---
+  const dirCollapsed = ref(false)
+  const fileListCollapsed = ref(false)
+
+  // --- 拖拽调宽 ---
+  const dirWidth = ref(200)
+  const fileListWidth = ref(280)
+  let resizeTarget: 'dir' | 'files' | null = null
+  let resizeStartX = 0
+  let resizeStartWidth = 0
+
+  function startResize(e: MouseEvent, target: 'dir' | 'files') {
+    e.preventDefault()
+    resizeTarget = target
+    resizeStartX = e.clientX
+    resizeStartWidth = target === 'dir' ? dirWidth.value : fileListWidth.value
+    document.addEventListener('mousemove', onResizeMove)
+    document.addEventListener('mouseup', onResizeEnd)
+    document.body.style.cursor = 'col-resize'
+    document.body.style.userSelect = 'none'
   }
-  pendingRestore = false
-  restoreHighlights()
-}
 
-// --- 折叠状态 ---
-const dirCollapsed = ref(false)
-const fileListCollapsed = ref(false)
-
-// --- 拖拽调宽 ---
-const dirWidth = ref(200)
-const fileListWidth = ref(280)
-let resizeTarget: 'dir' | 'files' | null = null
-let resizeStartX = 0
-let resizeStartWidth = 0
-
-function startResize(e: MouseEvent, target: 'dir' | 'files') {
-  e.preventDefault()
-  resizeTarget = target
-  resizeStartX = e.clientX
-  resizeStartWidth = target === 'dir' ? dirWidth.value : fileListWidth.value
-  document.addEventListener('mousemove', onResizeMove)
-  document.addEventListener('mouseup', onResizeEnd)
-  document.body.style.cursor = 'col-resize'
-  document.body.style.userSelect = 'none'
-}
-
-function onResizeMove(e: MouseEvent) {
-  if (!resizeTarget) return
-  const delta = e.clientX - resizeStartX
-  const newWidth = Math.max(120, Math.min(500, resizeStartWidth + delta))
-  if (resizeTarget === 'dir') {
-    dirWidth.value = newWidth
-  } else {
-    fileListWidth.value = newWidth
+  function onResizeMove(e: MouseEvent) {
+    if (!resizeTarget) return
+    const delta = e.clientX - resizeStartX
+    const newWidth = Math.max(120, Math.min(500, resizeStartWidth + delta))
+    if (resizeTarget === 'dir') {
+      dirWidth.value = newWidth
+    } else {
+      fileListWidth.value = newWidth
+    }
   }
-}
 
-function onResizeEnd() {
-  resizeTarget = null
-  document.removeEventListener('mousemove', onResizeMove)
-  document.removeEventListener('mouseup', onResizeEnd)
-  document.body.style.cursor = ''
-  document.body.style.userSelect = ''
-}
-
-// --- Toast 反馈 ---
-const toastMsg = ref('')
-const toastType = ref<'success' | 'info'>('success')
-let toastTimer: ReturnType<typeof setTimeout> | null = null
-
-function showToast(msg: string, type: 'success' | 'info' = 'success') {
-  toastMsg.value = msg
-  toastType.value = type
-  if (toastTimer) clearTimeout(toastTimer)
-  toastTimer = setTimeout(() => {
-    toastMsg.value = ''
-  }, 2000)
-}
-
-// --- 计算 ---
-const directoryTotalCount = computed(() => files.value.length)
-
-const filteredFiles = computed(() => {
-  if (!activeDir.value) return files.value
-
-  const parsed = parseDirectoryScope(activeDir.value)
-  return files.value.filter((file) => matchesDirectoryScope(file, parsed))
-})
-
-const isMarkdown = computed(() => fileContent.value?.name.endsWith('.md'))
-
-// --- 事件处理 ---
-function handleDirSelect(dir: string) {
-  activeDir.value = dir
-  emit('directory-change', dir)
-}
-
-function toggleDirectoryExpanded(scopeKey: string) {
-  const next = new Set(expandedDirKeys.value)
-  if (next.has(scopeKey)) {
-    next.delete(scopeKey)
-  } else {
-    next.add(scopeKey)
+  function onResizeEnd() {
+    resizeTarget = null
+    document.removeEventListener('mousemove', onResizeMove)
+    document.removeEventListener('mouseup', onResizeEnd)
+    document.body.style.cursor = ''
+    document.body.style.userSelect = ''
   }
-  expandedDirKeys.value = next
-}
 
-function buildExpandedScopeKeys(directory: string, filePath: string): Set<string> {
-  const keys = new Set<string>()
-  keys.add(directory)
+  // --- Toast 反馈 ---
+  const toastMsg = ref('')
+  const toastType = ref<'success' | 'info'>('success')
+  let toastTimer: ReturnType<typeof setTimeout> | null = null
 
-  const parentDir = getFileParentDirectory(filePath)
-  if (!parentDir) {
+  function showToast(msg: string, type: 'success' | 'info' = 'success') {
+    toastMsg.value = msg
+    toastType.value = type
+    if (toastTimer) clearTimeout(toastTimer)
+    toastTimer = setTimeout(() => {
+      toastMsg.value = ''
+    }, 2000)
+  }
+
+  // --- 计算 ---
+  const directoryTotalCount = computed(() => files.value.length)
+
+  const filteredFiles = computed(() => {
+    if (!activeDir.value) return files.value
+
+    const parsed = parseDirectoryScope(activeDir.value)
+    return files.value.filter((file) => matchesDirectoryScope(file, parsed))
+  })
+
+  const isMarkdown = computed(() => fileContent.value?.name.endsWith('.md'))
+
+  // --- 事件处理 ---
+  function handleDirSelect(dir: string) {
+    activeDir.value = dir
+    emit('directory-change', dir)
+  }
+
+  function toggleDirectoryExpanded(scopeKey: string) {
+    const next = new Set(expandedDirKeys.value)
+    if (next.has(scopeKey)) {
+      next.delete(scopeKey)
+    } else {
+      next.add(scopeKey)
+    }
+    expandedDirKeys.value = next
+  }
+
+  function buildExpandedScopeKeys(directory: string, filePath: string): Set<string> {
+    const keys = new Set<string>()
+    keys.add(directory)
+
+    const parentDir = getFileParentDirectory(filePath)
+    if (!parentDir) {
+      return keys
+    }
+
+    const segments = parentDir.split('/').filter(Boolean)
+    let currentPath = ''
+    for (const segment of segments) {
+      currentPath = currentPath ? `${currentPath}/${segment}` : segment
+      keys.add(`${directory}::${currentPath}`)
+    }
+
     return keys
   }
 
-  const segments = parentDir.split('/').filter(Boolean)
-  let currentPath = ''
-  for (const segment of segments) {
-    currentPath = currentPath ? `${currentPath}/${segment}` : segment
-    keys.add(`${directory}::${currentPath}`)
-  }
-
-  return keys
-}
-
-function handleLocateCurrentFile() {
-  if (!selectedFile.value) {
-    return
-  }
-
-  const file = selectedFile.value
-  activeDir.value = buildDirectoryScope(file.directory, file.path)
-  expandedDirKeys.value = buildExpandedScopeKeys(file.directory, file.path)
-  dirCollapsed.value = false
-  fileListCollapsed.value = false
-  emit('directory-change', activeDir.value)
-}
-
-function parseDirectoryScope(scope: string): { directory: string; path: string } {
-  const separatorIndex = scope.indexOf('::')
-  if (separatorIndex < 0) {
-    return { directory: scope, path: '' }
-  }
-  return {
-    directory: scope.slice(0, separatorIndex),
-    path: scope.slice(separatorIndex + 2),
-  }
-}
-
-function buildDirectoryScope(directory: string, filePath: string): string {
-  const parentDir = getFileParentDirectory(filePath)
-  if (!parentDir) {
-    return directory
-  }
-  return `${directory}::${parentDir}`
-}
-
-function getFileParentDirectory(filePath: string): string {
-  const normalizedPath = filePath.replace(/\\/g, '/')
-  const slashIndex = normalizedPath.lastIndexOf('/')
-  if (slashIndex < 0) {
-    return ''
-  }
-  return normalizedPath.slice(0, slashIndex)
-}
-
-function matchesDirectoryScope(file: DocFileItem, scope: { directory: string; path: string }): boolean {
-  if (file.directory !== scope.directory) {
-    return false
-  }
-  if (!scope.path) {
-    return true
-  }
-  const parentDir = getFileParentDirectory(file.path)
-  return parentDir === scope.path || parentDir.startsWith(`${scope.path}/`)
-}
-
-function handleSortModeChange(mode: { sortBy: DocSortBy; sortOrder: DocSortOrder }) {
-  if (sortBy.value === mode.sortBy && sortOrder.value === mode.sortOrder) return
-  sortBy.value = mode.sortBy
-  sortOrder.value = mode.sortOrder
-  loadFiles()
-}
-
-function toggleFullscreen() {
-  isFullscreen.value = !isFullscreen.value
-}
-
-function openPrintDialog() {
-  if (!fileContent.value || contentLoading.value) return
-  printDialogVisible.value = true
-}
-
-function closePrintDialog() {
-  printDialogVisible.value = false
-}
-
-function getPrintMarginMm(preset: PrintMarginPreset): number {
-  if (preset === 'narrow') return 8
-  if (preset === 'wide') return 18
-  return 12
-}
-
-function updatePrintStyleTag() {
-  const margin = getPrintMarginMm(printSettings.value.marginPreset)
-  const orientation = printSettings.value.orientation
-  const css = `@page { size: A4 ${orientation}; margin: ${margin}mm; }`
-
-  if (!printStyleEl) {
-    printStyleEl = document.createElement('style')
-    printStyleEl.setAttribute('data-r-docs-print-style', 'true')
-    document.head.appendChild(printStyleEl)
-  }
-  printStyleEl.textContent = css
-}
-
-async function waitForPrintAssets() {
-  await nextTick()
-  await new Promise<void>((resolve) => {
-    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
-  })
-
-  const images = Array.from(document.querySelectorAll('.r-docs-content-body img')) as HTMLImageElement[]
-  await Promise.all(
-    images.map((img) => {
-      if (img.complete) return Promise.resolve()
-      return new Promise<void>((resolve) => {
-        img.addEventListener('load', () => resolve(), { once: true })
-        img.addEventListener('error', () => resolve(), { once: true })
-      })
-    }),
-  )
-}
-
-function handleAfterPrint() {
-  isPrinting.value = false
-  clearAcademicTableSizes()
-}
-
-function adjustAcademicTableSizes() {
-  if (printSettings.value.theme !== 'academic') return
-  const tables = document.querySelectorAll<HTMLTableElement>(
-    '.r-docs-content-body .r-markdown-preview table',
-  )
-  const manual = printSettings.value.academicTableSize
-  tables.forEach((table) => {
-    let fontPt: number
-    if (manual !== 'auto') {
-      fontPt = manual
-    } else {
-      const rows = table.querySelectorAll('tr')
-      if (!rows.length) return
-      const colCount = rows[0].querySelectorAll('th, td').length || 1
-      let maxLen = 0
-      let totalLen = 0
-      let cellCount = 0
-      rows.forEach((row) => {
-        row.querySelectorAll('th, td').forEach((cell) => {
-          const len = (cell.textContent || '').trim().length
-          if (len > maxLen) maxLen = len
-          totalLen += len
-          cellCount += 1
-        })
-      })
-      const avgLen = cellCount > 0 ? totalLen / cellCount : 0
-
-      fontPt = 9.5
-      if (colCount >= 3 && (maxLen > 25 || avgLen > 12)) fontPt = 9
-      if (colCount >= 4) fontPt = 8
-      if (colCount >= 4 && (maxLen > 50 || avgLen > 20)) fontPt = 7.5
-      if (colCount >= 5) fontPt = Math.min(fontPt, 7.5)
-      if (colCount >= 6 || maxLen > 80) fontPt = 7
-      if (colCount >= 7 || maxLen > 150) fontPt = 6.5
+  function handleLocateCurrentFile() {
+    if (!selectedFile.value) {
+      return
     }
 
-    table.style.fontSize = `${fontPt}pt`
-    table.dataset.academicAdjusted = '1'
-  })
-}
-
-function clearAcademicTableSizes() {
-  const tables = document.querySelectorAll<HTMLTableElement>(
-    '.r-docs-content-body .r-markdown-preview table[data-academic-adjusted="1"]',
-  )
-  tables.forEach((table) => {
-    table.style.fontSize = ''
-    delete table.dataset.academicAdjusted
-  })
-}
-
-async function handlePrintConfirm() {
-  if (!fileContent.value || isPrinting.value) return
-  isPrinting.value = true
-  printDialogVisible.value = false
-  updatePrintStyleTag()
-  adjustAcademicTableSizes()
-  await waitForPrintAssets()
-  window.print()
-}
-
-async function handleCopyPath(path: string) {
-  if (!path) {
-    return
+    const file = selectedFile.value
+    activeDir.value = buildDirectoryScope(file.directory, file.path)
+    expandedDirKeys.value = buildExpandedScopeKeys(file.directory, file.path)
+    dirCollapsed.value = false
+    fileListCollapsed.value = false
+    emit('directory-change', activeDir.value)
   }
-  try {
-    await navigator.clipboard.writeText(path)
-    showToast('路径已复制', 'success')
-  } catch {
-    showToast('复制失败', 'info')
-  }
-}
 
-function handleKeydown(e: KeyboardEvent) {
-  if (e.key === 'Escape' && printDialogVisible.value) {
+  function parseDirectoryScope(scope: string): { directory: string; path: string } {
+    const separatorIndex = scope.indexOf('::')
+    if (separatorIndex < 0) {
+      return { directory: scope, path: '' }
+    }
+    return {
+      directory: scope.slice(0, separatorIndex),
+      path: scope.slice(separatorIndex + 2),
+    }
+  }
+
+  function buildDirectoryScope(directory: string, filePath: string): string {
+    const parentDir = getFileParentDirectory(filePath)
+    if (!parentDir) {
+      return directory
+    }
+    return `${directory}::${parentDir}`
+  }
+
+  function getFileParentDirectory(filePath: string): string {
+    const normalizedPath = filePath.replace(/\\/g, '/')
+    const slashIndex = normalizedPath.lastIndexOf('/')
+    if (slashIndex < 0) {
+      return ''
+    }
+    return normalizedPath.slice(0, slashIndex)
+  }
+
+  function matchesDirectoryScope(
+    file: DocFileItem,
+    scope: { directory: string; path: string },
+  ): boolean {
+    if (file.directory !== scope.directory) {
+      return false
+    }
+    if (!scope.path) {
+      return true
+    }
+    const parentDir = getFileParentDirectory(file.path)
+    return parentDir === scope.path || parentDir.startsWith(`${scope.path}/`)
+  }
+
+  function handleSortModeChange(mode: { sortBy: DocSortBy; sortOrder: DocSortOrder }) {
+    if (sortBy.value === mode.sortBy && sortOrder.value === mode.sortOrder) return
+    sortBy.value = mode.sortBy
+    sortOrder.value = mode.sortOrder
+    loadFiles()
+  }
+
+  function toggleFullscreen() {
+    isFullscreen.value = !isFullscreen.value
+  }
+
+  function openPrintDialog() {
+    if (!fileContent.value || contentLoading.value) return
+    printDialogVisible.value = true
+  }
+
+  function closePrintDialog() {
     printDialogVisible.value = false
-    return
   }
-  if (e.key === 'Escape' && isFullscreen.value) {
-    isFullscreen.value = false
-  }
-}
 
-// --- 数据加载 ---
-async function loadDirectories() {
-  try {
-    loadError.value = null
-    const res = await props.api.getDirectories()
-    directories.value = res.directories || []
-  } catch (e: any) {
-    loadError.value = e?.message || '加载目录失败'
+  function getPrintMarginMm(preset: PrintMarginPreset): number {
+    if (preset === 'narrow') return 8
+    if (preset === 'wide') return 18
+    return 12
   }
-}
 
-async function loadFiles() {
-  fileListLoading.value = true
-  try {
-    loadError.value = null
-    const res = await props.api.getFileList(sortOrder.value, sortBy.value)
-    files.value = res.files || []
-    if (selectedFile.value) {
-      const synced = files.value.find(
-        (item) =>
-          item.directory === selectedFile.value?.directory &&
-          item.path === selectedFile.value?.path,
-      )
-      if (synced) {
-        selectedFile.value = synced
+  function updatePrintStyleTag() {
+    const margin = getPrintMarginMm(printSettings.value.marginPreset)
+    const orientation = printSettings.value.orientation
+    const css = `@page { size: A4 ${orientation}; margin: ${margin}mm; }`
+
+    if (!printStyleEl) {
+      printStyleEl = document.createElement('style')
+      printStyleEl.setAttribute('data-r-docs-print-style', 'true')
+      document.head.appendChild(printStyleEl)
+    }
+    printStyleEl.textContent = css
+  }
+
+  async function waitForPrintAssets() {
+    await nextTick()
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+    })
+
+    const images = Array.from(
+      document.querySelectorAll('.r-docs-content-body img'),
+    ) as HTMLImageElement[]
+    await Promise.all(
+      images.map((img) => {
+        if (img.complete) return Promise.resolve()
+        return new Promise<void>((resolve) => {
+          img.addEventListener('load', () => resolve(), { once: true })
+          img.addEventListener('error', () => resolve(), { once: true })
+        })
+      }),
+    )
+  }
+
+  function handleAfterPrint() {
+    isPrinting.value = false
+  }
+
+  async function handlePrintConfirm() {
+    if (!fileContent.value || isPrinting.value) return
+    isPrinting.value = true
+    printDialogVisible.value = false
+    updatePrintStyleTag()
+    await waitForPrintAssets()
+    window.print()
+  }
+
+  async function handleCopyPath(path: string) {
+    if (!path) {
+      return
+    }
+    try {
+      await navigator.clipboard.writeText(path)
+      showToast('路径已复制', 'success')
+    } catch {
+      showToast('复制失败', 'info')
+    }
+  }
+
+  function handleKeydown(e: KeyboardEvent) {
+    if (e.key === 'Escape' && printDialogVisible.value) {
+      printDialogVisible.value = false
+      return
+    }
+    if (e.key === 'Escape' && isFullscreen.value) {
+      isFullscreen.value = false
+    }
+  }
+
+  // --- 数据加载 ---
+  async function loadDirectories() {
+    try {
+      loadError.value = null
+      const res = await props.api.getDirectories()
+      directories.value = res.directories || []
+    } catch (e: any) {
+      loadError.value = e?.message || '加载目录失败'
+    }
+  }
+
+  async function loadFiles() {
+    fileListLoading.value = true
+    try {
+      loadError.value = null
+      const res = await props.api.getFileList(sortOrder.value, sortBy.value)
+      files.value = res.files || []
+      if (selectedFile.value) {
+        const synced = files.value.find(
+          (item) =>
+            item.directory === selectedFile.value?.directory &&
+            item.path === selectedFile.value?.path,
+        )
+        if (synced) {
+          selectedFile.value = synced
+        }
       }
+      await syncFromActiveFileTag()
+    } catch (e: any) {
+      loadError.value = e?.message || '加载文件列表失败'
+    } finally {
+      fileListLoading.value = false
     }
-    await syncFromActiveFileTag()
-  } catch (e: any) {
-    loadError.value = e?.message || '加载文件列表失败'
-  } finally {
-    fileListLoading.value = false
-  }
-}
-
-function buildFileTag(file: DocFileItem): string {
-  return `${file.directory}::${file.path}`
-}
-
-function parseFileTag(tag: string): { directory?: string; path: string } | null {
-  if (!tag) return null
-  const sepIndex = tag.indexOf('::')
-  if (sepIndex < 0) {
-    return { path: tag }
-  }
-  if (sepIndex === 0 || sepIndex >= tag.length - 2) return null
-  return {
-    directory: tag.slice(0, sepIndex),
-    path: tag.slice(sepIndex + 2),
-  }
-}
-
-async function handleFileClick(file: DocFileItem, emitTagChange = true) {
-  const sameFile =
-    selectedFile.value?.directory === file.directory && selectedFile.value?.path === file.path
-
-  selectedFile.value = file
-  emit('file-select', file)
-
-  if (emitTagChange) {
-    emit('file-tag-change', buildFileTag(file))
   }
 
-  if (sameFile && fileContent.value) {
-    return
+  function buildFileTag(file: DocFileItem): string {
+    return `${file.directory}::${file.path}`
   }
 
-  await loadFileContent(file.directory, file.path)
-}
-
-async function syncFromActiveFileTag(): Promise<void> {
-  const parsed = parseFileTag(props.activeFileTag || '')
-  if (!parsed || !files.value.length) return
-
-  const matched = files.value.find((item) => {
-    if (parsed.directory) {
-      return item.directory === parsed.directory && item.path === parsed.path
+  function parseFileTag(tag: string): { directory?: string; path: string } | null {
+    if (!tag) return null
+    const sepIndex = tag.indexOf('::')
+    if (sepIndex < 0) {
+      return { path: tag }
     }
-    return item.path === parsed.path
-  })
-  if (!matched) return
-
-  activeDir.value = buildDirectoryScope(matched.directory, matched.path)
-  expandedDirKeys.value = buildExpandedScopeKeys(matched.directory, matched.path)
-  await handleFileClick(matched, false)
-}
-
-async function loadFileContent(dir: string, path: string) {
-  const cacheKey = `${dir}:${path}`
-
-  if (props.enableCache && fileCache.value[cacheKey]) {
-    fileContent.value = fileCache.value[cacheKey]
-    isCached.value = true
-    return
+    if (sepIndex === 0 || sepIndex >= tag.length - 2) return null
+    return {
+      directory: tag.slice(0, sepIndex),
+      path: tag.slice(sepIndex + 2),
+    }
   }
 
-  contentLoading.value = true
-  isCached.value = false
-  try {
-    const res = await props.api.getFileContent(dir, path)
-    fileContent.value = res
-    if (props.enableCache) {
-      fileCache.value[cacheKey] = res
+  async function handleFileClick(file: DocFileItem, emitTagChange = true) {
+    const sameFile =
+      selectedFile.value?.directory === file.directory && selectedFile.value?.path === file.path
+
+    selectedFile.value = file
+    emit('file-select', file)
+
+    if (emitTagChange) {
+      emit('file-tag-change', buildFileTag(file))
+    }
+
+    if (sameFile && fileContent.value) {
+      return
+    }
+
+    await loadFileContent(file.directory, file.path)
+  }
+
+  async function syncFromActiveFileTag(): Promise<void> {
+    const parsed = parseFileTag(props.activeFileTag || '')
+    if (!parsed || !files.value.length) return
+
+    const matched = files.value.find((item) => {
+      if (parsed.directory) {
+        return item.directory === parsed.directory && item.path === parsed.path
+      }
+      return item.path === parsed.path
+    })
+    if (!matched) return
+
+    activeDir.value = buildDirectoryScope(matched.directory, matched.path)
+    expandedDirKeys.value = buildExpandedScopeKeys(matched.directory, matched.path)
+    await handleFileClick(matched, false)
+  }
+
+  async function loadFileContent(dir: string, path: string) {
+    const cacheKey = `${dir}:${path}`
+
+    if (props.enableCache && fileCache.value[cacheKey]) {
+      fileContent.value = fileCache.value[cacheKey]
+      isCached.value = true
+      return
+    }
+
+    contentLoading.value = true
+    isCached.value = false
+    try {
+      const res = await props.api.getFileContent(dir, path)
+      fileContent.value = res
+      if (props.enableCache) {
+        fileCache.value[cacheKey] = res
+        persistCache()
+      }
+    } catch (e) {
+      console.error('[DocsBrowser] Failed to load file content', e)
+    } finally {
+      contentLoading.value = false
+    }
+  }
+
+  function persistCache() {
+    try {
+      localStorage.setItem(props.cacheKey, JSON.stringify(fileCache.value))
+    } catch {
+      /* quota exceeded */
+    }
+  }
+
+  function loadCacheFromStorage() {
+    if (!props.enableCache) return
+    try {
+      const cached = localStorage.getItem(props.cacheKey)
+      if (cached) fileCache.value = JSON.parse(cached)
+    } catch {
+      /* corrupted cache */
+    }
+  }
+
+  function loadPrintSettings() {
+    try {
+      const raw = localStorage.getItem(PRINT_SETTINGS_STORAGE_KEY)
+      if (!raw) return
+      const parsed = JSON.parse(raw) as Partial<PrintSettings>
+      if (parsed.orientation === 'portrait' || parsed.orientation === 'landscape') {
+        printSettings.value.orientation = parsed.orientation
+      }
+      if (
+        parsed.marginPreset === 'narrow' ||
+        parsed.marginPreset === 'normal' ||
+        parsed.marginPreset === 'wide'
+      ) {
+        printSettings.value.marginPreset = parsed.marginPreset
+      }
+      if (parsed.theme === 'paper' || parsed.theme === 'ink' || parsed.theme === 'github') {
+        printSettings.value.theme = parsed.theme
+      }
+      if (parsed.mermaidScale === 100 || parsed.mermaidScale === 90 || parsed.mermaidScale === 80) {
+        printSettings.value.mermaidScale = parsed.mermaidScale
+      }
+      if (typeof parsed.mermaidAutoFit === 'boolean') {
+        printSettings.value.mermaidAutoFit = parsed.mermaidAutoFit
+      }
+    } catch {
+      /* ignore corrupted settings */
+    }
+  }
+
+  // --- 刷新 / 清缓存（带反馈） ---
+  async function handleRefresh() {
+    await loadFiles()
+    if (selectedFile.value) {
+      const key = `${selectedFile.value.directory}:${selectedFile.value.path}`
+      delete fileCache.value[key]
       persistCache()
+      await loadFileContent(selectedFile.value.directory, selectedFile.value.path)
     }
-  } catch (e) {
-    console.error('[DocsBrowser] Failed to load file content', e)
-  } finally {
-    contentLoading.value = false
+    showToast(`已刷新，共 ${files.value.length} 个文件`, 'success')
+    emit('refresh')
   }
-}
 
-function persistCache() {
-  try {
-    localStorage.setItem(props.cacheKey, JSON.stringify(fileCache.value))
-  } catch {
-    /* quota exceeded */
+  function handleClearCache() {
+    const count = Object.keys(fileCache.value).length
+    fileCache.value = {}
+    localStorage.removeItem(props.cacheKey)
+    isCached.value = false
+    showToast(`已清除 ${count} 条缓存`, 'info')
+    emit('cache-clear')
   }
-}
 
-function loadCacheFromStorage() {
-  if (!props.enableCache) return
-  try {
-    const cached = localStorage.getItem(props.cacheKey)
-    if (cached) fileCache.value = JSON.parse(cached)
-  } catch {
-    /* corrupted cache */
-  }
-}
+  // --- 生命周期 ---
+  onMounted(async () => {
+    loadCacheFromStorage()
+    loadPrintSettings()
+    document.addEventListener('keydown', handleKeydown)
+    window.addEventListener('afterprint', handleAfterPrint)
+    await loadDirectories()
+    await loadFiles()
+  })
 
-function loadPrintSettings() {
-  try {
-    const raw = localStorage.getItem(PRINT_SETTINGS_STORAGE_KEY)
-    if (!raw) return
-    const parsed = JSON.parse(raw) as Partial<PrintSettings>
-    if (parsed.orientation === 'portrait' || parsed.orientation === 'landscape') {
-      printSettings.value.orientation = parsed.orientation
+  watch(
+    () => printSettings.value,
+    (value) => {
+      localStorage.setItem(PRINT_SETTINGS_STORAGE_KEY, JSON.stringify(value))
+    },
+    { deep: true },
+  )
+
+  watch(
+    () => props.activeFileTag,
+    () => {
+      void syncFromActiveFileTag()
+    },
+  )
+
+  onUnmounted(() => {
+    document.removeEventListener('keydown', handleKeydown)
+    window.removeEventListener('afterprint', handleAfterPrint)
+    document.removeEventListener('mousemove', onResizeMove)
+    document.removeEventListener('mouseup', onResizeEnd)
+    if (toastTimer) clearTimeout(toastTimer)
+    if (printStyleEl?.parentNode) {
+      printStyleEl.parentNode.removeChild(printStyleEl)
+      printStyleEl = null
     }
-    if (parsed.marginPreset === 'narrow' || parsed.marginPreset === 'normal' || parsed.marginPreset === 'wide') {
-      printSettings.value.marginPreset = parsed.marginPreset
-    }
-    if (
-      parsed.theme === 'paper' ||
-      parsed.theme === 'ink' ||
-      parsed.theme === 'github' ||
-      parsed.theme === 'academic'
-    ) {
-      printSettings.value.theme = parsed.theme
-    }
-    if (parsed.mermaidScale === 100 || parsed.mermaidScale === 90 || parsed.mermaidScale === 80) {
-      printSettings.value.mermaidScale = parsed.mermaidScale
-    }
-    if (typeof parsed.mermaidAutoFit === 'boolean') {
-      printSettings.value.mermaidAutoFit = parsed.mermaidAutoFit
-    }
-    if (
-      parsed.academicTableSize === 'auto' ||
-      parsed.academicTableSize === 9 ||
-      parsed.academicTableSize === 8 ||
-      parsed.academicTableSize === 7 ||
-      parsed.academicTableSize === 6
-    ) {
-      printSettings.value.academicTableSize = parsed.academicTableSize
-    }
-    if (
-      parsed.academicSectionGap === 'compact' ||
-      parsed.academicSectionGap === 'normal' ||
-      parsed.academicSectionGap === 'loose'
-    ) {
-      printSettings.value.academicSectionGap = parsed.academicSectionGap
-    }
-  } catch {
-    /* ignore corrupted settings */
-  }
-}
+  })
 
-// --- 刷新 / 清缓存（带反馈） ---
-async function handleRefresh() {
-  await loadFiles()
-  if (selectedFile.value) {
-    const key = `${selectedFile.value.directory}:${selectedFile.value.path}`
-    delete fileCache.value[key]
-    persistCache()
-    await loadFileContent(selectedFile.value.directory, selectedFile.value.path)
-  }
-  showToast(`已刷新，共 ${files.value.length} 个文件`, 'success')
-  emit('refresh')
-}
-
-function handleClearCache() {
-  const count = Object.keys(fileCache.value).length
-  fileCache.value = {}
-  localStorage.removeItem(props.cacheKey)
-  isCached.value = false
-  showToast(`已清除 ${count} 条缓存`, 'info')
-  emit('cache-clear')
-}
-
-// --- 生命周期 ---
-onMounted(async () => {
-  loadCacheFromStorage()
-  loadPrintSettings()
-  document.addEventListener('keydown', handleKeydown)
-  window.addEventListener('afterprint', handleAfterPrint)
-  await loadDirectories()
-  await loadFiles()
-})
-
-watch(
-  () => printSettings.value,
-  (value) => {
-    localStorage.setItem(PRINT_SETTINGS_STORAGE_KEY, JSON.stringify(value))
-  },
-  { deep: true },
-)
-
-watch(
-  () => props.activeFileTag,
-  () => {
-    void syncFromActiveFileTag()
-  },
-)
-
-onUnmounted(() => {
-  document.removeEventListener('keydown', handleKeydown)
-  window.removeEventListener('afterprint', handleAfterPrint)
-  document.removeEventListener('mousemove', onResizeMove)
-  document.removeEventListener('mouseup', onResizeEnd)
-  if (toastTimer) clearTimeout(toastTimer)
-  if (printStyleEl?.parentNode) {
-    printStyleEl.parentNode.removeChild(printStyleEl)
-    printStyleEl = null
-  }
-})
-
-defineExpose({
-  refresh: handleRefresh,
-  clearCache: handleClearCache,
-  openByTag: syncFromActiveFileTag,
-})
+  defineExpose({
+    refresh: handleRefresh,
+    clearCache: handleClearCache,
+    openByTag: syncFromActiveFileTag,
+  })
 </script>
 
 <style>
-.r-docs-browser {
-  display: flex;
-  position: relative;
-  border: 1px solid var(--ra-color-border, #e5e7eb);
-  border-radius: var(--ra-radius-lg, 8px);
-  overflow: hidden;
-  background: var(--ra-color-surface, #ffffff);
-  box-shadow: var(--ra-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
-}
-
-.r-docs-browser.is-fullscreen {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  border-radius: 0;
-  border: none;
-}
-
-.r-docs-print-mask {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-  background: rgba(17, 24, 39, 0.48);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: var(--ra-spacing-5, 24px);
-}
-
-.r-docs-print-dialog {
-  width: min(560px, 100%);
-  background: var(--ra-color-surface, #ffffff);
-  border: 1px solid var(--ra-color-border, #e5e7eb);
-  border-radius: var(--ra-radius-lg, 10px);
-  box-shadow: var(--ra-shadow-lg, 0 12px 28px rgba(0, 0, 0, 0.18));
-  overflow: hidden;
-}
-
-.r-docs-print-dialog__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--ra-spacing-4, 16px) var(--ra-spacing-5, 24px);
-  border-bottom: 1px solid var(--ra-color-border, #e5e7eb);
-}
-
-.r-docs-print-dialog__header h3 {
-  margin: 0;
-  font-size: var(--ra-font-size-lg, 16px);
-  font-weight: 600;
-  color: var(--ra-color-text-primary, #111827);
-}
-
-.r-docs-print-close {
-  border: 1px solid var(--ra-color-border, #e5e7eb);
-  background: var(--ra-color-surface, #fff);
-  color: var(--ra-color-text-secondary, #6b7280);
-  border-radius: var(--ra-radius-sm, 6px);
-  width: 28px;
-  height: 28px;
-  cursor: pointer;
-}
-
-.r-docs-print-section {
-  padding: var(--ra-spacing-4, 16px) var(--ra-spacing-5, 24px);
-  border-bottom: 1px solid var(--ra-color-border, #e5e7eb);
-}
-
-.r-docs-print-section__title {
-  margin: 0 0 var(--ra-spacing-3, 12px);
-  font-size: var(--ra-font-size-sm, 13px);
-  color: var(--ra-color-text-secondary, #6b7280);
-}
-
-.r-docs-print-grid {
-  display: grid;
-  gap: var(--ra-spacing-2, 8px);
-}
-
-.r-docs-print-grid label {
-  display: flex;
-  align-items: center;
-  gap: var(--ra-spacing-2, 8px);
-  font-size: var(--ra-font-size-sm, 13px);
-  color: var(--ra-color-text-primary, #111827);
-}
-
-.r-docs-print-check {
-  display: flex;
-  align-items: center;
-  gap: var(--ra-spacing-2, 8px);
-  margin-bottom: var(--ra-spacing-2, 8px);
-  font-size: var(--ra-font-size-sm, 13px);
-  color: var(--ra-color-text-primary, #111827);
-}
-
-.r-docs-print-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--ra-spacing-2, 8px);
-  padding: var(--ra-spacing-4, 16px) var(--ra-spacing-5, 24px);
-}
-
-.r-docs-print-btn {
-  border: 1px solid var(--ra-color-border, #e5e7eb);
-  background: var(--ra-color-surface, #fff);
-  color: var(--ra-color-text-secondary, #6b7280);
-  border-radius: var(--ra-radius-md, 6px);
-  padding: 6px 12px;
-  cursor: pointer;
-}
-
-.r-docs-print-btn--primary {
-  background: var(--ra-color-primary, #2563eb);
-  border-color: var(--ra-color-primary, #2563eb);
-  color: #fff;
-}
-
-.r-docs-print-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* --- Toast --- */
-.r-docs-toast {
-  position: absolute;
-  top: 12px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 100;
-  padding: 6px 16px;
-  border-radius: var(--ra-radius-md, 6px);
-  font-size: 13px;
-  font-weight: 500;
-  box-shadow: var(--ra-shadow-md, 0 4px 12px rgba(0, 0, 0, 0.1));
-  pointer-events: none;
-}
-
-.r-docs-toast--success {
-  background: var(--ra-color-success, #059669);
-  color: #fff;
-}
-
-.r-docs-toast--info {
-  background: var(--ra-color-primary, #2563eb);
-  color: #fff;
-}
-
-.r-docs-toast-enter-active,
-.r-docs-toast-leave-active {
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
-}
-
-.r-docs-toast-enter-from {
-  opacity: 0;
-  transform: translateX(-50%) translateY(-8px);
-}
-
-.r-docs-toast-leave-to {
-  opacity: 0;
-  transform: translateX(-50%) translateY(-4px);
-}
-
-/* --- Panels --- */
-.r-docs-panel {
-  flex-shrink: 0;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.r-docs-panel--dir {
-  min-width: 120px;
-  max-width: 360px;
-}
-
-.r-docs-panel--dir .r-docs-dir-sidebar {
-  width: 100%;
-  min-width: unset;
-  max-width: unset;
-}
-
-.r-docs-panel--files {
-  min-width: 160px;
-  max-width: 500px;
-}
-
-.r-docs-panel--files .r-docs-file-list {
-  width: 100%;
-  min-width: unset;
-  max-width: unset;
-}
-
-/* --- Resize Handle --- */
-.r-docs-resize-handle {
-  flex-shrink: 0;
-  width: 4px;
-  cursor: col-resize;
-  background: transparent;
-  position: relative;
-  z-index: 3;
-  transition: background 0.15s;
-}
-
-.r-docs-resize-handle::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 1px;
-  width: 2px;
-  background: var(--ra-color-border, #e5e7eb);
-  transition: background 0.15s;
-}
-
-.r-docs-resize-handle:hover::after,
-.r-docs-resize-handle:active::after {
-  background: var(--ra-color-primary, #2563eb);
-}
-
-/* --- Collapse Button --- */
-.r-docs-collapse-btn {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  background: var(--ra-color-surface-secondary, #fafbfc);
-  color: var(--ra-color-text-tertiary, #9ca3af);
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.r-docs-collapse-btn--vertical {
-  width: 20px;
-  border-right: 1px solid var(--ra-color-border, #e5e7eb);
-}
-
-.r-docs-collapse-btn:hover {
-  background: var(--ra-color-surface-hover, #f3f4f6);
-  color: var(--ra-color-primary, #2563eb);
-}
-
-/* --- Error Banner --- */
-.r-docs-error-banner {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  align-items: center;
-  gap: var(--ra-spacing-2, 8px);
-  padding: var(--ra-spacing-2, 8px) var(--ra-spacing-4, 16px);
-  background: var(--ra-color-danger-subtle, #fef2f2);
-  color: var(--ra-color-danger, #dc2626);
-  font-size: var(--ra-font-size-sm, 13px);
-  z-index: 10;
-}
-
-.r-docs-error-retry {
-  margin-left: auto;
-  padding: 2px 8px;
-  border: 1px solid var(--ra-color-danger, #dc2626);
-  border-radius: var(--ra-radius-sm, 4px);
-  background: transparent;
-  color: var(--ra-color-danger, #dc2626);
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.r-docs-error-retry:hover {
-  background: var(--ra-color-danger, #dc2626);
-  color: #fff;
-}
-
-/* --- Content Wrapper --- */
-.r-docs-content-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.r-docs-content-wrapper--brush {
-  cursor: text;
-}
-
-.r-docs-content-wrapper--brush .r-docs-content-body {
-  user-select: text;
-  -webkit-user-select: text;
-}
-
-.r-docs-content-wrapper--brush .r-docs-content-body ::selection {
-  background: var(--r-docs-selection-color, rgba(250, 204, 21, 0.4));
-}
-
-.r-docs-highlight-mark {
-  cursor: pointer;
-  transition: filter 0.15s;
-}
-.r-docs-highlight-mark:hover {
-  filter: brightness(0.92);
-}
-
-.r-docs-highlight-popover {
-  position: fixed;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
-  background: var(--ra-color-surface, #fff);
-  border: 1px solid var(--ra-color-border, #e5e7eb);
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-  transform: translateX(-50%);
-  white-space: nowrap;
-  font-size: 12px;
-  color: var(--ra-color-text-secondary, #6b7280);
-  pointer-events: auto;
-}
-
-.r-docs-highlight-popover__text {
-  max-width: 160px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 12px;
-  color: var(--ra-color-text-tertiary, #9ca3af);
-}
-
-.r-docs-highlight-popover__btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  border: none;
-  border-radius: 4px;
-  background: transparent;
-  cursor: pointer;
-  color: var(--ra-color-text-secondary, #6b7280);
-  transition: background 0.15s, color 0.15s;
-}
-.r-docs-highlight-popover__btn:hover {
-  background: var(--ra-color-surface-hover, #f3f4f6);
-}
-.r-docs-highlight-popover__btn--delete:hover {
-  color: var(--ra-color-danger, #dc2626);
-  background: var(--ra-color-danger-subtle, #fef2f2);
-}
-.r-docs-highlight-popover__btn--note:hover {
-  color: var(--ra-color-primary, #2563eb);
-  background: var(--ra-color-primary-subtle, #eff6ff);
-}
-
-.r-docs-popover-enter-active,
-.r-docs-popover-leave-active {
-  transition: opacity 0.15s, transform 0.15s;
-}
-.r-docs-popover-enter-from,
-.r-docs-popover-leave-to {
-  opacity: 0;
-  transform: translateX(-50%) translateY(4px);
-}
-
-/* --- Main Area --- */
-.r-docs-main-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  overflow: hidden;
-}
-
-.r-docs-global-toolbar {
-  display: flex;
-  align-items: center;
-  gap: var(--ra-spacing-2, 8px);
-  padding: var(--ra-spacing-2, 8px) var(--ra-spacing-4, 16px);
-  border-bottom: 1px solid var(--ra-color-border, #e5e7eb);
-  background: var(--ra-color-surface-secondary, #fafbfc);
-  flex-shrink: 0;
-}
-
-.r-docs-toolbar-group {
-  display: flex;
-  align-items: center;
-  gap: var(--ra-spacing-1, 4px);
-}
-
-.r-docs-toolbar-divider {
-  width: 1px;
-  height: 16px;
-  background: var(--ra-color-border, #e5e7eb);
-  margin: 0 4px;
-}
-
-.r-docs-toolbar-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 10px;
-  border: 1px solid var(--ra-color-border, #e5e7eb);
-  border-radius: var(--ra-radius-md, 6px);
-  background: var(--ra-color-surface, #ffffff);
-  color: var(--ra-color-text-secondary, #6b7280);
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.r-docs-toolbar-btn:hover {
-  background: var(--ra-color-surface-hover, #f3f4f6);
-  color: var(--ra-color-text-primary, #111827);
-}
-
-.r-docs-toolbar-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.r-docs-toolbar-btn--warning:hover {
-  color: var(--ra-color-warning, #d97706);
-  border-color: var(--ra-color-warning, #d97706);
-}
-
-/* --- TOC Panel --- */
-.r-docs-toc-panel {
-  width: 280px;
-  flex-shrink: 0;
-  border-left: 1px solid var(--ra-color-border, #e5e7eb);
-  background: var(--ra-color-surface, #ffffff);
-  overflow-y: auto;
-}
-
-.r-docs-toc-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--ra-spacing-3, 12px) var(--ra-spacing-4, 16px);
-  border-bottom: 1px solid var(--ra-color-border, #e5e7eb);
-  font-size: var(--ra-font-size-sm, 13px);
-  font-weight: 600;
-  color: var(--ra-color-text-primary, #111827);
-}
-
-.r-docs-toc-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border: none;
-  border-radius: var(--ra-radius-sm, 4px);
-  background: transparent;
-  color: var(--ra-color-text-tertiary, #9ca3af);
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.r-docs-toc-close:hover {
-  background: var(--ra-color-surface-hover, #f3f4f6);
-  color: var(--ra-color-text-primary, #111827);
-}
-
-/* --- Responsive --- */
-@media (max-width: 768px) {
   .r-docs-browser {
+    display: flex;
+    position: relative;
+    border: 1px solid var(--ra-color-border, #e5e7eb);
+    border-radius: var(--ra-radius-lg, 8px);
+    overflow: hidden;
+    background: var(--ra-color-surface, #ffffff);
+    box-shadow: var(--ra-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
+  }
+
+  .r-docs-browser.is-fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    border-radius: 0;
+    border: none;
+  }
+
+  .r-docs-print-mask {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(17, 24, 39, 0.48);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--ra-spacing-5, 24px);
+  }
+
+  .r-docs-print-dialog {
+    width: min(560px, 100%);
+    background: var(--ra-color-surface, #ffffff);
+    border: 1px solid var(--ra-color-border, #e5e7eb);
+    border-radius: var(--ra-radius-lg, 10px);
+    box-shadow: var(--ra-shadow-lg, 0 12px 28px rgba(0, 0, 0, 0.18));
+    overflow: hidden;
+  }
+
+  .r-docs-print-dialog__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--ra-spacing-4, 16px) var(--ra-spacing-5, 24px);
+    border-bottom: 1px solid var(--ra-color-border, #e5e7eb);
+  }
+
+  .r-docs-print-dialog__header h3 {
+    margin: 0;
+    font-size: var(--ra-font-size-lg, 16px);
+    font-weight: 600;
+    color: var(--ra-color-text-primary, #111827);
+  }
+
+  .r-docs-print-close {
+    border: 1px solid var(--ra-color-border, #e5e7eb);
+    background: var(--ra-color-surface, #fff);
+    color: var(--ra-color-text-secondary, #6b7280);
+    border-radius: var(--ra-radius-sm, 6px);
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+  }
+
+  .r-docs-print-section {
+    padding: var(--ra-spacing-4, 16px) var(--ra-spacing-5, 24px);
+    border-bottom: 1px solid var(--ra-color-border, #e5e7eb);
+  }
+
+  .r-docs-print-section__title {
+    margin: 0 0 var(--ra-spacing-3, 12px);
+    font-size: var(--ra-font-size-sm, 13px);
+    color: var(--ra-color-text-secondary, #6b7280);
+  }
+
+  .r-docs-print-grid {
+    display: grid;
+    gap: var(--ra-spacing-2, 8px);
+  }
+
+  .r-docs-print-grid label {
+    display: flex;
+    align-items: center;
+    gap: var(--ra-spacing-2, 8px);
+    font-size: var(--ra-font-size-sm, 13px);
+    color: var(--ra-color-text-primary, #111827);
+  }
+
+  .r-docs-print-check {
+    display: flex;
+    align-items: center;
+    gap: var(--ra-spacing-2, 8px);
+    margin-bottom: var(--ra-spacing-2, 8px);
+    font-size: var(--ra-font-size-sm, 13px);
+    color: var(--ra-color-text-primary, #111827);
+  }
+
+  .r-docs-print-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--ra-spacing-2, 8px);
+    padding: var(--ra-spacing-4, 16px) var(--ra-spacing-5, 24px);
+  }
+
+  .r-docs-print-btn {
+    border: 1px solid var(--ra-color-border, #e5e7eb);
+    background: var(--ra-color-surface, #fff);
+    color: var(--ra-color-text-secondary, #6b7280);
+    border-radius: var(--ra-radius-md, 6px);
+    padding: 6px 12px;
+    cursor: pointer;
+  }
+
+  .r-docs-print-btn--primary {
+    background: var(--ra-color-primary, #2563eb);
+    border-color: var(--ra-color-primary, #2563eb);
+    color: #fff;
+  }
+
+  .r-docs-print-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* --- Toast --- */
+  .r-docs-toast {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    padding: 6px 16px;
+    border-radius: var(--ra-radius-md, 6px);
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: var(--ra-shadow-md, 0 4px 12px rgba(0, 0, 0, 0.1));
+    pointer-events: none;
+  }
+
+  .r-docs-toast--success {
+    background: var(--ra-color-success, #059669);
+    color: #fff;
+  }
+
+  .r-docs-toast--info {
+    background: var(--ra-color-primary, #2563eb);
+    color: #fff;
+  }
+
+  .r-docs-toast-enter-active,
+  .r-docs-toast-leave-active {
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .r-docs-toast-enter-from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-8px);
+  }
+
+  .r-docs-toast-leave-to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-4px);
+  }
+
+  /* --- Panels --- */
+  .r-docs-panel {
+    flex-shrink: 0;
+    overflow: hidden;
+    display: flex;
     flex-direction: column;
   }
 
-  .r-docs-panel--dir,
-  .r-docs-panel--files {
-    width: 100% !important;
+  .r-docs-panel--dir {
+    min-width: 120px;
+    max-width: 360px;
+  }
+
+  .r-docs-panel--dir .r-docs-dir-sidebar {
+    width: 100%;
+    min-width: unset;
     max-width: unset;
-    max-height: 180px;
   }
 
+  .r-docs-panel--files {
+    min-width: 160px;
+    max-width: 500px;
+  }
+
+  .r-docs-panel--files .r-docs-file-list {
+    width: 100%;
+    min-width: unset;
+    max-width: unset;
+  }
+
+  /* --- Resize Handle --- */
   .r-docs-resize-handle {
-    display: none;
-  }
-}
-
-@media print {
-  .r-docs-browser,
-  .r-docs-main-area,
-  .r-docs-content,
-  .r-docs-content-wrapper,
-  .r-docs-content-body {
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-    overflow: visible !important;
-    display: block !important;
-    flex: none !important;
+    flex-shrink: 0;
+    width: 4px;
+    cursor: col-resize;
+    background: transparent;
+    position: relative;
+    z-index: 3;
+    transition: background 0.15s;
   }
 
-  .r-docs-browser {
-    display: block !important;
-    position: static !important;
-    inset: auto !important;
-    border: none !important;
-    box-shadow: none !important;
-    background: #fff !important;
+  .r-docs-resize-handle::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 1px;
+    width: 2px;
+    background: var(--ra-color-border, #e5e7eb);
+    transition: background 0.15s;
   }
 
-  .r-docs-panel,
-  .r-docs-resize-handle,
-  .r-docs-collapse-btn,
-  .r-docs-global-toolbar,
-  .r-docs-content-header,
-  .r-docs-toc-panel,
-  .r-docs-toast,
-  .r-docs-print-mask,
-  .rmd-canvas-overlay {
-    display: none !important;
+  .r-docs-resize-handle:hover::after,
+  .r-docs-resize-handle:active::after {
+    background: var(--ra-color-primary, #2563eb);
   }
 
-  .r-docs-main-area,
-  .r-docs-content {
-    width: 100% !important;
+  /* --- Collapse Button --- */
+  .r-docs-collapse-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: var(--ra-color-surface-secondary, #fafbfc);
+    color: var(--ra-color-text-tertiary, #9ca3af);
+    cursor: pointer;
+    transition: all 0.15s;
   }
 
-  .r-docs-content-body {
-    padding: 0 !important;
+  .r-docs-collapse-btn--vertical {
+    width: 20px;
+    border-right: 1px solid var(--ra-color-border, #e5e7eb);
   }
 
-  .r-markdown-preview {
-    padding: 0 !important;
-    max-width: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
+  .r-docs-collapse-btn:hover {
+    background: var(--ra-color-surface-hover, #f3f4f6);
+    color: var(--ra-color-primary, #2563eb);
   }
 
-  .r-markdown-preview h1,
-  .r-markdown-preview h2,
-  .r-markdown-preview h3,
-  .r-markdown-preview pre,
-  .r-markdown-preview table,
-  .r-markdown-preview blockquote,
-  .r-markdown-preview img {
-    break-inside: avoid;
-    page-break-inside: avoid;
+  /* --- Error Banner --- */
+  .r-docs-error-banner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--ra-spacing-2, 8px);
+    padding: var(--ra-spacing-2, 8px) var(--ra-spacing-4, 16px);
+    background: var(--ra-color-danger-subtle, #fef2f2);
+    color: var(--ra-color-danger, #dc2626);
+    font-size: var(--ra-font-size-sm, 13px);
+    z-index: 10;
   }
 
-  .r-markdown-preview p,
-  .r-markdown-preview li,
-  .r-markdown-preview blockquote p {
-    orphans: 3;
-    widows: 3;
-  }
-
-  .r-markdown-preview h1,
-  .r-markdown-preview h2,
-  .r-markdown-preview h3,
-  .r-markdown-preview h4,
-  .r-markdown-preview h5,
-  .r-markdown-preview h6 {
-    break-after: avoid-page;
-    page-break-after: avoid;
-  }
-
-  .r-markdown-preview table {
-    display: table !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow: visible !important;
-    table-layout: auto !important;
-    word-break: break-word;
-  }
-
-  .r-markdown-preview table th,
-  .r-markdown-preview table td {
-    overflow-wrap: break-word;
-    word-break: break-word;
-  }
-
-  .r-markdown-preview img,
-  .r-markdown-preview svg {
-    max-width: 100% !important;
-    height: auto !important;
-  }
-
-  .r-markdown-preview .rmd-mermaid-fullscreen-btn {
-    display: none !important;
-  }
-
-  .r-markdown-preview .rmd-mermaid-container {
-    break-inside: auto !important;
-    page-break-inside: auto !important;
-    overflow: visible !important;
-    max-width: 100% !important;
-  }
-
-  .r-markdown-preview .rmd-mermaid-container svg {
-    display: block !important;
-    width: auto !important;
-    max-width: var(--r-docs-print-mermaid-max-width, 100%) !important;
-    max-height: 220mm !important;
-    height: auto !important;
+  .r-docs-error-retry {
     margin-left: auto;
-    margin-right: auto;
+    padding: 2px 8px;
+    border: 1px solid var(--ra-color-danger, #dc2626);
+    border-radius: var(--ra-radius-sm, 4px);
+    background: transparent;
+    color: var(--ra-color-danger, #dc2626);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
   }
 
-  .r-docs-browser.print-theme-ink .r-markdown-preview {
-    color: #111 !important;
-    background: #fff !important;
+  .r-docs-error-retry:hover {
+    background: var(--ra-color-danger, #dc2626);
+    color: #fff;
   }
 
-  .r-docs-browser.print-theme-ink .r-markdown-preview pre,
-  .r-docs-browser.print-theme-ink .r-markdown-preview code,
-  .r-docs-browser.print-theme-ink .r-markdown-preview table tr:nth-child(2n) {
-    background: #fff !important;
+  /* --- Content Wrapper --- */
+  .r-docs-content-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
   }
 
-  .r-docs-browser.print-theme-ink .r-markdown-preview pre,
-  .r-docs-browser.print-theme-ink .r-markdown-preview table,
-  .r-docs-browser.print-theme-ink .r-markdown-preview table td,
-  .r-docs-browser.print-theme-ink .r-markdown-preview table th,
-  .r-docs-browser.print-theme-ink .r-markdown-preview blockquote {
-    border-color: #d1d5db !important;
+  .r-docs-content-wrapper--brush {
+    cursor: text;
   }
 
-  .r-docs-browser.print-theme-github .r-markdown-preview {
-    font-size: 15px !important;
-    line-height: 1.6 !important;
+  .r-docs-content-wrapper--brush .r-docs-content-body {
+    user-select: text;
+    -webkit-user-select: text;
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview {
-    font-family: 'Times New Roman', 'Songti SC', 'STSong', 'SimSun', serif !important;
-    font-size: 10.5pt !important;
-    line-height: 1.55 !important;
-    color: #000 !important;
-    background: #fff !important;
-    text-align: justify !important;
-    hyphens: auto;
+  .r-docs-content-wrapper--brush .r-docs-content-body ::selection {
+    background: var(--r-docs-selection-color, rgba(250, 204, 21, 0.4));
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview p {
-    margin: 0 0 5pt !important;
-    text-indent: 2em;
-    orphans: 3;
-    widows: 3;
+  .r-docs-highlight-mark {
+    cursor: pointer;
+    transition: filter 0.15s;
+  }
+  .r-docs-highlight-mark:hover {
+    filter: brightness(0.92);
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview strong,
-  .r-docs-browser.print-theme-academic .r-markdown-preview b {
-    font-weight: 700 !important;
-    font-family: 'Times New Roman', 'Heiti SC', 'STHeiti', 'SimHei', 'Microsoft YaHei',
-      'Songti SC', serif !important;
-    color: #000 !important;
+  .r-docs-highlight-popover {
+    position: fixed;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    background: var(--ra-color-surface, #fff);
+    border: 1px solid var(--ra-color-border, #e5e7eb);
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 12px;
+    color: var(--ra-color-text-secondary, #6b7280);
+    pointer-events: auto;
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview h1,
-  .r-docs-browser.print-theme-academic .r-markdown-preview h2 {
-    text-align: center !important;
-    text-indent: 0 !important;
-    font-weight: 700 !important;
-    color: #000 !important;
+  .r-docs-highlight-popover__text {
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+    color: var(--ra-color-text-tertiary, #9ca3af);
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview h1 {
-    font-size: 17pt !important;
-    margin: 10pt 0 8pt !important;
-    border: none !important;
-    letter-spacing: 0.5pt;
+  .r-docs-highlight-popover__btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+    color: var(--ra-color-text-secondary, #6b7280);
+    transition:
+      background 0.15s,
+      color 0.15s;
+  }
+  .r-docs-highlight-popover__btn:hover {
+    background: var(--ra-color-surface-hover, #f3f4f6);
+  }
+  .r-docs-highlight-popover__btn--delete:hover {
+    color: var(--ra-color-danger, #dc2626);
+    background: var(--ra-color-danger-subtle, #fef2f2);
+  }
+  .r-docs-highlight-popover__btn--note:hover {
+    color: var(--ra-color-primary, #2563eb);
+    background: var(--ra-color-primary-subtle, #eff6ff);
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview h2 {
-    font-size: 14pt !important;
-    margin: var(--r-docs-academic-section-gap, 20pt) 0 6pt !important;
-    padding-bottom: 3pt !important;
-    border-bottom: 0.5pt solid #bbb !important;
+  .r-docs-popover-enter-active,
+  .r-docs-popover-leave-active {
+    transition:
+      opacity 0.15s,
+      transform 0.15s;
+  }
+  .r-docs-popover-enter-from,
+  .r-docs-popover-leave-to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview h1 + h2,
-  .r-docs-browser.print-theme-academic .r-markdown-preview h2:first-child {
-    margin-top: 6pt !important;
+  /* --- Main Area --- */
+  .r-docs-main-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    overflow: hidden;
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview h3 {
-    font-size: 11.5pt !important;
-    margin: 8pt 0 4pt !important;
-    text-indent: 0 !important;
-    text-align: left !important;
-    font-weight: 700 !important;
-    border: none !important;
+  .r-docs-global-toolbar {
+    display: flex;
+    align-items: center;
+    gap: var(--ra-spacing-2, 8px);
+    padding: var(--ra-spacing-2, 8px) var(--ra-spacing-4, 16px);
+    border-bottom: 1px solid var(--ra-color-border, #e5e7eb);
+    background: var(--ra-color-surface-secondary, #fafbfc);
+    flex-shrink: 0;
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview h4,
-  .r-docs-browser.print-theme-academic .r-markdown-preview h5,
-  .r-docs-browser.print-theme-academic .r-markdown-preview h6 {
-    font-size: 10.5pt !important;
-    margin: 5pt 0 3pt !important;
-    text-indent: 0 !important;
-    text-align: left !important;
-    font-weight: 700 !important;
+  .r-docs-toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: var(--ra-spacing-1, 4px);
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview ul,
-  .r-docs-browser.print-theme-academic .r-markdown-preview ol {
-    margin: 0 0 5pt !important;
-    padding-left: 22pt !important;
+  .r-docs-toolbar-divider {
+    width: 1px;
+    height: 16px;
+    background: var(--ra-color-border, #e5e7eb);
+    margin: 0 4px;
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview li {
-    margin: 0 0 1pt !important;
-    text-indent: 0 !important;
+  .r-docs-toolbar-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    border: 1px solid var(--ra-color-border, #e5e7eb);
+    border-radius: var(--ra-radius-md, 6px);
+    background: var(--ra-color-surface, #ffffff);
+    color: var(--ra-color-text-secondary, #6b7280);
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.15s ease;
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview li > p {
-    text-indent: 0 !important;
-    margin: 0 0 2pt !important;
+  .r-docs-toolbar-btn:hover {
+    background: var(--ra-color-surface-hover, #f3f4f6);
+    color: var(--ra-color-text-primary, #111827);
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview pre,
-  .r-docs-browser.print-theme-academic .r-markdown-preview table,
-  .r-docs-browser.print-theme-academic .r-markdown-preview blockquote,
-  .r-docs-browser.print-theme-academic .r-markdown-preview .rmd-mermaid-container {
-    margin: 6pt 0 !important;
-    text-indent: 0 !important;
+  .r-docs-toolbar-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview pre,
-  .r-docs-browser.print-theme-academic .r-markdown-preview pre code {
-    font-family: 'SF Mono', 'Menlo', 'Consolas', 'Courier New', monospace !important;
-    font-size: 9pt !important;
-    line-height: 1.4 !important;
-    background: #f6f8fa !important;
-    border: 0.4pt solid #d0d7de !important;
-    padding: 5pt 7pt !important;
-    text-align: left !important;
-    text-indent: 0 !important;
-    white-space: pre !important;
-    word-break: normal !important;
-    overflow-wrap: normal !important;
-    overflow-x: hidden !important;
+  .r-docs-toolbar-btn--warning:hover {
+    color: var(--ra-color-warning, #d97706);
+    border-color: var(--ra-color-warning, #d97706);
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview pre,
-  .r-docs-browser.print-theme-academic .r-markdown-preview pre *,
-  .r-docs-browser.print-theme-academic .r-markdown-preview pre code,
-  .r-docs-browser.print-theme-academic .r-markdown-preview pre code * {
-    text-decoration: none !important;
-    border-top: 0 !important;
-    border-bottom: 0 !important;
-    box-shadow: none !important;
+  /* --- TOC Panel --- */
+  .r-docs-toc-panel {
+    width: 280px;
+    flex-shrink: 0;
+    border-left: 1px solid var(--ra-color-border, #e5e7eb);
+    background: var(--ra-color-surface, #ffffff);
+    overflow-y: auto;
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview pre code,
-  .r-docs-browser.print-theme-academic .r-markdown-preview pre code *,
-  .r-docs-browser.print-theme-academic .r-markdown-preview pre a {
-    background: transparent !important;
-    background-color: transparent !important;
-    border-radius: 0 !important;
-    padding: 0 !important;
-    color: inherit !important;
+  .r-docs-toc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--ra-spacing-3, 12px) var(--ra-spacing-4, 16px);
+    border-bottom: 1px solid var(--ra-color-border, #e5e7eb);
+    font-size: var(--ra-font-size-sm, 13px);
+    font-weight: 600;
+    color: var(--ra-color-text-primary, #111827);
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview pre code :not(pre) > code {
-    font-size: inherit !important;
-    background: transparent !important;
-    padding: 0 !important;
+  .r-docs-toc-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: none;
+    border-radius: var(--ra-radius-sm, 4px);
+    background: transparent;
+    color: var(--ra-color-text-tertiary, #9ca3af);
+    cursor: pointer;
+    transition: all 0.15s ease;
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview :not(pre) > code {
-    font-family: 'SF Mono', 'Menlo', 'Consolas', monospace !important;
-    font-size: 9.5pt !important;
-    background: #f6f8fa !important;
-    padding: 0 2pt !important;
+  .r-docs-toc-close:hover {
+    background: var(--ra-color-surface-hover, #f3f4f6);
+    color: var(--ra-color-text-primary, #111827);
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview table {
-    font-size: 10pt !important;
-    border-collapse: collapse !important;
-    width: 100% !important;
-    table-layout: auto !important;
-    word-break: normal !important;
-    line-height: 1.4 !important;
+  /* --- Responsive --- */
+  @media (max-width: 768px) {
+    .r-docs-browser {
+      flex-direction: column;
+    }
+
+    .r-docs-panel--dir,
+    .r-docs-panel--files {
+      width: 100% !important;
+      max-width: unset;
+      max-height: 180px;
+    }
+
+    .r-docs-resize-handle {
+      display: none;
+    }
   }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview table th,
-  .r-docs-browser.print-theme-academic .r-markdown-preview table td {
-    border: 0.5pt solid #000 !important;
-    padding: 3pt 5pt !important;
-    text-indent: 0 !important;
-    text-align: left !important;
-    background: #fff !important;
-    vertical-align: top;
-    word-break: normal !important;
-    overflow-wrap: break-word !important;
-    white-space: normal !important;
-    line-break: strict;
-  }
+  @media print {
+    .r-docs-browser,
+    .r-docs-main-area,
+    .r-docs-content,
+    .r-docs-content-body {
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview table th p,
-  .r-docs-browser.print-theme-academic .r-markdown-preview table td p {
-    text-indent: 0 !important;
-    margin: 0 !important;
-    text-align: left !important;
-  }
+    .r-docs-browser {
+      display: block !important;
+      position: static !important;
+      inset: auto !important;
+      border: none !important;
+      box-shadow: none !important;
+      background: #fff !important;
+    }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview table th {
-    background: #f0f0f0 !important;
-    font-weight: 700 !important;
-    text-align: center !important;
-  }
+    .r-docs-panel,
+    .r-docs-resize-handle,
+    .r-docs-collapse-btn,
+    .r-docs-global-toolbar,
+    .r-docs-content-header,
+    .r-docs-toc-panel,
+    .r-docs-toast,
+    .r-docs-print-mask,
+    .rmd-canvas-overlay {
+      display: none !important;
+    }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview table tr:nth-child(2n) {
-    background: #fff !important;
-  }
+    .r-docs-main-area,
+    .r-docs-content {
+      width: 100% !important;
+    }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview blockquote {
-    border-left: 1.5pt solid #555 !important;
-    padding: 3pt 10pt !important;
-    margin: 6pt 0 !important;
-    color: #333 !important;
-    font-style: italic;
-    background: #fafafa !important;
-  }
+    .r-docs-content-body {
+      padding: 0 !important;
+    }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview blockquote p {
-    text-indent: 0 !important;
-  }
+    .r-markdown-preview {
+      padding: 0 !important;
+      max-width: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+    }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview img,
-  .r-docs-browser.print-theme-academic .r-markdown-preview svg {
-    max-width: 100% !important;
-    height: auto !important;
-  }
+    .r-markdown-preview h1,
+    .r-markdown-preview h2,
+    .r-markdown-preview h3,
+    .r-markdown-preview pre,
+    .r-markdown-preview table,
+    .r-markdown-preview blockquote,
+    .r-markdown-preview img {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview .rmd-mermaid-container svg {
-    max-height: 200mm !important;
-  }
+    .r-markdown-preview table {
+      display: table !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      overflow: visible !important;
+      table-layout: auto !important;
+      word-break: break-word;
+    }
 
-  .r-docs-browser.print-theme-academic .r-markdown-preview hr {
-    border: none !important;
-    border-top: 0.4pt solid #999 !important;
-    margin: 8pt 0 !important;
+    .r-markdown-preview table th,
+    .r-markdown-preview table td {
+      overflow-wrap: break-word;
+      word-break: break-word;
+    }
+
+    .r-markdown-preview img,
+    .r-markdown-preview svg {
+      max-width: 100% !important;
+      height: auto !important;
+    }
+
+    .r-markdown-preview .rmd-mermaid-fullscreen-btn {
+      display: none !important;
+    }
+
+    .r-markdown-preview .rmd-mermaid-container {
+      break-inside: auto !important;
+      page-break-inside: auto !important;
+      overflow: visible !important;
+      max-width: 100% !important;
+    }
+
+    .r-markdown-preview .rmd-mermaid-container svg {
+      display: block !important;
+      width: auto !important;
+      max-width: var(--r-docs-print-mermaid-max-width, 100%) !important;
+      max-height: 220mm !important;
+      height: auto !important;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .r-docs-browser.print-theme-ink .r-markdown-preview {
+      color: #111 !important;
+      background: #fff !important;
+    }
+
+    .r-docs-browser.print-theme-ink .r-markdown-preview pre,
+    .r-docs-browser.print-theme-ink .r-markdown-preview code,
+    .r-docs-browser.print-theme-ink .r-markdown-preview table tr:nth-child(2n) {
+      background: #fff !important;
+    }
+
+    .r-docs-browser.print-theme-ink .r-markdown-preview pre,
+    .r-docs-browser.print-theme-ink .r-markdown-preview table,
+    .r-docs-browser.print-theme-ink .r-markdown-preview table td,
+    .r-docs-browser.print-theme-ink .r-markdown-preview table th,
+    .r-docs-browser.print-theme-ink .r-markdown-preview blockquote {
+      border-color: #d1d5db !important;
+    }
+
+    .r-docs-browser.print-theme-github .r-markdown-preview {
+      font-size: 15px !important;
+      line-height: 1.6 !important;
+    }
   }
-}
 </style>

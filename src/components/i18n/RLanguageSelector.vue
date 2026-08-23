@@ -1,37 +1,37 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
-import { NSelect } from 'naive-ui'
+  import { computed } from 'vue'
+  import { NSelect } from 'naive-ui'
 
-const props = defineProps<{
-  modelValue: string
-  options: { value: string; label: string }[]
-}>()
+  const props = defineProps<{
+    modelValue: string
+    options: { value: string; label: string }[]
+  }>()
 
-const emit = defineEmits<{
-  'update:modelValue': [value: string]
-}>()
+  const emit = defineEmits<{
+    'update:modelValue': [value: string]
+  }>()
 
-const inner = computed({
-  get: () => props.modelValue,
-  set: (v: string) => emit('update:modelValue', v),
-})
+  const inner = computed({
+    get: () => props.modelValue,
+    set: (v: string) => emit('update:modelValue', v),
+  })
 
-const FLAG_BY_LOCALE: Record<string, string> = {
-  'zh-CN': '🇨🇳',
-  zh: '🇨🇳',
-  'en-US': '🇺🇸',
-  en: '🇺🇸',
-}
+  const FLAG_BY_LOCALE: Record<string, string> = {
+    'zh-CN': '🇨🇳',
+    zh: '🇨🇳',
+    'en-US': '🇺🇸',
+    en: '🇺🇸',
+  }
 
-const displayOptions = computed(() =>
-  props.options.map((o) => {
-    const flag = FLAG_BY_LOCALE[o.value] || ''
-    return {
-      value: o.value,
-      label: flag ? `${flag} ${o.label}` : o.label,
-    }
-  }),
-)
+  const displayOptions = computed(() =>
+    props.options.map((o) => {
+      const flag = FLAG_BY_LOCALE[o.value] || ''
+      return {
+        value: o.value,
+        label: flag ? `${flag} ${o.label}` : o.label,
+      }
+    }),
+  )
 </script>
 
 <template>
@@ -46,8 +46,8 @@ const displayOptions = computed(() =>
 </template>
 
 <style scoped>
-.r-language-selector :deep(.n-base-selection) {
-  min-height: 28px;
-  font-size: 12px;
-}
+  .r-language-selector :deep(.n-base-selection) {
+    min-height: 28px;
+    font-size: 12px;
+  }
 </style>

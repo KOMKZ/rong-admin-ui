@@ -172,499 +172,507 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted, onBeforeUnmount, nextTick, type CSSProperties } from 'vue'
-import TreeNode from './TreeNode.vue'
-import {
-  DEFAULT_TREE_SELECT_I18N,
-  type RTreeSelectProps,
-  type TreeSelectNode,
-  type TreeSelectI18n,
-} from './types'
+  import {
+    ref,
+    computed,
+    watch,
+    onMounted,
+    onBeforeUnmount,
+    nextTick,
+    type CSSProperties,
+  } from 'vue'
+  import TreeNode from './TreeNode.vue'
+  import {
+    DEFAULT_TREE_SELECT_I18N,
+    type RTreeSelectProps,
+    type TreeSelectNode,
+    type TreeSelectI18n,
+  } from './types'
 
-const props = withDefaults(defineProps<RTreeSelectProps>(), {
-  options: () => [],
-  disabled: false,
-  clearable: true,
-  size: 'medium',
-  searchable: true,
-  defaultExpandLevel: 1,
-  maxHeight: 320,
-})
-
-const emit = defineEmits<{
-  'update:modelValue': [value: string | number | null]
-  select: [node: TreeSelectNode | null]
-  clear: []
-}>()
-
-const containerRef = ref<HTMLElement>()
-const dropdownRef = ref<HTMLElement>()
-const searchInputRef = ref<HTMLInputElement>()
-
-const isOpen = ref(false)
-const isFocused = ref(false)
-const isLoading = ref(false)
-const keyword = ref('')
-const expandedKeys = ref<Set<string | number>>(new Set())
-const treeData = ref<TreeSelectNode[]>([])
-
-const mergedI18n = computed<Required<TreeSelectI18n>>(
-  () =>
-    ({
-      ...DEFAULT_TREE_SELECT_I18N,
-      ...props.i18n,
-    }) as Required<TreeSelectI18n>,
-)
-
-const mergedSize = computed(() => props.size)
-
-const contentMaxHeight = computed(() =>
-  typeof props.maxHeight === 'number' ? `${props.maxHeight}px` : props.maxHeight,
-)
-
-const dropdownStyle = ref<CSSProperties>({})
-
-const currentNodes = computed<TreeSelectNode[]>(() =>
-  treeData.value.length > 0 ? treeData.value : props.options,
-)
-
-const flatNodes = computed<TreeSelectNode[]>(() => {
-  const result: TreeSelectNode[] = []
-  function walk(nodes: TreeSelectNode[]): void {
-    for (const n of nodes) {
-      result.push(n)
-      if (n.children?.length) walk(n.children)
-    }
-  }
-  walk(currentNodes.value)
-  return result
-})
-
-const selectedNode = computed<TreeSelectNode | null>(() => {
-  if (props.modelValue == null) return null
-  return flatNodes.value.find((n) => n.id === props.modelValue) ?? null
-})
-
-const filteredNodes = computed<TreeSelectNode[]>(() => {
-  if (!keyword.value.trim()) return currentNodes.value
-  const kw = keyword.value.toLowerCase()
-  const matchIds = new Set<string | number>()
-
-  for (const n of flatNodes.value) {
-    if (n.label.toLowerCase().includes(kw)) {
-      matchIds.add(n.id)
-      let pid = n.parentId
-      while (pid != null) {
-        matchIds.add(pid)
-        const parent = flatNodes.value.find((p) => p.id === pid)
-        pid = parent?.parentId ?? null
-      }
-    }
-  }
-
-  function filterTree(nodes: TreeSelectNode[]): TreeSelectNode[] {
-    return nodes
-      .filter((n) => matchIds.has(n.id))
-      .map((n) => ({
-        ...n,
-        children: n.children ? filterTree(n.children) : undefined,
-      }))
-  }
-
-  return filterTree(currentNodes.value)
-})
-
-function initExpandedKeys(): void {
-  const keys = new Set<string | number>()
-  function walk(nodes: TreeSelectNode[], depth: number): void {
-    for (const n of nodes) {
-      if (depth < props.defaultExpandLevel && n.children?.length) {
-        keys.add(n.id)
-        walk(n.children, depth + 1)
-      }
-    }
-  }
-  walk(currentNodes.value, 0)
-
-  if (props.modelValue != null) {
-    const node = flatNodes.value.find((n) => n.id === props.modelValue)
-    if (node) {
-      let pid = node.parentId
-      while (pid != null) {
-        keys.add(pid)
-        const parent = flatNodes.value.find((p) => p.id === pid)
-        pid = parent?.parentId ?? null
-      }
-    }
-  }
-
-  expandedKeys.value = keys
-}
-
-function updateDropdownPosition(): void {
-  if (!containerRef.value) return
-  const rect = containerRef.value.getBoundingClientRect()
-  const spaceBelow = window.innerHeight - rect.bottom
-  const dropAbove = spaceBelow < 200 && rect.top > spaceBelow
-
-  dropdownStyle.value = {
-    position: 'fixed',
-    left: `${rect.left}px`,
-    width: `${Math.max(rect.width, 200)}px`,
-    zIndex: 9999,
-    ...(dropAbove
-      ? { bottom: `${window.innerHeight - rect.top + 4}px` }
-      : { top: `${rect.bottom + 4}px` }),
-  }
-}
-
-const loadError = ref<string | null>(null)
-
-async function loadRemoteData(): Promise<void> {
-  if (!props.loadData) return
-  isLoading.value = true
-  loadError.value = null
-  try {
-    treeData.value = await props.loadData()
-    initExpandedKeys()
-  } catch (err) {
-    loadError.value = err instanceof Error ? err.message : 'Load failed'
-    treeData.value = []
-  } finally {
-    isLoading.value = false
-  }
-}
-
-function open(): void {
-  if (props.disabled) return
-  isOpen.value = true
-  keyword.value = ''
-  updateDropdownPosition()
-  nextTick(() => {
-    searchInputRef.value?.focus()
+  const props = withDefaults(defineProps<RTreeSelectProps>(), {
+    options: () => [],
+    disabled: false,
+    clearable: true,
+    size: 'medium',
+    searchable: true,
+    defaultExpandLevel: 1,
+    maxHeight: 320,
   })
-}
 
-function close(): void {
-  isOpen.value = false
-}
+  const emit = defineEmits<{
+    'update:modelValue': [value: string | number | null]
+    select: [node: TreeSelectNode | null]
+    clear: []
+  }>()
 
-function handleTriggerClick(): void {
-  if (props.disabled) return
-  if (isOpen.value) {
-    close()
-  } else {
-    open()
-  }
-}
+  const containerRef = ref<HTMLElement>()
+  const dropdownRef = ref<HTMLElement>()
+  const searchInputRef = ref<HTMLInputElement>()
 
-function handleTriggerKeydown(e: KeyboardEvent): void {
-  if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault()
-    handleTriggerClick()
-  } else if (e.key === 'Escape') {
-    close()
-  }
-}
+  const isOpen = ref(false)
+  const isFocused = ref(false)
+  const isLoading = ref(false)
+  const keyword = ref('')
+  const expandedKeys = ref<Set<string | number>>(new Set())
+  const treeData = ref<TreeSelectNode[]>([])
 
-function handleSelect(node: TreeSelectNode): void {
-  if (node.disabled) return
-  emit('update:modelValue', node.id)
-  emit('select', node)
-  close()
-}
+  const mergedI18n = computed<Required<TreeSelectI18n>>(
+    () =>
+      ({
+        ...DEFAULT_TREE_SELECT_I18N,
+        ...props.i18n,
+      }) as Required<TreeSelectI18n>,
+  )
 
-function handleClear(): void {
-  emit('update:modelValue', null)
-  emit('select', null)
-  emit('clear')
-}
+  const mergedSize = computed(() => props.size)
 
-function handleToggle(id: string | number): void {
-  const keys = new Set(expandedKeys.value)
-  if (keys.has(id)) {
-    keys.delete(id)
-  } else {
-    keys.add(id)
-  }
-  expandedKeys.value = keys
-}
+  const contentMaxHeight = computed(() =>
+    typeof props.maxHeight === 'number' ? `${props.maxHeight}px` : props.maxHeight,
+  )
 
-function focusFirstNode(): void {
-  const firstItem = dropdownRef.value?.querySelector('[role="treeitem"]') as HTMLElement
-  firstItem?.focus()
-}
+  const dropdownStyle = ref<CSSProperties>({})
 
-function handleClickOutside(e: MouseEvent): void {
-  if (
-    !containerRef.value?.contains(e.target as Node) &&
-    !dropdownRef.value?.contains(e.target as Node)
-  ) {
-    close()
-  }
-}
+  const currentNodes = computed<TreeSelectNode[]>(() =>
+    treeData.value.length > 0 ? treeData.value : props.options,
+  )
 
-function handleScroll(): void {
-  if (isOpen.value) updateDropdownPosition()
-}
+  const flatNodes = computed<TreeSelectNode[]>(() => {
+    const result: TreeSelectNode[] = []
+    function walk(nodes: TreeSelectNode[]): void {
+      for (const n of nodes) {
+        result.push(n)
+        if (n.children?.length) walk(n.children)
+      }
+    }
+    walk(currentNodes.value)
+    return result
+  })
 
-watch(
-  () => keyword.value,
-  (kw) => {
-    if (kw.trim()) {
-      const ids = new Set(expandedKeys.value)
-      for (const n of flatNodes.value) {
-        if (n.label.toLowerCase().includes(kw.toLowerCase()) && n.parentId != null) {
-          let pid: string | number | null = n.parentId
-          while (pid != null) {
-            ids.add(pid)
-            const parent = flatNodes.value.find((p) => p.id === pid)
-            pid = parent?.parentId ?? null
-          }
+  const selectedNode = computed<TreeSelectNode | null>(() => {
+    if (props.modelValue == null) return null
+    return flatNodes.value.find((n) => n.id === props.modelValue) ?? null
+  })
+
+  const filteredNodes = computed<TreeSelectNode[]>(() => {
+    if (!keyword.value.trim()) return currentNodes.value
+    const kw = keyword.value.toLowerCase()
+    const matchIds = new Set<string | number>()
+
+    for (const n of flatNodes.value) {
+      if (n.label.toLowerCase().includes(kw)) {
+        matchIds.add(n.id)
+        let pid = n.parentId
+        while (pid != null) {
+          matchIds.add(pid)
+          const parent = flatNodes.value.find((p) => p.id === pid)
+          pid = parent?.parentId ?? null
         }
       }
-      expandedKeys.value = ids
     }
-  },
-)
 
-watch(
-  () => props.options,
-  () => {
-    if (!props.loadData) initExpandedKeys()
-  },
-  { deep: true },
-)
+    function filterTree(nodes: TreeSelectNode[]): TreeSelectNode[] {
+      return nodes
+        .filter((n) => matchIds.has(n.id))
+        .map((n) => ({
+          ...n,
+          children: n.children ? filterTree(n.children) : undefined,
+        }))
+    }
 
-onMounted(() => {
-  initExpandedKeys()
-  if (props.loadData && currentNodes.value.length === 0) {
-    loadRemoteData()
+    return filterTree(currentNodes.value)
+  })
+
+  function initExpandedKeys(): void {
+    const keys = new Set<string | number>()
+    function walk(nodes: TreeSelectNode[], depth: number): void {
+      for (const n of nodes) {
+        if (depth < props.defaultExpandLevel && n.children?.length) {
+          keys.add(n.id)
+          walk(n.children, depth + 1)
+        }
+      }
+    }
+    walk(currentNodes.value, 0)
+
+    if (props.modelValue != null) {
+      const node = flatNodes.value.find((n) => n.id === props.modelValue)
+      if (node) {
+        let pid = node.parentId
+        while (pid != null) {
+          keys.add(pid)
+          const parent = flatNodes.value.find((p) => p.id === pid)
+          pid = parent?.parentId ?? null
+        }
+      }
+    }
+
+    expandedKeys.value = keys
   }
-  document.addEventListener('click', handleClickOutside, true)
-  window.addEventListener('scroll', handleScroll, true)
-  window.addEventListener('resize', handleScroll)
-})
 
-onBeforeUnmount(() => {
-  document.removeEventListener('click', handleClickOutside, true)
-  window.removeEventListener('scroll', handleScroll, true)
-  window.removeEventListener('resize', handleScroll)
-})
+  function updateDropdownPosition(): void {
+    if (!containerRef.value) return
+    const rect = containerRef.value.getBoundingClientRect()
+    const spaceBelow = window.innerHeight - rect.bottom
+    const dropAbove = spaceBelow < 200 && rect.top > spaceBelow
 
-defineExpose({
-  reload: loadRemoteData,
-  open,
-  close,
-  getSelectedNode: () => selectedNode.value,
-})
+    dropdownStyle.value = {
+      position: 'fixed',
+      left: `${rect.left}px`,
+      width: `${Math.max(rect.width, 200)}px`,
+      zIndex: 9999,
+      ...(dropAbove
+        ? { bottom: `${window.innerHeight - rect.top + 4}px` }
+        : { top: `${rect.bottom + 4}px` }),
+    }
+  }
+
+  const loadError = ref<string | null>(null)
+
+  async function loadRemoteData(): Promise<void> {
+    if (!props.loadData) return
+    isLoading.value = true
+    loadError.value = null
+    try {
+      treeData.value = await props.loadData()
+      initExpandedKeys()
+    } catch (err) {
+      loadError.value = err instanceof Error ? err.message : 'Load failed'
+      treeData.value = []
+    } finally {
+      isLoading.value = false
+    }
+  }
+
+  function open(): void {
+    if (props.disabled) return
+    isOpen.value = true
+    keyword.value = ''
+    updateDropdownPosition()
+    nextTick(() => {
+      searchInputRef.value?.focus()
+    })
+  }
+
+  function close(): void {
+    isOpen.value = false
+  }
+
+  function handleTriggerClick(): void {
+    if (props.disabled) return
+    if (isOpen.value) {
+      close()
+    } else {
+      open()
+    }
+  }
+
+  function handleTriggerKeydown(e: KeyboardEvent): void {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      handleTriggerClick()
+    } else if (e.key === 'Escape') {
+      close()
+    }
+  }
+
+  function handleSelect(node: TreeSelectNode): void {
+    if (node.disabled) return
+    emit('update:modelValue', node.id)
+    emit('select', node)
+    close()
+  }
+
+  function handleClear(): void {
+    emit('update:modelValue', null)
+    emit('select', null)
+    emit('clear')
+  }
+
+  function handleToggle(id: string | number): void {
+    const keys = new Set(expandedKeys.value)
+    if (keys.has(id)) {
+      keys.delete(id)
+    } else {
+      keys.add(id)
+    }
+    expandedKeys.value = keys
+  }
+
+  function focusFirstNode(): void {
+    const firstItem = dropdownRef.value?.querySelector('[role="treeitem"]') as HTMLElement
+    firstItem?.focus()
+  }
+
+  function handleClickOutside(e: MouseEvent): void {
+    if (
+      !containerRef.value?.contains(e.target as Node) &&
+      !dropdownRef.value?.contains(e.target as Node)
+    ) {
+      close()
+    }
+  }
+
+  function handleScroll(): void {
+    if (isOpen.value) updateDropdownPosition()
+  }
+
+  watch(
+    () => keyword.value,
+    (kw) => {
+      if (kw.trim()) {
+        const ids = new Set(expandedKeys.value)
+        for (const n of flatNodes.value) {
+          if (n.label.toLowerCase().includes(kw.toLowerCase()) && n.parentId != null) {
+            let pid: string | number | null = n.parentId
+            while (pid != null) {
+              ids.add(pid)
+              const parent = flatNodes.value.find((p) => p.id === pid)
+              pid = parent?.parentId ?? null
+            }
+          }
+        }
+        expandedKeys.value = ids
+      }
+    },
+  )
+
+  watch(
+    () => props.options,
+    () => {
+      if (!props.loadData) initExpandedKeys()
+    },
+    { deep: true },
+  )
+
+  onMounted(() => {
+    initExpandedKeys()
+    if (props.loadData && currentNodes.value.length === 0) {
+      loadRemoteData()
+    }
+    document.addEventListener('click', handleClickOutside, true)
+    window.addEventListener('scroll', handleScroll, true)
+    window.addEventListener('resize', handleScroll)
+  })
+
+  onBeforeUnmount(() => {
+    document.removeEventListener('click', handleClickOutside, true)
+    window.removeEventListener('scroll', handleScroll, true)
+    window.removeEventListener('resize', handleScroll)
+  })
+
+  defineExpose({
+    reload: loadRemoteData,
+    open,
+    close,
+    getSelectedNode: () => selectedNode.value,
+  })
 </script>
 
 <style>
-.r-tree-select {
-  position: relative;
-  display: inline-flex;
-  width: 100%;
-}
+  .r-tree-select {
+    position: relative;
+    display: inline-flex;
+    width: 100%;
+  }
 
-.r-tree-select--disabled {
-  opacity: 0.5;
-  pointer-events: none;
-}
+  .r-tree-select--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
 
-/* ─── Trigger ─── */
+  /* ─── Trigger ─── */
 
-.r-tree-select__trigger {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  border: 1px solid var(--ra-color-border-default);
-  border-radius: var(--ra-radius-md);
-  background: var(--ra-color-bg-surface);
-  color: var(--ra-color-text-primary);
-  cursor: pointer;
-  transition:
-    border-color var(--ra-transition-fast),
-    box-shadow var(--ra-transition-fast);
-  outline: none;
-}
+  .r-tree-select__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    border: 1px solid var(--ra-color-border-default);
+    border-radius: var(--ra-radius-md);
+    background: var(--ra-color-bg-surface);
+    color: var(--ra-color-text-primary);
+    cursor: pointer;
+    transition:
+      border-color var(--ra-transition-fast),
+      box-shadow var(--ra-transition-fast);
+    outline: none;
+  }
 
-.r-tree-select--small .r-tree-select__trigger {
-  height: 28px;
-  padding: 0 8px;
-  font-size: var(--ra-font-size-xs);
-}
+  .r-tree-select--small .r-tree-select__trigger {
+    height: 28px;
+    padding: 0 8px;
+    font-size: var(--ra-font-size-xs);
+  }
 
-.r-tree-select--medium .r-tree-select__trigger {
-  height: 34px;
-  padding: 0 12px;
-  font-size: var(--ra-font-size-sm);
-}
+  .r-tree-select--medium .r-tree-select__trigger {
+    height: 34px;
+    padding: 0 12px;
+    font-size: var(--ra-font-size-sm);
+  }
 
-.r-tree-select--large .r-tree-select__trigger {
-  height: 40px;
-  padding: 0 14px;
-  font-size: var(--ra-font-size-base);
-}
+  .r-tree-select--large .r-tree-select__trigger {
+    height: 40px;
+    padding: 0 14px;
+    font-size: var(--ra-font-size-base);
+  }
 
-.r-tree-select--focused .r-tree-select__trigger,
-.r-tree-select--open .r-tree-select__trigger {
-  border-color: var(--ra-color-border-focus);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ra-color-brand-primary) 15%, transparent);
-}
+  .r-tree-select--focused .r-tree-select__trigger,
+  .r-tree-select--open .r-tree-select__trigger {
+    border-color: var(--ra-color-border-focus);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--ra-color-brand-primary) 15%, transparent);
+  }
 
-.r-tree-select__trigger:hover {
-  border-color: var(--ra-color-border-interactive);
-}
+  .r-tree-select__trigger:hover {
+    border-color: var(--ra-color-border-interactive);
+  }
 
-.r-tree-select__value {
-  flex: 1;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+  .r-tree-select__value {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-.r-tree-select__placeholder {
-  flex: 1;
-  color: var(--ra-color-text-quaternary);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+  .r-tree-select__placeholder {
+    flex: 1;
+    color: var(--ra-color-text-quaternary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 
-.r-tree-select__actions {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  margin-left: 4px;
-  flex-shrink: 0;
-}
+  .r-tree-select__actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: 4px;
+    flex-shrink: 0;
+  }
 
-.r-tree-select__clear {
-  display: flex;
-  align-items: center;
-  color: var(--ra-color-text-tertiary);
-  cursor: pointer;
-  border-radius: var(--ra-radius-sm);
-  padding: 1px;
-  transition: color var(--ra-transition-fast);
-}
+  .r-tree-select__clear {
+    display: flex;
+    align-items: center;
+    color: var(--ra-color-text-tertiary);
+    cursor: pointer;
+    border-radius: var(--ra-radius-sm);
+    padding: 1px;
+    transition: color var(--ra-transition-fast);
+  }
 
-.r-tree-select__clear:hover {
-  color: var(--ra-color-text-primary);
-}
+  .r-tree-select__clear:hover {
+    color: var(--ra-color-text-primary);
+  }
 
-.r-tree-select__arrow {
-  display: flex;
-  align-items: center;
-  color: var(--ra-color-text-tertiary);
-  transition: transform var(--ra-transition-fast);
-}
+  .r-tree-select__arrow {
+    display: flex;
+    align-items: center;
+    color: var(--ra-color-text-tertiary);
+    transition: transform var(--ra-transition-fast);
+  }
 
-.r-tree-select__arrow--open {
-  transform: rotate(180deg);
-}
+  .r-tree-select__arrow--open {
+    transform: rotate(180deg);
+  }
 
-/* ─── Dropdown ─── */
+  /* ─── Dropdown ─── */
 
-.r-tree-select__dropdown {
-  background: var(--ra-color-bg-elevated);
-  border: 1px solid var(--ra-color-border-light);
-  border-radius: var(--ra-radius-lg);
-  box-shadow: var(--ra-shadow-lg);
-  overflow: hidden;
-}
+  .r-tree-select__dropdown {
+    background: var(--ra-color-bg-elevated);
+    border: 1px solid var(--ra-color-border-light);
+    border-radius: var(--ra-radius-lg);
+    box-shadow: var(--ra-shadow-lg);
+    overflow: hidden;
+  }
 
-.r-tree-select-dropdown-enter-active,
-.r-tree-select-dropdown-leave-active {
-  transition:
-    opacity var(--ra-transition-fast),
-    transform var(--ra-transition-fast);
-}
+  .r-tree-select-dropdown-enter-active,
+  .r-tree-select-dropdown-leave-active {
+    transition:
+      opacity var(--ra-transition-fast),
+      transform var(--ra-transition-fast);
+  }
 
-.r-tree-select-dropdown-enter-from,
-.r-tree-select-dropdown-leave-to {
-  opacity: 0;
-  transform: translateY(-4px);
-}
+  .r-tree-select-dropdown-enter-from,
+  .r-tree-select-dropdown-leave-to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
 
-/* ─── Search ─── */
+  /* ─── Search ─── */
 
-.r-tree-select__search {
-  position: relative;
-  padding: 8px;
-  border-bottom: 1px solid var(--ra-color-border-light);
-}
+  .r-tree-select__search {
+    position: relative;
+    padding: 8px;
+    border-bottom: 1px solid var(--ra-color-border-light);
+  }
 
-.r-tree-select__search-input {
-  width: 100%;
-  height: 30px;
-  padding: 0 8px 0 28px;
-  border: 1px solid var(--ra-color-border-default);
-  border-radius: var(--ra-radius-md);
-  background: var(--ra-color-bg-surface);
-  color: var(--ra-color-text-primary);
-  font-size: var(--ra-font-size-sm);
-  outline: none;
-  transition: border-color var(--ra-transition-fast);
-}
+  .r-tree-select__search-input {
+    width: 100%;
+    height: 30px;
+    padding: 0 8px 0 28px;
+    border: 1px solid var(--ra-color-border-default);
+    border-radius: var(--ra-radius-md);
+    background: var(--ra-color-bg-surface);
+    color: var(--ra-color-text-primary);
+    font-size: var(--ra-font-size-sm);
+    outline: none;
+    transition: border-color var(--ra-transition-fast);
+  }
 
-.r-tree-select__search-input:focus {
-  border-color: var(--ra-color-border-focus);
-}
+  .r-tree-select__search-input:focus {
+    border-color: var(--ra-color-border-focus);
+  }
 
-.r-tree-select__search-input::placeholder {
-  color: var(--ra-color-text-quaternary);
-}
+  .r-tree-select__search-input::placeholder {
+    color: var(--ra-color-text-quaternary);
+  }
 
-.r-tree-select__search-icon {
-  position: absolute;
-  left: 16px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--ra-color-text-tertiary);
-  pointer-events: none;
-}
+  .r-tree-select__search-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ra-color-text-tertiary);
+    pointer-events: none;
+  }
 
-/* ─── Content ─── */
+  /* ─── Content ─── */
 
-.r-tree-select__content {
-  overflow-y: auto;
-  padding: 4px 0;
-}
+  .r-tree-select__content {
+    overflow-y: auto;
+    padding: 4px 0;
+  }
 
-.r-tree-select__status {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 16px;
-  color: var(--ra-color-text-tertiary);
-  font-size: var(--ra-font-size-sm);
-}
+  .r-tree-select__status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+    color: var(--ra-color-text-tertiary);
+    font-size: var(--ra-font-size-sm);
+  }
 
-.r-tree-select__status--error {
-  color: var(--ra-color-danger-text);
-}
+  .r-tree-select__status--error {
+    color: var(--ra-color-danger-text);
+  }
 
-.r-tree-select__retry {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  border: 1px solid var(--ra-color-border-default);
-  border-radius: var(--ra-radius-sm);
-  background: var(--ra-color-bg-surface);
-  color: var(--ra-color-text-secondary);
-  cursor: pointer;
-  font-size: 14px;
-  transition: border-color var(--ra-transition-fast);
-}
+  .r-tree-select__retry {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--ra-color-border-default);
+    border-radius: var(--ra-radius-sm);
+    background: var(--ra-color-bg-surface);
+    color: var(--ra-color-text-secondary);
+    cursor: pointer;
+    font-size: 14px;
+    transition: border-color var(--ra-transition-fast);
+  }
 
-.r-tree-select__retry:hover {
-  border-color: var(--ra-color-brand-primary);
-  color: var(--ra-color-brand-primary);
-}
+  .r-tree-select__retry:hover {
+    border-color: var(--ra-color-brand-primary);
+    color: var(--ra-color-brand-primary);
+  }
 </style>

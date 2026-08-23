@@ -95,6 +95,8 @@ export const defaultLocale: ProUploadLocale = {
 export interface ProUploadProps {
   /** Controlled value — list of file items */
   value?: ProUploadFileItem[]
+  /** Standard v-model value — list of file items */
+  modelValue?: ProUploadFileItem[]
   /** Multiple file selection */
   multiple?: boolean
   /** Accepted file types (e.g. ".jpg,.png" or "image/*") */
@@ -115,6 +117,14 @@ export interface ProUploadProps {
   retryConfig?: ProUploadRetryConfig
   /** Storage domain type (e.g. "avatar", "image", "document") */
   storage?: string
+  /** Upload endpoint for the built-in XMLHttpRequest transport */
+  action?: string
+  /** Upload method for the built-in transport */
+  method?: 'POST' | 'PUT' | 'PATCH'
+  /** Extra headers for the built-in transport */
+  headers?: Record<string, string>
+  /** Whether the built-in transport should send credentials */
+  withCredentials?: boolean
   /** Category for file metadata */
   category?: string
   /** Business ID for file metadata */
@@ -127,6 +137,8 @@ export interface ProUploadProps {
   customRequest?: (options: ProUploadRequestOptions) => void
   /** Hook before upload; return false or Promise<false> to prevent */
   beforeUpload?: (file: File) => boolean | Promise<boolean>
+  /** Transform a validated File before it enters upload queue */
+  transformFile?: (file: File, ctx: ProUploadPayloadContext) => File | Promise<File>
   /** Build FormData payload; override to add custom fields */
   buildUploadPayload?: (file: File, ctx: ProUploadPayloadContext) => FormData
   /** Parse raw server response into FileItem fields */
@@ -142,6 +154,7 @@ export interface ProUploadProps {
 export interface ProUploadEmits {
   (e: 'change', fileList: ProUploadFileItem[]): void
   (e: 'update:value', fileList: ProUploadFileItem[]): void
+  (e: 'update:modelValue', fileList: ProUploadFileItem[]): void
   (e: 'success', file: ProUploadFileItem, response: unknown): void
   (e: 'error', file: ProUploadFileItem, error: Error): void
   (e: 'preview', file: ProUploadFileItem): void

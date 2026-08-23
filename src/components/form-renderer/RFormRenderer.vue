@@ -18,7 +18,12 @@ import {
   type FormRules,
 } from 'naive-ui'
 import { RCheckButtonGroup } from '../check-button-group'
-import type { FormFieldSchema, FormFieldOption, FormFieldGroup, FormRendererExpose } from './types'
+import type {
+  FormFieldSchema,
+  FormFieldOption,
+  FormFieldGroup,
+  FormRendererExpose,
+} from './types'
 
 const props = defineProps({
   schema: { type: Array as PropType<FormFieldSchema[]>, required: true },
@@ -44,6 +49,15 @@ const asyncOptionsMap = reactive<Record<string, FormFieldOption[]>>({})
 const asyncLoadingMap = reactive<Record<string, boolean>>({})
 const schemaPatchMap = reactive<Record<string, Partial<FormFieldSchema>>>({})
 const collapsedGroups = reactive<Record<string, boolean>>({})
+let latestModel: Record<string, unknown> = { ...props.model }
+
+watch(
+  () => props.model,
+  (model) => {
+    latestModel = { ...model }
+  },
+  { deep: true },
+)
 
 const effectiveSchema = computed(() =>
   props.schema.map((field) => {
@@ -153,7 +167,8 @@ function isFieldDisabled(field: FormFieldSchema): boolean {
 }
 
 function updateField(key: string, value: unknown): void {
-  emit('update:model', { ...props.model, [key]: value })
+  latestModel = { ...latestModel, [key]: value }
+  emit('update:model', { ...latestModel })
 }
 
 function fieldStr(key: string): string {
@@ -196,6 +211,19 @@ function fieldButtonGroupValue(key: string): (string | number)[] | string | numb
 function toStrNum(v: unknown): string | number {
   if (typeof v === 'number') return v
   return String(v ?? '')
+}
+
+function customComponentListeners(
+  field: FormFieldSchema,
+): Record<string, (value: unknown) => void> {
+  const listeners: Record<string, (value: unknown) => void> = {
+    'update:modelValue': (value) => updateField(field.key, value),
+    'update:value': (value) => updateField(field.key, value),
+  }
+  for (const [eventName, targetKey] of Object.entries(field.componentEventMap ?? {})) {
+    listeners[eventName] = (value) => updateField(targetKey, value)
+  }
+  return listeners
 }
 
 function resolvedOptions(
@@ -404,8 +432,7 @@ defineExpose(expose)
                 v-else-if="field.type === 'custom' && field.component"
                 :model-value="model[field.key]"
                 v-bind="field.componentProps"
-                @update:model-value="updateField(field.key, $event)"
-                @update:value="updateField(field.key, $event)"
+                v-on="customComponentListeners(field)"
               />
             </template>
             <slot name="fieldSuffix" :field="field" />
@@ -557,8 +584,7 @@ defineExpose(expose)
             v-else-if="field.type === 'custom' && field.component"
             :model-value="model[field.key]"
             v-bind="field.componentProps"
-            @update:model-value="updateField(field.key, $event)"
-            @update:value="updateField(field.key, $event)"
+            v-on="customComponentListeners(field)"
           />
         </template>
         <slot name="fieldSuffix" :field="field" />
