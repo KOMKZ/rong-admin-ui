@@ -1,7 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { h } from 'vue'
+import { mount } from '@vue/test-utils'
+import { NMessageProvider } from 'naive-ui'
 import { createAsyncTaskCenter } from '../../src/components/async-task-center'
 import { createAsyncTaskPoller } from '../../src/components/async-task-center/async-task-poller'
 import { createAsyncTaskStore } from '../../src/components/async-task-center/async-task-store'
+import RAsyncTaskCenter from '../../src/components/async-task-center/RAsyncTaskCenter.vue'
 
 describe('async task center', () => {
   beforeEach(() => {
@@ -49,6 +53,24 @@ describe('async task center', () => {
     task.status = 'succeeded'
 
     expect(center.actions(task).map((action) => action.key)).toEqual(['download'])
+    center.destroy()
+  })
+
+  it('renders the progress notification trigger with a progress icon', () => {
+    const center = createAsyncTaskCenter({
+      query: { getMany: async () => [] },
+    })
+
+    const wrapper = mount({
+      render: () => h(NMessageProvider, null, { default: () => h(RAsyncTaskCenter, { center }) }),
+    })
+
+    const trigger = wrapper.find('[data-testid="async-task-center-trigger"]')
+    expect(trigger.exists()).toBe(true)
+    expect(trigger.attributes('aria-label')).toBe('进度通知')
+    expect(wrapper.find('[data-testid="r-icon"]').attributes('aria-label')).toBe('activity')
+
+    wrapper.unmount()
     center.destroy()
   })
 })

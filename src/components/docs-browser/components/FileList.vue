@@ -71,7 +71,7 @@
 
     <div class="r-docs-file-items" v-if="filteredFiles.length > 0">
       <button
-        v-for="file in filteredFiles"
+        v-for="file in visibleFiles"
         :key="`${file.directory}:${file.path}`"
         class="r-docs-file-item"
         :class="{ 'is-active': isSelected(file) }"
@@ -156,6 +156,8 @@
       (f) => f.name.toLowerCase().includes(q) || (f.title && f.title.toLowerCase().includes(q)),
     )
   })
+
+  const visibleFiles = computed(() => filteredFiles.value.slice(0, 28))
 
   const sortModeOptions: Array<{
     key: string

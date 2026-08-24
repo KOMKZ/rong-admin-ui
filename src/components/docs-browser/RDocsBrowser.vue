@@ -1271,7 +1271,7 @@
     fileListLoading.value = true
     try {
       loadError.value = null
-      const res = await props.api.getFileList(sortOrder.value, sortBy.value)
+      const res = await props.api.getFileList(sortOrder.value, sortBy.value, 1, 100)
       files.value = res.files || []
       if (selectedFile.value) {
         const synced = files.value.find(

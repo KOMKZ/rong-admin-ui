@@ -40,7 +40,12 @@ export interface DocListDirectoriesResponse {
 }
 
 export interface DocsApiAdapter {
-  getFileList: (order: DocSortOrder, sortBy?: DocSortBy) => Promise<DocListFilesResponse>
+  getFileList: (
+    order: DocSortOrder,
+    sortBy?: DocSortBy,
+    page?: number,
+    pageSize?: number,
+  ) => Promise<DocListFilesResponse>
   getDirectories: () => Promise<DocListDirectoriesResponse>
   getFileContent: (dir: string, path: string) => Promise<DocFileContent>
 }

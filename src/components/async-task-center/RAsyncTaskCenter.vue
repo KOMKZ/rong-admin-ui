@@ -10,7 +10,7 @@
     NText,
     useMessage,
   } from 'naive-ui'
-  import { Bell } from 'lucide-vue-next'
+  import RIcon from '../icon/RIcon.vue'
   import RAsyncTaskItem from './RAsyncTaskItem.vue'
   import type { AsyncTaskCenterInstance } from './types'
 
@@ -65,11 +65,11 @@
     <NButton
       circle
       quaternary
-      aria-label="异步任务"
+      aria-label="进度通知"
       data-testid="async-task-center-trigger"
       @click="drawerOpen = true"
     >
-      <template #icon><Bell :size="17" /></template>
+      <template #icon><RIcon name="activity" :size="18" /></template>
     </NButton>
   </NBadge>
   <NDrawer
@@ -78,7 +78,7 @@
     :width="420"
     data-testid="async-task-center-drawer"
   >
-    <NDrawerContent title="任务通知" closable>
+    <NDrawerContent title="进度通知" closable>
       <div class="r-async-task-center__header">
         <NText depth="3">共 {{ tasks.length }} 个任务</NText>
         <NSpace size="small">
