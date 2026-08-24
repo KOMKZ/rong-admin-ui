@@ -63,6 +63,7 @@ export default defineConfig({
           __dirname,
           'src/components/page-skeleton/index.ts',
         ),
+        'components/page-layout/index': resolve(__dirname, 'src/components/page-layout/index.ts'),
         'components/batch-action-bar/index': resolve(
           __dirname,
           'src/components/batch-action-bar/index.ts',

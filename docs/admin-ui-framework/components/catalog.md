@@ -4,9 +4,18 @@
 
 | 层级             | 定位     | 组件                                                                                                                                       |
 | ---------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| layout           | 页面骨架 | RPage, RListPage, RFormPage, RDetailPage, RSectionCard                                                                                     |
 | business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RFileUpload, RProUpload, RImageCropUpload, RProTreeEditor, RDashboardBuilder, RDashboardWorkspace |
 
 ## 组件清单
+
+### RPage / RListPage / RFormPage / RDetailPage / RSectionCard
+
+- **文件**: `src/components/page-layout/`
+- **契约**: `src/components/page-layout/types.ts`
+- **规格文档**: `features/page-layout.md`
+- **测试**: `tests/components/page-layout.test.ts`
+- **消费方调用**: `hrise-admin-web/src/views/**`
 
 ### RDataTable
 
