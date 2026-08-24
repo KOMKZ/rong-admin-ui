@@ -13,6 +13,7 @@ import { createAdminRouterPipeline } from '../app-router/router-pipeline'
 import type { RouterPipelineInstance } from '../app-router/router-pipeline'
 import type { AppConfigInput } from '../app-config'
 import type { RongAdminPresetOptions, RongAdminAppInstance } from './types'
+import { createAsyncTaskCenter } from '../components/async-task-center'
 
 const defaultStorage: TokenStorage = {
   get: (key) => {
@@ -87,6 +88,8 @@ export function createRongAdminApp(options: RongAdminPresetOptions): RongAdminAp
     errorStrategy: options.request?.errorStrategy,
   })
 
+  const asyncTaskCenter = options.asyncTasks ? createAsyncTaskCenter(options.asyncTasks) : null
+
   const configPlugin: AppPlugin = {
     name: 'rong-admin-config',
     install: (app: App) => {
@@ -141,6 +144,7 @@ export function createRongAdminApp(options: RongAdminPresetOptions): RongAdminAp
       routerPipeline.resetRoutes()
     }
     themeProvider.destroy()
+    asyncTaskCenter?.destroy()
     tokenManager.destroy()
     appCtx?.destroy()
     appCtx = null
@@ -152,6 +156,7 @@ export function createRongAdminApp(options: RongAdminPresetOptions): RongAdminAp
     httpClient,
     themeProvider,
     routerPipeline,
+    asyncTaskCenter,
     bootstrap,
     destroy,
   }

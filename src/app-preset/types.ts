@@ -12,6 +12,10 @@ import type {
 } from '../theme/types'
 import type { RouterPipelineOptions, RouterPipelineInstance } from '../app-router/router-pipeline'
 import type { RouteRecordRaw } from 'vue-router'
+import type {
+  AsyncTaskCenterInstance,
+  AsyncTaskCenterOptions,
+} from '../components/async-task-center'
 
 export interface RongAdminPresetOptions {
   rootComponent: Component
@@ -58,6 +62,8 @@ export interface RongAdminPresetOptions {
 
   plugins?: AppPlugin[]
 
+  asyncTasks?: AsyncTaskCenterOptions
+
   onReady?: () => void | Promise<void>
   onError?: AppErrorHandler
 }
@@ -68,6 +74,7 @@ export interface RongAdminAppInstance {
   httpClient: HttpClient
   themeProvider: ThemeProviderInstance
   routerPipeline: RouterPipelineInstance | null
+  asyncTaskCenter: AsyncTaskCenterInstance | null
   bootstrap: () => Promise<AppContext>
   destroy: () => void
 }
