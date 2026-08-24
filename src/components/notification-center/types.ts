@@ -9,6 +9,8 @@ export interface NotificationItem {
   read: boolean
   /** Auto-dismiss after ms; 0 = persistent */
   duration?: number
+  /** Extra detail payload shown in the detail dialog */
+  metadata?: Record<string, unknown>
   /** Action callback */
   onAction?: () => void
   actionLabel?: string

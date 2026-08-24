@@ -1,6 +1,16 @@
 <script lang="ts" setup>
   import { computed, ref, type PropType } from 'vue'
-  import { NPopover, NButton, NSpace, NBadge, NEmpty } from 'naive-ui'
+  import {
+    NBadge,
+    NButton,
+    NDrawer,
+    NDrawerContent,
+    NEmpty,
+    NModal,
+    NSpace,
+    NTabPane,
+    NTabs,
+  } from 'naive-ui'
   import { RIcon } from '../icon'
   import type { NotificationItem, NotificationType, NotificationCenterExpose } from './types'
 
@@ -24,11 +34,22 @@
   }>()
 
   const panelOpen = ref(false)
+  const detailOpen = ref(false)
+  const selectedNotification = ref<NotificationItem | null>(null)
+  const activeTab = ref<'unread' | 'read'>('unread')
+  const detailModalStyle = {
+    width: 'min(420px, calc(100vw - 32px))',
+    maxWidth: 'calc(100vw - 32px)',
+  }
 
   const unreadCount = computed(() => props.notifications.filter((n) => !n.read).length)
+  const readCount = computed(() => props.notifications.filter((n) => n.read).length)
 
   const visibleNotifications = computed(() =>
-    [...props.notifications].sort((a, b) => b.timestamp - a.timestamp).slice(0, props.maxVisible),
+    [...props.notifications]
+      .filter((item) => (activeTab.value === 'unread' ? !item.read : item.read))
+      .sort((a, b) => b.timestamp - a.timestamp)
+      .slice(0, props.maxVisible),
   )
 
   const typeIconMap: Record<NotificationType, string> = {
@@ -95,12 +116,23 @@
     emit('action', item)
   }
 
+  function handleItemClick(item: NotificationItem): void {
+    if (!item.read) markRead(item.id)
+    selectedNotification.value = item
+    detailOpen.value = true
+  }
+
   function formatTime(ts: number): string {
     const diff = Date.now() - ts
     if (diff < 60_000) return '刚刚'
     if (diff < 3_600_000) return `${Math.floor(diff / 60_000)} 分钟前`
     if (diff < 86_400_000) return `${Math.floor(diff / 3_600_000)} 小时前`
     return new Date(ts).toLocaleDateString()
+  }
+
+  function detailTrigger(item: NotificationItem): string {
+    const source = item.metadata?.trigger || item.metadata?.source || item.metadata?.type_code
+    return typeof source === 'string' && source ? source : item.type
   }
 
   const expose: NotificationCenterExpose = {
@@ -118,79 +150,116 @@
 </script>
 
 <template>
-  <NPopover
-    trigger="click"
-    :placement="placement"
-    :show="panelOpen"
-    :style="{ padding: 0, width: '380px' }"
-    @update:show="panelOpen = $event"
+  <button
+    class="r-notif-trigger"
+    aria-label="Notifications"
+    data-testid="notification-trigger"
+    @click="panelOpen = true"
   >
-    <template #trigger>
-      <button
-        class="r-notif-trigger"
-        aria-label="Notifications"
-        data-testid="notification-trigger"
-        @click="panelOpen = !panelOpen"
-      >
-        <NBadge v-if="showBadge && unreadCount > 0" :value="unreadCount" :max="99">
-          <RIcon name="bell" size="sm" />
-        </NBadge>
-        <RIcon v-else name="bell" size="sm" />
-      </button>
-    </template>
+    <NBadge v-if="showBadge && unreadCount > 0" :value="unreadCount" :max="99">
+      <RIcon name="bell" size="sm" />
+    </NBadge>
+    <RIcon v-else name="bell" size="sm" />
+  </button>
 
-    <div class="r-notif-panel" data-testid="notification-panel">
-      <div class="r-notif-panel__header">
-        <span class="r-notif-panel__title">
-          通知
-          <span v-if="unreadCount > 0" class="r-notif-panel__count">{{ unreadCount }}</span>
-        </span>
-        <NSpace size="small">
-          <NButton text size="tiny" :disabled="unreadCount === 0" @click="markAllRead">
-            全部已读
-          </NButton>
-          <NButton text size="tiny" :disabled="notifications.length === 0" @click="clearAll">
-            清空
-          </NButton>
-        </NSpace>
-      </div>
+  <NDrawer v-model:show="panelOpen" :width="420" placement="right" data-testid="notification-panel">
+    <NDrawerContent closable>
+      <template #header>
+        <div class="r-notif-panel__drawer-header">
+          <span class="r-notif-panel__title">
+            通知
+            <span v-if="unreadCount > 0" class="r-notif-panel__count">{{ unreadCount }}</span>
+          </span>
+          <NSpace size="small">
+            <NButton text size="tiny" :disabled="unreadCount === 0" @click="markAllRead">
+              全部已读
+            </NButton>
+            <NButton text size="tiny" :disabled="notifications.length === 0" @click="clearAll">
+              清空
+            </NButton>
+          </NSpace>
+        </div>
+      </template>
 
-      <div class="r-notif-panel__list">
-        <NEmpty v-if="visibleNotifications.length === 0" description="暂无通知" />
-        <div
-          v-for="item in visibleNotifications"
-          :key="item.id"
-          class="r-notif-item"
-          :class="[typeColorClass[item.type], { 'r-notif-item--unread': !item.read }]"
-          :data-testid="`notification-item-${item.id}`"
-          @click="markRead(item.id)"
-        >
-          <div class="r-notif-item__icon">
-            <RIcon :name="typeIconMap[item.type]" size="sm" />
-          </div>
-          <div class="r-notif-item__body">
-            <div class="r-notif-item__title">{{ item.title }}</div>
-            <div v-if="item.description" class="r-notif-item__desc">{{ item.description }}</div>
-            <div class="r-notif-item__meta">
-              <span class="r-notif-item__time">{{ formatTime(item.timestamp) }}</span>
-              <NButton
-                v-if="item.actionLabel"
-                text
-                size="tiny"
-                type="primary"
-                @click.stop="handleAction(item)"
-              >
-                {{ item.actionLabel }}
-              </NButton>
+      <div class="r-notif-panel">
+        <NTabs v-model:value="activeTab" size="small" class="r-notif-panel__tabs">
+          <NTabPane name="unread" :tab="`未读 ${unreadCount}`" />
+          <NTabPane name="read" :tab="`已读 ${readCount}`" />
+        </NTabs>
+        <div class="r-notif-panel__list">
+          <NEmpty
+            v-if="visibleNotifications.length === 0"
+            :description="activeTab === 'unread' ? '暂无未读通知' : '暂无已读通知'"
+          />
+          <div
+            v-for="item in visibleNotifications"
+            :key="item.id"
+            class="r-notif-item"
+            :class="[typeColorClass[item.type], { 'r-notif-item--unread': !item.read }]"
+            :data-testid="`notification-item-${item.id}`"
+            @click="handleItemClick(item)"
+          >
+            <div class="r-notif-item__icon">
+              <RIcon :name="typeIconMap[item.type]" size="sm" />
             </div>
+            <div class="r-notif-item__body">
+              <div class="r-notif-item__title">{{ item.title }}</div>
+              <div v-if="item.description" class="r-notif-item__desc">{{ item.description }}</div>
+              <div class="r-notif-item__meta">
+                <span class="r-notif-item__time">{{ formatTime(item.timestamp) }}</span>
+                <NButton
+                  v-if="item.actionLabel"
+                  text
+                  size="tiny"
+                  type="primary"
+                  @click.stop="handleAction(item)"
+                >
+                  {{ item.actionLabel }}
+                </NButton>
+              </div>
+            </div>
+            <button
+              class="r-notif-item__dismiss"
+              aria-label="Dismiss"
+              @click.stop="dismiss(item.id)"
+            >
+              <RIcon name="x" size="xs" />
+            </button>
           </div>
-          <button class="r-notif-item__dismiss" aria-label="Dismiss" @click.stop="dismiss(item.id)">
-            <RIcon name="x" size="xs" />
-          </button>
         </div>
       </div>
+    </NDrawerContent>
+  </NDrawer>
+
+  <NModal
+    v-model:show="detailOpen"
+    preset="card"
+    :title="selectedNotification?.title || '通知详情'"
+    class="r-notif-detail"
+    :style="detailModalStyle"
+  >
+    <div v-if="selectedNotification" class="r-notif-detail__body">
+      <div class="r-notif-detail__row">
+        <span>触发</span>
+        <strong>{{ detailTrigger(selectedNotification) }}</strong>
+      </div>
+      <div class="r-notif-detail__row">
+        <span>消息主体</span>
+        <p>{{ selectedNotification.description || selectedNotification.title }}</p>
+      </div>
+      <div class="r-notif-detail__row">
+        <span>时间</span>
+        <strong>
+          {{ new Date(selectedNotification.timestamp).toLocaleString() }}
+        </strong>
+      </div>
+      <div v-if="selectedNotification.actionLabel" class="r-notif-detail__actions">
+        <NButton type="primary" @click="handleAction(selectedNotification)">
+          {{ selectedNotification.actionLabel }}
+        </NButton>
+      </div>
     </div>
-  </NPopover>
+  </NModal>
 </template>
 
 <style scoped>
@@ -217,16 +286,16 @@
   }
 
   .r-notif-panel {
-    max-height: 480px;
+    height: 100%;
     display: flex;
     flex-direction: column;
   }
-  .r-notif-panel__header {
+  .r-notif-panel__drawer-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--ra-spacing-3) var(--ra-spacing-4);
-    border-bottom: 1px solid var(--ra-color-border-light);
+    gap: var(--ra-spacing-3);
+    width: 100%;
   }
   .r-notif-panel__title {
     font-size: var(--ra-font-size-base);
@@ -254,6 +323,9 @@
     overflow-y: auto;
     flex: 1;
     padding: var(--ra-spacing-1) 0;
+  }
+  .r-notif-panel__tabs {
+    padding: 0 var(--ra-spacing-4);
   }
 
   .r-notif-item {
@@ -356,5 +428,40 @@
   .r-notif-item__dismiss:hover {
     background: var(--ra-color-bg-hover);
     color: var(--ra-color-text-secondary);
+  }
+
+  .r-notif-detail {
+    width: min(420px, calc(100vw - 32px));
+  }
+  .r-notif-detail__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ra-spacing-3);
+  }
+  .r-notif-detail__row {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: var(--ra-spacing-3);
+    align-items: start;
+  }
+  .r-notif-detail__row > span {
+    color: var(--ra-color-text-tertiary);
+    font-size: var(--ra-font-size-sm);
+  }
+  .r-notif-detail__row strong {
+    color: var(--ra-color-text-primary);
+    font-size: var(--ra-font-size-sm);
+    font-weight: var(--ra-font-weight-medium);
+    word-break: break-word;
+  }
+  .r-notif-detail__row p {
+    margin: 0;
+    color: var(--ra-color-text-secondary);
+    line-height: var(--ra-line-height-relaxed);
+    word-break: break-word;
+  }
+  .r-notif-detail__actions {
+    display: flex;
+    justify-content: flex-end;
   }
 </style>
