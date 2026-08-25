@@ -3,6 +3,7 @@ SHELL := /bin/bash
 .DEFAULT_GOAL := help
 
 PROJECT := rong-admin-ui
+COMMIT_MESSAGE := 增加新功能
 RUNTIME_DIR := .runtime
 DEV_PID_FILE := $(RUNTIME_DIR)/dev.pid
 DEV_LOG_FILE := $(RUNTIME_DIR)/dev.log
@@ -13,7 +14,7 @@ DEV_PORT ?= 5173
 PREVIEW_PORT ?= 4173
 PORTS ?= $(DEV_PORT) $(PREVIEW_PORT)
 
-.PHONY: help install dev dev-bg preview preview-bg stop stop-dev stop-preview kill-ports status ports logs typecheck lint test build clean-runtime clean git-commit-merge-main git-commit-merge-main-push
+.PHONY: help install dev dev-bg preview preview-bg stop stop-dev stop-preview kill-ports status ports logs typecheck lint test build clean-runtime clean git-commit-merge-main git-commit-merge-main-push git-push
 
 help:
 	@printf "\n"
@@ -33,12 +34,22 @@ help:
 	@printf "  make clean        Stop services and remove runtime files\n"
 	@printf "  make git-commit-merge-main  Commit workspace changes then merge current branch into main (local only)\n"
 	@printf "  make git-commit-merge-main-push  Commit/merge to main then push after upstream safety checks\n"
+	@printf "  make git-push     Commit all changes and push to remote\n"
 
 git-commit-merge-main:
 	@./scripts/git-commit-merge-main.sh
 
 git-commit-merge-main-push:
 	@./scripts/git-commit-merge-main-push.sh
+
+git-push:
+	@git add -A
+	@if ! git diff --cached --quiet; then git commit -m "$(COMMIT_MESSAGE)"; else echo "No changes to commit."; fi
+	@if ! git remote get-url origin >/dev/null 2>&1; then \
+		gh repo create "$(PROJECT)" --private --source=. --remote=origin --push; \
+	else \
+		git push -u origin HEAD; \
+	fi
 
 install:
 	pnpm install
