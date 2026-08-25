@@ -2,6 +2,7 @@ export interface TokenPair {
   accessToken: string
   refreshToken?: string
   expiresIn?: number
+  refreshAfterSeconds?: number
   tokenType?: string
 }
 
@@ -17,7 +18,7 @@ export interface TokenRefreshApi {
 
 export interface AuthConfig {
   storage: TokenStorage
-  storageKeys?: AuthStorageKeys
+  storageKeys?: Partial<AuthStorageKeys>
   refreshApi?: TokenRefreshApi
   refreshThresholdMs?: number
   refreshIntervalMs?: number
@@ -30,6 +31,7 @@ export interface AuthStorageKeys {
   accessToken: string
   refreshToken: string
   expiresAt: string
+  refreshAt: string
 }
 
 export interface AuthState {
@@ -37,13 +39,16 @@ export interface AuthState {
   isRefreshing: boolean
   accessToken: string | null
   expiresAt: number | null
+  refreshAt: number | null
 }
 
 export interface TokenManagerInstance {
   init: () => void
   destroy: () => void
   getToken: () => string | null
+  getRefreshToken: () => string | null
   isAuthenticated: () => boolean
+  refreshNow: () => Promise<boolean>
   onLoginSuccess: (tokenPair: TokenPair) => void
   onLogout: () => void
 }

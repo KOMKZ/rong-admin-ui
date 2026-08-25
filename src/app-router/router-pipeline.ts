@@ -105,10 +105,10 @@ export function createAdminRouterPipeline(options: RouterPipelineOptions): Route
     const toPath = to.path
     const fromPath = from.path
 
-    const token = tokenManager.getToken()
+    const authenticated = tokenManager.isAuthenticated()
 
     // Authenticated user navigating to login → redirect to home
-    if (toPath === loginPath && token) {
+    if (toPath === loginPath && authenticated) {
       return homePath
     }
 
@@ -120,7 +120,7 @@ export function createAdminRouterPipeline(options: RouterPipelineOptions): Route
 
     if (isWhiteListed(toPath) || isPublicRoute(to)) return true
 
-    if (!token) {
+    if (!authenticated) {
       return `${loginPath}?redirect=${encodeURIComponent(toPath)}`
     }
 

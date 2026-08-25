@@ -10,6 +10,7 @@ const DEFAULT_STORAGE_KEYS: AuthStorageKeys = {
   accessToken: 'rong_access_token',
   refreshToken: 'rong_refresh_token',
   expiresAt: 'rong_expires_at',
+  refreshAt: 'rong_refresh_at',
 }
 
 const DEFAULT_REFRESH_THRESHOLD_MS = 5 * 60 * 1000
@@ -26,22 +27,30 @@ export function createTokenManager(config: AuthConfig): TokenManagerInstance {
   let broadcastChannel: BroadcastChannel | null = null
   let isRefreshing = false
   let initialized = false
+  let refreshPromise: Promise<boolean> | null = null
 
   function getState(): AuthState {
     const token = storage.get(keys.accessToken)
     const expiresAtStr = storage.get(keys.expiresAt)
+    const refreshAtStr = storage.get(keys.refreshAt)
     const expiresAt = expiresAtStr ? parseInt(expiresAtStr, 10) : null
+    const refreshAt = refreshAtStr ? parseInt(refreshAtStr, 10) : null
 
     return {
       isAuthenticated: !!token,
       isRefreshing,
       accessToken: token,
       expiresAt,
+      refreshAt,
     }
   }
 
   function getToken(): string | null {
     return storage.get(keys.accessToken)
+  }
+
+  function getRefreshToken(): string | null {
+    return storage.get(keys.refreshToken)
   }
 
   function isAuthenticated(): boolean {
@@ -64,39 +73,58 @@ export function createTokenManager(config: AuthConfig): TokenManagerInstance {
       const expiresAt = Date.now() + pair.expiresIn * 1000
       storage.set(keys.expiresAt, String(expiresAt))
     }
+    if (pair.refreshAfterSeconds) {
+      const refreshAt = Date.now() + pair.refreshAfterSeconds * 1000
+      storage.set(keys.refreshAt, String(refreshAt))
+    } else {
+      storage.remove(keys.refreshAt)
+    }
   }
 
   function clearTokens(): void {
     storage.remove(keys.accessToken)
     storage.remove(keys.refreshToken)
     storage.remove(keys.expiresAt)
+    storage.remove(keys.refreshAt)
   }
 
   function shouldRefresh(): boolean {
     const state = getState()
     if (!state.accessToken || !state.expiresAt) return false
+    if (state.refreshAt && Date.now() >= state.refreshAt) return true
     const threshold = config.refreshThresholdMs ?? DEFAULT_REFRESH_THRESHOLD_MS
     return state.expiresAt - Date.now() < threshold
   }
 
-  async function attemptRefresh(): Promise<void> {
-    if (isRefreshing || !config.refreshApi) return
+  async function refreshNow(): Promise<boolean> {
+    if (refreshPromise) return refreshPromise
+    if (!config.refreshApi) return false
 
     const refreshToken = storage.get(keys.refreshToken)
-    if (!refreshToken) return
+    if (!refreshToken) return false
 
+    refreshPromise = (async () => {
+      isRefreshing = true
+      try {
+        const newPair = await config.refreshApi!.refresh(refreshToken)
+        saveTokenPair(newPair)
+        broadcastSync('token_refreshed')
+        return true
+      } catch (err) {
+        config.onRefreshFailed?.(err instanceof Error ? err : new Error(String(err)))
+        return false
+      } finally {
+        isRefreshing = false
+        refreshPromise = null
+      }
+    })()
+
+    return refreshPromise
+  }
+
+  async function attemptRefresh(): Promise<void> {
     if (!shouldRefresh()) return
-
-    isRefreshing = true
-    try {
-      const newPair = await config.refreshApi.refresh(refreshToken)
-      saveTokenPair(newPair)
-      broadcastSync('token_refreshed')
-    } catch (err) {
-      config.onRefreshFailed?.(err instanceof Error ? err : new Error(String(err)))
-    } finally {
-      isRefreshing = false
-    }
+    await refreshNow()
   }
 
   function startAutoRefresh(): void {
@@ -185,7 +213,9 @@ export function createTokenManager(config: AuthConfig): TokenManagerInstance {
     init,
     destroy,
     getToken,
+    getRefreshToken,
     isAuthenticated,
+    refreshNow,
     onLoginSuccess,
     onLogout,
   }

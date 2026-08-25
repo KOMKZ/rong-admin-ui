@@ -112,6 +112,93 @@ describe('createHttpClient', () => {
     })
   })
 
+  it('should refresh token and retry once on 401', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: false, status: 401, statusText: 'Unauthorized' })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ code: 200, message: 'ok', data: { id: 2 } }),
+      })
+    vi.stubGlobal('fetch', fetchMock)
+
+    let token = 'old-token'
+    const refreshToken = vi.fn().mockImplementation(async () => {
+      token = 'new-token'
+      return true
+    })
+    const client = createHttpClient({
+      requestConfig: { baseURL: 'https://api.test.com' },
+      tokenProvider: {
+        getToken: () => token,
+        refreshToken,
+      },
+    })
+
+    const result = await client.get<{ id: number }>('/secure')
+
+    expect(result.data.id).toBe(2)
+    expect(refreshToken).toHaveBeenCalledTimes(1)
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(fetchMock.mock.calls[0][1].headers.Authorization).toBe('Bearer old-token')
+    expect(fetchMock.mock.calls[1][1].headers.Authorization).toBe('Bearer new-token')
+  })
+
+  it('should share refresh promise across concurrent 401 retries', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: false, status: 401, statusText: 'Unauthorized' })
+      .mockResolvedValueOnce({ ok: false, status: 401, statusText: 'Unauthorized' })
+      .mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({ code: 200, message: 'ok', data: { id: 3 } }),
+      })
+    vi.stubGlobal('fetch', fetchMock)
+
+    let token = 'old-token'
+    const refreshToken = vi.fn().mockImplementation(() => {
+      return Promise.resolve().then(() => {
+        token = 'new-token'
+        return true
+      })
+    })
+    const client = createHttpClient({
+      requestConfig: { baseURL: 'https://api.test.com' },
+      tokenProvider: {
+        getToken: () => token,
+        refreshToken,
+      },
+    })
+
+    await Promise.all([client.get('/secure-a'), client.get('/secure-b')])
+
+    expect(refreshToken).toHaveBeenCalledTimes(1)
+    expect(fetchMock).toHaveBeenCalledTimes(4)
+    expect(fetchMock.mock.calls[2][1].headers.Authorization).toBe('Bearer new-token')
+    expect(fetchMock.mock.calls[3][1].headers.Authorization).toBe('Bearer new-token')
+  })
+
+  it('should not retry 401 when auth refresh is skipped', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({ ok: false, status: 401, statusText: 'Unauthorized' }),
+    )
+
+    const refreshToken = vi.fn().mockResolvedValue(true)
+    const client = createHttpClient({
+      requestConfig: { baseURL: 'https://api.test.com' },
+      tokenProvider: {
+        getToken: () => 'token',
+        refreshToken,
+      },
+    })
+
+    await expect(client.request({ url: '/secure', skipAuthRefresh: true })).rejects.toMatchObject({
+      status: 401,
+    })
+    expect(refreshToken).not.toHaveBeenCalled()
+  })
+
   it('should return HTTP_ERROR with status for 403', async () => {
     vi.stubGlobal(
       'fetch',
@@ -201,12 +288,12 @@ describe('createHttpClient', () => {
     // Abort before the request resolves
     setTimeout(() => controller.abort(), 10)
 
-    await expect(
-      client.request({ url: '/data', signal: controller.signal }),
-    ).rejects.toMatchObject({
-      kind: 'CANCELLED',
-      code: 'CANCELLED',
-    })
+    await expect(client.request({ url: '/data', signal: controller.signal })).rejects.toMatchObject(
+      {
+        kind: 'CANCELLED',
+        code: 'CANCELLED',
+      },
+    )
   })
 
   it('should support PUT, PATCH, DELETE methods', async () => {

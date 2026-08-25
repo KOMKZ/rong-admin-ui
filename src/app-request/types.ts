@@ -17,6 +17,8 @@ export interface RequestOptions {
   headers?: Record<string, string>
   timeout?: number
   signal?: AbortSignal
+  skipAuthRefresh?: boolean
+  authRetry?: boolean
 }
 
 export interface ApiResponse<T = unknown> {
@@ -53,6 +55,7 @@ export interface ErrorStrategyConfig {
 export interface TokenProvider {
   getToken: () => string | null
   getTokenType?: () => string
+  refreshToken?: () => Promise<boolean>
 }
 
 export interface HttpClient {

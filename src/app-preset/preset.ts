@@ -83,7 +83,10 @@ export function createRongAdminApp(options: RongAdminPresetOptions): RongAdminAp
       timeout: options.request?.timeout ?? 15000,
       headers: options.request?.headers,
     },
-    tokenProvider: { getToken: () => tokenManager.getToken() },
+    tokenProvider: {
+      getToken: () => tokenManager.getToken(),
+      refreshToken: () => tokenManager.refreshNow(),
+    },
     interceptors: options.request?.interceptors,
     errorStrategy: options.request?.errorStrategy,
   })

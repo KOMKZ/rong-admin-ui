@@ -41,6 +41,7 @@ describe('createTokenManager', () => {
 
     expect(manager.isAuthenticated()).toBe(true)
     expect(manager.getToken()).toBe('access-123')
+    expect(manager.getRefreshToken()).toBe('refresh-456')
   })
 
   it('should clear tokens on logout', () => {
@@ -105,6 +106,64 @@ describe('createTokenManager', () => {
     await vi.advanceTimersByTimeAsync(6000)
 
     expect(onRefreshFailed).toHaveBeenCalled()
+    manager.destroy()
+  })
+
+  it('should refresh at backend provided refreshAfterSeconds', async () => {
+    const refreshApi = {
+      refresh: vi.fn().mockResolvedValue({
+        accessToken: 'new-access',
+        refreshToken: 'new-refresh',
+        expiresIn: 3600,
+        refreshAfterSeconds: 1800,
+      }),
+    }
+
+    const manager = createTokenManager({
+      storage,
+      refreshApi,
+      refreshThresholdMs: 60 * 1000,
+      refreshIntervalMs: 5000,
+    })
+    manager.onLoginSuccess({
+      accessToken: 'old-access',
+      refreshToken: 'old-refresh',
+      expiresIn: 3600,
+      refreshAfterSeconds: 5,
+    })
+
+    await vi.advanceTimersByTimeAsync(6000)
+
+    expect(refreshApi.refresh).toHaveBeenCalledWith('old-refresh')
+    expect(manager.getToken()).toBe('new-access')
+    manager.destroy()
+  })
+
+  it('should share concurrent refreshNow calls', async () => {
+    let resolveRefresh: (value: { accessToken: string; expiresIn: number }) => void = () => {}
+    const refreshApi = {
+      refresh: vi.fn(
+        () =>
+          new Promise<{ accessToken: string; expiresIn: number }>((resolve) => {
+            resolveRefresh = resolve
+          }),
+      ),
+    }
+    const manager = createTokenManager({ storage, refreshApi })
+    manager.onLoginSuccess({
+      accessToken: 'old-access',
+      refreshToken: 'old-refresh',
+      expiresIn: 10,
+    })
+
+    const first = manager.refreshNow()
+    const second = manager.refreshNow()
+    resolveRefresh({ accessToken: 'new-access', expiresIn: 3600 })
+
+    await expect(first).resolves.toBe(true)
+    await expect(second).resolves.toBe(true)
+    expect(refreshApi.refresh).toHaveBeenCalledTimes(1)
+    expect(manager.getToken()).toBe('new-access')
     manager.destroy()
   })
 

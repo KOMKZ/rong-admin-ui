@@ -8,15 +8,24 @@ import type { PermissionServiceInstance } from '../../src/app-permission/permiss
 const FakePage = defineComponent({ render: () => h('div', 'page') })
 const LoginPage = defineComponent({ render: () => h('div', 'login') })
 
-function createMockTokenManager(token: string | null = null): TokenManagerInstance {
+function createMockTokenManager(
+  token: string | null = null,
+  authenticated?: boolean,
+): TokenManagerInstance {
   let currentToken = token
   return {
     init: vi.fn(),
     destroy: vi.fn(),
     getToken: () => currentToken,
-    isAuthenticated: () => currentToken !== null,
-    onLoginSuccess: vi.fn((pair) => { currentToken = pair.accessToken }),
-    onLogout: vi.fn(() => { currentToken = null }),
+    getRefreshToken: () => null,
+    isAuthenticated: () => authenticated ?? currentToken !== null,
+    refreshNow: vi.fn().mockResolvedValue(false),
+    onLoginSuccess: vi.fn((pair) => {
+      currentToken = pair.accessToken
+    }),
+    onLogout: vi.fn(() => {
+      currentToken = null
+    }),
   }
 }
 
@@ -65,6 +74,25 @@ describe('createAdminRouterPipeline', () => {
       whiteList: ['/login'],
       loginPath: '/login',
       tokenManager: createMockTokenManager(null),
+      permissionService: createMockPermissionService(),
+    })
+
+    await pipeline.router.push('/dashboard')
+    await pipeline.router.isReady()
+    expect(pipeline.router.currentRoute.value.path).toBe('/login')
+  })
+
+  it('redirects expired token user to login', async () => {
+    const pipeline = createAdminRouterPipeline({
+      history: createMemoryHistory(),
+      staticRoutes: [
+        { path: '/', component: FakePage },
+        { path: '/login', component: LoginPage },
+        { path: '/dashboard', component: FakePage },
+      ],
+      whiteList: ['/login'],
+      loginPath: '/login',
+      tokenManager: createMockTokenManager('expired-token', false),
       permissionService: createMockPermissionService(),
     })
 

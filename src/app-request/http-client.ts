@@ -208,6 +208,16 @@ function applyErrorStrategy(config: HttpClientConfig, error: RequestError): void
 }
 
 export function createHttpClient(config: HttpClientConfig): HttpClient {
+  let authRefreshPromise: Promise<boolean> | null = null
+
+  function refreshAuthToken(): Promise<boolean> {
+    if (!config.tokenProvider?.refreshToken) return Promise.resolve(false)
+    authRefreshPromise ??= config.tokenProvider.refreshToken().finally(() => {
+      authRefreshPromise = null
+    })
+    return authRefreshPromise
+  }
+
   async function request<T = unknown>(options: RequestOptions): Promise<ApiResponse<T>> {
     const processedOptions = await applyRequestInterceptors(config, options)
     const method = processedOptions.method ?? 'GET'
@@ -242,6 +252,18 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
       clearTimeout(timeoutId)
 
       if (!response.ok) {
+        if (
+          response.status === 401 &&
+          !processedOptions.skipAuthRefresh &&
+          !processedOptions.authRetry &&
+          config.tokenProvider?.refreshToken
+        ) {
+          const refreshed = await refreshAuthToken()
+          if (refreshed) {
+            return request<T>({ ...processedOptions, authRetry: true })
+          }
+        }
+
         const responseBody = await parseErrorBody(response)
         const error: RequestError = {
           kind: 'HTTP_ERROR',
