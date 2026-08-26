@@ -53,6 +53,7 @@ export default defineConfig({
           'src/components/table-toolbar/index.ts',
         ),
         'components/table-card/index': resolve(__dirname, 'src/components/table-card/index.ts'),
+        'components/money/index': resolve(__dirname, 'src/components/money/index.ts'),
         'components/descriptions-panel/index': resolve(
           __dirname,
           'src/components/descriptions-panel/index.ts',
