@@ -56,7 +56,10 @@ export type MenuToRouteConverter = (menus: MenuDataItem[]) => RouteRecordRaw[]
 export type DynamicRouteLoader = () => Promise<RouteRecordRaw[]>
 
 export interface RouterGuardHooks {
-  beforeAuth?: (to: string, from: string) => boolean | string | undefined
+  beforeAuth?: (
+    to: string,
+    from: string,
+  ) => boolean | string | undefined | Promise<boolean | string | undefined>
   afterAuth?: (to: string) => void
   onAuthFail?: (to: string) => string
 }

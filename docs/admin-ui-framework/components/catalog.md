@@ -5,7 +5,7 @@
 | 层级             | 定位     | 组件                                                                                                                                       |
 | ---------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | layout           | 页面骨架 | RPage, RListPage, RFormPage, RDetailPage, RSectionCard                                                                                     |
-| business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RFileUpload, RProUpload, RImageCropUpload, RProTreeEditor, RDashboardBuilder, RDashboardWorkspace |
+| business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RFileUpload, RProUpload, RImageCropUpload, RMoneyText, RMoneyInput, RProTreeEditor, RDashboardBuilder, RDashboardWorkspace |
 
 ## 组件清单
 
@@ -58,6 +58,14 @@
 - **规格文档**: `components/spec-image-crop-upload.md`
 - **测试**: `tests/components/image-crop-upload.test.ts`, `tests/components/image-crop-upload-utils.test.ts`
 - **消费方调用**: `hrise-admin-web/src/views/admin/components/AdminAvatarUpload.vue`
+
+### RMoneyText / RMoneyInput
+
+- **文件**: `src/components/money/`
+- **契约**: `src/components/money/types.ts`
+- **规格文档**: `components/spec-money.md`
+- **测试**: `tests/components/money.test.ts`
+- **消费方调用**: `hrise-admin-web/src/views/shop/**`
 
 ### RProTreeEditor
 

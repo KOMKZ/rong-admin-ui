@@ -113,7 +113,7 @@ export function createAdminRouterPipeline(options: RouterPipelineOptions): Route
     }
 
     if (hooks?.beforeAuth) {
-      const result = hooks.beforeAuth(toPath, fromPath)
+      const result = await hooks.beforeAuth(toPath, fromPath)
       if (result === false) return false
       if (typeof result === 'string') return result
     }

@@ -56,6 +56,15 @@
 | ImageCropUploadProps | components/image-crop-upload/types.ts | 组件 Props，继承 ProUpload 上传契约    |
 | ImageCropUploadEmits | components/image-crop-upload/types.ts | 上传与裁切事件定义                     |
 
+## Money
+
+| 接口 | 路径 | 说明 |
+| ---- | ---- | ---- |
+| MoneyFormatOptions | components/money/types.ts | 金额格式化配置 |
+| RMoneyTextProps | components/money/types.ts | 金额展示组件 Props |
+| RMoneyInputProps | components/money/types.ts | 金额输入组件 Props，输入小数金额，输出最小货币单位整数 |
+| RMoneyInputEmits | components/money/types.ts | `update:value` 输出整数金额，`valid-change` 输出校验状态 |
+
 ## ProTreeEditor
 
 | 接口                        | 路径                                                        | 说明                                                         |

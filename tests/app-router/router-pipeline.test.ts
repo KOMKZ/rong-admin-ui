@@ -4,6 +4,7 @@ import { createMemoryHistory } from 'vue-router'
 import { createAdminRouterPipeline } from '../../src/app-router/router-pipeline'
 import type { TokenManagerInstance } from '../../src/app-auth/types'
 import type { PermissionServiceInstance } from '../../src/app-permission/permission-service'
+import type { PermissionItem } from '../../src/app-permission/types'
 
 const FakePage = defineComponent({ render: () => h('div', 'page') })
 const LoginPage = defineComponent({ render: () => h('div', 'login') })
@@ -235,5 +236,36 @@ describe('createAdminRouterPipeline', () => {
     await pipeline.router.push('/dashboard')
     await pipeline.router.isReady()
     expect(pipeline.router.currentRoute.value.path).toBe('/maintenance')
+  })
+
+  it('awaits hook.beforeAuth before checking route permissions', async () => {
+    const permissions = createMockPermissionService([])
+    const setPermissions = permissions.setPermissions
+    permissions.setPermissions = vi.fn((items: PermissionItem[]) => {
+      setPermissions(items)
+      const actions = items.map((item) => item.action)
+      permissions.hasPermission = (p: string) => actions.includes(p)
+    })
+
+    const pipeline = createAdminRouterPipeline({
+      history: createMemoryHistory(),
+      staticRoutes: [
+        { path: '/', component: FakePage },
+        { path: '/orders/1001', component: FakePage, meta: { permissions: ['order:read'] } },
+      ],
+      tokenManager: createMockTokenManager('valid-token'),
+      permissionService: permissions,
+      hooks: {
+        beforeAuth: async () => {
+          await Promise.resolve()
+          permissions.setPermissions([{ action: 'order:read', scope: 'route' }])
+          return undefined
+        },
+      },
+    })
+
+    await pipeline.router.push('/orders/1001')
+    await pipeline.router.isReady()
+    expect(pipeline.router.currentRoute.value.path).toBe('/orders/1001')
   })
 })

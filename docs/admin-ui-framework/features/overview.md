@@ -22,6 +22,7 @@
 | 对话框         | components/modal-dialog (RModalDialog)                                   | ✅ 已实现 |
 | 文件上传       | components/file-upload (RFileUpload)                                     | ✅ 已实现 |
 | 图片裁切上传   | components/image-crop-upload (RImageCropUpload)                          | ✅ 已实现 |
+| 金额展示与输入 | components/money (RMoneyText, RMoneyInput)                               | ✅ 已实现 |
 | 树编辑器       | components/pro-tree-editor (RProTreeEditor)                              | ✅ 已实现 |
 | Dashboard 编排 | components/dashboard-builder (RDashboardBuilder, RDashboardWorkspace)    | ✅ 已实现 |
 
