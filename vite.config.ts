@@ -111,6 +111,7 @@ export default defineConfig({
           __dirname,
           'src/components/markdown-preview/index.ts',
         ),
+        'components/json-viewer/index': resolve(__dirname, 'src/components/json-viewer/index.ts'),
         'components/markdown-editor/index': resolve(
           __dirname,
           'src/components/markdown-editor/index.ts',

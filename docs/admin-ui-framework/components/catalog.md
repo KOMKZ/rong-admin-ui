@@ -5,7 +5,7 @@
 | 层级             | 定位     | 组件                                                                                                                                       |
 | ---------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | layout           | 页面骨架 | RPage, RListPage, RFormPage, RDetailPage, RSectionCard                                                                                     |
-| business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RFileUpload, RProUpload, RImageCropUpload, RMoneyText, RMoneyInput, RProTreeEditor, RDashboardBuilder, RDashboardWorkspace |
+| business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RFileUpload, RProUpload, RImageCropUpload, RMoneyText, RMoneyInput, RJsonViewer, RProTreeEditor, RDashboardBuilder, RDashboardWorkspace |
 
 ## 组件清单
 
@@ -66,6 +66,14 @@
 - **规格文档**: `components/spec-money.md`
 - **测试**: `tests/components/money.test.ts`
 - **消费方调用**: `hrise-admin-web/src/views/shop/**`
+
+### RJsonViewer
+
+- **文件**: `src/components/json-viewer/RJsonViewer.vue`
+- **契约**: `src/components/json-viewer/types.ts`
+- **规格文档**: `components/spec-json-viewer.md`
+- **测试**: `tests/components/json-viewer.test.ts`
+- **消费方调用**: `hrise-admin-web/src/views/ai-task-workflows/components/WorkflowFlowViewer.vue`
 
 ### RProTreeEditor
 

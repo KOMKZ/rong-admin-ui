@@ -7,3 +7,6 @@ coverage/
 .runtime/
 .artifacts/
 rong-admin-ui-*.tgz
+
+# CodeGraph local index
+.codegraph/
