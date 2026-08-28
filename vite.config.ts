@@ -48,6 +48,7 @@ export default defineConfig({
         'components/showcase/index': resolve(__dirname, 'src/components/showcase/index.ts'),
         'components/primitives/index': resolve(__dirname, 'src/components/primitives/index.ts'),
         'components/filter-bar/index': resolve(__dirname, 'src/components/filter-bar/index.ts'),
+        'components/row-actions/index': resolve(__dirname, 'src/components/row-actions/index.ts'),
         'components/table-toolbar/index': resolve(
           __dirname,
           'src/components/table-toolbar/index.ts',
@@ -90,6 +91,10 @@ export default defineConfig({
         'components/drawer-form/index': resolve(__dirname, 'src/components/drawer-form/index.ts'),
         'components/empty-state/index': resolve(__dirname, 'src/components/empty-state/index.ts'),
         'components/result-state/index': resolve(__dirname, 'src/components/result-state/index.ts'),
+        'components/async-task-center/index': resolve(
+          __dirname,
+          'src/components/async-task-center/index.ts',
+        ),
         'components/command-palette/index': resolve(
           __dirname,
           'src/components/command-palette/index.ts',
@@ -99,6 +104,7 @@ export default defineConfig({
           'src/components/notification-center/index.ts',
         ),
         'components/pro-upload/index': resolve(__dirname, 'src/components/pro-upload/index.ts'),
+        'components/image-preview/index': resolve(__dirname, 'src/components/image-preview/index.ts'),
         'components/image-crop-upload/index': resolve(
           __dirname,
           'src/components/image-crop-upload/index.ts',
@@ -179,6 +185,7 @@ export default defineConfig({
         'vue-router',
         'pinia',
         'naive-ui',
+        /^naive-ui\/es\//,
         'markdown-it',
         'highlight.js',
         'mermaid',
