@@ -1,6 +1,6 @@
 /**
  * Re-export common Naive UI primitives through the admin-ui package boundary.
- * Business code should import these from @rong/admin-ui instead of naive-ui directly.
+ * Business code should consume the primitives component subpath directly.
  */
 export {
   NButton,
