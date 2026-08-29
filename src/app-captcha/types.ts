@@ -1,45 +1,67 @@
 export interface CaptchaConfig {
   enabled: boolean
   provider: 'aliyun'
-  sceneId: string
   prefix: string
-  ekey?: string
+  scene: string
+  region?: 'cn' | 'sgp'
   language?: 'cn' | 'tw' | 'en'
   mode?: 'popup' | 'embed'
   slideStyle?: { width: number; height: number }
+  scriptUrl?: string
+  timeout?: number
+  rem?: number
+  autoRefresh?: boolean
+  immediate?: boolean
 }
 
-export interface CaptchaVerifyResult {
-  captchaResult: boolean
-  bizResult?: boolean
+export interface CaptchaSceneToken {
+  provider: string
+  scene: string
+  scene_id: string
+  token: string
+  expires_in: number
 }
 
-export type CaptchaVerifyCallback = (captchaVerifyParam: string) => Promise<CaptchaVerifyResult>
+export type CaptchaSceneTokenLoader = (scene: string) => Promise<CaptchaSceneToken>
 
-export type CaptchaBizResultCallback = (bizResult: boolean) => void
+export type CaptchaVerifyCallback = (captchaVerifyParam: string) => void | Promise<void>
+
+export type CaptchaErrorCallback = (error: Error) => void
+
+export type CaptchaStatus = 'disabled' | 'loading' | 'ready' | 'error'
 
 export interface CaptchaInstance {
-  reset: () => void
-  show: () => void
-  hide: () => void
+  reset?: () => void
+  show?: () => void
+  hide?: () => void
+}
+
+export interface AliyunCaptchaGlobalConfig {
+  region: 'cn' | 'sgp'
+  prefix: string
 }
 
 declare global {
   interface Window {
-    initAliyunCaptcha: (options: AliyunCaptchaOptions) => void
+    AliyunCaptchaConfig?: AliyunCaptchaGlobalConfig
+    initAliyunCaptcha?: (options: AliyunCaptchaOptions) => void
   }
 }
 
 export interface AliyunCaptchaOptions {
   SceneId: string
-  prefix: string
+  EncryptedSceneId?: string
   mode: string
   element: string
   button: string
-  captchaVerifyCallback: CaptchaVerifyCallback
-  onBizResultCallback: CaptchaBizResultCallback
+  success: CaptchaVerifyCallback
+  fail?: (result: unknown) => void
   getInstance: (instance: CaptchaInstance) => void
   slideStyle?: { width: number; height: number }
   language?: string
-  ekey?: string
+  timeout?: number
+  rem?: number
+  autoRefresh?: boolean
+  immediate?: boolean
+  onError?: (error: Error) => void
 }

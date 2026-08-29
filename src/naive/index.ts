@@ -1,3 +1,4 @@
+export { default as naive } from 'naive-ui'
 export { NAlert } from 'naive-ui/es/alert'
 export { NAvatar } from 'naive-ui/es/avatar'
 export { NBreadcrumb, NBreadcrumbItem } from 'naive-ui/es/breadcrumb'

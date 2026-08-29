@@ -1,9 +1,3 @@
 export { default as RaCaptcha } from './RaCaptcha.vue'
-export type {
-  CaptchaConfig,
-  CaptchaVerifyResult,
-  CaptchaVerifyCallback,
-  CaptchaBizResultCallback,
-  CaptchaInstance,
-  AliyunCaptchaOptions,
-} from './types'
+export { loadAliyunCaptcha, DEFAULT_ALIYUN_CAPTCHA_SCRIPT_URL } from './aliyun-loader'
+export * from './types'
