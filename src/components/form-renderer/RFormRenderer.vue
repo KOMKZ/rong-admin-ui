@@ -24,6 +24,7 @@
     FormFieldGroup,
     FormRendererExpose,
   } from './types'
+  import RStorageIdField from './RStorageIdField.vue'
 
   const props = defineProps({
     schema: { type: Array as PropType<FormFieldSchema[]>, required: true },
@@ -210,6 +211,10 @@
     if (Array.isArray(v)) return v as (string | number)[]
     if (typeof v === 'string' || typeof v === 'number') return v
     return null
+  }
+
+  function isUploadField(field: FormFieldSchema): boolean {
+    return field.type === 'upload' || field.type === 'storage_id'
   }
 
   function toStrNum(v: unknown): string | number {
@@ -437,6 +442,14 @@
                 :size="size"
                 @update:model-value="updateField(field.key, $event)"
               />
+              <RStorageIdField
+                v-else-if="isUploadField(field)"
+                :field="field"
+                :model-value="model[field.key]"
+                :disabled="isFieldDisabled(field)"
+                :readonly="readonly"
+                @update:model-value="updateField(field.key, $event)"
+              />
               <component
                 :is="field.component"
                 v-else-if="field.type === 'custom' && field.component"
@@ -476,6 +489,14 @@
             :options="resolvedOptions(field)"
             :clearable="isFieldClearable(field)"
             @update:value="updateField(field.key, $event)"
+          />
+          <RStorageIdField
+            v-else-if="isUploadField(field)"
+            :field="field"
+            :model-value="model[field.key]"
+            :disabled="isFieldDisabled(field)"
+            :readonly="readonly"
+            @update:model-value="updateField(field.key, $event)"
           />
           <slot name="fieldSuffix" :field="field" />
         </NFormItemGi>
@@ -595,6 +616,14 @@
             :multiple="!!field.buttonGroupMultiple"
             :disabled="isFieldDisabled(field)"
             :size="size"
+            @update:model-value="updateField(field.key, $event)"
+          />
+          <RStorageIdField
+            v-else-if="isUploadField(field)"
+            :field="field"
+            :model-value="model[field.key]"
+            :disabled="isFieldDisabled(field)"
+            :readonly="readonly"
             @update:model-value="updateField(field.key, $event)"
           />
           <component

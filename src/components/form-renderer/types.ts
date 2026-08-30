@@ -11,6 +11,7 @@ export type FormFieldType =
   | 'daterange'
   | 'number'
   | 'upload'
+  | 'storage_id'
   | 'button-group'
   | 'custom'
 
@@ -81,6 +82,26 @@ export interface FormFieldSchema {
   componentEventMap?: Record<string, string>
   /** When type is 'button-group', allow multiple selection */
   buttonGroupMultiple?: boolean
+  /** When type is 'upload' or 'storage_id', constrain accepted file types */
+  accept?: string
+  /** When type is 'upload' or 'storage_id', constrain max file count */
+  maxCount?: number
+  /** When type is 'upload' or 'storage_id', constrain max file size in MB */
+  maxSizeMB?: number
+  /** When type is 'storage_id', controls UI and uploaded media_class metadata */
+  mediaClass?: 'image' | 'video' | 'archive' | 'file' | string
+  /** Storage bucket/domain code passed to upload backend */
+  storage?: string
+  /** Business type metadata passed to upload backend */
+  businessType?: string
+  /** Business id metadata passed to upload backend */
+  businessId?: string
+  /** Upload endpoint for framework upload fields */
+  action?: string
+  /** Extra headers for framework upload fields */
+  headers?: Record<string, string>
+  /** Whether upload request should include credentials */
+  withCredentials?: boolean
   /** Group key this field belongs to (used with FormRendererProps.groups) */
   group?: string
 }
