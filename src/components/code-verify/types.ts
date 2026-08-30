@@ -7,10 +7,12 @@ export interface CodeVerifyProps {
   resendLabel?: string
   placeholder?: string
   disabled?: boolean
+  sendDisabled?: boolean
   sending?: boolean
   size?: 'small' | 'medium' | 'large'
   inputWidth?: number | string
   autoFocus?: boolean
+  autoStartCountdown?: boolean
 }
 
 export interface CodeVerifyEmits {

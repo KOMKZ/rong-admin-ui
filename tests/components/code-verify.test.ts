@@ -56,6 +56,14 @@ describe('RCodeVerify', () => {
     expect(wrapper.html()).toBeTruthy()
   })
 
+  it('disables only the send action when sendDisabled is true', async () => {
+    const wrapper = mount(RCodeVerify, { props: { modelValue: '123456', sendDisabled: true } })
+    expect(wrapper.find('[data-testid="code-send-btn"]').attributes('disabled')).toBeDefined()
+    await wrapper.find('[data-testid="code-send-btn"]').trigger('click')
+    expect(wrapper.emitted('send')).toBeUndefined()
+    expect(wrapper.find('[data-testid="code-input"]').attributes('disabled')).toBeUndefined()
+  })
+
   it('shows sending state', () => {
     const wrapper = mount(RCodeVerify, { props: { modelValue: '', sending: true } })
     expect(wrapper.html()).toBeTruthy()

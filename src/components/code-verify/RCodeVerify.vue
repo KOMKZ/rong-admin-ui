@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { ref, onUnmounted, type PropType } from 'vue'
+  import { computed, ref, onUnmounted, type PropType } from 'vue'
   import { NInput, NButton } from 'naive-ui'
 
   const codeInputRef = ref<InstanceType<typeof NInput> | null>(null)
@@ -13,10 +13,12 @@
     resendLabel: { type: String, default: '重新获取' },
     placeholder: { type: String, default: '请输入验证码' },
     disabled: { type: Boolean, default: false },
+    sendDisabled: { type: Boolean, default: false },
     sending: { type: Boolean, default: false },
     size: { type: String as PropType<'small' | 'medium' | 'large'>, default: 'medium' },
     inputWidth: { type: [Number, String], default: undefined },
     autoFocus: { type: Boolean, default: false },
+    autoStartCountdown: { type: Boolean, default: true },
   })
 
   const emit = defineEmits<{
@@ -27,6 +29,9 @@
 
   const remaining = ref(0)
   let timer: ReturnType<typeof setInterval> | null = null
+  const isSendDisabled = computed(
+    () => props.disabled || props.sendDisabled || props.sending || remaining.value > 0,
+  )
 
   function startCountdown(): void {
     stopTimer()
@@ -57,9 +62,11 @@
   })
 
   function handleSend(): void {
-    if (remaining.value > 0 || props.sending || props.disabled) return
+    if (isSendDisabled.value) return
     emit('send')
-    startCountdown()
+    if (props.autoStartCountdown) {
+      startCountdown()
+    }
   }
 
   function handleInput(value: string): void {
@@ -102,7 +109,7 @@
       <template #suffix>
         <NButton
           :size="size"
-          :disabled="disabled || sending || remaining > 0"
+          :disabled="isSendDisabled"
           :loading="sending"
           text
           type="primary"
