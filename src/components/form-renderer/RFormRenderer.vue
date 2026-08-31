@@ -25,6 +25,7 @@
     FormRendererExpose,
   } from './types'
   import RStorageIdField from './RStorageIdField.vue'
+  import RTextareaField from './RTextareaField.vue'
 
   const props = defineProps({
     schema: { type: Array as PropType<FormFieldSchema[]>, required: true },
@@ -350,16 +351,14 @@
                 :clearable="isFieldClearable(field)"
                 @update:value="updateField(field.key, $event)"
               />
-              <NInput
+              <RTextareaField
                 v-else-if="field.type === 'textarea'"
-                type="textarea"
-                :value="fieldStr(field.key)"
-                :placeholder="field.placeholder"
+                :field="field"
+                :model-value="model[field.key]"
                 :disabled="isFieldDisabled(field)"
                 :readonly="readonly"
                 :clearable="isFieldClearable(field)"
-                :rows="3"
-                @update:value="updateField(field.key, $event)"
+                @update:model-value="updateField(field.key, $event)"
               />
               <NInputNumber
                 v-else-if="field.type === 'number'"
@@ -526,16 +525,14 @@
             :clearable="isFieldClearable(field)"
             @update:value="updateField(field.key, $event)"
           />
-          <NInput
+          <RTextareaField
             v-else-if="field.type === 'textarea'"
-            type="textarea"
-            :value="fieldStr(field.key)"
-            :placeholder="field.placeholder"
+            :field="field"
+            :model-value="model[field.key]"
             :disabled="isFieldDisabled(field)"
             :readonly="readonly"
             :clearable="isFieldClearable(field)"
-            :rows="3"
-            @update:value="updateField(field.key, $event)"
+            @update:model-value="updateField(field.key, $event)"
           />
           <NInputNumber
             v-else-if="field.type === 'number'"

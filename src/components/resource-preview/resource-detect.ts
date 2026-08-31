@@ -64,12 +64,14 @@ export function detectJsonResources(
 function inferResourceKind(value: string, key: string): ResourcePreviewKind | '' {
   const lowerValue = stripQuery(value).toLowerCase()
   const lowerKey = key.toLowerCase()
-  if (hasExtension(lowerValue, imageExtensions) || imageKeyPattern.test(lowerKey)) {
+  if (hasExtension(lowerValue, imageExtensions)) {
     return 'image'
   }
-  if (hasExtension(lowerValue, videoExtensions) || videoKeyPattern.test(lowerKey)) {
+  if (hasExtension(lowerValue, videoExtensions)) {
     return 'video'
   }
+  if (isResourceLocator(value) && imageKeyPattern.test(lowerKey)) return 'image'
+  if (isResourceLocator(value) && videoKeyPattern.test(lowerKey)) return 'video'
   if (looksLikeUrl(value) || looksLikePath(value)) return 'file'
   return ''
 }
@@ -113,6 +115,12 @@ function looksLikeUrl(value: string): boolean {
 function looksLikePath(value: string): boolean {
   if (!filePathPattern.test(value) || /\s/.test(value)) return false
   return hasExtension(stripQuery(value).toLowerCase(), [...imageExtensions, ...videoExtensions])
+}
+
+function isResourceLocator(value: string): boolean {
+  const text = value.trim()
+  if (!text || /\s/.test(text)) return false
+  return looksLikeUrl(text) || filePathPattern.test(text)
 }
 
 function isPlainObject(value: unknown): value is Record<string, unknown> {

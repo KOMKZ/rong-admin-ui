@@ -58,6 +58,38 @@ describe('resource-preview', () => {
     })
   })
 
+  it('ignores prompt text and semantic ids even when keys contain media words', () => {
+    const resources = detectJsonResources({
+      output: {
+        cover_url: 'https://img.example.test/cover?id=123',
+        storyboard: {
+          storyScenes: [
+            {
+              id: 'scene_01',
+              visual_group_id: 'visual_01',
+              voiceover_text: '很多人第一次听到这本书的名字，会觉得它讲的是怎么破局。',
+            },
+          ],
+          visualGroups: [
+            {
+              id: 'visual_01',
+              image_prompt_seed:
+                '昏暗房间旧木桌上翻开的书，窗外灰蓝天光，表现读者被问题逼近的不安感。',
+            },
+          ],
+        },
+      },
+    })
+
+    expect(resources).toHaveLength(1)
+    expect(resources[0]).toMatchObject({
+      kind: 'image',
+      label: 'cover_url',
+      url: 'https://img.example.test/cover?id=123',
+      previewable: true,
+    })
+  })
+
   it('opens resources in the expanded json dialog by default', async () => {
     const wrapper = mount(RJsonResourceViewer, {
       props: {

@@ -1,4 +1,4 @@
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, nextTick } from 'vue'
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { NInput } from 'naive-ui'
@@ -76,6 +76,20 @@ describe('RFormRenderer', () => {
     })
     const textarea = wrapper.find('textarea')
     expect(textarea.exists()).toBe(true)
+  })
+
+  it('should open enlarged editor for textarea fields', async () => {
+    const wrapper = mount(RFormRenderer, {
+      props: {
+        schema: [{ key: 'prompt', label: '分镜 Prompt', type: 'textarea' }],
+        model: { prompt: 'long prompt' },
+      },
+    })
+
+    await wrapper.find('[data-testid="textarea-expand"]').trigger('click')
+    await nextTick()
+
+    expect(wrapper.findComponent({ name: 'Modal' }).props('show')).toBe(true)
   })
 
   it('should sync custom component value via update:value event (NInput compat)', async () => {
