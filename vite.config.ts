@@ -104,7 +104,14 @@ export default defineConfig({
           'src/components/notification-center/index.ts',
         ),
         'components/pro-upload/index': resolve(__dirname, 'src/components/pro-upload/index.ts'),
-        'components/image-preview/index': resolve(__dirname, 'src/components/image-preview/index.ts'),
+        'components/image-preview/index': resolve(
+          __dirname,
+          'src/components/image-preview/index.ts',
+        ),
+        'components/resource-preview/index': resolve(
+          __dirname,
+          'src/components/resource-preview/index.ts',
+        ),
         'components/image-crop-upload/index': resolve(
           __dirname,
           'src/components/image-crop-upload/index.ts',
