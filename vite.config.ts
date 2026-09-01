@@ -112,6 +112,10 @@ export default defineConfig({
           __dirname,
           'src/components/resource-preview/index.ts',
         ),
+        'components/resource-picker/index': resolve(
+          __dirname,
+          'src/components/resource-picker/index.ts',
+        ),
         'components/image-crop-upload/index': resolve(
           __dirname,
           'src/components/image-crop-upload/index.ts',

@@ -5,7 +5,7 @@
 | 层级             | 定位     | 组件                                                                                                                                       |
 | ---------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | layout           | 页面骨架 | RPage, RListPage, RFormPage, RDetailPage, RSectionCard                                                                                     |
-| business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RFileUpload, RProUpload, RImageCropUpload, RMoneyText, RMoneyInput, RJsonViewer, RProTreeEditor, RDashboardBuilder, RDashboardWorkspace |
+| business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RResourcePickerDialog, RFileUpload, RProUpload, RImageCropUpload, RMoneyText, RMoneyInput, RJsonViewer, RProTreeEditor, RDashboardBuilder, RDashboardWorkspace |
 
 ## 组件清单
 
@@ -42,6 +42,13 @@
 - **测试**: `tests/components/modal-dialog.test.ts` (12 tests)
 - **a11y**: `tests/components/a11y.test.ts` (2 tests)
 - **消费方调用**: `rong-admin-webdemo/src/stories/ModalDialogStory.vue`
+
+### RResourcePickerDialog
+
+- **文件**: `src/components/resource-picker/RResourcePickerDialog.vue`
+- **契约**: `src/components/resource-picker/types.ts`
+- **规格文档**: `components/spec-resource-picker.md`
+- **消费方调用**: `hrise-admin-web/src/components/resource-picker/SystemResourcePicker.vue`
 
 ### RFileUpload
 
