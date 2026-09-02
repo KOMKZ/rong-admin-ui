@@ -60,13 +60,13 @@
       @update:fullscreen="emit('update:fullscreen', $event)"
       @update:column-presets="emit('update:columnPresets', $event)"
     >
-      <template #prefix>
+      <template v-if="$slots.prefix" #prefix>
         <slot name="prefix" />
       </template>
       <template v-if="$slots.title" #title>
         <slot name="title" />
       </template>
-      <template #extra>
+      <template v-if="$slots.extra" #extra>
         <slot name="extra" />
       </template>
       <slot />

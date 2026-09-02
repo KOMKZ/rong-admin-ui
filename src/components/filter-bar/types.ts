@@ -15,6 +15,8 @@ export interface QuickFilter {
   icon?: string
 }
 
+export type FilterBarLayoutPreset = 'default' | 'list-toolbar' | 'dense-search' | 'advanced'
+
 export interface FilterBarProProps {
   schema: FormFieldSchema[]
   modelValue: Record<string, unknown>
@@ -25,6 +27,7 @@ export interface FilterBarProProps {
   savedSchemes?: FilterScheme[]
   maxVisibleFields?: number
   cols?: number
+  layoutPreset?: FilterBarLayoutPreset
   resetLabel?: string
   searchLabel?: string
   advancedLabel?: string

@@ -33,6 +33,8 @@
     labelWidth: { type: [Number, String] as PropType<number | string>, default: 'auto' },
     labelPlacement: { type: String as PropType<'left' | 'top'>, default: 'left' },
     cols: { type: Number, default: 1 },
+    rowGap: { type: Number, default: 12 },
+    columnGap: { type: Number, default: 16 },
     disabled: { type: Boolean, default: false },
     readonly: { type: Boolean, default: false },
     size: { type: String as PropType<'small' | 'medium' | 'large'>, default: 'medium' },
@@ -329,7 +331,7 @@
             {{ gf.group.description }}
           </p>
         </slot>
-        <NGrid v-if="!gf.collapsed" :cols="cols" :x-gap="16" :y-gap="0">
+        <NGrid v-if="!gf.collapsed" :cols="cols" :x-gap="columnGap" :y-gap="rowGap">
           <NFormItemGi
             v-for="field in gf.fields"
             :key="field.key"
@@ -453,6 +455,9 @@
                 :is="field.component"
                 v-else-if="field.type === 'custom' && field.component"
                 :model-value="model[field.key]"
+                :field="field"
+                :disabled="isFieldDisabled(field)"
+                :readonly="readonly"
                 v-bind="field.componentProps"
                 v-on="customComponentListeners(field)"
               />
@@ -462,7 +467,7 @@
         </NGrid>
       </div>
       <!-- Ungrouped fields -->
-      <NGrid v-if="ungroupedFields.length > 0" :cols="cols" :x-gap="16" :y-gap="0">
+      <NGrid v-if="ungroupedFields.length > 0" :cols="cols" :x-gap="columnGap" :y-gap="rowGap">
         <NFormItemGi
           v-for="field in ungroupedFields"
           :key="field.key"
@@ -503,7 +508,7 @@
     </template>
 
     <!-- Flat layout (default) -->
-    <NGrid v-else :cols="cols" :x-gap="16" :y-gap="0">
+    <NGrid v-else :cols="cols" :x-gap="columnGap" :y-gap="rowGap">
       <NFormItemGi
         v-for="field in visibleFields"
         :key="field.key"
@@ -627,6 +632,9 @@
             :is="field.component"
             v-else-if="field.type === 'custom' && field.component"
             :model-value="model[field.key]"
+            :field="field"
+            :disabled="isFieldDisabled(field)"
+            :readonly="readonly"
             v-bind="field.componentProps"
             v-on="customComponentListeners(field)"
           />

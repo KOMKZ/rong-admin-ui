@@ -4,7 +4,12 @@
   import RFormRenderer from '../form-renderer/RFormRenderer.vue'
   import RIcon from '../icon/RIcon.vue'
   import type { FormFieldSchema } from '../form-renderer/types'
-  import type { FilterBarProExpose, FilterScheme, QuickFilter } from './types'
+  import type {
+    FilterBarLayoutPreset,
+    FilterBarProExpose,
+    FilterScheme,
+    QuickFilter,
+  } from './types'
 
   const props = defineProps({
     schema: { type: Array as PropType<FormFieldSchema[]>, required: true },
@@ -14,8 +19,12 @@
     quickFilters: { type: Array as PropType<QuickFilter[]>, default: () => [] },
     storageKey: { type: String, default: undefined },
     savedSchemes: { type: Array as PropType<FilterScheme[]>, default: () => [] },
-    maxVisibleFields: { type: Number, default: 3 },
-    cols: { type: Number, default: 4 },
+    maxVisibleFields: { type: Number, default: undefined },
+    cols: { type: Number, default: undefined },
+    layoutPreset: {
+      type: String as PropType<FilterBarLayoutPreset>,
+      default: 'default',
+    },
     resetLabel: { type: String, default: '重置' },
     searchLabel: { type: String, default: '搜索' },
     advancedLabel: { type: String, default: '高级筛选' },
@@ -45,6 +54,25 @@
     'daterange',
   ])
 
+  const presetCols: Record<FilterBarLayoutPreset, number> = {
+    default: 4,
+    'list-toolbar': 2,
+    'dense-search': 3,
+    advanced: 4,
+  }
+
+  const presetMaxVisibleFields: Record<FilterBarLayoutPreset, number> = {
+    default: 3,
+    'list-toolbar': 2,
+    'dense-search': 3,
+    advanced: 4,
+  }
+
+  const resolvedCols = computed(() => props.cols ?? presetCols[props.layoutPreset])
+  const resolvedMaxVisibleFields = computed(
+    () => props.maxVisibleFields ?? presetMaxVisibleFields[props.layoutPreset],
+  )
+
   watch(
     () => props.modelValue,
     (v) => {
@@ -57,7 +85,7 @@
     const schema =
       !props.collapsible || !collapsed.value
         ? props.schema
-        : props.schema.slice(0, props.maxVisibleFields)
+        : props.schema.slice(0, resolvedMaxVisibleFields.value)
     return schema.map((field) =>
       clearableFieldTypes.has(field.type) && field.clearable === undefined
         ? { ...field, clearable: true }
@@ -66,7 +94,7 @@
   })
 
   const hasAdvanced = computed(
-    () => props.collapsible && props.schema.length > props.maxVisibleFields,
+    () => props.collapsible && props.schema.length > resolvedMaxVisibleFields.value,
   )
 
   const activeQuickFilters = computed(() => {
@@ -167,7 +195,7 @@
 </script>
 
 <template>
-  <div class="r-filter-bar-pro">
+  <div class="r-filter-bar-pro" :class="`r-filter-bar-pro--${layoutPreset}`">
     <!-- Quick Filters -->
     <div v-if="quickFilters.length > 0" class="r-filter-bar-pro__quick" data-testid="quick-filters">
       <NSpace size="small">
@@ -199,7 +227,7 @@
       <RFormRenderer
         :schema="visibleSchema"
         :model="localModel"
-        :cols="cols"
+        :cols="resolvedCols"
         :label-width="80"
         @update:model="handleModelUpdate"
       >

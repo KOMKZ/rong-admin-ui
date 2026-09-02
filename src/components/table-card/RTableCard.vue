@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { type PropType } from 'vue'
+  import { computed, type PropType, useSlots } from 'vue'
   import {
     type ColumnPreset,
     type TableDensity,
@@ -31,11 +31,27 @@
     'update:fullscreen': [fullscreen: boolean]
     'update:columnPresets': [presets: ColumnPreset[]]
   }>()
+
+  const slots = useSlots()
+  const hasHeader = computed(() =>
+    Boolean(
+      props.title ||
+      slots.prefix ||
+      slots.title ||
+      slots.extra ||
+      props.refreshable ||
+      props.exportable ||
+      props.actions.length > 0 ||
+      props.densitySwitchable ||
+      props.fullscreenable ||
+      props.columnConfigurable,
+    ),
+  )
 </script>
 
 <template>
   <div class="ra-card ra-card--flush r-table-card" :data-testid="dataTestid">
-    <div class="r-table-card__header">
+    <div v-if="hasHeader" class="r-table-card__header">
       <RTableToolbarPro
         :title="props.title"
         :loading="props.loading"

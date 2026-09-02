@@ -2,6 +2,8 @@ export { default as RDataTable } from './RDataTable.vue'
 export type {
   DataTableColumn,
   DataTablePagination,
+  DataTableDensity,
+  DataTableOverflowPolicy,
   DataTableRowKey,
   DataTableSortState,
   DataTableFilterOption,

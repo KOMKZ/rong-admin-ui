@@ -27,3 +27,14 @@ export interface ResourceDetectOptions {
   maxDepth?: number
   resolveUrl?: ResourcePreviewUrlResolver
 }
+
+export interface ArtifactPreviewItem {
+  id: string
+  title?: string
+  type?: string
+  uri?: string
+  mimeType?: string
+  size?: number
+  metadata?: unknown
+  raw?: unknown
+}

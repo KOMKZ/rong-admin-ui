@@ -112,6 +112,8 @@ export interface FormRendererProps {
   labelWidth?: number | string
   labelPlacement?: 'left' | 'top'
   cols?: number
+  rowGap?: number
+  columnGap?: number
   disabled?: boolean
   readonly?: boolean
   size?: 'small' | 'medium' | 'large'
