@@ -26,6 +26,22 @@ describe('page layout components', () => {
     expect(wrapper.find('[data-testid="table"]').exists()).toBe(true)
   })
 
+  it('does not render an empty table card header when table tools are disabled', () => {
+    const wrapper = mount(RListPage, {
+      props: {
+        refreshable: false,
+        densitySwitchable: false,
+        tableTestid: 'plain-card',
+      },
+      slots: {
+        default: '<div data-testid="table">table</div>',
+      },
+    })
+
+    expect(wrapper.find('[data-testid="plain-card"] .r-table-card__header').exists()).toBe(false)
+    expect(wrapper.find('[data-testid="table"]').exists()).toBe(true)
+  })
+
   it('renders a form page with the framework card width contract', () => {
     const wrapper = mount(RFormPage, {
       props: { width: 'wide', dataTestid: 'form-page', cardTestid: 'form-card' },

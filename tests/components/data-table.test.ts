@@ -112,6 +112,54 @@ describe('RDataTable', () => {
     expect(wrapper.find('.custom-toolbar').exists()).toBe(true)
   })
 
+  it('keeps refresh, density, and column controls in the table toolbar', async () => {
+    const wrapper = mount(RDataTable, {
+      props: {
+        columns,
+        data,
+        refreshable: true,
+        densitySwitchable: true,
+        columnConfigurable: true,
+      },
+    })
+
+    expect(wrapper.find('[data-testid="data-table-refresh"]').exists()).toBe(true)
+    expect(wrapper.find('[data-testid="data-table-density"]').exists()).toBe(true)
+    expect(wrapper.find('[data-testid="data-table-columns"]').exists()).toBe(true)
+    expect(wrapper.find('.r-data-table__toolbar-actions').classes()).toContain(
+      'r-data-table__toolbar-actions',
+    )
+    await wrapper.find('[data-testid="data-table-refresh"]').trigger('click')
+    expect(wrapper.emitted('refresh')).toBeTruthy()
+  })
+
+  it('wires density changes from the table toolbar', () => {
+    const wrapper = mount(RDataTable, {
+      props: { columns, data, density: 'operations', densitySwitchable: true },
+    })
+    const source = readFileSync(
+      join(process.cwd(), 'src/components/data-table/RDataTable.vue'),
+      'utf8',
+    )
+
+    expect(wrapper.find('[data-testid="data-table-density"]').exists()).toBe(true)
+    expect(source).toContain('@click="handleDensityChange(opt.value)"')
+    expect(source).toContain("'update:density': [density: DataTableDensity]")
+  })
+
+  it('governs table toolbar spacing in the framework layer', () => {
+    const source = readFileSync(
+      join(process.cwd(), 'src/components/data-table/RDataTable.vue'),
+      'utf8',
+    )
+
+    expect(source).toContain('--ra-table-toolbar-padding-x')
+    expect(source).toContain('--ra-table-toolbar-padding-top')
+    expect(source).toContain('--ra-table-toolbar-padding-bottom')
+    expect(source).toContain('flex-wrap: nowrap')
+    expect(source).toContain('justify-content: flex-end')
+  })
+
   it('should render built-in selected export and delete actions', () => {
     const wrapper = mount(RDataTable, {
       props: {
@@ -150,6 +198,36 @@ describe('RDataTable', () => {
       props: { columns, data, size: 'small' },
     })
     expect(wrapper.find('.r-data-table').exists()).toBe(true)
+  })
+
+  it('applies operations density as compact table with governed horizontal overflow', () => {
+    const wideColumns: DataTableColumn[] = [
+      { key: 'workflow_key', title: '工作流', minWidth: 180 },
+      { key: 'workflow_version', title: '版本', width: 90 },
+      { key: 'status', title: '状态', width: 110 },
+      { key: 'current_node', title: '当前节点', minWidth: 160 },
+      { key: 'error_message', title: '错误', minWidth: 220 },
+      { key: 'created_at', title: '创建时间', width: 170 },
+      { key: 'actions', title: '操作', width: 100, fixed: 'right' },
+    ]
+    const wrapper = mount(RDataTable, {
+      props: { columns: wideColumns, data, density: 'operations' },
+    })
+    const table = wrapper.findComponent({ name: 'DataTable' })
+
+    expect(wrapper.find('.r-data-table--operations').exists()).toBe(true)
+    expect(table.props('size')).toBe('small')
+    expect(table.props('scrollX')).toBeGreaterThanOrEqual(1030)
+  })
+
+  it('keeps explicit size and scrollX above density defaults', () => {
+    const wrapper = mount(RDataTable, {
+      props: { columns, data, density: 'operations', size: 'medium', scrollX: 1280 },
+    })
+    const table = wrapper.findComponent({ name: 'DataTable' })
+
+    expect(table.props('size')).toBe('medium')
+    expect(table.props('scrollX')).toBe(1280)
   })
 
   it('should support custom column render', () => {

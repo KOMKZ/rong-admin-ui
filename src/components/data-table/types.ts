@@ -39,6 +39,9 @@ export interface DataTablePagination {
   pageSizes?: number[]
 }
 
+export type DataTableDensity = 'compact' | 'default' | 'comfortable' | 'operations'
+export type DataTableOverflowPolicy = 'visible' | 'horizontal' | 'auto'
+
 export type DataTableRowKey = string | number
 
 export interface DataTableSortState {
@@ -84,8 +87,12 @@ export interface DataTableProps<T = Record<string, unknown>> {
   striped?: boolean
   singleLine?: boolean
   size?: 'small' | 'medium' | 'large'
+  density?: DataTableDensity
+  refreshable?: boolean
+  densitySwitchable?: boolean
   maxHeight?: number | string
   scrollX?: number | string
+  overflowPolicy?: DataTableOverflowPolicy
   selectable?: boolean
   checkedRowKeys?: DataTableRowKey[]
   defaultSort?: DataTableSortState
@@ -115,7 +122,9 @@ export interface DataTableEmits<T = Record<string, unknown>> {
   'update:sort': [sort: DataTableSortState]
   'update:filters': [filters: DataTableFilterState[]]
   'server-params-change': [params: ServerSideParams]
-  rowClick: [row: T, index: number]
+  refresh: []
+  'update:density': [density: DataTableDensity]
+  rowClick: [row: any, index: number]
   export: [payload: DataTableExportPayload<T>]
   batchDelete: [payload: DataTableBatchPayload<T>]
   batchAction: [key: string, selectedKeys: DataTableRowKey[], selectedRows: T[]]

@@ -70,6 +70,35 @@ describe('RFilterBarPro', () => {
     expect(wrapper.find('[data-testid="filter-toggle-btn"]').exists()).toBe(true)
   })
 
+  it('applies list-toolbar preset for dense list filters', () => {
+    const wrapper = mount(RFilterBarPro, {
+      props: { schema: baseSchema, modelValue: {}, layoutPreset: 'list-toolbar' },
+    })
+    const formRenderer = wrapper.findComponent(RFormRenderer)
+    const schema = formRenderer.props('schema') as FormFieldSchema[]
+
+    expect(wrapper.find('.r-filter-bar-pro--list-toolbar').exists()).toBe(true)
+    expect(formRenderer.props('cols')).toBe(2)
+    expect(schema.map((field) => field.key)).toEqual(['keyword', 'status'])
+  })
+
+  it('lets explicit cols and maxVisibleFields override layout preset', () => {
+    const wrapper = mount(RFilterBarPro, {
+      props: {
+        schema: baseSchema,
+        modelValue: {},
+        layoutPreset: 'list-toolbar',
+        cols: 3,
+        maxVisibleFields: 3,
+      },
+    })
+    const formRenderer = wrapper.findComponent(RFormRenderer)
+    const schema = formRenderer.props('schema') as FormFieldSchema[]
+
+    expect(formRenderer.props('cols')).toBe(3)
+    expect(schema.map((field) => field.key)).toEqual(['keyword', 'status', 'role'])
+  })
+
   it('hides advanced toggle when not collapsible', () => {
     const wrapper = mount(RFilterBarPro, {
       props: { schema: baseSchema, modelValue: {}, collapsible: false },
