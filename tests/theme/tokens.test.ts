@@ -1,4 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import {
   primitiveColors,
   colorVar,
@@ -76,5 +78,11 @@ describe('resolveToken', () => {
 
     expect(resolveToken('--ra-color-brand-primary')).toBe('#2080f0')
     spy.mockRestore()
+  })
+
+  it('defines table header background as a semantic token', () => {
+    const source = readFileSync(join(process.cwd(), 'src/theme/semantic.css'), 'utf8')
+
+    expect(source).toContain('--ra-color-table-header-bg: var(--ra-color-brand-subtle);')
   })
 })

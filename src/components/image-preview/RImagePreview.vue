@@ -50,7 +50,7 @@
   .r-image-preview__image {
     overflow: hidden;
     border: 1px solid var(--ra-border-color, #e5e7eb);
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     background: var(--ra-fill-color-light, #f5f7fa);
     cursor: zoom-in;
   }

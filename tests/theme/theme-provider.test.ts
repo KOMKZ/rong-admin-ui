@@ -4,6 +4,7 @@ import {
   resetThemeProvider,
   getActiveThemeProvider,
 } from '../../src/theme/theme-provider'
+import { getPreset, getPresetNames } from '../../src/theme/presets'
 
 function clearRootClasses(): void {
   document.documentElement.className = ''
@@ -112,7 +113,9 @@ describe('ThemeProvider', () => {
     const tp = createThemeProvider({
       storage: {
         get: (k) => store[k] ?? null,
-        set: (k, v) => { store[k] = v },
+        set: (k, v) => {
+          store[k] = v
+        },
       },
     })
 
@@ -132,6 +135,25 @@ describe('ThemeProvider', () => {
 
     tp.setMode('dark')
     expect(tp.naiveOverrides.common?.primaryColor).toBe('#7b79e8')
+  })
+
+  it('keeps naive-ui shape square for every preset and mode', () => {
+    for (const presetName of getPresetNames()) {
+      for (const mode of ['light', 'dark'] as const) {
+        const overrides = getPreset(presetName, mode).naiveOverrides
+
+        expect(overrides.common?.borderRadius).toBe('0px')
+        expect(overrides.common?.borderRadiusSmall).toBe('0px')
+        expect(overrides.Input?.borderRadius).toBe('0px')
+        expect(overrides.InputNumber?.peers?.Input?.borderRadius).toBe('0px')
+        expect(overrides.InternalSelection?.borderRadius).toBe('0px')
+        expect(overrides.Button?.borderRadiusMedium).toBe('0px')
+        expect(overrides.Card?.borderRadius).toBe('0px')
+        expect(overrides.Dialog?.borderRadius).toBe('0px')
+        expect(overrides.Drawer?.borderRadius).toBe('0px')
+        expect(overrides.Popover?.borderRadius).toBe('0px')
+      }
+    }
   })
 
   it('only one instance active at a time (HMR safe)', () => {
@@ -177,8 +199,12 @@ describe('ThemeProvider', () => {
   it('works with custom storage that throws', () => {
     const tp = createThemeProvider({
       storage: {
-        get: () => { throw new Error('storage read failed') },
-        set: () => { throw new Error('storage write failed') },
+        get: () => {
+          throw new Error('storage read failed')
+        },
+        set: () => {
+          throw new Error('storage write failed')
+        },
       },
     })
     expect(tp.currentPreset).toBe('enterprise-blue')

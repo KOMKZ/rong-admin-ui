@@ -33,6 +33,7 @@ describe('createAppConfig / useAppConfig', () => {
     const ctx = consumer.vm.config
     expect(ctx.design.darkMode).toBe(false)
     expect(ctx.design.primaryColor).toBe('#2080f0')
+    expect(ctx.design.borderRadius).toBe(0)
     expect(ctx.project.navMode).toBe('vertical')
     expect(ctx.runtime.env).toBe('development')
     expect(ctx.website.title).toBe('Admin System')

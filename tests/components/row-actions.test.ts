@@ -21,6 +21,27 @@ describe('RRowActions', () => {
     expect(wrapper.find('[data-testid="row-action-more"]').exists()).toBe(false)
   })
 
+  it('renders governed default icons for common action keys', () => {
+    const wrapper = mount(RRowActions, {
+      props: {
+        row,
+        actions: [
+          { key: 'detail', label: '详情' },
+          { key: 'copy', label: '复制' },
+          { key: 'open', label: '打开' },
+        ],
+      },
+    })
+
+    const icons = wrapper.findAll('[data-testid="r-icon"]')
+    expect(icons).toHaveLength(3)
+    expect(icons.map((icon) => icon.attributes('aria-label'))).toEqual([
+      'eye',
+      'copy',
+      'external-link',
+    ])
+  })
+
   it('moves overflow actions into more menu when actions exceed maxInline', () => {
     const wrapper = mount(RRowActions, {
       props: {

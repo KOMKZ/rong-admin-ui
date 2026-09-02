@@ -60,9 +60,7 @@ describe('RQueryTable', () => {
   })
 
   it('should render query form when querySchema provided', () => {
-    const querySchema: FormFieldSchema[] = [
-      { key: 'name', label: '姓名', type: 'input' },
-    ]
+    const querySchema: FormFieldSchema[] = [{ key: 'name', label: '姓名', type: 'input' }]
     const wrapper = mount(RQueryTable, {
       props: { columns, fetchData, querySchema },
     })
@@ -96,9 +94,7 @@ describe('RQueryTable', () => {
       props: { columns, fetchData, defaultPageSize: 20 },
     })
     await flushPromises()
-    expect(fetchData).toHaveBeenCalledWith(
-      expect.objectContaining({ pageSize: 20 }),
-    )
+    expect(fetchData).toHaveBeenCalledWith(expect.objectContaining({ pageSize: 20 }))
   })
 
   it('should expose reload method', async () => {
@@ -168,5 +164,24 @@ describe('RQueryTable', () => {
     expect(fetchData).toHaveBeenCalledWith(
       expect.objectContaining({ query: { status: 'active', keyword: null } }),
     )
+  })
+
+  it('should render error empty state and retry after fetch failure', async () => {
+    const failingFetch = vi.fn().mockRejectedValueOnce(new Error('网络异常'))
+    const wrapper = mount(RQueryTable, {
+      props: { columns, fetchData: failingFetch },
+    })
+
+    await flushPromises()
+
+    expect(wrapper.find('[data-testid="query-table-empty"]').exists()).toBe(true)
+    expect(wrapper.text()).toContain('加载失败')
+    expect(wrapper.text()).toContain('网络异常')
+
+    failingFetch.mockResolvedValueOnce({ data: mockData, total: mockData.length })
+    await wrapper.find('[data-testid="empty-state-action"]').trigger('click')
+    await flushPromises()
+
+    expect(failingFetch).toHaveBeenCalledTimes(2)
   })
 })

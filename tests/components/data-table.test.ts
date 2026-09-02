@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { RDataTable } from '@/components/data-table'
 import type { DataTableColumn, DataTablePagination } from '@/components/data-table'
 
@@ -163,5 +165,16 @@ describe('RDataTable', () => {
       props: { columns: customColumns, data },
     })
     expect(wrapper.html()).toContain('Custom: Item 1')
+  })
+
+  it('governs table header color and right edge spacing with framework tokens', () => {
+    const source = readFileSync(
+      join(process.cwd(), 'src/components/data-table/RDataTable.vue'),
+      'utf8',
+    )
+
+    expect(source).toContain('background-color: var(--ra-color-table-header-bg)')
+    expect(source).toContain('--ra-table-action-column-padding-right')
+    expect(source).toContain('.n-data-table-td--fixed-right')
   })
 })

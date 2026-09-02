@@ -24,7 +24,7 @@ export interface AppConfigInput {
 const defaultDesignConfig: DesignConfig = {
   darkMode: false,
   primaryColor: '#2080f0',
-  borderRadius: 6,
+  borderRadius: 0,
   fontSize: 14,
 }
 
