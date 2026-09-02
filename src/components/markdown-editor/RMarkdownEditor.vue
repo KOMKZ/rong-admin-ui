@@ -249,7 +249,7 @@
     display: flex;
     flex-direction: column;
     border: 1px solid var(--ra-color-border-default, #d0d7de);
-    border-radius: var(--ra-radius-lg, 8px);
+    border-radius: var(--ra-radius-lg);
     overflow: hidden;
     background: var(--ra-color-bg-surface, #fff);
   }
@@ -321,7 +321,7 @@
   .rme-mode-toggle {
     display: flex;
     border: 1px solid var(--ra-color-border-default, #d0d7de);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     overflow: hidden;
   }
 
@@ -397,7 +397,7 @@
   .rme-split-handle__line {
     width: 3px;
     height: 32px;
-    border-radius: 2px;
+    border-radius: var(--ra-radius-sm);
     background: var(--ra-color-border-default, #d0d7de);
     transition: background 0.15s ease;
   }

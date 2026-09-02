@@ -73,7 +73,7 @@
   .r-chat-empty-state__icon-circle {
     width: 72px;
     height: 72px;
-    border-radius: 50%;
+    border-radius: var(--ra-radius-full);
     background: var(--ra-color-primary-light, #eff6ff);
     color: var(--ra-color-primary, #3b82f6);
     display: flex;
@@ -108,7 +108,7 @@
     font-size: 13px;
     line-height: 1.4;
     border: 1px solid var(--ra-color-border-light, #eef0f6);
-    border-radius: var(--ra-radius-md, 8px);
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-bg-surface, #fff);
     color: var(--ra-color-text-secondary, #4a5164);
     cursor: pointer;

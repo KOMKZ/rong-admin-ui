@@ -103,7 +103,7 @@
     width: 20px;
     height: 20px;
     border: 2px solid transparent;
-    border-radius: 50%;
+    border-radius: var(--ra-radius-full);
     cursor: pointer;
     transition: all 0.15s;
   }

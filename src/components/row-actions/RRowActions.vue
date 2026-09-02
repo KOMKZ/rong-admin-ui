@@ -10,6 +10,34 @@
     testIdPrefix: 'row-action',
   })
 
+  const defaultActionIcons: Record<string, string> = {
+    view: 'eye',
+    detail: 'eye',
+    details: 'eye',
+    preview: 'eye',
+    edit: 'edit',
+    update: 'edit',
+    copy: 'copy',
+    copyUrl: 'copy',
+    copyURL: 'copy',
+    'copy-url': 'copy',
+    open: 'external-link',
+    external: 'external-link',
+    delete: 'trash-2',
+    remove: 'trash-2',
+    roles: 'users',
+    role: 'users',
+    permission: 'shield',
+    permissions: 'shield',
+    password: 'lock',
+    resetPassword: 'lock',
+    reset: 'refresh-cw',
+    retry: 'refresh-cw',
+    refresh: 'refresh-cw',
+    test: 'send',
+    run: 'play',
+  }
+
   const emit = defineEmits<{
     action: [key: string, row: T]
   }>()
@@ -25,7 +53,7 @@
   })
   const overflowOptions = computed<DropdownOption[]>(() =>
     overflowActions.value.map((action) => {
-      const iconName = action.icon
+      const iconName = resolveActionIcon(action)
       return {
         key: action.key,
         label: action.label,
@@ -50,6 +78,12 @@
     return action.type ?? 'default'
   }
 
+  function resolveActionIcon(action: RowAction<T>): string {
+    if (action.icon) return action.icon
+    if (action.danger) return 'trash-2'
+    return defaultActionIcons[action.key] ?? 'circle-dot'
+  }
+
   function triggerAction(action: RowAction<T>): void {
     if (isDisabled(action)) return
     action.onClick?.(props.row)
@@ -63,7 +97,7 @@
 </script>
 
 <template>
-  <NSpace class="r-row-actions" size="small" :wrap="false" @click.stop>
+  <NSpace class="r-row-actions" :size="6" :wrap="false" @click.stop>
     <template v-for="action in visibleActions" :key="action.key">
       <NButton
         size="small"
@@ -73,8 +107,8 @@
         :data-testid="`${testIdPrefix}-${action.key}`"
         @click.stop="triggerAction(action)"
       >
-        <template v-if="action.icon" #icon>
-          <RIcon :name="action.icon" :size="14" />
+        <template #icon>
+          <RIcon :name="resolveActionIcon(action)" :size="14" />
         </template>
         {{ action.label }}
       </NButton>
@@ -100,6 +134,15 @@
   .r-row-actions {
     display: inline-flex;
     align-items: center;
+    white-space: nowrap;
+  }
+
+  .r-row-actions :deep(.n-button) {
+    --n-padding: 0 var(--ra-spacing-1);
+  }
+
+  .r-row-actions :deep(.n-button__icon) {
+    margin-right: var(--ra-spacing-0-5);
   }
 
   :global(.r-row-actions__menu-item--danger) {

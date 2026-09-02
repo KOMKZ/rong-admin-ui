@@ -390,7 +390,7 @@
   }
   .r-chat-conv-list__item {
     padding: 8px 12px;
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     cursor: pointer;
     margin-bottom: 2px;
     transition: background 0.15s;

@@ -159,7 +159,7 @@
     display: flex;
     width: 100%;
     border: 1px solid var(--border-color, #e5e7eb);
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     overflow: hidden;
     background: #fafafa;
   }
@@ -188,7 +188,7 @@
   }
   .r-flow-timeline__badge {
     padding: 1px 5px;
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     font-size: 10px;
     font-weight: 600;
   }
@@ -234,7 +234,7 @@
   .r-flow-node__pulse {
     width: 8px;
     height: 8px;
-    border-radius: 50%;
+    border-radius: var(--ra-radius-full);
     background: #6366f1;
     animation: r-pulse 1.5s ease-in-out infinite;
   }

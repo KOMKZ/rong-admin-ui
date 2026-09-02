@@ -312,7 +312,7 @@
   .rpu-item__bar-wrap {
     height: 3px;
     background: var(--ra-color-bg-muted);
-    border-radius: 2px;
+    border-radius: var(--ra-radius-sm);
     overflow: hidden;
   }
   .rpu-item__bar {

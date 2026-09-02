@@ -474,7 +474,7 @@
     align-items: center;
     gap: 6px;
     padding: 6px 12px;
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-primary-light, #e8f0fe);
     color: var(--ra-color-primary, #2563eb);
     font-size: 13px;
@@ -502,7 +502,7 @@
     display: inline-flex;
     align-items: center;
     padding: 1px 6px;
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
     font-size: 11px;
     font-weight: 600;
     line-height: 1.4;
@@ -545,7 +545,7 @@
     align-items: center;
     gap: 6px;
     padding: 6px 12px;
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(168, 85, 247, 0.1));
     color: #6366f1;
     font-size: 13px;
@@ -585,7 +585,7 @@
     align-items: center;
     gap: 6px;
     padding: 6px 12px;
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     background: rgba(124, 58, 237, 0.1);
     color: #6d28d9;
     font-size: 13px;
@@ -626,7 +626,7 @@
     width: 4px;
     height: 4px;
     margin: 0 1px;
-    border-radius: 50%;
+    border-radius: var(--ra-radius-full);
     background: currentColor;
     animation: bounce 0.6s ease-in-out infinite;
   }
@@ -648,7 +648,7 @@
   }
   .r-chat-stream-renderer__tool-event {
     border: 1px solid var(--ra-color-border-light, #eef0f6);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     overflow: hidden;
   }
   .r-chat-stream-renderer__tool-event-summary {
@@ -699,7 +699,7 @@
     margin: 0;
     padding: 6px 8px;
     background: var(--ra-color-bg-tertiary, #f5f6f8);
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
     font-size: 11px;
     overflow-x: auto;
     white-space: pre-wrap;
@@ -709,7 +709,7 @@
   }
   .r-chat-stream-renderer__code-exec {
     border: 1px solid #e5e7eb;
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     overflow: hidden;
     background: #fafafa;
   }
@@ -729,7 +729,7 @@
   .r-chat-stream-renderer__code-exec-icon {
     width: 20px;
     height: 20px;
-    border-radius: 50%;
+    border-radius: var(--ra-radius-full);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -775,7 +775,7 @@
     padding: 8px 10px;
     background: #1f2937;
     color: #e5e7eb;
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     font-size: 12px;
     line-height: 1.5;
     max-height: 200px;
@@ -791,7 +791,7 @@
     padding: 8px 10px;
     background: white;
     border: 1px solid #e5e7eb;
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     font-size: 12px;
     font-family: 'SF Mono', 'Fira Code', monospace;
     max-height: 200px;

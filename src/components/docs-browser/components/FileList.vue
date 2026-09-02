@@ -249,7 +249,7 @@
     gap: var(--ra-spacing-2, 8px);
     padding: 6px 10px;
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-surface-secondary, #fafbfc);
     transition: border-color 0.15s ease;
   }
@@ -290,7 +290,7 @@
     height: 32px;
     padding: 0 10px;
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-surface, #ffffff);
     color: var(--ra-color-text-secondary, #6b7280);
     font-size: var(--ra-font-size-sm, 13px);
@@ -309,7 +309,7 @@
     min-width: 190px;
     padding: 6px;
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-surface, #ffffff);
     box-shadow: 0 8px 20px rgba(17, 24, 39, 0.12);
     z-index: 12;
@@ -324,7 +324,7 @@
     gap: 8px;
     padding: 0 8px;
     border: none;
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     background: transparent;
     color: var(--ra-color-text-secondary, #6b7280);
     font-size: var(--ra-font-size-sm, 13px);
@@ -360,7 +360,7 @@
     width: 100%;
     padding: var(--ra-spacing-2, 8px) var(--ra-spacing-3, 12px);
     border: none;
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     background: transparent;
     color: var(--ra-color-text-primary, #111827);
     cursor: pointer;
@@ -411,7 +411,7 @@
 
   .r-docs-file-dir {
     padding: 0 4px;
-    border-radius: 3px;
+    border-radius: var(--ra-radius-sm);
     background: var(--ra-color-surface-tertiary, #e5e7eb);
   }
 
@@ -424,7 +424,7 @@
 
   .r-docs-skeleton {
     height: 36px;
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-surface-secondary, #f3f4f6);
     animation: r-docs-pulse 1.5s ease-in-out infinite;
   }

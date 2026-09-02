@@ -572,7 +572,7 @@
 
   .menu-preset-editor__tree-panel {
     border: 1px solid var(--ra-color-border-light, #eef0f6);
-    border-radius: var(--ra-radius-lg, 12px);
+    border-radius: var(--ra-radius-lg);
     background: var(--ra-color-bg-surface, #fff);
     padding: var(--ra-spacing-3, 12px);
   }

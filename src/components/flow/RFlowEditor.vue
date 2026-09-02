@@ -166,7 +166,7 @@
     position: relative;
     width: 100%;
     border: 1px solid var(--border-color, #e5e7eb);
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     overflow: hidden;
     background: #fafafa;
   }
@@ -177,7 +177,7 @@
     z-index: 10;
     background: white;
     padding: 6px 12px;
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
     display: flex;
     gap: 6px;
@@ -186,7 +186,7 @@
   .r-flow-editor__btn {
     padding: 4px 10px;
     border: 1px solid #d1d5db;
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
     background: white;
     cursor: pointer;
     font-size: 12px;

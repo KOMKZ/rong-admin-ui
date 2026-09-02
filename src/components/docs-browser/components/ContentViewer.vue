@@ -262,7 +262,7 @@
   .r-docs-cached-badge {
     font-size: 11px;
     padding: 2px 6px;
-    border-radius: var(--ra-radius-sm, 4px);
+    border-radius: var(--ra-radius-sm);
     background: var(--ra-color-success-subtle, #ecfdf5);
     color: var(--ra-color-success, #059669);
   }
@@ -280,7 +280,7 @@
     width: 32px;
     height: 32px;
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-surface, #ffffff);
     color: var(--ra-color-text-secondary, #6b7280);
     cursor: pointer;
@@ -320,7 +320,7 @@
     font-size: 13px;
     line-height: 1.6;
     background: var(--ra-color-surface-secondary, #fafbfc);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     overflow: auto;
     color: var(--ra-color-text-primary, #111827);
     font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
@@ -336,7 +336,7 @@
 
   .r-docs-content-skeleton-bar {
     height: 16px;
-    border-radius: var(--ra-radius-sm, 4px);
+    border-radius: var(--ra-radius-sm);
     background: var(--ra-color-surface-secondary, #f3f4f6);
     animation: r-docs-pulse 1.5s ease-in-out infinite;
   }

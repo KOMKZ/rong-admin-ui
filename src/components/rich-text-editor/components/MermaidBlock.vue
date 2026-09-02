@@ -121,7 +121,7 @@
 <style>
   .rte-mermaid-block {
     border: 1px solid var(--ra-color-border-default, #e5e7eb);
-    border-radius: var(--ra-radius-lg, 8px);
+    border-radius: var(--ra-radius-lg);
     padding: 12px;
     background: var(--ra-color-bg-muted, #f8fafc);
     margin: 16px 0;
@@ -148,7 +148,7 @@
     padding: 4px 10px;
     font-size: 12px;
     border: 1px solid var(--ra-color-border-default, #d0d7de);
-    border-radius: var(--ra-radius-md, 4px);
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-bg-surface, #fff);
     color: var(--ra-color-text-secondary, #57606a);
     cursor: pointer;
@@ -191,7 +191,7 @@
     min-height: 120px;
     font-family: 'JetBrains Mono', Menlo, Monaco, Consolas, monospace;
     font-size: 13px;
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     border: 1px solid var(--ra-color-border-default, #d1d5db);
     padding: 10px;
     background: var(--ra-color-bg-surface, #fff);
@@ -207,7 +207,7 @@
   }
 
   .rte-mermaid-preview {
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-bg-surface, #fff);
     padding: 16px;
     min-height: 100px;

@@ -10,7 +10,7 @@
     status: { type: String as PropType<IndexStatus>, default: 'idle' },
     showLabel: { type: Boolean, default: true },
     height: { type: Number, default: 12 },
-    borderRadius: { type: Number, default: 6 },
+    borderRadius: { type: Number, default: 0 },
   })
 
   const percentage = computed(() => {

@@ -27,7 +27,7 @@
 <style scoped>
   .r-ops-chart-placeholder {
     border: 1px dashed var(--n-border-color);
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     display: flex;
     align-items: center;
     justify-content: center;

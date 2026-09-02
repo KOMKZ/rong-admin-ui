@@ -198,7 +198,7 @@
     align-items: center;
     gap: 6px;
     padding: 5px 8px;
-    border-radius: 999px;
+    border-radius: var(--ra-radius-full);
     backdrop-filter: blur(8px);
     background: rgba(255, 255, 255, 0.85);
     border: 1px solid var(--ra-color-border-default, rgba(148, 163, 184, 0.4));
@@ -231,7 +231,7 @@
     padding: 2px 8px;
     font-size: 11px;
     border: none;
-    border-radius: var(--ra-radius-sm, 3px);
+    border-radius: var(--ra-radius-sm);
     background: transparent;
     color: var(--ra-color-text-secondary, #57606a);
     cursor: pointer;

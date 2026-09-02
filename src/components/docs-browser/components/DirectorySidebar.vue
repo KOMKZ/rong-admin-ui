@@ -161,7 +161,7 @@
     margin: 0 0 8px;
     padding: 8px 12px;
     border: 1px solid var(--ra-color-border-secondary, #e5e7eb);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-surface-primary, #fff);
   }
 
@@ -196,7 +196,7 @@
     align-items: center;
     gap: var(--ra-spacing-2, 8px);
     padding: var(--ra-spacing-2, 8px) var(--ra-spacing-3, 12px);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     background: transparent;
     color: var(--ra-color-text-secondary, #6b7280);
     font-size: var(--ra-font-size-sm, 13px);
@@ -266,7 +266,7 @@
 
   .r-docs-dir-highlight {
     padding: 0 1px;
-    border-radius: 3px;
+    border-radius: var(--ra-radius-sm);
     background: rgba(59, 130, 246, 0.18);
     color: inherit;
   }
@@ -280,7 +280,7 @@
     justify-content: center;
     font-size: 11px;
     font-weight: 500;
-    border-radius: 10px;
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-surface-tertiary, #e5e7eb);
     color: var(--ra-color-text-tertiary, #6b7280);
     padding: 0 6px;

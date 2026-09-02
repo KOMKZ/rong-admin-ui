@@ -2,6 +2,7 @@
   import { ref, onMounted, type PropType } from 'vue'
   import { NSpace, NButton } from 'naive-ui'
   import { default as RDataTable } from '../data-table/RDataTable.vue'
+  import { default as REmptyState } from '../empty-state/REmptyState.vue'
   import { default as RFormRenderer } from '../form-renderer/RFormRenderer.vue'
   import type { DataTableColumn, DataTableRowKey, DataTableSortState } from '../data-table/types'
   import type { FormFieldSchema } from '../form-renderer/types'
@@ -26,11 +27,22 @@
     autoLoad: { type: Boolean, default: true },
     bordered: { type: Boolean, default: true },
     striped: { type: Boolean, default: false },
+    emptyTitle: { type: String, default: '暂无数据' },
+    emptyDescription: { type: String, default: '' },
+    emptyIcon: { type: String, default: 'inbox' },
+    errorTitle: { type: String, default: '加载失败' },
+    errorIcon: { type: String, default: 'alert-circle' },
+    retryLabel: { type: String, default: '重试' },
+    resolveErrorMessage: {
+      type: Function as PropType<(error: unknown) => string>,
+      default: undefined,
+    },
   })
 
   const loading = ref(false)
   const data = ref<Record<string, unknown>[]>([])
   const total = ref(0)
+  const errorMessage = ref('')
   const page = ref(1)
   const pageSize = ref(props.defaultPageSize)
   const queryModel = ref<Record<string, unknown>>(buildDefaultQuery())
@@ -39,6 +51,7 @@
 
   const emit = defineEmits<{
     'update:checkedKeys': [keys: DataTableRowKey[]]
+    error: [error: unknown]
   }>()
 
   function buildDefaultQuery(): Record<string, unknown> {
@@ -51,6 +64,7 @@
 
   async function doFetch(): Promise<void> {
     loading.value = true
+    errorMessage.value = ''
     try {
       const result = await props.fetchData({
         page: page.value,
@@ -60,9 +74,20 @@
       })
       data.value = result.data
       total.value = result.total
+    } catch (error) {
+      errorMessage.value = props.resolveErrorMessage?.(error) || defaultErrorMessage(error)
+      data.value = []
+      total.value = 0
+      emit('error', error)
     } finally {
       loading.value = false
     }
+  }
+
+  function defaultErrorMessage(error: unknown): string {
+    if (error instanceof Error && error.message) return error.message
+    if (typeof error === 'string' && error) return error
+    return '数据加载失败，请重试'
   }
 
   function handleSearch(): void {
@@ -100,6 +125,10 @@
     clearSelection: () => {
       checkedKeys.value = []
     },
+  }
+
+  function handleEmptyAction(): void {
+    if (errorMessage.value) void doFetch()
   }
 
   defineExpose(expose)
@@ -157,7 +186,20 @@
         }
       "
       @update:sort="handleSortChange"
-    />
+    >
+      <template #empty>
+        <slot name="empty" :error="errorMessage" :retry="doFetch" :loading="loading">
+          <REmptyState
+            :icon="errorMessage ? props.errorIcon : props.emptyIcon"
+            :title="errorMessage ? props.errorTitle : props.emptyTitle"
+            :description="errorMessage || props.emptyDescription"
+            :action-label="errorMessage ? props.retryLabel : ''"
+            data-testid="query-table-empty"
+            @action="handleEmptyAction"
+          />
+        </slot>
+      </template>
+    </RDataTable>
   </div>
 </template>
 

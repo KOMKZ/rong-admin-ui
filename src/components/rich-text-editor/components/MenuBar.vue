@@ -549,7 +549,7 @@
     padding: 4px;
     background: var(--ra-color-bg-surface, #fff);
     border: 1px solid var(--ra-color-border-default, #d0d7de);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     box-shadow: var(--ra-shadow-lg, 0 8px 24px rgba(0, 0, 0, 0.12));
     margin-top: 4px;
   }
@@ -578,7 +578,7 @@
     font-size: 13px;
     text-align: left;
     border: none;
-    border-radius: var(--ra-radius-sm, 3px);
+    border-radius: var(--ra-radius-sm);
     background: transparent;
     color: var(--ra-color-text-secondary, #57606a);
     cursor: pointer;
@@ -608,7 +608,7 @@
   .rrte-color-swatch {
     width: 24px;
     height: 24px;
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
     cursor: pointer;
     border: 1px solid var(--ra-color-border-light, #e5e7eb);
     transition: transform 0.1s ease;
@@ -624,7 +624,7 @@
     justify-content: center;
     width: 24px;
     height: 24px;
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
     border: 1px solid var(--ra-color-border-light, #e5e7eb);
     background: var(--ra-color-bg-surface, #fff);
     cursor: pointer;
@@ -641,7 +641,7 @@
     padding: 4px 8px;
     font-size: 13px;
     border: 1px solid var(--ra-color-border-default, #d0d7de);
-    border-radius: var(--ra-radius-sm, 4px);
+    border-radius: var(--ra-radius-sm);
     outline: none;
   }
 
@@ -653,7 +653,7 @@
     padding: 4px 10px;
     font-size: 12px;
     border: none;
-    border-radius: var(--ra-radius-sm, 4px);
+    border-radius: var(--ra-radius-sm);
     background: var(--ra-color-brand-primary, #0969da);
     color: #fff;
     cursor: pointer;
@@ -671,7 +671,7 @@
     padding: 4px 8px;
     font-size: 12px;
     border: none;
-    border-radius: var(--ra-radius-sm, 4px);
+    border-radius: var(--ra-radius-sm);
     background: transparent;
     color: var(--ra-color-danger, #cf222e);
     cursor: pointer;

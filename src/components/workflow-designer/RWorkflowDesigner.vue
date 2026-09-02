@@ -1187,7 +1187,7 @@
   .r-workflow-resizer {
     position: relative;
     cursor: col-resize;
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     background: linear-gradient(
       180deg,
       transparent 0%,
@@ -1213,7 +1213,7 @@
 
   .r-workflow-panel {
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: var(--ra-radius-lg, 10px);
+    border-radius: var(--ra-radius-lg);
     background: var(--ra-color-surface, #fff);
     display: flex;
     flex-direction: column;
@@ -1242,7 +1242,7 @@
 
   .r-workflow-tab {
     border: 1px solid var(--ra-color-border, #d1d5db);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     background: #fff;
     padding: 5px 8px;
     font-size: 12px;
@@ -1268,7 +1268,7 @@
 
   .r-workflow-palette-item {
     border: 1px solid var(--ra-color-border, #d1d5db);
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-surface, #fff);
     cursor: pointer;
     padding: 10px;
@@ -1294,7 +1294,7 @@
   .r-workflow-canvas-wrap {
     min-width: 0;
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: var(--ra-radius-lg, 10px);
+    border-radius: var(--ra-radius-lg);
     background: linear-gradient(180deg, #f8fafc 0%, #f3f4f6 100%);
     display: flex;
     flex-direction: column;
@@ -1314,7 +1314,7 @@
     border: 1px solid var(--ra-color-border, #d1d5db);
     background: #fff;
     color: var(--ra-color-text-secondary, #374151);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     padding: 4px 10px;
     font-size: 12px;
     cursor: pointer;
@@ -1362,7 +1362,7 @@
     width: 190px;
     min-height: 96px;
     border: 1px solid #cbd5e1;
-    border-radius: 10px;
+    border-radius: var(--ra-radius-md);
     padding: 10px;
     background: #fff;
     box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
@@ -1413,7 +1413,7 @@
 
   .r-workflow-inline-btn {
     border: 1px solid #d1d5db;
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     background: #fff;
     padding: 2px 8px;
     font-size: 12px;
@@ -1441,7 +1441,7 @@
   .r-workflow-field select,
   .r-workflow-field textarea {
     border: 1px solid var(--ra-color-border, #d1d5db);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     padding: 8px;
     font-size: 13px;
     color: #0f172a;
@@ -1504,7 +1504,7 @@
     gap: 8px;
     padding: 6px 8px;
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     font-size: 12px;
   }
 
@@ -1518,7 +1518,7 @@
 
   .r-workflow-edge-item__meta input {
     border: 1px solid var(--ra-color-border, #d1d5db);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     padding: 4px 8px;
     font-size: 12px;
   }
@@ -1538,7 +1538,7 @@
   .r-workflow-rule-row input,
   .r-workflow-rule-row select {
     border: 1px solid var(--ra-color-border, #d1d5db);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     padding: 4px 8px;
     font-size: 12px;
   }
@@ -1558,7 +1558,7 @@
 
   .r-workflow-issues li {
     font-size: 12px;
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     padding: 6px 8px;
   }
 

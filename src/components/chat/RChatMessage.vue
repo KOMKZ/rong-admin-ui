@@ -271,7 +271,7 @@
   .r-chat-message__avatar {
     width: var(--ra-chat-avatar-size, 36px);
     height: var(--ra-chat-avatar-size, 36px);
-    border-radius: 50%;
+    border-radius: var(--ra-radius-full);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -375,7 +375,7 @@
     padding: 4px 10px;
     background: var(--ra-color-bg-subtle, #f8fafc);
     border: 1px solid var(--ra-color-border-light, #eef0f6);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     text-decoration: none;
     transition:
       background 0.15s,
@@ -392,7 +392,7 @@
     justify-content: center;
     width: 18px;
     height: 18px;
-    border-radius: 50%;
+    border-radius: var(--ra-radius-full);
     background: var(--ra-color-primary, #2563eb);
     color: #fff;
     font-size: 10px;
@@ -452,7 +452,7 @@
     margin: 0;
     padding: 8px;
     background: var(--ra-color-bg-tertiary, #f5f6f8);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     font-size: 11px;
     overflow-x: auto;
     white-space: pre-wrap;

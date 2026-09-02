@@ -830,7 +830,7 @@
     mark.dataset.highlightColor = color
     if (highlightId != null) mark.dataset.highlightId = String(highlightId)
     mark.style.background = bgColor
-    mark.style.borderRadius = '2px'
+    mark.style.borderRadius = 'var(--ra-radius-sm)'
     mark.style.padding = '0 1px'
     return mark
   }
@@ -1486,7 +1486,7 @@
     display: flex;
     position: relative;
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: var(--ra-radius-lg, 8px);
+    border-radius: var(--ra-radius-lg);
     overflow: hidden;
     background: var(--ra-color-surface, #ffffff);
     box-shadow: var(--ra-shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.05));
@@ -1515,7 +1515,7 @@
     width: min(560px, 100%);
     background: var(--ra-color-surface, #ffffff);
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: var(--ra-radius-lg, 10px);
+    border-radius: var(--ra-radius-lg);
     box-shadow: var(--ra-shadow-lg, 0 12px 28px rgba(0, 0, 0, 0.18));
     overflow: hidden;
   }
@@ -1539,7 +1539,7 @@
     border: 1px solid var(--ra-color-border, #e5e7eb);
     background: var(--ra-color-surface, #fff);
     color: var(--ra-color-text-secondary, #6b7280);
-    border-radius: var(--ra-radius-sm, 6px);
+    border-radius: var(--ra-radius-sm);
     width: 28px;
     height: 28px;
     cursor: pointer;
@@ -1589,7 +1589,7 @@
     border: 1px solid var(--ra-color-border, #e5e7eb);
     background: var(--ra-color-surface, #fff);
     color: var(--ra-color-text-secondary, #6b7280);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     padding: 6px 12px;
     cursor: pointer;
   }
@@ -1613,7 +1613,7 @@
     transform: translateX(-50%);
     z-index: 100;
     padding: 6px 16px;
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     font-size: 13px;
     font-weight: 500;
     box-shadow: var(--ra-shadow-md, 0 4px 12px rgba(0, 0, 0, 0.1));
@@ -1747,7 +1747,7 @@
     margin-left: auto;
     padding: 2px 8px;
     border: 1px solid var(--ra-color-danger, #dc2626);
-    border-radius: var(--ra-radius-sm, 4px);
+    border-radius: var(--ra-radius-sm);
     background: transparent;
     color: var(--ra-color-danger, #dc2626);
     font-size: 12px;
@@ -1799,7 +1799,7 @@
     padding: 4px 8px;
     background: var(--ra-color-surface, #fff);
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
     transform: translateX(-50%);
     white-space: nowrap;
@@ -1824,7 +1824,7 @@
     width: 26px;
     height: 26px;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
     background: transparent;
     cursor: pointer;
     color: var(--ra-color-text-secondary, #6b7280);
@@ -1894,7 +1894,7 @@
     gap: 4px;
     padding: 4px 10px;
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-surface, #ffffff);
     color: var(--ra-color-text-secondary, #6b7280);
     font-size: 12px;
@@ -1944,7 +1944,7 @@
     width: 24px;
     height: 24px;
     border: none;
-    border-radius: var(--ra-radius-sm, 4px);
+    border-radius: var(--ra-radius-sm);
     background: transparent;
     color: var(--ra-color-text-tertiary, #9ca3af);
     cursor: pointer;

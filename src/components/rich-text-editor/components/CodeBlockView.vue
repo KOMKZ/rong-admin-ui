@@ -169,7 +169,7 @@
   .rte-code-block {
     position: relative;
     margin: 16px 0;
-    border-radius: var(--ra-radius-lg, 8px);
+    border-radius: var(--ra-radius-lg);
     overflow: hidden;
     border: 1px solid var(--ra-color-border-default, #e5e7eb);
     background: #f6f8fa;
@@ -188,7 +188,7 @@
     padding: 3px 8px;
     font-size: 12px;
     border: 1px solid var(--ra-color-border-default, #d0d7de);
-    border-radius: var(--ra-radius-sm, 4px);
+    border-radius: var(--ra-radius-sm);
     background: var(--ra-color-bg-surface, #fff);
     color: var(--ra-color-text-secondary, #57606a);
     outline: none;
@@ -211,7 +211,7 @@
     width: 28px;
     height: 28px;
     border: none;
-    border-radius: var(--ra-radius-sm, 4px);
+    border-radius: var(--ra-radius-sm);
     background: transparent;
     color: var(--ra-color-text-secondary, #57606a);
     cursor: pointer;
@@ -302,7 +302,7 @@
     padding: 4px 16px;
     font-size: 13px;
     border: 1px solid var(--ra-color-border-default, #d0d7de);
-    border-radius: var(--ra-radius-md, 4px);
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-bg-surface, #fff);
     color: var(--ra-color-brand-primary, #0969da);
     cursor: pointer;

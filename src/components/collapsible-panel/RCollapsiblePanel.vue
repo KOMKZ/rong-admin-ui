@@ -41,7 +41,7 @@
 
 <style scoped>
   .r-collapsible-panel {
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     overflow: hidden;
   }
   .r-collapsible-panel--bordered {

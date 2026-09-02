@@ -95,7 +95,7 @@
     flex-direction: column;
     background: var(--ra-color-bg-surface, #fff);
     border: 1px solid var(--ra-color-border-light, #eef0f6);
-    border-radius: var(--ra-radius-lg, 12px);
+    border-radius: var(--ra-radius-lg);
     box-shadow: var(
       --ra-shadow-card,
       0 1px 3px 0 rgb(0 0 0 / 0.04),
@@ -120,7 +120,7 @@
     overflow: hidden;
     background: var(--ra-color-bg-surface, #fff);
     border: 1px solid var(--ra-color-border-light, #eef0f6);
-    border-radius: var(--ra-radius-lg, 12px);
+    border-radius: var(--ra-radius-lg);
     box-shadow: var(
       --ra-shadow-card,
       0 1px 3px 0 rgb(0 0 0 / 0.04),

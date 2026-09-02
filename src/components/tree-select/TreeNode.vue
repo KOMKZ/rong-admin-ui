@@ -273,7 +273,7 @@
   .r-tree-node__highlight {
     background: color-mix(in srgb, var(--ra-color-warning) 25%, transparent);
     color: inherit;
-    border-radius: 2px;
+    border-radius: var(--ra-radius-sm);
     padding: 0 1px;
   }
 

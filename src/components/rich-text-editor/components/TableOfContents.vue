@@ -71,7 +71,7 @@
     margin: 16px 0;
     background: var(--ra-color-bg-muted, #f6f8fa);
     border: 1px solid var(--ra-color-border-light, #e5e7eb);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     user-select: none;
   }
 
@@ -96,7 +96,7 @@
     color: var(--ra-color-text-secondary, #57606a);
     cursor: pointer;
     transition: color 0.15s ease;
-    border-radius: var(--ra-radius-sm, 3px);
+    border-radius: var(--ra-radius-sm);
   }
 
   .rte-toc__item:hover {

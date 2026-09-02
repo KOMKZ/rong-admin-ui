@@ -399,7 +399,7 @@
     right: 0;
     height: 2px;
     background: var(--ra-color-brand-primary);
-    border-radius: 1px;
+    border-radius: var(--ra-radius-sm);
   }
   .rpte-node--drop-target.rpte-node--drop-after::after {
     content: '';
@@ -409,7 +409,7 @@
     right: 0;
     height: 2px;
     background: var(--ra-color-brand-primary);
-    border-radius: 1px;
+    border-radius: var(--ra-radius-sm);
   }
   .rpte-node--drop-invalid.rpte-node--drop-inside {
     border-color: var(--ra-color-danger);
@@ -529,6 +529,6 @@
     background: var(--ra-color-warning);
     color: var(--ra-color-text-primary);
     padding: 0 1px;
-    border-radius: 2px;
+    border-radius: var(--ra-radius-sm);
   }
 </style>

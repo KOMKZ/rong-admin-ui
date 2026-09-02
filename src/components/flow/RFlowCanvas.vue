@@ -85,14 +85,14 @@
   .r-flow-canvas {
     width: 100%;
     border: 1px solid var(--border-color, #e5e7eb);
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     overflow: hidden;
     background: #fafafa;
   }
 
   .r-flow-node {
     padding: 10px 16px;
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     font-size: 13px;
     min-width: 120px;
     text-align: center;
@@ -135,7 +135,7 @@
     display: inline-block;
     margin-top: 6px;
     padding: 2px 8px;
-    border-radius: 10px;
+    border-radius: var(--ra-radius-md);
     font-size: 10px;
     background: #ede9fe;
     color: #6366f1;

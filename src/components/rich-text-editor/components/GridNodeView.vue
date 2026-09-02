@@ -339,7 +339,7 @@
 
   .rte-grid-card {
     border: 1px solid var(--ra-color-border-default, rgba(148, 163, 184, 0.4));
-    border-radius: var(--ra-radius-lg, 12px);
+    border-radius: var(--ra-radius-lg);
     padding: 12px;
     background: var(--ra-color-bg-surface, #fff);
     box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
@@ -364,7 +364,7 @@
     font-size: 15px;
     font-weight: 600;
     border: 1px solid transparent;
-    border-radius: var(--ra-radius-sm, 4px);
+    border-radius: var(--ra-radius-sm);
     padding: 2px 6px;
     background: transparent;
     color: var(--ra-color-text-primary, #0f172a);
@@ -400,7 +400,7 @@
     padding: 4px 10px;
     font-size: 12px;
     border: 1px solid var(--ra-color-border-default, #d0d7de);
-    border-radius: var(--ra-radius-md, 4px);
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-bg-surface, #fff);
     color: var(--ra-color-text-secondary, #57606a);
     cursor: pointer;
@@ -429,7 +429,7 @@
 
   .rte-grid-table-wrap {
     margin-top: 8px;
-    border-radius: var(--ra-radius-md, 8px);
+    border-radius: var(--ra-radius-md);
     overflow-x: auto;
     background: var(--ra-color-bg-muted, #f8fafc);
   }
@@ -466,7 +466,7 @@
     padding: 1px 8px;
     margin: 1px 2px;
     font-size: 12px;
-    border-radius: 999px;
+    border-radius: var(--ra-radius-full);
     background: var(--ra-color-brand-subtle, #dbeafe);
     color: var(--ra-color-brand-primary, #0969da);
   }
@@ -516,7 +516,7 @@
     font-size: 12px;
     font-weight: 400;
     padding: 2px 8px;
-    border-radius: 999px;
+    border-radius: var(--ra-radius-full);
     background: var(--ra-color-brand-subtle, #dbeafe);
     color: var(--ra-color-brand-primary, #0969da);
   }
@@ -533,7 +533,7 @@
     padding: 6px 14px;
     font-size: 13px;
     border: 1px solid var(--ra-color-border-default, #d0d7de);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-bg-surface, #fff);
     color: var(--ra-color-text-secondary, #57606a);
     cursor: pointer;

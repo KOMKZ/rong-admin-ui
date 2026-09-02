@@ -307,7 +307,7 @@
     width: 24px;
     height: 24px;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
     background: transparent;
     cursor: pointer;
     color: var(--ra-color-text-tertiary, #656d76);

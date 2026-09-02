@@ -352,7 +352,7 @@
     line-height: 1.5;
     word-wrap: break-word;
     padding: 32px;
-    border-radius: var(--ra-radius-lg, 6px);
+    border-radius: var(--ra-radius-lg);
   }
 
   .r-markdown-preview .rmd-empty {
@@ -430,7 +430,7 @@
     font-size: 85%;
     white-space: break-spaces;
     background-color: rgba(175, 184, 193, 0.2);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     font-family:
       ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
   }
@@ -438,7 +438,7 @@
   /* Code block with language label */
   .r-markdown-preview .rmd-code-block {
     margin-bottom: 16px;
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     overflow: hidden;
     background-color: var(--rmd-code-bg);
   }
@@ -463,7 +463,7 @@
     font-size: 85%;
     line-height: 1.45;
     background-color: var(--rmd-code-bg);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     margin-top: 0;
     margin-bottom: 16px;
   }
@@ -494,7 +494,7 @@
   /* Code block with language label */
   .r-markdown-preview .rmd-code-block {
     margin-bottom: 16px;
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     overflow: hidden;
     background-color: var(--rmd-code-bg);
   }
@@ -601,7 +601,7 @@
     max-width: 100%;
     box-sizing: content-box;
     background-color: var(--rmd-bg);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
   }
 
   /* Task lists */
@@ -637,7 +637,7 @@
     background-color: var(--rmd-code-bg);
     border: solid 1px var(--rmd-border);
     border-bottom-color: var(--rmd-kbd-border-bottom);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     box-shadow: inset 0 -1px 0 var(--rmd-kbd-shadow);
   }
 
@@ -649,7 +649,7 @@
     padding: 3px 10px;
     font-size: 12px;
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
     background: rgba(255, 255, 255, 0.1);
     color: rgba(255, 255, 255, 0.6);
     cursor: pointer;
@@ -671,7 +671,7 @@
   .r-markdown-preview .rmd-mermaid-container {
     margin: 16px 0;
     border: 1px solid var(--rmd-border);
-    border-radius: var(--ra-radius-lg, 8px);
+    border-radius: var(--ra-radius-lg);
     background-color: var(--rmd-mermaid-container-bg);
     overflow: hidden;
     position: relative;
@@ -688,7 +688,7 @@
     width: 32px;
     height: 32px;
     border: 1px solid var(--rmd-border);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     background: rgba(255, 255, 255, 0.92);
     color: var(--rmd-blockquote-text);
     cursor: pointer;
@@ -733,7 +733,7 @@
     width: 36px;
     height: 36px;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     background: transparent;
     color: rgba(255, 255, 255, 0.7);
     cursor: pointer;
@@ -784,7 +784,7 @@
   .rmd-canvas-transform svg {
     display: block;
     background: #fff;
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     padding: 24px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
   }

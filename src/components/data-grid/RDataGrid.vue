@@ -771,7 +771,7 @@
     display: flex;
     flex-direction: column;
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: var(--ra-radius-lg, 8px);
+    border-radius: var(--ra-radius-lg);
     overflow: hidden;
     background: var(--ra-color-bg, #fff);
   }
@@ -803,7 +803,7 @@
     gap: 4px;
     padding: 6px 14px;
     border: 1px solid var(--ra-color-border, #d1d5db);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     font-size: 13px;
     line-height: 1.5;
     cursor: pointer;
@@ -853,7 +853,7 @@
     padding: 0 4px;
     font-size: 10px;
     font-weight: 600;
-    border-radius: 999px;
+    border-radius: var(--ra-radius-full);
     background: var(--ra-color-primary, #6366f1);
     color: #fff;
   }
@@ -884,7 +884,7 @@
   .rdg-search {
     padding: 6px 12px 6px 30px;
     border: 1px solid var(--ra-color-border, #d1d5db);
-    border-radius: 20px;
+    border-radius: var(--ra-radius-lg);
     font-size: 13px;
     outline: none;
     width: 200px;
@@ -931,7 +931,7 @@
   .rdg-dropdown-menu {
     background: var(--ra-color-bg, #fff);
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
     padding: 4px 0;
     min-width: 200px;
@@ -986,7 +986,7 @@
 
   .rdg-modal {
     background: var(--ra-color-bg, #fff);
-    border-radius: var(--ra-radius-lg, 8px);
+    border-radius: var(--ra-radius-lg);
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16);
     width: 90%;
     max-height: 80vh;
@@ -1044,7 +1044,7 @@
     width: 100%;
     padding: 10px 14px;
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-bg, #fff);
     font-size: 14px;
     color: var(--ra-color-text, #374151);
@@ -1079,7 +1079,7 @@
   .rdg-textarea {
     padding: 6px 10px;
     border: 1px solid var(--ra-color-border, #d1d5db);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     font-size: 14px;
     outline: none;
     background: var(--ra-color-bg, #fff);

@@ -33,6 +33,6 @@
     flex: 1;
     overflow: auto;
     background: var(--ra-color-bg-surface, #fff);
-    border-radius: var(--ra-radius-md, 4px);
+    border-radius: var(--ra-radius-md);
   }
 </style>

@@ -90,7 +90,7 @@
     flex-direction: column;
     background: var(--ra-color-bg-surface, #fff);
     border: 2px solid var(--ra-color-brand-primary, #0969da);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     min-width: 200px;
     max-height: 280px;
     outline: none;
@@ -103,7 +103,7 @@
     margin: 8px 8px 4px;
     padding: 4px 8px;
     border: 1px solid var(--ra-color-border, #d0d7de);
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
     font-size: 13px;
     outline: none;
   }

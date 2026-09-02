@@ -211,7 +211,7 @@
   .rdg-textarea {
     padding: 6px 10px;
     border: 1px solid var(--ra-color-border-default, #d0d7de);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     font-size: 14px;
     background: var(--ra-color-bg-surface, #fff);
     color: var(--ra-color-text-primary, #24292f);
@@ -240,7 +240,7 @@
   .rdg-btn {
     padding: 6px 16px;
     border: 1px solid var(--ra-color-border-default, #d0d7de);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     background: var(--ra-color-bg-surface, #fff);
     color: var(--ra-color-text-primary, #24292f);
     font-size: 14px;

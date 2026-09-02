@@ -63,7 +63,7 @@
   .r-demo__toggle:focus-visible {
     outline: 2px solid var(--ra-color-focus-ring);
     outline-offset: 2px;
-    border-radius: 3px;
+    border-radius: var(--ra-radius-sm);
   }
   .r-demo__arrow {
     display: inline-block;

@@ -50,7 +50,7 @@
       type="line"
       :percentage="percentage"
       :height="compact ? 4 : 8"
-      :border-radius="4"
+      :border-radius="0"
       :color="progressColor"
       :show-indicator="false"
       :processing="steps.some((s) => s.status === 'running')"

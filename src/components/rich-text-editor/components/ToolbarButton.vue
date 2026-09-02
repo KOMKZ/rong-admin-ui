@@ -39,7 +39,7 @@
     width: 32px;
     height: 32px;
     border: 1px solid transparent;
-    border-radius: var(--ra-radius-md, 4px);
+    border-radius: var(--ra-radius-md);
     background: transparent;
     color: var(--ra-color-text-secondary, #57606a);
     cursor: pointer;

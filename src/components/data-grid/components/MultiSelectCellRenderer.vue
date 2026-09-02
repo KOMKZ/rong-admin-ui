@@ -38,7 +38,7 @@
     display: inline-block;
     padding: 1px 8px;
     font-size: 12px;
-    border-radius: 999px;
+    border-radius: var(--ra-radius-full);
     background: var(--ra-color-brand-subtle, #dbeafe);
     color: var(--ra-color-brand-primary, #0969da);
   }

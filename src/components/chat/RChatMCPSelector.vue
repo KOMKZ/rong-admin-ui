@@ -118,7 +118,7 @@
     padding: 6px;
     background: var(--ra-color-bg-surface, #fff);
     border: 1px solid var(--ra-color-border-light, #e5e7eb);
-    border-radius: 10px;
+    border-radius: var(--ra-radius-md);
     box-shadow:
       0 8px 24px rgba(15, 23, 42, 0.12),
       0 2px 8px rgba(15, 23, 42, 0.06);
@@ -139,7 +139,7 @@
     text-align: left;
     padding: 8px 10px;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--ra-radius-md);
     background: transparent;
     cursor: pointer;
     font: inherit;

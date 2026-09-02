@@ -243,7 +243,7 @@
     z-index: 1000;
     background: var(--ra-color-bg-elevated, #fff);
     border: 1px solid var(--ra-color-border-default, #eee);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     box-shadow: var(--ra-shadow-lg);
     padding: 4px 0;
     min-width: 120px;

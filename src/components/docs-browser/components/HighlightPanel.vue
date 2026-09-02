@@ -204,7 +204,7 @@
     width: 28px;
     height: 28px;
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     background: var(--ra-color-surface, #fff);
     color: var(--ra-color-text-secondary, #6b7280);
     cursor: pointer;
@@ -256,7 +256,7 @@
   .r-docs-highlight-item__color {
     width: 4px;
     flex-shrink: 0;
-    border-radius: 2px;
+    border-radius: var(--ra-radius-sm);
     margin-top: 2px;
   }
 
@@ -283,7 +283,7 @@
     color: var(--ra-color-text-secondary, #6b7280);
     background: var(--ra-color-surface-secondary, #f9fafb);
     padding: 4px 8px;
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
     border-left: 2px solid var(--ra-color-primary, #2563eb);
   }
 
@@ -306,7 +306,7 @@
     margin-top: 6px;
     padding: 6px 8px;
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
     font-size: 12px;
     resize: vertical;
     font-family: inherit;
@@ -321,7 +321,7 @@
   .r-docs-highlight-item__note-btn {
     padding: 2px 8px;
     border: 1px solid var(--ra-color-border, #e5e7eb);
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
     background: var(--ra-color-surface, #fff);
     font-size: 11px;
     cursor: pointer;
@@ -343,7 +343,7 @@
     align-items: center;
     justify-content: center;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
     background: transparent;
     color: var(--ra-color-text-tertiary, #9ca3af);
     cursor: pointer;

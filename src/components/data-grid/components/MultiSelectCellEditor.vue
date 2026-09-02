@@ -129,7 +129,7 @@
     flex-direction: column;
     background: var(--ra-color-bg-surface, #fff);
     border: 2px solid var(--ra-color-brand-primary, #0969da);
-    border-radius: 6px;
+    border-radius: var(--ra-radius-sm);
     min-width: 220px;
     max-height: 320px;
     outline: none;
@@ -151,7 +151,7 @@
     gap: 2px;
     padding: 2px 8px;
     font-size: 12px;
-    border-radius: 999px;
+    border-radius: var(--ra-radius-full);
     background: var(--ra-color-brand-subtle, #dbeafe);
     color: var(--ra-color-brand-primary, #0969da);
   }
@@ -175,7 +175,7 @@
     margin: 4px 8px;
     padding: 4px 8px;
     border: 1px solid var(--ra-color-border, #d0d7de);
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
     font-size: 13px;
     outline: none;
   }
@@ -240,7 +240,7 @@
   .rdg-multiselect-editor__confirm {
     padding: 3px 12px;
     border: none;
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
     background: var(--ra-color-brand-primary, #0969da);
     color: #fff;
     font-size: 12px;

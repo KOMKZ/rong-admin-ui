@@ -454,7 +454,7 @@
   .r-data-table__config-btn {
     padding: 4px 8px;
     border: 1px solid var(--ra-color-border-default, #e0e0e0);
-    border-radius: var(--ra-radius-sm, 4px);
+    border-radius: var(--ra-radius-sm);
     background: var(--ra-color-bg-surface, #fff);
     cursor: pointer;
     font-size: 14px;
@@ -471,7 +471,7 @@
   }
   .r-data-table__config-panel {
     border: 1px solid var(--ra-color-border-default, #e0e0e0);
-    border-radius: var(--ra-radius-sm, 4px);
+    border-radius: var(--ra-radius-sm);
     background: var(--ra-color-bg-surface, #fff);
     padding: var(--ra-spacing-3, 12px);
     margin-bottom: var(--ra-spacing-2, 8px);
@@ -488,7 +488,7 @@
   .r-data-table__config-reset {
     padding: 2px 8px;
     border: 1px solid var(--ra-color-border-default, #e0e0e0);
-    border-radius: var(--ra-radius-sm, 4px);
+    border-radius: var(--ra-radius-sm);
     background: none;
     cursor: pointer;
     font-size: var(--ra-font-size-xs, 12px);
@@ -517,5 +517,22 @@
     font-size: var(--ra-font-size-sm, 13px);
     color: var(--ra-color-brand-primary, #2080f0);
     font-weight: 500;
+  }
+
+  .r-data-table :deep(.n-data-table-th) {
+    background-color: var(--ra-color-table-header-bg);
+    color: var(--ra-color-text-primary);
+    font-weight: var(--ra-font-weight-semibold);
+  }
+
+  .r-data-table :deep(.n-data-table-th:last-child),
+  .r-data-table :deep(.n-data-table-td:last-child),
+  .r-data-table :deep(.n-data-table-th--fixed-right),
+  .r-data-table :deep(.n-data-table-td--fixed-right) {
+    padding-right: var(--ra-table-action-column-padding-right, var(--ra-spacing-5));
+  }
+
+  .r-data-table :deep(.n-data-table-th:last-child) {
+    border-right: 0;
   }
 </style>

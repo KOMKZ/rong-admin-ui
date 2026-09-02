@@ -157,14 +157,14 @@
   .image-node-view__container--selected {
     outline: 2px solid var(--ra-color-brand-primary, #0969da);
     outline-offset: 2px;
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
   }
 
   .image-node-view__img {
     display: block;
     max-width: 100%;
     height: auto;
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
   }
 
   .image-node-view__toolbar {
@@ -178,7 +178,7 @@
     padding: 4px 6px;
     background: var(--ra-color-bg-surface, #fff);
     border: 1px solid var(--ra-color-border-default, #d0d7de);
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     box-shadow: var(--ra-shadow-md, 0 4px 12px rgba(0, 0, 0, 0.1));
     z-index: 50;
   }
@@ -190,7 +190,7 @@
     width: 28px;
     height: 28px;
     border: none;
-    border-radius: var(--ra-radius-sm, 4px);
+    border-radius: var(--ra-radius-sm);
     background: transparent;
     color: var(--ra-color-text-secondary, #57606a);
     cursor: pointer;
@@ -232,7 +232,7 @@
     height: 12px;
     background: var(--ra-color-brand-primary, #0969da);
     border: 2px solid #fff;
-    border-radius: 2px;
+    border-radius: var(--ra-radius-sm);
     cursor: se-resize;
     z-index: 10;
   }

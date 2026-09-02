@@ -1,6 +1,76 @@
 import type { GlobalThemeOverrides } from 'naive-ui'
 import type { ThemePreset, ThemePresetName } from '../types'
 
+const ADMIN_RADIUS = '0px'
+
+function withAdminShapeGovernance(overrides: GlobalThemeOverrides): GlobalThemeOverrides {
+  return {
+    ...overrides,
+    common: {
+      ...overrides.common,
+      borderRadius: ADMIN_RADIUS,
+      borderRadiusSmall: ADMIN_RADIUS,
+    },
+    Button: {
+      ...overrides.Button,
+      borderRadiusTiny: ADMIN_RADIUS,
+      borderRadiusSmall: ADMIN_RADIUS,
+      borderRadiusMedium: ADMIN_RADIUS,
+      borderRadiusLarge: ADMIN_RADIUS,
+    },
+    Card: {
+      ...overrides.Card,
+      borderRadius: ADMIN_RADIUS,
+      closeBorderRadius: ADMIN_RADIUS,
+    },
+    Dialog: {
+      ...overrides.Dialog,
+      borderRadius: ADMIN_RADIUS,
+      closeBorderRadius: ADMIN_RADIUS,
+    },
+    Drawer: {
+      ...overrides.Drawer,
+      borderRadius: ADMIN_RADIUS,
+      closeBorderRadius: ADMIN_RADIUS,
+    },
+    Dropdown: {
+      ...overrides.Dropdown,
+      borderRadius: ADMIN_RADIUS,
+      borderRadiusSubmenu: ADMIN_RADIUS,
+    },
+    Input: {
+      ...overrides.Input,
+      borderRadius: ADMIN_RADIUS,
+    },
+    InputNumber: {
+      ...overrides.InputNumber,
+      peers: {
+        ...overrides.InputNumber?.peers,
+        Input: {
+          ...overrides.InputNumber?.peers?.Input,
+          borderRadius: ADMIN_RADIUS,
+        },
+      },
+    },
+    InternalSelection: {
+      ...overrides.InternalSelection,
+      borderRadius: ADMIN_RADIUS,
+    },
+    Modal: {
+      ...overrides.Modal,
+      borderRadius: ADMIN_RADIUS,
+    },
+    Popconfirm: {
+      ...overrides.Popconfirm,
+      borderRadius: ADMIN_RADIUS,
+    },
+    Popover: {
+      ...overrides.Popover,
+      borderRadius: ADMIN_RADIUS,
+    },
+  }
+}
+
 function blueNaiveLight(): GlobalThemeOverrides {
   return {
     common: {
@@ -18,7 +88,7 @@ function blueNaiveLight(): GlobalThemeOverrides {
       textColor1: '#1a202c',
       textColor2: '#4a5568',
       textColor3: '#6b7785',
-      borderRadius: '6px',
+      borderRadius: ADMIN_RADIUS,
       fontFamily:
         "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif",
     },
@@ -42,7 +112,7 @@ function blueNaiveDark(): GlobalThemeOverrides {
       textColor1: '#e8eaed',
       textColor2: '#9aa0aa',
       textColor3: '#6b7280',
-      borderRadius: '6px',
+      borderRadius: ADMIN_RADIUS,
     },
   }
 }
@@ -64,7 +134,7 @@ function tealNaiveLight(): GlobalThemeOverrides {
       textColor1: '#1a2b2a',
       textColor2: '#4a6968',
       textColor3: '#7a9594',
-      borderRadius: '6px',
+      borderRadius: ADMIN_RADIUS,
     },
   }
 }
@@ -86,7 +156,7 @@ function tealNaiveDark(): GlobalThemeOverrides {
       textColor1: '#e0edec',
       textColor2: '#8aaba9',
       textColor3: '#5e807e',
-      borderRadius: '6px',
+      borderRadius: ADMIN_RADIUS,
     },
   }
 }
@@ -108,7 +178,7 @@ function graphiteNaiveLight(): GlobalThemeOverrides {
       textColor1: '#1c1c1e',
       textColor2: '#636366',
       textColor3: '#8e8e93',
-      borderRadius: '6px',
+      borderRadius: ADMIN_RADIUS,
     },
   }
 }
@@ -130,7 +200,7 @@ function graphiteNaiveDark(): GlobalThemeOverrides {
       textColor1: '#e5e5ea',
       textColor2: '#8e8e93',
       textColor3: '#636366',
-      borderRadius: '6px',
+      borderRadius: ADMIN_RADIUS,
     },
   }
 }
@@ -152,7 +222,7 @@ function cloudOpsNaiveLight(): GlobalThemeOverrides {
       textColor1: '#0f172a',
       textColor2: '#475569',
       textColor3: '#64748b',
-      borderRadius: '8px',
+      borderRadius: ADMIN_RADIUS,
       fontFamily:
         "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
     },
@@ -176,7 +246,7 @@ function cloudOpsNaiveDark(): GlobalThemeOverrides {
       textColor1: '#f1f5f9',
       textColor2: '#94a3b8',
       textColor3: '#64748b',
-      borderRadius: '8px',
+      borderRadius: ADMIN_RADIUS,
     },
   }
 }
@@ -198,7 +268,7 @@ function slateProNaiveLight(): GlobalThemeOverrides {
       textColor1: '#111827',
       textColor2: '#374151',
       textColor3: '#6b7280',
-      borderRadius: '8px',
+      borderRadius: ADMIN_RADIUS,
       fontFamily:
         "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
     },
@@ -222,7 +292,7 @@ function slateProNaiveDark(): GlobalThemeOverrides {
       textColor1: '#f9fafb',
       textColor2: '#d1d5db',
       textColor3: '#9ca3af',
-      borderRadius: '8px',
+      borderRadius: ADMIN_RADIUS,
     },
   }
 }
@@ -244,7 +314,7 @@ function hirezySoftNaiveLight(): GlobalThemeOverrides {
       textColor1: '#1e2235',
       textColor2: '#4a5068',
       textColor3: '#6e7389',
-      borderRadius: '12px',
+      borderRadius: ADMIN_RADIUS,
       fontFamily:
         "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif",
     },
@@ -268,7 +338,7 @@ function hirezySoftNaiveDark(): GlobalThemeOverrides {
       textColor1: '#f0f1f7',
       textColor2: '#b8bbcc',
       textColor3: '#8589a0',
-      borderRadius: '12px',
+      borderRadius: ADMIN_RADIUS,
     },
   }
 }
@@ -280,14 +350,14 @@ export const themePresets: Record<ThemePresetName, { light: ThemePreset; dark: T
       label: 'Enterprise Blue',
       mode: 'light',
       cssClass: 'ra-theme-enterprise-blue',
-      naiveOverrides: blueNaiveLight(),
+      naiveOverrides: withAdminShapeGovernance(blueNaiveLight()),
     },
     dark: {
       name: 'enterprise-blue',
       label: 'Enterprise Blue',
       mode: 'dark',
       cssClass: 'ra-theme-enterprise-blue ra-dark',
-      naiveOverrides: blueNaiveDark(),
+      naiveOverrides: withAdminShapeGovernance(blueNaiveDark()),
     },
   },
   'teal-ops': {
@@ -296,14 +366,14 @@ export const themePresets: Record<ThemePresetName, { light: ThemePreset; dark: T
       label: 'Teal Ops',
       mode: 'light',
       cssClass: 'ra-theme-teal-ops',
-      naiveOverrides: tealNaiveLight(),
+      naiveOverrides: withAdminShapeGovernance(tealNaiveLight()),
     },
     dark: {
       name: 'teal-ops',
       label: 'Teal Ops',
       mode: 'dark',
       cssClass: 'ra-theme-teal-ops ra-dark',
-      naiveOverrides: tealNaiveDark(),
+      naiveOverrides: withAdminShapeGovernance(tealNaiveDark()),
     },
   },
   'graphite-pro': {
@@ -312,14 +382,14 @@ export const themePresets: Record<ThemePresetName, { light: ThemePreset; dark: T
       label: 'Graphite Pro',
       mode: 'light',
       cssClass: 'ra-theme-graphite-pro',
-      naiveOverrides: graphiteNaiveLight(),
+      naiveOverrides: withAdminShapeGovernance(graphiteNaiveLight()),
     },
     dark: {
       name: 'graphite-pro',
       label: 'Graphite Pro',
       mode: 'dark',
       cssClass: 'ra-theme-graphite-pro ra-dark',
-      naiveOverrides: graphiteNaiveDark(),
+      naiveOverrides: withAdminShapeGovernance(graphiteNaiveDark()),
     },
   },
   'cloud-ops': {
@@ -328,14 +398,14 @@ export const themePresets: Record<ThemePresetName, { light: ThemePreset; dark: T
       label: 'Cloud Ops',
       mode: 'light',
       cssClass: 'ra-theme-cloud-ops',
-      naiveOverrides: cloudOpsNaiveLight(),
+      naiveOverrides: withAdminShapeGovernance(cloudOpsNaiveLight()),
     },
     dark: {
       name: 'cloud-ops',
       label: 'Cloud Ops',
       mode: 'dark',
       cssClass: 'ra-theme-cloud-ops ra-dark',
-      naiveOverrides: cloudOpsNaiveDark(),
+      naiveOverrides: withAdminShapeGovernance(cloudOpsNaiveDark()),
     },
   },
   'slate-pro': {
@@ -344,14 +414,14 @@ export const themePresets: Record<ThemePresetName, { light: ThemePreset; dark: T
       label: 'Slate Pro',
       mode: 'light',
       cssClass: 'ra-theme-slate-pro',
-      naiveOverrides: slateProNaiveLight(),
+      naiveOverrides: withAdminShapeGovernance(slateProNaiveLight()),
     },
     dark: {
       name: 'slate-pro',
       label: 'Slate Pro',
       mode: 'dark',
       cssClass: 'ra-theme-slate-pro ra-dark',
-      naiveOverrides: slateProNaiveDark(),
+      naiveOverrides: withAdminShapeGovernance(slateProNaiveDark()),
     },
   },
   'hirezy-soft': {
@@ -360,14 +430,14 @@ export const themePresets: Record<ThemePresetName, { light: ThemePreset; dark: T
       label: 'Hirezy Soft',
       mode: 'light',
       cssClass: 'ra-theme-hirezy-soft',
-      naiveOverrides: hirezySoftNaiveLight(),
+      naiveOverrides: withAdminShapeGovernance(hirezySoftNaiveLight()),
     },
     dark: {
       name: 'hirezy-soft',
       label: 'Hirezy Soft',
       mode: 'dark',
       cssClass: 'ra-theme-hirezy-soft ra-dark',
-      naiveOverrides: hirezySoftNaiveDark(),
+      naiveOverrides: withAdminShapeGovernance(hirezySoftNaiveDark()),
     },
   },
 }

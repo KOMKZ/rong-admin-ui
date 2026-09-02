@@ -166,7 +166,7 @@
     gap: 8px;
     padding: 6px 12px;
     cursor: pointer;
-    border-radius: var(--ra-radius-md, 6px);
+    border-radius: var(--ra-radius-md);
     transition: all 0.15s;
     font-size: 14px;
     line-height: 1.5;

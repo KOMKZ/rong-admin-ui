@@ -50,7 +50,7 @@
     width: 100%;
     height: 100%;
     border: 2px solid var(--ra-color-brand-primary, #0969da);
-    border-radius: 3px;
+    border-radius: var(--ra-radius-sm);
     padding: 4px 8px;
     font-size: 14px;
     outline: none;

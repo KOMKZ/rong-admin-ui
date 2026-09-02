@@ -304,7 +304,7 @@
     flex-direction: column;
     position: relative;
     background: var(--ra-color-bg-surface, #fff);
-    border-radius: var(--ra-radius-lg, 8px);
+    border-radius: var(--ra-radius-lg);
     overflow: hidden;
   }
 
@@ -334,7 +334,7 @@
     display: flex;
     gap: 2px;
     border: 1px solid var(--ra-color-border-light, #e5e7eb);
-    border-radius: var(--ra-radius-md, 4px);
+    border-radius: var(--ra-radius-md);
     overflow: hidden;
   }
 
@@ -456,7 +456,7 @@
   .r-rich-text-editor .ProseMirror img {
     max-width: 100%;
     height: auto;
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
   }
   .r-rich-text-editor .ProseMirror img.ProseMirror-selectednode {
     outline: 3px solid var(--ra-color-brand-primary, #68cef8);
@@ -466,7 +466,7 @@
     background-color: rgba(9, 30, 66, 0.08);
     color: var(--ra-color-text-primary, #172b4d);
     padding: 0.12em 0.3em;
-    border-radius: 3px;
+    border-radius: var(--ra-radius-sm);
     font-family: 'JetBrains Mono', 'Fira Code', Consolas, Monaco, monospace;
     font-size: 0.95em;
   }
@@ -476,7 +476,7 @@
     color: var(--ra-color-text-primary);
     font-family: 'JetBrains Mono', monospace;
     padding: 0.75rem 1rem;
-    border-radius: 0.5rem;
+    border-radius: var(--ra-radius-md);
   }
 
   .r-rich-text-editor .ProseMirror pre code {
@@ -489,7 +489,7 @@
   .r-rich-text-editor .ProseMirror mark {
     background-color: var(--ra-color-warning-bg);
     padding: 0.1em 0.3em;
-    border-radius: 0.2em;
+    border-radius: var(--ra-radius-sm);
   }
 
   .r-rich-text-editor .ProseMirror table {
@@ -572,7 +572,7 @@
     z-index: 25;
     width: 40px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: var(--ra-radius-full);
     border: none;
     background: var(--ra-color-brand-primary, #0969da);
     color: #fff;

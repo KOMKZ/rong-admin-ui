@@ -62,7 +62,7 @@
   .r-breadcrumb__link:focus-visible {
     outline: 2px solid var(--ra-color-focus-ring);
     outline-offset: 2px;
-    border-radius: 2px;
+    border-radius: var(--ra-radius-sm);
   }
   .r-breadcrumb__current {
     color: var(--ra-color-text-primary);

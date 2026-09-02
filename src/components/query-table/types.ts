@@ -12,6 +12,13 @@ export interface QueryTableProps<T = Record<string, unknown>> {
   autoLoad?: boolean
   bordered?: boolean
   striped?: boolean
+  emptyTitle?: string
+  emptyDescription?: string
+  emptyIcon?: string
+  errorTitle?: string
+  errorIcon?: string
+  retryLabel?: string
+  resolveErrorMessage?: (error: unknown) => string
 }
 
 export interface QueryTableFetchParams {

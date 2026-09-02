@@ -101,7 +101,7 @@
     width: 22px;
     height: 22px;
     border: none;
-    border-radius: 3px;
+    border-radius: var(--ra-radius-sm);
     background: transparent;
     color: var(--ra-color-brand-primary, #0969da);
     cursor: pointer;

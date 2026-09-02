@@ -22,7 +22,7 @@
   .r-chat-markdown-renderer :deep(pre) {
     background: var(--ra-chat-pre-bg);
     padding: var(--ra-spacing-3, 12px);
-    border-radius: var(--ra-radius-sm, 6px);
+    border-radius: var(--ra-radius-sm);
     overflow-x: auto;
   }
   .r-chat-markdown-renderer :deep(code) {

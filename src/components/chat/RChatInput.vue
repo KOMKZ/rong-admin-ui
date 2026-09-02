@@ -385,13 +385,13 @@
     gap: 4px;
     padding: 2px 6px;
     background: var(--ra-color-bg-2, #f0f0f0);
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
   }
   .r-chat-input__thumb {
     width: 40px;
     height: 40px;
     object-fit: cover;
-    border-radius: 4px;
+    border-radius: var(--ra-radius-sm);
   }
   .r-chat-input__filename {
     font-size: 12px;
@@ -409,7 +409,7 @@
     width: 6px;
     height: 6px;
     background: #e74c3c;
-    border-radius: 50%;
+    border-radius: var(--ra-radius-full);
     flex-shrink: 0;
     animation: r-chat-input__pulse 1s ease-in-out infinite;
   }
