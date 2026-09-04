@@ -6,6 +6,7 @@ export type {
   ProUploadExpose,
   ProUploadFileItem,
   ProUploadFileStatus,
+  ProUploadMediaInfo,
   ProUploadRequestOptions,
   ProUploadRetryConfig,
   ProUploadLocale,

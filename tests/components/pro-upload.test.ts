@@ -218,6 +218,52 @@ describe('RProUpload', () => {
       })
     })
 
+    it('preserves media info from upload response', async () => {
+      let capturedOptions: any
+      const customRequest = vi.fn((opts: any) => {
+        capturedOptions = opts
+      })
+
+      const wrapper = mount(RProUpload, {
+        props: { customRequest, storage: 'asset' },
+      })
+
+      const input = wrapper.find('[data-testid="pro-upload-input"]')
+      const file = createMockFile()
+      Object.defineProperty(input.element, 'files', { value: [file], writable: true })
+      await input.trigger('change')
+      await flushPromises()
+
+      capturedOptions.onSuccess({
+        code: 0,
+        data: {
+          id: 42,
+          storage_id: 'local:asset@abc.jpg',
+          media_info: {
+            media_class: 'image',
+            width: 1920,
+            height: 1080,
+            aspect_ratio: '16:9',
+          },
+        },
+      })
+      await flushPromises()
+
+      const successEvents = wrapper.emitted('success')
+      expect(successEvents).toBeTruthy()
+      expect(successEvents![0][0]).toMatchObject({
+        mediaInfo: {
+          media_class: 'image',
+          width: 1920,
+          height: 1080,
+          aspect_ratio: '16:9',
+        },
+        responseData: expect.objectContaining({
+          storage_id: 'local:asset@abc.jpg',
+        }),
+      })
+    })
+
     it('handles upload error and retries', async () => {
       let capturedOptions: any
       const customRequest = vi.fn((opts: any) => {
@@ -243,6 +289,35 @@ describe('RProUpload', () => {
       const errorEvents = wrapper.emitted('error')
       expect(errorEvents).toBeTruthy()
       expect(errorEvents![0][0]).toMatchObject({ status: 'error' })
+    })
+
+    it('shows server error message in picture-card mode', async () => {
+      let capturedOptions: any
+      const customRequest = vi.fn((opts: any) => {
+        capturedOptions = opts
+      })
+
+      const wrapper = mount(RProUpload, {
+        props: {
+          customRequest,
+          listType: 'picture-card',
+          retryConfig: { maxRetries: 0, retryDelay: 0 },
+        },
+      })
+
+      const input = wrapper.find('[data-testid="pro-upload-input"]')
+      const file = createMockFile()
+      Object.defineProperty(input.element, 'files', { value: [file], writable: true })
+      await input.trigger('change')
+      await flushPromises()
+
+      capturedOptions.onError(new Error('媒体元信息识别失败'))
+      await flushPromises()
+
+      expect(wrapper.find('.rpu-item__error-overlay').text()).toContain('媒体元信息识别失败')
+      expect(wrapper.emitted('error')?.[0]?.[1]).toMatchObject({
+        message: '媒体元信息识别失败',
+      })
     })
   })
 

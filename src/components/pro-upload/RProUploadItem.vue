@@ -88,6 +88,14 @@
           <span class="rpu-item__progress-text">{{ file.progress }}%</span>
         </div>
       </div>
+
+      <div
+        v-if="isCard && file.status === 'error'"
+        class="rpu-item__error-overlay"
+        :title="file.error ?? t('uploadFailed')"
+      >
+        <span>{{ file.error ?? t('uploadFailed') }}</span>
+      </div>
     </div>
 
     <!-- Info -->
@@ -254,6 +262,26 @@
     align-items: center;
     justify-content: center;
     background: rgba(0, 0, 0, 0.45);
+  }
+  .rpu-item__error-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--ra-spacing-2);
+    background: rgba(194, 57, 52, 0.88);
+    color: #fff;
+    font-size: var(--ra-font-size-2xs);
+    line-height: 1.35;
+    text-align: center;
+  }
+  .rpu-item__error-overlay span {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+    word-break: break-word;
   }
   .rpu-item__progress-ring {
     position: relative;

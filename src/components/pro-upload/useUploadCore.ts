@@ -125,6 +125,8 @@ export function useUploadCore(options: UploadCoreOptions) {
       name: (data.original_name ?? data.original_filename ?? data.OriginalFilename) as
         | string
         | undefined,
+      mediaInfo: (data.media_info ?? data.mediaInfo) as ProUploadFileItem['mediaInfo'],
+      responseData: data,
     }
   }
 
@@ -231,7 +233,7 @@ export function useUploadCore(options: UploadCoreOptions) {
           options.onSuccess(xhr.responseText)
         }
       } else {
-        options.onError(new Error(`Upload failed: ${xhr.status} ${xhr.statusText}`))
+        options.onError(new Error(parseUploadErrorMessage(xhr)))
       }
     })
 
@@ -246,6 +248,30 @@ export function useUploadCore(options: UploadCoreOptions) {
     options.signal.addEventListener('abort', () => xhr.abort())
 
     xhr.send(options.formData)
+  }
+
+  function parseUploadErrorMessage(xhr: XMLHttpRequest): string {
+    const fallback = `Upload failed: ${xhr.status} ${xhr.statusText}`.trim()
+    const text = xhr.responseText?.trim()
+    if (!text) return fallback
+    try {
+      const payload = JSON.parse(text) as unknown
+      const message = extractMessage(payload)
+      if (message) return message
+    } catch {
+      return text
+    }
+    return fallback
+  }
+
+  function extractMessage(payload: unknown): string {
+    if (!payload || typeof payload !== 'object') return ''
+    const record = payload as Record<string, unknown>
+    for (const key of ['msg', 'message', 'error', 'error_msg']) {
+      const value = record[key]
+      if (typeof value === 'string' && value.trim()) return value.trim()
+    }
+    return extractMessage(record.data)
   }
 
   /* ─── Validation ─── */

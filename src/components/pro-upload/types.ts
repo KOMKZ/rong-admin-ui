@@ -15,11 +15,29 @@ export interface ProUploadFileItem {
   thumbUrl?: string
   storageId?: string
   fileId?: number
+  responseData?: unknown
+  mediaInfo?: ProUploadMediaInfo
   error?: string
   /** Raw File object (only present before/during upload) */
   raw?: File
   /** Retry count consumed so far */
   _retryCount?: number
+}
+
+export interface ProUploadMediaInfo {
+  media_class?: string
+  content_type?: string
+  probe_status?: 'success' | 'failed' | string
+  probe_error?: string
+  width?: number
+  height?: number
+  duration_ms?: number
+  aspect_ratio?: string
+  bitrate_kbps?: number
+  codec_name?: string
+  format_name?: string
+  size_bytes?: number
+  [key: string]: unknown
 }
 
 /* ─── Storage Integration ─── */
@@ -41,6 +59,8 @@ export interface ProUploadRawResponse {
   size?: number
   file_size?: number
   content_type?: string
+  media_info?: ProUploadMediaInfo
+  mediaInfo?: ProUploadMediaInfo
   [key: string]: unknown
 }
 
