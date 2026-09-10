@@ -1,0 +1,195 @@
+{
+  "generated_at": "2026-09-10T04:49:40.594Z",
+  "config": ".hrise/frontend-structure-gate.json",
+  "issues": {
+    "function:src/app-auth/token-manager.ts:createTokenManager:22": {
+      "kind": "function",
+      "severity": "warn",
+      "value": 201,
+      "threshold": 134,
+      "profile": "source"
+    },
+    "function:src/components/chat/composables/useChatSSE.ts:startStream:41": {
+      "kind": "function",
+      "severity": "warn",
+      "value": 303,
+      "threshold": 291,
+      "profile": "composable"
+    },
+    "function:src/components/chat/composables/useChatSSE.ts:useChatSSE:26": {
+      "kind": "function",
+      "severity": "warn",
+      "value": 345,
+      "threshold": 291,
+      "profile": "composable"
+    },
+    "file:src/components/chat/RChatStreamRenderer.vue": {
+      "kind": "file",
+      "severity": "warn",
+      "value": 831,
+      "threshold": 504,
+      "profile": "framework-component"
+    },
+    "file:src/components/dashboard-builder/RDashboardBuilder.vue": {
+      "kind": "file",
+      "severity": "block",
+      "value": 1846,
+      "threshold": 1344,
+      "profile": "complex-component"
+    },
+    "file:src/components/dashboard-builder/RDashboardWorkspace.vue": {
+      "kind": "file",
+      "severity": "warn",
+      "value": 562,
+      "threshold": 504,
+      "profile": "framework-component"
+    },
+    "file:src/components/data-grid/RDataGrid.vue": {
+      "kind": "file",
+      "severity": "block",
+      "value": 1111,
+      "threshold": 840,
+      "profile": "framework-component"
+    },
+    "file:src/components/data-table/RDataTable.vue": {
+      "kind": "file",
+      "severity": "warn",
+      "value": 689,
+      "threshold": 504,
+      "profile": "framework-component"
+    },
+    "file:src/components/docs-browser/RDocsBrowser.vue": {
+      "kind": "file",
+      "severity": "block",
+      "value": 2102,
+      "threshold": 1568,
+      "profile": "docs-browser"
+    },
+    "file:src/components/form-renderer/RFormRenderer.vue": {
+      "kind": "file",
+      "severity": "warn",
+      "value": 698,
+      "threshold": 504,
+      "profile": "framework-component"
+    },
+    "file:src/components/image-crop-upload/RImageCropperDialog.vue": {
+      "kind": "file",
+      "severity": "warn",
+      "value": 571,
+      "threshold": 504,
+      "profile": "framework-component"
+    },
+    "file:src/components/markdown-preview/RMarkdownPreview.vue": {
+      "kind": "file",
+      "severity": "warn",
+      "value": 803,
+      "threshold": 504,
+      "profile": "framework-component"
+    },
+    "file:src/components/menu-preset-editor/RMenuPresetEditor.vue": {
+      "kind": "file",
+      "severity": "warn",
+      "value": 709,
+      "threshold": 504,
+      "profile": "framework-component"
+    },
+    "file:src/components/pro-tree-editor/composables/useTreeData.ts": {
+      "kind": "file",
+      "severity": "warn",
+      "value": 558,
+      "threshold": 504,
+      "profile": "composable"
+    },
+    "function:src/components/pro-tree-editor/composables/useTreeData.ts:useTreeData:91": {
+      "kind": "function",
+      "severity": "block",
+      "value": 467,
+      "threshold": 459,
+      "profile": "composable"
+    },
+    "file:src/components/pro-tree-editor/RProTreeEditor.vue": {
+      "kind": "file",
+      "severity": "warn",
+      "value": 755,
+      "threshold": 504,
+      "profile": "framework-component"
+    },
+    "file:src/components/pro-tree-editor/RTreeNode.vue": {
+      "kind": "file",
+      "severity": "warn",
+      "value": 535,
+      "threshold": 504,
+      "profile": "framework-component"
+    },
+    "file:src/components/pro-upload/RProUpload.vue": {
+      "kind": "file",
+      "severity": "warn",
+      "value": 547,
+      "threshold": 504,
+      "profile": "framework-component"
+    },
+    "function:src/components/pro-upload/useUploadCore.ts:useUploadCore:58": {
+      "kind": "function",
+      "severity": "warn",
+      "value": 427,
+      "threshold": 291,
+      "profile": "composable"
+    },
+    "file:src/components/resource-picker/RResourcePickerDialog.vue": {
+      "kind": "file",
+      "severity": "warn",
+      "value": 546,
+      "threshold": 504,
+      "profile": "framework-component"
+    },
+    "file:src/components/rich-text-editor/components/GridNodeView.vue": {
+      "kind": "file",
+      "severity": "warn",
+      "value": 598,
+      "threshold": 504,
+      "profile": "framework-component"
+    },
+    "file:src/components/rich-text-editor/components/MenuBar.vue": {
+      "kind": "file",
+      "severity": "warn",
+      "value": 684,
+      "threshold": 504,
+      "profile": "framework-component"
+    },
+    "file:src/components/rich-text-editor/RRichTextEditor.vue": {
+      "kind": "file",
+      "severity": "warn",
+      "value": 600,
+      "threshold": 504,
+      "profile": "framework-component"
+    },
+    "file:src/components/settings-manager/RSettingsManager.vue": {
+      "kind": "file",
+      "severity": "block",
+      "value": 1047,
+      "threshold": 840,
+      "profile": "framework-component"
+    },
+    "file:src/components/tree-select/RTreeSelect.vue": {
+      "kind": "file",
+      "severity": "warn",
+      "value": 679,
+      "threshold": 504,
+      "profile": "framework-component"
+    },
+    "file:src/components/workflow-designer/RWorkflowDesigner.vue": {
+      "kind": "file",
+      "severity": "block",
+      "value": 1604,
+      "threshold": 1344,
+      "profile": "complex-component"
+    },
+    "package:tests/components": {
+      "kind": "package",
+      "severity": "block",
+      "value": 59,
+      "threshold": 48,
+      "profile": "test"
+    }
+  }
+}

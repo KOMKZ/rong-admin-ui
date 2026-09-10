@@ -1,0 +1,299 @@
+{
+  "scan": {
+    "roots": [
+      "src",
+      "scripts",
+      "tests"
+    ],
+    "extensions": [
+      ".ts",
+      ".tsx",
+      ".js",
+      ".jsx",
+      ".mjs",
+      ".vue"
+    ],
+    "exclude": [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/coverage/**",
+      "**/.artifacts/**",
+      "**/reports/**",
+      "**/*.d.ts",
+      "src/vite-env.d.ts"
+    ]
+  },
+  "defaults": {
+    "profile": "source"
+  },
+  "profiles": {
+    "source": {
+      "file": {
+        "warn_lines": 504,
+        "max_lines": 784,
+        "suggestion": "按 app module、types、adapter、composable 或 component family 拆分。"
+      },
+      "function": {
+        "warn_lines": 134,
+        "max_lines": 213,
+        "suggestion": "把协议映射、状态计算、DOM 处理和 registry 分组拆成具名 helper。"
+      },
+      "package": {
+        "warn_files": 18,
+        "max_files": 27,
+        "report_only": true
+      }
+    },
+    "framework-component": {
+      "file": {
+        "warn_lines": 504,
+        "max_lines": 840,
+        "suggestion": "框架组件超过阈值后按 primitive、panel、composable、model、adapter 和样式职责拆分。"
+      },
+      "function": {
+        "warn_lines": 179,
+        "max_lines": 314,
+        "suggestion": "框架组件长函数优先拆渲染模型、交互状态、事件处理和子组件。"
+      },
+      "package": {
+        "warn_files": 15,
+        "max_files": 25,
+        "report_only": true
+      }
+    },
+    "complex-component": {
+      "file": {
+        "warn_lines": 1064,
+        "max_lines": 1344,
+        "suggestion": "复杂组件临时放宽；新增恶化必须抽 composable、子面板、adapter 或 renderer。"
+      },
+      "function": {
+        "warn_lines": 235,
+        "max_lines": 426,
+        "suggestion": "复杂组件长函数优先拆 selection、resize、render model、commands 和 DOM effect。"
+      },
+      "package": {
+        "warn_files": 15,
+        "max_files": 25,
+        "report_only": true
+      }
+    },
+    "docs-browser": {
+      "file": {
+        "warn_lines": 1232,
+        "max_lines": 1568,
+        "suggestion": "Docs browser 属于复合工具；新增恶化必须拆 highlight、print、directory、content viewer 或 cache composable。"
+      },
+      "function": {
+        "warn_lines": 252,
+        "max_lines": 448,
+        "suggestion": "Docs browser 长函数优先拆 DOM range、print assets、directory model 和缓存策略。"
+      },
+      "package": {
+        "warn_files": 15,
+        "max_files": 25,
+        "report_only": true
+      }
+    },
+    "registry": {
+      "file": {
+        "warn_lines": 672,
+        "max_lines": 1008,
+        "suggestion": "registry/icon/menu/preset 文件按 domain、category 或 export family 分片。"
+      },
+      "function": {
+        "warn_lines": 202,
+        "max_lines": 392,
+        "suggestion": "registry 长函数拆成分组 builder 和薄聚合入口。"
+      },
+      "package": {
+        "warn_files": 20,
+        "max_files": 31,
+        "report_only": true
+      }
+    },
+    "composable": {
+      "file": {
+        "warn_lines": 504,
+        "max_lines": 840,
+        "suggestion": "Composable 可承担状态机和协议桥接；继续恶化时按状态、IO、副作用、校验和事件拆分。"
+      },
+      "function": {
+        "warn_lines": 291,
+        "max_lines": 459,
+        "suggestion": "Composable 长函数优先拆 state model、event handlers、request lifecycle 和 cleanup helper。"
+      },
+      "package": {
+        "warn_files": 15,
+        "max_files": 25,
+        "report_only": true
+      }
+    },
+    "test": {
+      "file": {
+        "warn_lines": 896,
+        "max_lines": 1456,
+        "suggestion": "测试按组件族、fixture builder、交互场景和无障碍场景拆分。"
+      },
+      "function": {
+        "warn_lines": 280,
+        "max_lines": 504,
+        "suggestion": "长测试优先抽 mount helper、fixture 和断言 helper；顶层 describe/it callback 忽略。"
+      },
+      "ignore_top_level_test_callbacks": true,
+      "package": {
+        "warn_files": 31,
+        "max_files": 48,
+        "report_only": true
+      }
+    },
+    "script": {
+      "file": {
+        "warn_lines": 420,
+        "max_lines": 672,
+        "suggestion": "脚本超过阈值时拆扫描、校验、报告和 CLI 参数解析。"
+      },
+      "function": {
+        "warn_lines": 123,
+        "max_lines": 213,
+        "suggestion": "脚本长函数拆成纯函数和命令入口。"
+      },
+      "package": {
+        "warn_files": 17,
+        "max_files": 25,
+        "report_only": true
+      }
+    }
+  },
+  "package_profiles": {
+    "source": {
+      "package": {
+        "warn_files": 18,
+        "max_files": 27,
+        "report_only": true
+      }
+    },
+    "framework-component": {
+      "package": {
+        "warn_files": 15,
+        "max_files": 25,
+        "report_only": true
+      }
+    },
+    "complex-component": {
+      "package": {
+        "warn_files": 15,
+        "max_files": 25,
+        "report_only": true
+      }
+    },
+    "docs-browser": {
+      "package": {
+        "warn_files": 15,
+        "max_files": 25,
+        "report_only": true
+      }
+    },
+    "registry": {
+      "package": {
+        "warn_files": 20,
+        "max_files": 31,
+        "report_only": true
+      }
+    },
+    "composable": {
+      "package": {
+        "warn_files": 15,
+        "max_files": 25,
+        "report_only": true
+      }
+    },
+    "test": {
+      "package": {
+        "warn_files": 31,
+        "max_files": 48,
+        "report_only": true
+      }
+    },
+    "script": {
+      "package": {
+        "warn_files": 17,
+        "max_files": 25,
+        "report_only": true
+      }
+    }
+  },
+  "package_depth_overrides": [
+    {
+      "paths": [
+        "src/components/**"
+      ],
+      "depth": 3
+    },
+    {
+      "paths": [
+        "tests/**"
+      ],
+      "depth": 2
+    }
+  ],
+  "overrides": [
+    {
+      "paths": [
+        "**/*.test.ts",
+        "**/*.spec.ts",
+        "tests/**"
+      ],
+      "profile": "test"
+    },
+    {
+      "paths": [
+        "scripts/**"
+      ],
+      "profile": "script"
+    },
+    {
+      "paths": [
+        "**/*registry.ts",
+        "**/*Registry.ts",
+        "src/components/icon/icon-registry.ts",
+        "src/app-menu/**/*.ts"
+      ],
+      "profile": "registry"
+    },
+    {
+      "paths": [
+        "src/**/composables/**/*.ts",
+        "src/**/use*.ts"
+      ],
+      "profile": "composable"
+    },
+    {
+      "paths": [
+        "src/components/**/*.vue"
+      ],
+      "profile": "framework-component"
+    },
+    {
+      "paths": [
+        "src/components/docs-browser/RDocsBrowser.vue",
+        "src/components/dashboard-builder/RDashboardBuilder.vue",
+        "src/components/workflow-designer/RWorkflowDesigner.vue"
+      ],
+      "profile": "complex-component"
+    },
+    {
+      "paths": [
+        "src/components/docs-browser/RDocsBrowser.vue"
+      ],
+      "profile": "docs-browser"
+    }
+  ],
+  "baseline": {
+    "path": ".hrise/frontend-structure-gate-baseline.json"
+  },
+  "report": {
+    "json": ".hrise/frontend-structure-gate-report.json",
+    "markdown": ".hrise/frontend-structure-gate-report.md"
+  }
+}
