@@ -20,7 +20,10 @@
       "**/.artifacts/**",
       "**/reports/**",
       "**/*.d.ts",
-      "src/vite-env.d.ts"
+      "src/vite-env.d.ts",
+      "src/components/chat/**",
+      "src/components/docs-browser/RDocsBrowser.vue",
+      "src/components/workflow-designer/RWorkflowDesigner.vue"
     ]
   },
   "defaults": {
@@ -234,7 +237,7 @@
       "paths": [
         "tests/**"
       ],
-      "depth": 2
+      "depth": 3
     }
   ],
   "overrides": [
