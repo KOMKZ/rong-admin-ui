@@ -1,0 +1,276 @@
+<div
+    class="r-data-grid"
+    :class="{ 'r-data-grid--readonly': readonly }"
+    :style="rootStyle"
+    data-testid="data-grid"
+  >
+    <!-- Toolbar -->
+    <div v-if="!hideToolbar" class="rdg-toolbar">
+      <div class="rdg-toolbar__left">
+        <template v-if="!readonly">
+          <button
+            v-if="allowAddRow"
+            class="rdg-btn rdg-btn--primary"
+            :aria-label="mergedLocale.addRow"
+            @click="handleAddRow"
+          >
+            <svg
+              class="rdg-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            {{ mergedLocale.addRow }}
+          </button>
+          <div v-if="allowAddColumn" class="rdg-dropdown-wrap">
+            <button
+              class="rdg-btn rdg-btn--ghost"
+              :aria-label="mergedLocale.addColumn"
+              @click="columnMenuOpen = !columnMenuOpen"
+            >
+              <svg
+                class="rdg-icon"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              列操作
+              <svg class="rdg-icon rdg-icon--caret" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M4 6l4 4 4-4z" />
+              </svg>
+            </button>
+            <Teleport to="body">
+              <div
+                v-if="columnMenuOpen"
+                class="rdg-dropdown-backdrop"
+                @click="columnMenuOpen = false"
+              />
+              <div
+                v-if="columnMenuOpen"
+                ref="columnMenuRef"
+                class="rdg-dropdown-menu"
+                :style="columnMenuStyle"
+              >
+                <button class="rdg-dropdown-item" @click="handleColumnMenuSelect('add')">
+                  <span class="rdg-dropdown-item__icon">+</span> 新增列（末尾）
+                </button>
+                <button class="rdg-dropdown-item" @click="handleColumnMenuSelect('batch-add')">
+                  <span class="rdg-dropdown-item__icon">++</span> 批量新增列
+                </button>
+                <button class="rdg-dropdown-item" @click="handleColumnMenuSelect('insert-before')">
+                  <span class="rdg-dropdown-item__icon">⬅</span> 在指定列前插入
+                </button>
+                <button class="rdg-dropdown-item" @click="handleColumnMenuSelect('insert-after')">
+                  <span class="rdg-dropdown-item__icon">➡</span> 在指定列后插入
+                </button>
+                <div class="rdg-dropdown-divider" />
+                <button class="rdg-dropdown-item" @click="handleColumnMenuSelect('edit')">
+                  <span class="rdg-dropdown-item__icon">✏</span> 编辑列配置
+                </button>
+                <div class="rdg-dropdown-divider" />
+                <button
+                  class="rdg-dropdown-item rdg-dropdown-item--danger"
+                  @click="handleColumnMenuSelect('delete')"
+                >
+                  <span class="rdg-dropdown-item__icon">🗑</span> 删除指定列
+                </button>
+              </div>
+            </Teleport>
+          </div>
+          <button
+            v-if="allowDelete"
+            class="rdg-btn rdg-btn--ghost"
+            :aria-label="mergedLocale.deleteRow"
+            @click="handleDeleteSelectedRows"
+          >
+            <svg
+              class="rdg-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" />
+            </svg>
+            {{ mergedLocale.deleteRow }}
+          </button>
+        </template>
+        <slot name="toolbar-left" />
+      </div>
+      <div class="rdg-toolbar__right">
+        <div class="rdg-search-wrap">
+          <svg
+            class="rdg-search-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            v-model="searchText"
+            class="rdg-search"
+            type="text"
+            :placeholder="mergedLocale.search"
+            aria-label="搜索"
+            @input="handleSearch"
+          />
+        </div>
+        <button
+          class="rdg-btn rdg-btn--ghost"
+          :class="{ 'rdg-btn--active': filterConditions.length > 0 }"
+          :aria-label="mergedLocale.filter"
+          @click="filterVisible = true"
+        >
+          <svg
+            class="rdg-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+          </svg>
+          {{ mergedLocale.filter }}
+          <span v-if="filterConditions.length > 0" class="rdg-badge">{{
+            filterConditions.length
+          }}</span>
+        </button>
+        <button
+          v-if="allowExport"
+          class="rdg-btn rdg-btn--ghost"
+          :aria-label="mergedLocale.export"
+          @click="handleExport"
+        >
+          <svg
+            class="rdg-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          {{ mergedLocale.export }}
+        </button>
+        <slot name="toolbar-right" />
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="rdg-grid-container" :style="containerStyle">
+      <ag-grid-vue
+        class="ag-theme-alpine"
+        :column-defs="agColumnDefs"
+        :row-data="localRows"
+        :default-col-def="defaultColDef"
+        :grid-options="gridOptions"
+        @grid-ready="onGridReady"
+        @cell-value-changed="onCellValueChanged"
+        @row-drag-end="onRowDragEnd"
+      />
+    </div>
+
+    <!-- Drawers -->
+    <ColumnEditDrawer
+      :visible="columnEditVisible"
+      :column="editingColumnDef"
+      :field="editingField"
+      @update:visible="columnEditVisible = $event"
+      @save="handleColumnEditSave"
+    />
+    <FilterDrawer
+      :visible="filterVisible"
+      :conditions="filterConditions"
+      :columns="currentAgColDefs"
+      @update:visible="filterVisible = $event"
+      @update:conditions="filterConditions = $event"
+      @apply="applyFilters"
+    />
+
+    <!-- Column Select Dialog -->
+    <Teleport to="body">
+      <Transition name="rdg-fade">
+        <div
+          v-if="columnSelectVisible"
+          class="rdg-modal-overlay"
+          @click.self="columnSelectVisible = false"
+        >
+          <div class="rdg-modal" style="max-width: 360px">
+            <div class="rdg-modal__header">
+              <span class="rdg-modal__title">{{ columnSelectTitle }}</span>
+              <button class="rdg-modal__close" @click="columnSelectVisible = false">&times;</button>
+            </div>
+            <div class="rdg-modal__body">
+              <button
+                v-for="col in localColumns.filter((c) => c.field !== 'id')"
+                :key="col.field"
+                class="rdg-column-select-item"
+                @click="handleColumnSelect(col.field)"
+              >
+                {{ col.headerName || col.field }}
+              </button>
+              <div
+                v-if="localColumns.filter((c) => c.field !== 'id').length === 0"
+                class="rdg-empty-text"
+              >
+                暂无可操作的列
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- Batch Add Dialog -->
+    <Teleport to="body">
+      <Transition name="rdg-fade">
+        <div v-if="batchAddVisible" class="rdg-modal-overlay" @click.self="batchAddVisible = false">
+          <div class="rdg-modal" style="max-width: 420px">
+            <div class="rdg-modal__header">
+              <span class="rdg-modal__title">批量新增列</span>
+              <button class="rdg-modal__close" @click="batchAddVisible = false">&times;</button>
+            </div>
+            <div class="rdg-modal__body">
+              <label class="rdg-form-item">
+                <span class="rdg-form-label">列名列表（每行一个）</span>
+                <textarea
+                  v-model="batchAddNames"
+                  class="rdg-textarea"
+                  rows="6"
+                  placeholder="姓名&#10;年龄&#10;地址"
+                />
+              </label>
+              <label class="rdg-form-item">
+                <span class="rdg-form-label">默认类型</span>
+                <select v-model="batchAddType" class="rdg-select">
+                  <option value="text">文本</option>
+                  <option value="number">数字</option>
+                  <option value="date">日期</option>
+                  <option value="select">单选</option>
+                  <option value="multiselect">多选</option>
+                </select>
+              </label>
+            </div>
+            <div class="rdg-modal__footer">
+              <button class="rdg-btn" @click="batchAddVisible = false">取消</button>
+              <button class="rdg-btn rdg-btn--primary" @click="confirmBatchAdd">确定</button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+  </div>

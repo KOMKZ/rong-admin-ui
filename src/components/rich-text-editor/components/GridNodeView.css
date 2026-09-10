@@ -1,0 +1,262 @@
+  .rte-grid-node {
+    width: 100%;
+    user-select: text;
+  }
+
+  .rte-grid-card {
+    border: 1px solid var(--ra-color-border-default, rgba(148, 163, 184, 0.4));
+    border-radius: var(--ra-radius-lg);
+    padding: 12px;
+    background: var(--ra-color-bg-surface, #fff);
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+    margin: 16px 0;
+  }
+
+  .rte-grid-card__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+
+  .rte-grid-card__title-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .rte-grid-card__title-input {
+    font-size: 15px;
+    font-weight: 600;
+    border: 1px solid transparent;
+    border-radius: var(--ra-radius-sm);
+    padding: 2px 6px;
+    background: transparent;
+    color: var(--ra-color-text-primary, #0f172a);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+
+  .rte-grid-card__title-input:focus {
+    border-color: var(--ra-color-brand-primary, #0969da);
+  }
+
+  .rte-grid-card__title-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ra-color-text-primary, #0f172a);
+  }
+
+  .rte-grid-card__meta {
+    font-size: 12px;
+    color: var(--ra-color-text-quaternary, #94a3b8);
+  }
+
+  .rte-grid-card__actions {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .rte-grid-card__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 12px;
+    border: 1px solid var(--ra-color-border-default, #d0d7de);
+    border-radius: var(--ra-radius-md);
+    background: var(--ra-color-bg-surface, #fff);
+    color: var(--ra-color-text-secondary, #57606a);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .rte-grid-card__btn:hover {
+    background: var(--ra-color-bg-muted, #f3f4f6);
+    color: var(--ra-color-text-primary, #24292f);
+  }
+
+  .rte-grid-card__btn--danger {
+    border: none;
+  }
+
+  .rte-grid-card__btn--danger:hover {
+    color: var(--ra-color-danger, #cf222e);
+  }
+
+  .rte-grid-empty {
+    text-align: center;
+    padding: 24px 0;
+    color: var(--ra-color-text-quaternary, #94a3b8);
+    font-size: 14px;
+  }
+
+  .rte-grid-table-wrap {
+    margin-top: 8px;
+    border-radius: var(--ra-radius-md);
+    overflow-x: auto;
+    background: var(--ra-color-bg-muted, #f8fafc);
+  }
+
+  .rte-grid-preview-table {
+    width: max-content;
+    min-width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .rte-grid-preview-table th {
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ra-color-text-secondary, #475569);
+    background: var(--ra-color-bg-muted, #f1f5f9);
+    text-align: left;
+    white-space: nowrap;
+    border-bottom: 1px solid var(--ra-color-border-light, #e2e8f0);
+  }
+
+  .rte-grid-preview-table td {
+    padding: 8px 12px;
+    color: var(--ra-color-text-primary, #0f172a);
+    vertical-align: top;
+    border-bottom: 1px solid var(--ra-color-border-light, #f1f5f9);
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .rte-grid-tag {
+    display: inline-block;
+    padding: 1px 8px;
+    margin: 1px 2px;
+    font-size: 12px;
+    border-radius: var(--ra-radius-full);
+    background: var(--ra-color-brand-subtle, #dbeafe);
+    color: var(--ra-color-brand-primary, #0969da);
+  }
+
+  .rte-grid-card__footer {
+    font-size: 12px;
+    color: var(--ra-color-text-quaternary, #94a3b8);
+    margin-top: 8px;
+  }
+
+  /* Drawer */
+  .rte-grid-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .rte-grid-drawer {
+    width: min(80vw, 1200px);
+    height: 100%;
+    background: var(--ra-color-bg-surface, #fff);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .rte-grid-drawer__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--ra-color-border-light, #e5e7eb);
+  }
+
+  .rte-grid-drawer__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .rte-grid-drawer__badge {
+    font-size: 12px;
+    font-weight: 400;
+    padding: 2px 8px;
+    border-radius: var(--ra-radius-full);
+    background: var(--ra-color-brand-subtle, #dbeafe);
+    color: var(--ra-color-brand-primary, #0969da);
+  }
+
+  .rte-grid-drawer__header-actions {
+    display: flex;
+    gap: 6px;
+  }
+
+  .rte-grid-drawer__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    font-size: 13px;
+    border: 1px solid var(--ra-color-border-default, #d0d7de);
+    border-radius: var(--ra-radius-md);
+    background: var(--ra-color-bg-surface, #fff);
+    color: var(--ra-color-text-secondary, #57606a);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .rte-grid-drawer__btn:hover {
+    background: var(--ra-color-bg-muted, #f3f4f6);
+  }
+
+  .rte-grid-drawer__btn--primary {
+    background: var(--ra-color-brand-primary, #0969da);
+    border-color: var(--ra-color-brand-primary, #0969da);
+    color: #fff;
+  }
+
+  .rte-grid-drawer__btn--primary:hover {
+    opacity: 0.9;
+    color: #fff;
+  }
+
+  .rte-grid-drawer__btn--primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .rte-grid-drawer__body {
+    flex: 1;
+    overflow: hidden;
+    padding: 16px;
+  }
+
+  .rte-grid-drawer__fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--ra-color-text-quaternary, #94a3b8);
+  }
+
+  /* Drawer transition */
+  .rte-drawer-enter-active,
+  .rte-drawer-leave-active {
+    transition: opacity 0.2s ease;
+  }
+
+  .rte-drawer-enter-active .rte-grid-drawer,
+  .rte-drawer-leave-active .rte-grid-drawer {
+    transition: transform 0.25s ease;
+  }
+
+  .rte-drawer-enter-from,
+  .rte-drawer-leave-to {
+    opacity: 0;
+  }
+
+  .rte-drawer-enter-from .rte-grid-drawer,
+  .rte-drawer-leave-to .rte-grid-drawer {
+    transform: translateX(100%);
+  }

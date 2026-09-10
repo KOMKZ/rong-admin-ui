@@ -1,0 +1,319 @@
+<div class="rsm" :class="[`rsm--${layout}`]" data-testid="settings-manager">
+    <!-- Header -->
+    <div class="rsm__header">
+      <div class="rsm__header-text">
+        <h2 class="rsm__title">{{ title }}</h2>
+        <p v-if="description" class="rsm__desc">{{ description }}</p>
+      </div>
+      <div v-if="saveMode === 'batch' && hasDirty && !loading" class="rsm__header-actions">
+        <NButton size="small" quaternary @click="resetDirty"> 放弃更改 </NButton>
+        <NButton type="primary" size="small" :loading="saving" @click="saveAll">
+          <template #icon><RIcon name="save" :size="14" /></template>
+          保存 {{ dirtyFields.length }} 项更改
+        </NButton>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div v-if="loading" class="rsm__loading">
+      <NSpin size="large" />
+      <span class="rsm__loading-text">加载设置中…</span>
+    </div>
+
+    <!-- Error -->
+    <div v-else-if="errorMessage" class="rsm__error">
+      <RIcon name="alert-triangle" :size="40" class="rsm__error-icon" />
+      <h3 class="rsm__error-title">加载设置失败</h3>
+      <p class="rsm__error-msg">{{ errorMessage }}</p>
+      <NButton type="primary" size="small" @click="loadData">
+        <template #icon><RIcon name="refresh-cw" :size="14" /></template>
+        重试
+      </NButton>
+    </div>
+
+    <!-- Empty -->
+    <REmptyState
+      v-else-if="filteredGroups.length === 0 && searchQuery"
+      :description="`没有找到匹配「${searchQuery}」的设置项`"
+    />
+
+    <!-- Main Layout -->
+    <div v-else class="rsm__body">
+      <!-- Left sidebar -->
+      <aside v-if="showGroupNav && groups.length > 1" class="rsm__sidebar">
+        <div v-if="showSearch" class="rsm__search">
+          <NInput
+            v-model:value="searchQuery"
+            placeholder="搜索设置项…"
+            clearable
+            size="small"
+            data-testid="settings-search"
+          >
+            <template #prefix><RIcon name="search" :size="14" /></template>
+          </NInput>
+        </div>
+
+        <nav class="rsm__nav" role="tablist" aria-label="设置分组">
+          <button
+            v-for="g in groups"
+            :key="g.key"
+            type="button"
+            role="tab"
+            :aria-selected="activeGroupKey === g.key"
+            class="rsm__nav-item"
+            :class="{ 'rsm__nav-item--active': activeGroupKey === g.key }"
+            :data-testid="`settings-nav-${g.key}`"
+            @click="scrollToGroup(g.key)"
+          >
+            <span class="rsm__nav-indicator" />
+            <RIcon v-if="g.icon" :name="g.icon" :size="16" class="rsm__nav-icon" />
+            <span class="rsm__nav-label">{{ g.label }}</span>
+            <NBadge
+              v-if="groupDirtyCounts[g.key] > 0"
+              :value="groupDirtyCounts[g.key]"
+              :max="9"
+              type="warning"
+              class="rsm__nav-badge"
+            />
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Content -->
+      <div ref="contentEl" class="rsm__content">
+        <!-- Inline search (no sidebar) -->
+        <div
+          v-if="showSearch && (!showGroupNav || groups.length <= 1)"
+          class="rsm__search rsm__search--inline"
+        >
+          <NInput v-model:value="searchQuery" placeholder="搜索设置项…" clearable size="small">
+            <template #prefix><RIcon name="search" :size="14" /></template>
+          </NInput>
+        </div>
+
+        <div
+          v-for="group in filteredGroups"
+          v-show="activeGroupKey === group.key || !showGroupNav || groups.length <= 1"
+          :key="group.key"
+          :id="`settings-group-${group.key}`"
+          class="rsm__section"
+        >
+          <!-- Section header -->
+          <div class="rsm__section-header">
+            <RIcon v-if="group.icon" :name="group.icon" :size="18" class="rsm__section-icon" />
+            <div>
+              <h3 class="rsm__section-title">{{ group.label }}</h3>
+              <p v-if="group.description" class="rsm__section-desc">{{ group.description }}</p>
+            </div>
+          </div>
+
+          <!-- Fields card -->
+          <div class="rsm__fields-card">
+            <div
+              v-for="(field, idx) in group.fields"
+              :key="field.key"
+              class="rsm__row"
+              :class="{
+                'rsm__row--last': idx === group.fields.length - 1,
+                'rsm__row--dirty': isDirty(field.key),
+              }"
+              :data-testid="`settings-field-${field.key}`"
+            >
+              <!-- Left: label + description -->
+              <div class="rsm__row-info">
+                <label :for="`rsm-ctrl-${field.key}`" class="rsm__row-label">
+                  {{ field.label }}
+                </label>
+                <p v-if="field.description" class="rsm__row-help">{{ field.description }}</p>
+              </div>
+
+              <!-- Right: control + status -->
+              <div class="rsm__row-ctrl">
+                <div class="rsm__ctrl-wrap">
+                  <!-- Input -->
+                  <NInput
+                    v-if="field.type === 'input'"
+                    :id="`rsm-ctrl-${field.key}`"
+                    :value="currentValues[field.key]"
+                    :placeholder="field.placeholder"
+                    :disabled="field.disabled"
+                    size="small"
+                    @update:value="(v) => (currentValues[field.key] = v)"
+                  />
+                  <!-- Textarea -->
+                  <NInput
+                    v-else-if="field.type === 'textarea'"
+                    :id="`rsm-ctrl-${field.key}`"
+                    type="textarea"
+                    :value="currentValues[field.key]"
+                    :placeholder="field.placeholder"
+                    :disabled="field.disabled"
+                    :rows="3"
+                    size="small"
+                    @update:value="(v) => (currentValues[field.key] = v)"
+                  />
+                  <!-- Number -->
+                  <NInputNumber
+                    v-else-if="field.type === 'number'"
+                    :id="`rsm-ctrl-${field.key}`"
+                    :value="Number(currentValues[field.key]) || 0"
+                    :disabled="field.disabled"
+                    size="small"
+                    style="width: 100%"
+                    @update:value="
+                      (v) => (currentValues[field.key] = String(v ?? 0))
+                    "
+                  />
+                  <!-- Select -->
+                  <NSelect
+                    v-else-if="field.type === 'select'"
+                    :value="currentValues[field.key]"
+                    :options="
+                      (field.options || []).map((o) => ({ label: o.label, value: String(o.value) }))
+                    "
+                    :placeholder="field.placeholder"
+                    :disabled="field.disabled"
+                    size="small"
+                    @update:value="(v) => (currentValues[field.key] = v)"
+                  />
+                  <!-- Switch -->
+                  <NSwitch
+                    v-else-if="field.type === 'switch'"
+                    :value="currentValues[field.key] === 'true' || currentValues[field.key] === '1'"
+                    :disabled="field.disabled"
+                    @update:value="
+                      (v) => (currentValues[field.key] = v ? 'true' : 'false')
+                    "
+                  />
+                  <!-- Radio -->
+                  <NRadioGroup
+                    v-else-if="field.type === 'radio'"
+                    :value="currentValues[field.key]"
+                    :disabled="field.disabled"
+                    size="small"
+                    @update:value="(v) => (currentValues[field.key] = v)"
+                  >
+                    <NRadio
+                      v-for="opt in field.options"
+                      :key="String(opt.value)"
+                      :value="String(opt.value)"
+                      :disabled="opt.disabled"
+                      >{{ opt.label }}</NRadio
+                    >
+                  </NRadioGroup>
+                  <!-- Color -->
+                  <NColorPicker
+                    v-else-if="field.type === 'color'"
+                    :value="currentValues[field.key] || '#000000'"
+                    :disabled="field.disabled"
+                    size="small"
+                    @update:value="(v) => (currentValues[field.key] = v)"
+                  />
+                  <!-- Date -->
+                  <NDatePicker
+                    v-else-if="field.type === 'date'"
+                    type="date"
+                    :value="tsToDate(currentValues[field.key])"
+                    :disabled="field.disabled"
+                    size="small"
+                    clearable
+                    style="width: 100%"
+                    @update:value="(v) => (currentValues[field.key] = dateToStr(v))"
+                  />
+                  <!-- Time -->
+                  <NTimePicker
+                    v-else-if="field.type === 'time'"
+                    :value="
+                      tsToDate(
+                        currentValues[field.key] ? `1970-01-01T${currentValues[field.key]}` : '',
+                      )
+                    "
+                    :disabled="field.disabled"
+                    size="small"
+                    clearable
+                    style="width: 100%"
+                    @update:value="(v) => (currentValues[field.key] = timeToStr(v))"
+                  />
+                  <!-- DateTime -->
+                  <NDatePicker
+                    v-else-if="field.type === 'datetime'"
+                    type="datetime"
+                    :value="tsToDate(currentValues[field.key])"
+                    :disabled="field.disabled"
+                    size="small"
+                    clearable
+                    style="width: 100%"
+                    @update:value="
+                      (v) => (currentValues[field.key] = datetimeToStr(v))
+                    "
+                  />
+                  <!-- Image -->
+                  <div v-else-if="field.type === 'image'" class="rsm__image-wrap">
+                    <RProUpload
+                      :value="urlToFileList(currentValues[field.key])"
+                      :accept="field.accept || 'image/*'"
+                      :max-count="field.maxCount || 1"
+                      :max-size-m-b="field.maxSizeMB || 5"
+                      :disabled="field.disabled"
+                      list-type="picture-card"
+                      :custom-request="customUploadRequest"
+                      :parse-response="parseUploadResponse ? parseUploadResult : undefined"
+                      @change="(files) => handleImageChange(field.key, files)"
+                    />
+                  </div>
+                  <!-- Fallback -->
+                  <NInput
+                    v-else
+                    :id="`rsm-ctrl-${field.key}`"
+                    :value="currentValues[field.key]"
+                    :placeholder="field.placeholder"
+                    :disabled="field.disabled"
+                    size="small"
+                    @update:value="(v) => (currentValues[field.key] = v)"
+                  />
+                </div>
+
+                <!-- Per-field save + status -->
+                <div v-if="saveMode === 'field'" class="rsm__row-status">
+                  <Transition name="rsm-fade">
+                    <span v-if="savedField === field.key" class="rsm__saved-badge">
+                      <RIcon name="check" :size="12" /> 已保存
+                    </span>
+                  </Transition>
+                  <NButton
+                    v-if="isDirty(field.key)"
+                    size="tiny"
+                    type="primary"
+                    :loading="savingField === field.key"
+                    @click="saveField(field.key)"
+                  >
+                    保存
+                  </NButton>
+                </div>
+                <div v-else-if="isDirty(field.key)" class="rsm__row-dirty-dot" title="已修改" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sticky save bar (batch mode) -->
+    <Transition name="rsm-slide">
+      <div v-if="saveMode === 'batch' && hasDirty && !loading" class="rsm__save-bar">
+        <div class="rsm__save-bar-inner">
+          <div class="rsm__save-bar-info">
+            <span class="rsm__save-bar-dot" />
+            <NText class="rsm__save-bar-text"> {{ dirtyFields.length }} 项未保存的更改 </NText>
+          </div>
+          <NSpace :size="8">
+            <NButton size="small" @click="resetDirty">放弃</NButton>
+            <NButton type="primary" size="small" :loading="saving" @click="saveAll">
+              <template #icon><RIcon name="save" :size="14" /></template>
+              保存全部
+            </NButton>
+          </NSpace>
+        </div>
+      </div>
+    </Transition>
+  </div>

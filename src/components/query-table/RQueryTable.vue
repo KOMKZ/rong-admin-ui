@@ -54,6 +54,11 @@
     error: [error: unknown]
   }>()
 
+  defineSlots<{
+    toolbar?: (props: { checkedKeys: DataTableRowKey[]; reload: () => Promise<void> }) => unknown
+    empty?: (props: { error: string; retry: () => Promise<void>; loading: boolean }) => unknown
+  }>()
+
   function buildDefaultQuery(): Record<string, unknown> {
     const m: Record<string, unknown> = {}
     for (const field of props.querySchema) {

@@ -1,0 +1,127 @@
+<div
+    ref="treeContainerRef"
+    class="rpte"
+    :class="[`rpte--${density}`]"
+    data-testid="pro-tree-editor"
+    tabindex="0"
+    role="tree"
+    aria-label="Tree Editor"
+    @keydown="keyboard.handleKeyDown"
+  >
+    <!-- Toolbar -->
+    <slot name="toolbar">
+      <RTreeToolbar
+        :i18n="i18n"
+        :loading="treeOps.loading.value"
+        :keyword="search.keyword.value"
+        :selectable="selectable"
+        :batch="batch"
+        :checked-count="localCheckedKeys.length"
+        :batch-mode="batchMode"
+        @update:keyword="search.setKeyword"
+        @expand-all="treeOps.expandAll"
+        @collapse-all="treeOps.collapseAll"
+        @refresh="treeOps.loadTree"
+        @create="startCreateRoot"
+        @toggle-batch-mode="toggleBatchMode"
+      >
+        <template #toolbar-extra>
+          <slot name="toolbar-extra" />
+        </template>
+      </RTreeToolbar>
+    </slot>
+
+    <!-- Loading -->
+    <div
+      v-if="treeOps.loading.value && treeOps.treeData.value.length === 0"
+      class="rpte__loading"
+      data-testid="tree-loading"
+    >
+      <slot name="loading">
+        <RIcon name="loader" :size="24" class="rpte__spinner" />
+        <span class="rpte__loading-text">{{ t.loading }}</span>
+      </slot>
+    </div>
+
+    <!-- Error State -->
+    <div
+      v-else-if="treeOps.errorState.value && treeOps.treeData.value.length === 0"
+      class="rpte__error"
+      data-testid="tree-error"
+    >
+      <RIcon name="alert-triangle" :size="32" class="rpte__error-icon" />
+      <span class="rpte__error-message">{{ treeOps.errorState.value.message }}</span>
+      <NButton size="small" type="primary" data-testid="tree-retry-btn" @click="treeOps.loadTree">
+        <template #icon><RIcon name="refresh-cw" :size="14" /></template>
+        {{ t.retry }}
+      </NButton>
+    </div>
+
+    <!-- Empty State -->
+    <div
+      v-else-if="treeOps.treeData.value.length === 0"
+      class="rpte__empty"
+      data-testid="tree-empty"
+    >
+      <slot name="empty">
+        <NEmpty :description="t.noData">
+          <template #extra>
+            <NButton size="small" type="primary" @click="startCreateRoot">
+              <template #icon><RIcon name="plus" :size="14" /></template>
+              {{ t.newFolder }}
+            </NButton>
+          </template>
+        </NEmpty>
+      </slot>
+    </div>
+
+    <!-- Tree Content -->
+    <!-- eslint-disable vue/no-template-shadow -->
+    <div v-else class="rpte__tree" role="group" data-testid="tree-content">
+      <template v-for="node in renderNodes(treeOps.treeData.value)" :key="node.id">
+        <RTreeNodeRecursive
+          :node="node"
+          :depth="0"
+          :density="density"
+          :icons="icons"
+          :i18n="i18n"
+          :show-counts="showCounts"
+          :draggable="draggable"
+          :selectable="selectable"
+          :batch-mode="batchMode"
+          :selected-key="localSelectedKey"
+          :checked-keys="localCheckedKeys"
+          :expanded-keys="treeOps.expandedKeys.value"
+          :editing-node-id="treeOps.editingNodeId.value"
+          :loading-node-ids="treeOps.loadingNodeIds.value"
+          :operation-errors="treeOps.operationErrors.value"
+          :drag-node-id="dnd.dragNodeId.value"
+          :search-ops="search"
+          :dnd-ops="dnd"
+          @select="selectNode"
+          @toggle="treeOps.toggleExpand"
+          @start-edit="treeOps.startEditing"
+          @submit-edit="handleEditSubmit"
+          @cancel-edit="handleEditCancel"
+          @delete="(n) => confirmDelete(n)"
+          @check="handleNodeCheck"
+          @contextmenu="showContextMenu"
+          @dragstart="dnd.onDragStart"
+          @dragover="dnd.onDragOver"
+          @dragend="dnd.onDragEnd"
+          @clear-error="treeOps.clearError"
+        />
+      </template>
+    </div>
+
+    <!-- Context Menu -->
+    <RTreeContextMenu
+      v-model:show="ctxShow"
+      :x="ctxX"
+      :y="ctxY"
+      :node="ctxNode"
+      :i18n="i18n"
+      :draggable="draggable"
+      @action="handleContextAction"
+    />
+  </div>

@@ -1,0 +1,133 @@
+<div class="menu-preset-editor" data-testid="menu-preset-editor">
+    <div class="menu-preset-editor__toolbar">
+      <n-select
+        :value="activePresetId"
+        :options="presets.map((item) => ({ label: item.name, value: item.id }))"
+        size="small"
+        class="menu-preset-editor__preset-select"
+        @update:value="handlePresetChange"
+      />
+      <n-space :size="8">
+        <n-button size="small" @click="showCreateModal = true">新建组合</n-button>
+        <n-button size="small" :disabled="isActiveDefault" @click="handleSetDefault">
+          {{ isActiveDefault ? '已是默认' : '设为默认' }}
+        </n-button>
+        <n-popconfirm @positive-click="handleDeletePreset">
+          <template #trigger>
+            <n-button size="small" type="error" :disabled="!canDeleteActivePreset"
+              >删除组合</n-button
+            >
+          </template>
+          确认删除当前菜单组合？
+        </n-popconfirm>
+      </n-space>
+    </div>
+
+    <n-alert type="info" class="menu-preset-editor__tip" :show-icon="false">
+      支持拖拽排序、切换显隐、编辑标题与图标。默认菜单组合不可删除。
+    </n-alert>
+
+    <div class="menu-preset-editor__body">
+      <section class="menu-preset-editor__tree-panel">
+        <n-input v-model:value="keyword" size="small" clearable placeholder="搜索菜单标题或路径" />
+        <n-tree
+          class="menu-preset-editor__tree"
+          block-line
+          selectable
+          draggable
+          :pattern="keyword"
+          :filter="filterTree"
+          :data="treeData"
+          :render-label="renderTreeLabel"
+          :selected-keys="selectedKeys"
+          @drop="handleDrop"
+          @update:selected-keys="handleSelect"
+        />
+      </section>
+    </div>
+
+    <div class="menu-preset-editor__footer">
+      <n-tag :type="hasDirty ? 'warning' : 'success'" size="small">
+        {{ hasDirty ? '有未保存改动' : '已同步' }}
+      </n-tag>
+      <n-space :size="8">
+        <n-button size="small" :disabled="!hasDirty" @click="resetDraftFromActive"
+          >撤销改动</n-button
+        >
+        <n-button
+          type="primary"
+          size="small"
+          :disabled="!hasDirty || loading"
+          :loading="loading"
+          @click="handleSave"
+        >
+          保存当前组合
+        </n-button>
+      </n-space>
+    </div>
+
+    <n-modal
+      v-model:show="showCreateModal"
+      preset="card"
+      title="新建菜单组合"
+      class="menu-preset-editor__modal"
+    >
+      <div class="menu-preset-editor__create-body">
+        <n-input
+          v-model:value="newPresetName"
+          maxlength="30"
+          show-count
+          placeholder="请输入菜单组合名称"
+          @keyup.enter="handleCreatePreset"
+        />
+      </div>
+      <template #footer>
+        <n-space justify="end">
+          <n-button size="small" @click="showCreateModal = false">取消</n-button>
+          <n-button
+            type="primary"
+            size="small"
+            :disabled="!newPresetName.trim()"
+            @click="handleCreatePreset"
+          >
+            创建
+          </n-button>
+        </n-space>
+      </template>
+    </n-modal>
+
+    <n-modal
+      v-model:show="showNodeEditModal"
+      preset="card"
+      title="编辑菜单节点"
+      class="menu-preset-editor__modal"
+    >
+      <div class="menu-preset-editor__create-body menu-preset-editor__field-group">
+        <div class="menu-preset-editor__field">
+          <span class="menu-preset-editor__label">菜单标题</span>
+          <n-input v-model:value="editForm.title" size="small" />
+        </div>
+        <div class="menu-preset-editor__field">
+          <span class="menu-preset-editor__label">图标名称</span>
+          <n-input v-model:value="editForm.icon" size="small" placeholder="例如：Mail" />
+        </div>
+        <div class="menu-preset-editor__field menu-preset-editor__field--inline">
+          <span class="menu-preset-editor__label">隐藏菜单</span>
+          <n-switch v-model:value="editForm.hidden" />
+        </div>
+      </div>
+      <template #footer>
+        <n-space justify="end">
+          <n-button size="small" @click="showNodeEditModal = false">取消</n-button>
+          <n-button
+            type="primary"
+            size="small"
+            :disabled="!editForm.title.trim()"
+            @click="saveNodeEdit"
+          >
+            保存节点
+          </n-button>
+        </n-space>
+      </template>
+    </n-modal>
+  </div>

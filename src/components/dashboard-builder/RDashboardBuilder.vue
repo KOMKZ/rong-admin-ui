@@ -1,26 +1,40 @@
 <script setup lang="ts">
+import './RDashboardBuilder.css'
   import { computed, onBeforeUnmount, onMounted, ref, toRaw, watch, type Component } from 'vue'
   import { NButton, NDrawer, NDrawerContent } from 'naive-ui'
   import { RIcon } from '../icon'
   import { REmptyState } from '../empty-state'
+  import RDashboardWidgetCard from './RDashboardWidgetCard.vue'
   import type {
     DashboardBreakpoint,
     DashboardBuilderAdapter,
     DashboardBuilderExpose,
     DashboardLayoutItem,
-    DashboardRect,
     DashboardResponsiveColumns,
     DashboardSizePreset,
     DashboardWidgetRegistryEntry,
     DashboardWidgetDefinition,
   } from './types'
-
-  interface PlacedLayoutItem extends DashboardLayoutItem {
-    x: number
-    y: number
-  }
-
-  type LayoutByBreakpoint = Record<DashboardBreakpoint, PlacedLayoutItem[]>
+  import {
+    DEFAULT_SIZE_PRESETS,
+    GRID_GAP_PX,
+    GRID_ROW_HEIGHT_PX,
+    HISTORY_LIMIT,
+    MIN_H,
+    MIN_W,
+    clamp,
+    cloneLayoutMap,
+    clonePlacedLayout,
+    deriveLayout,
+    findFirstFit,
+    normalizePlaced,
+    rebalance,
+    serializeLayouts as serializeLayoutMap,
+    snapForDrag,
+    snapForResize,
+    type LayoutByBreakpoint,
+    type PlacedLayoutItem,
+  } from './layout-core'
 
   interface DragState {
     id: string
@@ -47,18 +61,6 @@
     vertical: number[]
     horizontal: number[]
   }
-
-  const GRID_GAP_PX = 16
-  const GRID_ROW_HEIGHT_PX = 72
-  const MIN_W = 2
-  const MIN_H = 1
-  const HISTORY_LIMIT = 50
-
-  const DEFAULT_SIZE_PRESETS: DashboardSizePreset[] = [
-    { key: 's', label: 'S', w: 3, h: 2 },
-    { key: 'm', label: 'M', w: 4, h: 2 },
-    { key: 'l', label: 'L', w: 6, h: 3 },
-  ]
 
   const props = withDefaults(
     defineProps<{
@@ -138,7 +140,7 @@
     return definitionMap.value.get(editingWidget.value.type)
   })
 
-  const previewRect = computed<DashboardRect | null>(() => {
+  const previewRect = computed(() => {
     if (!previewLayout.value || !previewAnchorId.value) {
       return null
     }
@@ -181,223 +183,8 @@
   const canUndo = computed(() => undoStack.value.length > 0)
   const canRedo = computed(() => redoStack.value.length > 0)
 
-  function clonePlacedLayout(items: PlacedLayoutItem[]): PlacedLayoutItem[] {
-    return items.map((item) => ({
-      ...item,
-      config: item.config ? { ...item.config } : undefined,
-      responsive: item.responsive ? { ...item.responsive } : undefined,
-    }))
-  }
-
-  function cloneLayoutMap(source: LayoutByBreakpoint): LayoutByBreakpoint {
-    return {
-      lg: clonePlacedLayout(source.lg),
-      md: clonePlacedLayout(source.md),
-      sm: clonePlacedLayout(source.sm),
-    }
-  }
-
-  function clamp(value: number, min: number, max: number): number {
-    return Math.max(min, Math.min(max, value))
-  }
-
-  function normalizePlaced(
-    item: DashboardLayoutItem,
-    fallbackIndex: number,
-    cols: number,
-  ): PlacedLayoutItem | null {
-    if (!item.id || !item.type) return null
-    if (typeof item.w !== 'number' || typeof item.h !== 'number') return null
-    const w = clamp(Math.round(item.w), MIN_W, cols)
-    const h = Math.max(MIN_H, Math.round(item.h))
-    const x = clamp(Math.round(item.x ?? 1), 1, Math.max(1, cols - w + 1))
-    const y = Math.max(1, Math.round(item.y ?? fallbackIndex + 1))
-    return {
-      id: String(item.id),
-      type: String(item.type),
-      x,
-      y,
-      w,
-      h,
-      config: item.config && typeof item.config === 'object' ? { ...item.config } : undefined,
-    }
-  }
-
-  function overlaps(a: PlacedLayoutItem, b: PlacedLayoutItem): boolean {
-    return !(a.x + a.w <= b.x || b.x + b.w <= a.x || a.y + a.h <= b.y || b.y + b.h <= a.y)
-  }
-
-  function canPlace(
-    candidate: PlacedLayoutItem,
-    items: PlacedLayoutItem[],
-    ignoreId?: string,
-  ): boolean {
-    return !items.some((item) => item.id !== ignoreId && overlaps(item, candidate))
-  }
-
-  function findFirstFit(
-    w: number,
-    h: number,
-    items: PlacedLayoutItem[],
-    cols: number,
-    ignoreId?: string,
-  ): { x: number; y: number } {
-    const safeW = clamp(w, MIN_W, cols)
-    for (let y = 1; y <= 300; y += 1) {
-      for (let x = 1; x <= cols - safeW + 1; x += 1) {
-        const candidate: PlacedLayoutItem = {
-          id: '__candidate__',
-          type: '__candidate__',
-          x,
-          y,
-          w: safeW,
-          h,
-        }
-        if (canPlace(candidate, items, ignoreId)) {
-          return { x, y }
-        }
-      }
-    }
-    return { x: 1, y: Math.max(1, items.length + 1) }
-  }
-
-  function compactLayout(
-    items: PlacedLayoutItem[],
-    cols: number,
-    fixedId?: string,
-  ): PlacedLayoutItem[] {
-    const sorted = [...items].sort((a, b) => a.y - b.y || a.x - b.x)
-    const result: PlacedLayoutItem[] = []
-    for (const raw of sorted) {
-      const item = {
-        ...raw,
-        w: clamp(raw.w, MIN_W, cols),
-        h: Math.max(MIN_H, raw.h),
-        x: clamp(raw.x, 1, Math.max(1, cols - raw.w + 1)),
-        y: Math.max(1, raw.y),
-      }
-      if (item.id === fixedId) {
-        result.push(item)
-        continue
-      }
-      while (item.y > 1) {
-        const next = { ...item, y: item.y - 1 }
-        if (!canPlace(next, result, item.id)) {
-          break
-        }
-        item.y -= 1
-      }
-      result.push(item)
-    }
-    return result.sort((a, b) => a.y - b.y || a.x - b.x)
-  }
-
-  function rebalance(
-    items: PlacedLayoutItem[],
-    cols: number,
-    anchorId?: string,
-  ): PlacedLayoutItem[] {
-    const placed: PlacedLayoutItem[] = []
-
-    if (anchorId) {
-      const anchor = items.find((item) => item.id === anchorId)
-      if (anchor) {
-        const safeAnchor = {
-          ...anchor,
-          w: clamp(anchor.w, MIN_W, cols),
-          h: Math.max(MIN_H, anchor.h),
-        }
-        safeAnchor.x = clamp(safeAnchor.x, 1, Math.max(1, cols - safeAnchor.w + 1))
-        safeAnchor.y = Math.max(1, safeAnchor.y)
-        placed.push(safeAnchor)
-      }
-    }
-
-    const rest = items
-      .filter((item) => item.id !== anchorId)
-      .map((item) => ({ ...item }))
-      .sort((a, b) => a.y - b.y || a.x - b.x)
-
-    for (const item of rest) {
-      item.w = clamp(item.w, MIN_W, cols)
-      item.h = Math.max(MIN_H, item.h)
-      item.x = clamp(item.x, 1, Math.max(1, cols - item.w + 1))
-      item.y = Math.max(1, item.y)
-
-      if (!canPlace(item, placed, item.id)) {
-        const fit = findFirstFit(item.w, item.h, placed, cols, item.id)
-        item.x = fit.x
-        item.y = fit.y
-      }
-      placed.push(item)
-    }
-
-    return compactLayout(placed, cols, anchorId)
-  }
-
-  function deriveLayout(source: PlacedLayoutItem[], cols: number): PlacedLayoutItem[] {
-    const draft = source.map((item, index) => {
-      const w = clamp(item.w, MIN_W, cols)
-      return {
-        ...item,
-        w,
-        x: clamp(item.x, 1, Math.max(1, cols - w + 1)),
-        y: Math.max(1, item.y || index + 1),
-      }
-    })
-    return rebalance(draft, cols)
-  }
-
   function serializeLayouts(source: LayoutByBreakpoint = layouts.value): DashboardLayoutItem[] {
-    const idMap = new Map<string, DashboardLayoutItem>()
-
-    for (const item of source.lg) {
-      idMap.set(item.id, {
-        id: item.id,
-        type: item.type,
-        x: item.x,
-        y: item.y,
-        w: item.w,
-        h: item.h,
-        config: item.config ? { ...item.config } : undefined,
-        responsive: {},
-      })
-    }
-
-    for (const breakpoint of ['md', 'sm'] as const) {
-      for (const item of source[breakpoint]) {
-        if (!idMap.has(item.id)) {
-          idMap.set(item.id, {
-            id: item.id,
-            type: item.type,
-            x: item.x,
-            y: item.y,
-            w: item.w,
-            h: item.h,
-            config: item.config ? { ...item.config } : undefined,
-            responsive: {},
-          })
-        }
-        const target = idMap.get(item.id)
-        if (!target) continue
-        const lg = source.lg.find((entry) => entry.id === item.id)
-        const differsFromLg =
-          !lg || lg.x !== item.x || lg.y !== item.y || lg.w !== item.w || lg.h !== item.h
-        if (differsFromLg) {
-          if (!target.responsive) {
-            target.responsive = {}
-          }
-          target.responsive[breakpoint] = {
-            x: item.x,
-            y: item.y,
-            w: item.w,
-            h: item.h,
-          }
-        }
-      }
-    }
-
-    return Array.from(idMap.values())
+    return serializeLayoutMap(source)
   }
 
   function clearPreview(): void {
@@ -412,134 +199,6 @@
       vertical: vertical.map((line) => Math.max(0, (line - 1) * (cellWidth + GRID_GAP_PX))),
       horizontal: horizontal.map((line) => Math.max(0, (line - 1) * rowUnit)),
     }
-  }
-
-  function findBestSnap(
-    diffCandidates: Array<{ diff: number; line: number }>,
-    threshold = 0.45,
-  ): { diff: number; line: number } | null {
-    let best: { diff: number; line: number } | null = null
-    for (const candidate of diffCandidates) {
-      if (Math.abs(candidate.diff) > threshold) continue
-      if (!best || Math.abs(candidate.diff) < Math.abs(best.diff)) {
-        best = candidate
-      }
-    }
-    return best
-  }
-
-  function snapForDrag(
-    anchor: PlacedLayoutItem,
-    baseLayout: PlacedLayoutItem[],
-    proposedX: number,
-    proposedY: number,
-    cols: number,
-  ): { x: number; y: number; vertical: number[]; horizontal: number[] } {
-    let x = proposedX
-    let y = proposedY
-    const vertical: number[] = []
-    const horizontal: number[] = []
-
-    const others = baseLayout.filter((item) => item.id !== anchor.id)
-    const xLines = [1, cols + 1]
-    const yLines = [1]
-    for (const item of others) {
-      xLines.push(item.x, item.x + item.w)
-      yLines.push(item.y, item.y + item.h)
-    }
-
-    const left = x
-    const right = x + anchor.w
-    const top = y
-    const bottom = y + anchor.h
-
-    const snapLeft = findBestSnap(xLines.map((line) => ({ diff: line - left, line })))
-    const snapRight = findBestSnap(xLines.map((line) => ({ diff: line - right, line })))
-    const bestX = !snapLeft
-      ? snapRight
-      : !snapRight
-        ? snapLeft
-        : Math.abs(snapLeft.diff) <= Math.abs(snapRight.diff)
-          ? snapLeft
-          : snapRight
-
-    if (bestX) {
-      if (bestX === snapRight) {
-        x = clamp(bestX.line - anchor.w, 1, Math.max(1, cols - anchor.w + 1))
-        vertical.push(bestX.line)
-      } else {
-        x = clamp(bestX.line, 1, Math.max(1, cols - anchor.w + 1))
-        vertical.push(bestX.line)
-      }
-    }
-
-    const snapTop = findBestSnap(yLines.map((line) => ({ diff: line - top, line })))
-    const snapBottom = findBestSnap(yLines.map((line) => ({ diff: line - bottom, line })))
-    const bestY = !snapTop
-      ? snapBottom
-      : !snapBottom
-        ? snapTop
-        : Math.abs(snapTop.diff) <= Math.abs(snapBottom.diff)
-          ? snapTop
-          : snapBottom
-
-    if (bestY) {
-      if (bestY === snapBottom) {
-        y = Math.max(1, bestY.line - anchor.h)
-        horizontal.push(bestY.line)
-      } else {
-        y = Math.max(1, bestY.line)
-        horizontal.push(bestY.line)
-      }
-    }
-
-    return { x, y, vertical, horizontal }
-  }
-
-  function snapForResize(
-    anchor: PlacedLayoutItem,
-    baseLayout: PlacedLayoutItem[],
-    proposedW: number,
-    proposedH: number,
-    axis: 'x' | 'y' | 'both',
-    cols: number,
-  ): { w: number; h: number; vertical: number[]; horizontal: number[] } {
-    let w = proposedW
-    let h = proposedH
-    const vertical: number[] = []
-    const horizontal: number[] = []
-
-    const others = baseLayout.filter((item) => item.id !== anchor.id)
-    const xLines = [1, cols + 1]
-    const yLines = [1]
-    for (const item of others) {
-      xLines.push(item.x, item.x + item.w)
-      yLines.push(item.y, item.y + item.h)
-    }
-
-    if (axis === 'x' || axis === 'both') {
-      const right = anchor.x + w
-      const snap = findBestSnap(xLines.map((line) => ({ diff: line - right, line })))
-      if (snap) {
-        w = clamp(
-          snap.line - anchor.x,
-          getMinWidth(anchor),
-          Math.min(getMaxWidth(anchor), cols - anchor.x + 1),
-        )
-        vertical.push(snap.line)
-      }
-    }
-
-    if (axis === 'y' || axis === 'both') {
-      const bottom = anchor.y + h
-      const snap = findBestSnap(yLines.map((line) => ({ diff: line - bottom, line })))
-      if (snap) {
-        h = clamp(snap.line - anchor.y, getMinHeight(anchor), getMaxHeight(anchor))
-        horizontal.push(snap.line)
-      }
-    }
-
-    return { w, h, vertical, horizontal }
   }
 
   function pushUndoSnapshot(snapshot: LayoutByBreakpoint): void {
@@ -1011,7 +670,12 @@
         nextH = clamp(state.originH + deltaRows, getMinHeight(anchor), getMaxHeight(anchor))
       }
 
-      const snapped = snapForResize(anchor, state.baseLayout, nextW, nextH, state.axis, cols)
+      const snapped = snapForResize(anchor, state.baseLayout, nextW, nextH, state.axis, cols, {
+        getMinWidth,
+        getMinHeight,
+        getMaxWidth,
+        getMaxHeight,
+      })
       nextW = snapped.w
       nextH = snapped.h
 
@@ -1315,137 +979,27 @@
           data-testid="dashboard-guide-horizontal"
         />
 
-        <article
+        <RDashboardWidgetCard
           v-for="(item, index) in renderedLayout"
           :key="item.id"
-          class="r-dashboard-builder__item"
-          :class="{ 'r-dashboard-builder__item--dragging': dragging?.id === item.id }"
-          :style="{
-            gridColumnStart: String(item.x),
-            gridColumnEnd: `span ${item.w}`,
-            gridRowStart: String(item.y),
-            gridRowEnd: `span ${item.h}`,
-          }"
-          data-testid="dashboard-widget"
-        >
-          <header
-            class="r-dashboard-builder__item-header"
-            :class="{ 'r-dashboard-builder__item-header--draggable': editing && !isReadonly }"
-            @pointerdown="beginDrag($event, item)"
-          >
-            <div class="r-dashboard-builder__item-title">
-              <RIcon :name="definitionMap.get(item.type)?.icon || 'layout-grid'" :size="16" />
-              <div class="r-dashboard-builder__item-texts">
-                <span>{{ getWidgetDisplayTitle(item) }}</span>
-                <small
-                  v-if="getWidgetDisplayDescription(item)"
-                  class="r-dashboard-builder__item-description"
-                >
-                  {{ getWidgetDisplayDescription(item) }}
-                </small>
-              </div>
-            </div>
-            <div class="r-dashboard-builder__item-actions" @pointerdown.stop>
-              <span
-                v-if="editing && !isReadonly"
-                class="r-dashboard-builder__size-chip"
-                data-testid="dashboard-widget-size"
-                >{{ getCurrentSizeLabel(item) }}</span
-              >
-              <template v-if="editing && !isReadonly">
-                <button
-                  v-if="getWidgetEditor(item.type)"
-                  class="r-dashboard-builder__icon-btn"
-                  type="button"
-                  data-testid="dashboard-widget-edit"
-                  @click="openWidgetEditor(item)"
-                >
-                  <RIcon name="settings" :size="14" />
-                </button>
-                <button
-                  class="r-dashboard-builder__icon-btn"
-                  type="button"
-                  data-testid="dashboard-widget-move-up"
-                  @click="moveWidget(index, 'up')"
-                >
-                  <RIcon name="arrow-up" :size="14" />
-                </button>
-                <button
-                  class="r-dashboard-builder__icon-btn"
-                  type="button"
-                  data-testid="dashboard-widget-move-down"
-                  @click="moveWidget(index, 'down')"
-                >
-                  <RIcon name="arrow-down" :size="14" />
-                </button>
-                <button
-                  class="r-dashboard-builder__icon-btn"
-                  type="button"
-                  data-testid="dashboard-widget-cycle-size"
-                  @click="cycleSize(item.id)"
-                >
-                  <RIcon name="expand" :size="14" />
-                </button>
-                <button
-                  class="r-dashboard-builder__icon-btn r-dashboard-builder__icon-btn--danger"
-                  type="button"
-                  data-testid="dashboard-widget-remove"
-                  @click="removeWidget(item.id)"
-                >
-                  <RIcon name="trash" :size="14" />
-                </button>
-              </template>
-            </div>
-          </header>
-
-          <div class="r-dashboard-builder__item-content">
-            <slot name="widget" :item="item" :definition="definitionMap.get(item.type)">
-              <component
-                :is="getWidgetRenderer(item.type)"
-                v-if="getWidgetRenderer(item.type)"
-                :item="item"
-                :definition="definitionMap.get(item.type)"
-                :config="item.config"
-                :fallback-title="definitionMap.get(item.type)?.title"
-                :fallback-description="definitionMap.get(item.type)?.description"
-              />
-              <REmptyState
-                v-else
-                icon="layout-grid"
-                title="组件未注册"
-                description="请为该组件类型提供渲染器。"
-                size="small"
-              />
-            </slot>
-          </div>
-
-          <template v-if="editing && !isReadonly">
-            <button
-              class="r-dashboard-builder__resize-handle r-dashboard-builder__resize-handle--x"
-              type="button"
-              data-testid="dashboard-widget-resize-x"
-              @pointerdown.stop="beginResize($event, item, 'x')"
-            >
-              <RIcon name="chevrons-right" :size="12" />
-            </button>
-            <button
-              class="r-dashboard-builder__resize-handle r-dashboard-builder__resize-handle--y"
-              type="button"
-              data-testid="dashboard-widget-resize-y"
-              @pointerdown.stop="beginResize($event, item, 'y')"
-            >
-              <RIcon name="chevrons-down" :size="12" />
-            </button>
-            <button
-              class="r-dashboard-builder__resize-handle r-dashboard-builder__resize-handle--both"
-              type="button"
-              data-testid="dashboard-widget-resize-both"
-              @pointerdown.stop="beginResize($event, item, 'both')"
-            >
-              <RIcon name="maximize-2" :size="12" />
-            </button>
-          </template>
-        </article>
+          :item="item"
+          :index="index"
+          :definition="definitionMap.get(item.type)"
+          :renderer="getWidgetRenderer(item.type)"
+          :title="getWidgetDisplayTitle(item)"
+          :description="getWidgetDisplayDescription(item)"
+          :size-label="getCurrentSizeLabel(item)"
+          :editing="editing"
+          :readonly="isReadonly"
+          :dragging="dragging?.id === item.id"
+          :has-editor="Boolean(getWidgetEditor(item.type))"
+          @begin-drag="beginDrag"
+          @begin-resize="beginResize"
+          @edit="openWidgetEditor"
+          @move="moveWidget"
+          @cycle-size="cycleSize"
+          @remove="removeWidget"
+        />
       </div>
 
       <REmptyState
@@ -1488,358 +1042,3 @@
     </NDrawer>
   </div>
 </template>
-
-<style scoped>
-  .r-dashboard-builder {
-    display: flex;
-    flex-direction: column;
-    gap: var(--ra-spacing-4);
-  }
-
-  .r-dashboard-builder__toolbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--ra-spacing-3);
-  }
-
-  .r-dashboard-builder__title {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--ra-spacing-2);
-    font-size: var(--ra-font-size-base);
-    font-weight: var(--ra-font-weight-semibold);
-    color: var(--ra-color-text-primary);
-  }
-
-  .r-dashboard-builder__breakpoint {
-    border: 1px solid var(--ra-color-border-default);
-    border-radius: var(--ra-radius-full);
-    padding: 0 var(--ra-spacing-2);
-    color: var(--ra-color-text-tertiary);
-    font-size: var(--ra-font-size-xs);
-  }
-
-  .r-dashboard-builder__toolbar-actions {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--ra-spacing-2);
-  }
-
-  .r-dashboard-builder__scope-switch {
-    display: inline-flex;
-    align-items: center;
-    border: 1px solid var(--ra-color-border-default);
-    border-radius: var(--ra-radius-md);
-    overflow: hidden;
-  }
-
-  .r-dashboard-builder__scope-btn {
-    border: none;
-    background: var(--ra-color-bg-surface);
-    color: var(--ra-color-text-secondary);
-    font-size: var(--ra-font-size-xs);
-    padding: var(--ra-spacing-1) var(--ra-spacing-2);
-    cursor: pointer;
-  }
-
-  .r-dashboard-builder__scope-btn + .r-dashboard-builder__scope-btn {
-    border-left: 1px solid var(--ra-color-border-default);
-  }
-
-  .r-dashboard-builder__scope-btn--active {
-    background: var(--ra-color-brand-subtle);
-    color: var(--ra-color-brand-primary);
-    font-weight: var(--ra-font-weight-semibold);
-  }
-
-  .r-dashboard-builder__feedback {
-    padding: var(--ra-spacing-2) var(--ra-spacing-3);
-    border-radius: var(--ra-radius-md);
-    border: 1px solid var(--ra-color-border-default);
-    background: var(--ra-color-bg-surface-secondary);
-    color: var(--ra-color-text-secondary);
-    font-size: var(--ra-font-size-xs);
-  }
-
-  .r-dashboard-builder__loading {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--ra-spacing-2);
-    color: var(--ra-color-text-secondary);
-    font-size: var(--ra-font-size-sm);
-  }
-
-  .r-dashboard-builder__spinner {
-    animation: rdb-spin 1s linear infinite;
-  }
-
-  .r-dashboard-builder__palette {
-    display: flex;
-    flex-direction: column;
-    gap: var(--ra-spacing-2);
-    padding: var(--ra-spacing-3);
-    border: 1px dashed var(--ra-color-border-default);
-    border-radius: var(--ra-radius-lg);
-    background: var(--ra-color-bg-surface-secondary);
-  }
-
-  .r-dashboard-builder__palette-title {
-    font-size: var(--ra-font-size-xs);
-    font-weight: var(--ra-font-weight-semibold);
-    color: var(--ra-color-text-tertiary);
-    text-transform: uppercase;
-    letter-spacing: var(--ra-letter-spacing-wide);
-  }
-
-  .r-dashboard-builder__palette-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--ra-spacing-2);
-  }
-
-  .r-dashboard-builder__palette-item {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--ra-spacing-1);
-    border: 1px solid var(--ra-color-border-default);
-    border-radius: var(--ra-radius-md);
-    background: var(--ra-color-bg-surface);
-    color: var(--ra-color-text-secondary);
-    padding: var(--ra-spacing-1) var(--ra-spacing-2);
-    font-size: var(--ra-font-size-xs);
-    cursor: pointer;
-  }
-
-  .r-dashboard-builder__palette-item:hover {
-    border-color: var(--ra-color-border-interactive);
-    color: var(--ra-color-text-primary);
-  }
-
-  .r-dashboard-builder__grid {
-    position: relative;
-    display: grid;
-    grid-template-columns: repeat(var(--rdb-cols, 12), minmax(0, 1fr));
-    grid-auto-rows: var(--rdb-row-height, 72px);
-    gap: var(--rdb-gap, 16px);
-  }
-
-  .r-dashboard-builder__preview {
-    border: 2px dashed var(--ra-color-border-interactive);
-    border-radius: var(--ra-radius-lg);
-    background: color-mix(in srgb, var(--ra-color-brand-subtle) 55%, transparent);
-    pointer-events: none;
-    transition: all var(--ra-transition-fast);
-  }
-
-  .r-dashboard-builder__guide {
-    position: absolute;
-    pointer-events: none;
-    z-index: 0;
-    background: color-mix(in srgb, var(--ra-color-brand-primary) 60%, transparent);
-    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ra-color-brand-primary) 20%, transparent);
-  }
-
-  .r-dashboard-builder__guide--vertical {
-    top: 0;
-    bottom: 0;
-    width: 2px;
-  }
-
-  .r-dashboard-builder__guide--horizontal {
-    left: 0;
-    right: 0;
-    height: 2px;
-  }
-
-  .r-dashboard-builder__item {
-    min-width: 0;
-    position: relative;
-    z-index: 1;
-    display: flex;
-    flex-direction: column;
-    gap: var(--ra-spacing-3);
-    padding: var(--ra-spacing-3);
-    border: 1px solid var(--ra-color-border-default);
-    border-radius: var(--ra-radius-lg);
-    background: var(--ra-color-bg-surface);
-    box-shadow: var(--ra-shadow-sm);
-    transition:
-      border-color var(--ra-transition-fast),
-      box-shadow var(--ra-transition-fast),
-      opacity var(--ra-transition-fast),
-      transform 140ms cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-
-  .r-dashboard-builder__item--dragging {
-    opacity: 0.85;
-    border-color: var(--ra-color-border-interactive);
-    box-shadow: var(--ra-shadow-md);
-    transform: scale(1.01);
-  }
-
-  .r-dashboard-builder__item-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--ra-spacing-2);
-  }
-
-  .r-dashboard-builder__item-header--draggable {
-    cursor: move;
-  }
-
-  .r-dashboard-builder__item-title {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--ra-spacing-2);
-    color: var(--ra-color-text-primary);
-    font-size: var(--ra-font-size-sm);
-    font-weight: var(--ra-font-weight-semibold);
-  }
-
-  .r-dashboard-builder__item-texts {
-    display: inline-flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .r-dashboard-builder__item-description {
-    color: var(--ra-color-text-tertiary);
-    font-size: var(--ra-font-size-xs);
-    font-weight: var(--ra-font-weight-regular);
-  }
-
-  .r-dashboard-builder__item-actions {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--ra-spacing-1);
-  }
-
-  .r-dashboard-builder__size-chip {
-    border-radius: var(--ra-radius-full);
-    border: 1px solid var(--ra-color-border-default);
-    padding: 1px var(--ra-spacing-2);
-    color: var(--ra-color-text-tertiary);
-    font-size: var(--ra-font-size-xs);
-  }
-
-  .r-dashboard-builder__icon-btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    border: 1px solid var(--ra-color-border-default);
-    border-radius: var(--ra-radius-sm);
-    background: var(--ra-color-bg-surface);
-    color: var(--ra-color-text-secondary);
-    cursor: pointer;
-  }
-
-  .r-dashboard-builder__icon-btn:hover {
-    border-color: var(--ra-color-border-interactive);
-    color: var(--ra-color-text-primary);
-  }
-
-  .r-dashboard-builder__icon-btn--danger:hover {
-    border-color: var(--ra-color-danger-text);
-    color: var(--ra-color-danger-text);
-  }
-
-  .r-dashboard-builder__item-content {
-    min-height: 0;
-    flex: 1;
-  }
-
-  .r-dashboard-builder__editor-actions {
-    width: 100%;
-    display: flex;
-    justify-content: flex-end;
-    gap: var(--ra-spacing-2);
-  }
-
-  .r-dashboard-builder__resize-handle {
-    position: absolute;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-    border: 1px solid var(--ra-color-border-default);
-    border-radius: var(--ra-radius-sm);
-    background: var(--ra-color-bg-surface);
-    color: var(--ra-color-text-tertiary);
-    opacity: 0;
-    transition:
-      opacity var(--ra-transition-fast),
-      color var(--ra-transition-fast),
-      border-color var(--ra-transition-fast);
-  }
-
-  .r-dashboard-builder__item:hover .r-dashboard-builder__resize-handle {
-    opacity: 1;
-  }
-
-  .r-dashboard-builder__resize-handle:hover {
-    color: var(--ra-color-text-primary);
-    border-color: var(--ra-color-border-interactive);
-  }
-
-  .r-dashboard-builder__resize-handle--x {
-    right: 6px;
-    top: 50%;
-    transform: translateY(-50%);
-    cursor: ew-resize;
-  }
-
-  .r-dashboard-builder__resize-handle--y {
-    bottom: 6px;
-    left: 50%;
-    transform: translateX(-50%);
-    cursor: ns-resize;
-  }
-
-  .r-dashboard-builder__resize-handle--both {
-    right: 6px;
-    bottom: 6px;
-    cursor: nwse-resize;
-  }
-
-  @media (max-width: 1024px) {
-    .r-dashboard-builder__resize-handle {
-      display: none;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .r-dashboard-builder__toolbar {
-      flex-direction: column;
-      align-items: stretch;
-    }
-
-    .r-dashboard-builder__toolbar-actions {
-      justify-content: flex-end;
-      flex-wrap: wrap;
-    }
-
-    .r-dashboard-builder__scope-switch {
-      width: 100%;
-    }
-
-    .r-dashboard-builder__scope-btn {
-      flex: 1;
-      text-align: center;
-    }
-  }
-
-  @keyframes rdb-spin {
-    from {
-      transform: rotate(0deg);
-    }
-
-    to {
-      transform: rotate(360deg);
-    }
-  }
-</style>
