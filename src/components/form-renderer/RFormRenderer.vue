@@ -24,6 +24,8 @@
     FormFieldGroup,
     FormRendererExpose,
   } from './types'
+  import type { ProUploadFileItem } from '../pro-upload/types'
+  import RImageCropUpload from '../image-crop-upload/RImageCropUpload.vue'
   import RStorageIdField from './RStorageIdField.vue'
   import RTextareaField from './RTextareaField.vue'
 
@@ -39,6 +41,7 @@
     readonly: { type: Boolean, default: false },
     size: { type: String as PropType<'small' | 'medium' | 'large'>, default: 'medium' },
     showFeedback: { type: Boolean, default: true },
+    showActions: { type: Boolean, default: true },
     groups: { type: Array as PropType<FormFieldGroup[]>, default: undefined },
   })
 
@@ -204,6 +207,11 @@
     return Array.isArray(v) ? (v as Array<string | number>) : []
   }
 
+  function fieldUploadArr(key: string): ProUploadFileItem[] {
+    const v = props.model[key]
+    return Array.isArray(v) ? (v as ProUploadFileItem[]) : []
+  }
+
   function fieldDateRange(key: string): [number, number] | null {
     const v = props.model[key]
     return Array.isArray(v) && v.length === 2 ? (v as [number, number]) : null
@@ -297,8 +305,7 @@
   }
 
   defineExpose(expose)
-void [NButton, NCheckbox, NCheckboxGroup, NDatePicker, NFormItemGi, NGrid, NInput, NInputNumber, NRadio, NRadioGroup, NSelect, NSpace, NSwitch, RCheckButtonGroup, RStorageIdField, RTextareaField, customComponentListeners, fieldArr, fieldBool, fieldButtonGroupValue, fieldDateRange, fieldNum, fieldStr, fieldStrNum, groupedFields, handleSubmit, isFieldClearable, isUploadField, naiveRules, resolvedOptions, toggleGroup, ungroupedFields]
+void [NButton, NCheckbox, NCheckboxGroup, NDatePicker, NFormItemGi, NGrid, NInput, NInputNumber, NRadio, NRadioGroup, NSelect, NSpace, NSwitch, RCheckButtonGroup, RImageCropUpload, RStorageIdField, RTextareaField, customComponentListeners, fieldArr, fieldBool, fieldButtonGroupValue, fieldDateRange, fieldNum, fieldStr, fieldStrNum, fieldUploadArr, groupedFields, handleSubmit, isFieldClearable, isUploadField, naiveRules, resolvedOptions, toggleGroup, ungroupedFields]
 </script>
 
 <template src="./RFormRenderer.template.html"></template>
-

@@ -11,6 +11,7 @@ export type FormFieldType =
   | 'daterange'
   | 'number'
   | 'upload'
+  | 'image_crop_upload'
   | 'storage_id'
   | 'button-group'
   | 'custom'
@@ -65,6 +66,8 @@ export interface FormFieldSchema {
   type: FormFieldType
   defaultValue?: unknown
   placeholder?: string
+  /** Native input type for text input fields, e.g. password. */
+  inputType?: 'text' | 'password'
   rules?: FormFieldRule[]
   options?: FormFieldOption[]
   /** Whether the rendered control can clear its current value. */
@@ -118,6 +121,8 @@ export interface FormRendererProps {
   readonly?: boolean
   size?: 'small' | 'medium' | 'large'
   showFeedback?: boolean
+  /** Whether to render default submit/reset actions. */
+  showActions?: boolean
   /** Field groups for sectioned rendering */
   groups?: FormFieldGroup[]
 }

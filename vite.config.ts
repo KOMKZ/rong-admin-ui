@@ -144,6 +144,10 @@ export default defineConfig({
           __dirname,
           'src/components/settings-manager/index.ts',
         ),
+        'components/settings-board/index': resolve(
+          __dirname,
+          'src/components/settings-board/index.ts',
+        ),
         'components/dashboard-builder/index': resolve(
           __dirname,
           'src/components/dashboard-builder/index.ts',

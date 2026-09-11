@@ -45,6 +45,7 @@
               <NInput
                 v-if="field.type === 'input'"
                 :value="fieldStr(field.key)"
+                :type="field.inputType || 'text'"
                 :placeholder="field.placeholder"
                 :disabled="isFieldDisabled(field)"
                 :readonly="readonly"
@@ -149,6 +150,23 @@
                 :readonly="readonly"
                 @update:model-value="updateField(field.key, $event)"
               />
+              <RImageCropUpload
+                v-else-if="field.type === 'image_crop_upload'"
+                :model-value="fieldUploadArr(field.key)"
+                :accept="field.accept || 'image/*'"
+                :max-count="field.maxCount ?? 1"
+                :max-size-m-b="field.maxSizeMB"
+                :storage="field.storage"
+                :business-id="field.businessId"
+                :business-type="field.businessType"
+                :action="field.action"
+                :headers="field.headers"
+                :with-credentials="field.withCredentials"
+                :disabled="isFieldDisabled(field)"
+                :readonly="readonly"
+                v-bind="field.componentProps"
+                @update:model-value="updateField(field.key, $event)"
+              />
               <component
                 :is="field.component"
                 v-else-if="field.type === 'custom' && field.component"
@@ -177,6 +195,7 @@
           <NInput
             v-if="field.type === 'input'"
             :value="fieldStr(field.key)"
+            :type="field.inputType || 'text'"
             :placeholder="field.placeholder"
             :disabled="isFieldDisabled(field)"
             :readonly="readonly"
@@ -198,6 +217,23 @@
             :model-value="model[field.key]"
             :disabled="isFieldDisabled(field)"
             :readonly="readonly"
+            @update:model-value="updateField(field.key, $event)"
+          />
+          <RImageCropUpload
+            v-else-if="field.type === 'image_crop_upload'"
+            :model-value="fieldUploadArr(field.key)"
+            :accept="field.accept || 'image/*'"
+            :max-count="field.maxCount ?? 1"
+            :max-size-m-b="field.maxSizeMB"
+            :storage="field.storage"
+            :business-id="field.businessId"
+            :business-type="field.businessType"
+            :action="field.action"
+            :headers="field.headers"
+            :with-credentials="field.withCredentials"
+            :disabled="isFieldDisabled(field)"
+            :readonly="readonly"
+            v-bind="field.componentProps"
             @update:model-value="updateField(field.key, $event)"
           />
           <slot name="fieldSuffix" :field="field" />
@@ -326,6 +362,23 @@
             :readonly="readonly"
             @update:model-value="updateField(field.key, $event)"
           />
+          <RImageCropUpload
+            v-else-if="field.type === 'image_crop_upload'"
+            :model-value="fieldUploadArr(field.key)"
+            :accept="field.accept || 'image/*'"
+            :max-count="field.maxCount ?? 1"
+            :max-size-m-b="field.maxSizeMB"
+            :storage="field.storage"
+            :business-id="field.businessId"
+            :business-type="field.businessType"
+            :action="field.action"
+            :headers="field.headers"
+            :with-credentials="field.withCredentials"
+            :disabled="isFieldDisabled(field)"
+            :readonly="readonly"
+            v-bind="field.componentProps"
+            @update:model-value="updateField(field.key, $event)"
+          />
           <component
             :is="field.component"
             v-else-if="field.type === 'custom' && field.component"
@@ -341,7 +394,7 @@
       </NFormItemGi>
     </NGrid>
 
-    <slot name="actions">
+    <slot v-if="showActions" name="actions">
       <NSpace justify="end" style="margin-top: 16px">
         <NButton attr-type="button" @click="handleReset">重置</NButton>
         <NButton type="primary" attr-type="submit">提交</NButton>
