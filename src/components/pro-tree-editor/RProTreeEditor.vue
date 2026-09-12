@@ -177,6 +177,7 @@ import './RProTreeEditor.css'
   // ─── Create ───
 
   const pendingCreateParentId = ref<string | number | null>(null)
+  const submittingEditNodeIds = new Set<string | number>()
 
   function startCreateChild(parentId: string | number): void {
     treeOps.expandedKeys.value.add(parentId)
@@ -225,11 +226,15 @@ import './RProTreeEditor.css'
   }
 
   async function handleEditSubmit(nodeId: string | number, name: string): Promise<void> {
+    if (submittingEditNodeIds.has(nodeId)) return
+    submittingEditNodeIds.add(nodeId)
     const isNew = String(nodeId).startsWith('__new_')
     try {
       if (isNew) {
+        const parentId = pendingCreateParentId.value
         removeTempNode(nodeId)
-        await treeOps.createNode(pendingCreateParentId.value, name)
+        treeOps.cancelEditing()
+        await treeOps.createNode(parentId, name)
         pendingCreateParentId.value = null
       } else {
         await treeOps.updateNode(nodeId, name)
@@ -241,6 +246,8 @@ import './RProTreeEditor.css'
       } else if (treeError.code === 'INVALID_NAME') {
         message.warning(t.value.invalidName || '')
       }
+    } finally {
+      if (!isNew) submittingEditNodeIds.delete(nodeId)
     }
   }
 

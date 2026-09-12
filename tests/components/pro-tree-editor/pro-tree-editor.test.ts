@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { nextTick, defineComponent, h } from 'vue'
 import { NDialogProvider, NMessageProvider, NConfigProvider } from 'naive-ui'
 import RProTreeEditor from '../../../src/components/pro-tree-editor/RProTreeEditor.vue'
@@ -110,6 +110,38 @@ describe('RProTreeEditor — DOM', () => {
     for (const node of treeNodes) {
       expect(node.attributes('data-node-id')).toBeTruthy()
     }
+  })
+
+  it('should select a row with visible selected state class', async () => {
+    const wrapper = mountEditor({ requestMode: 'manual', data: mockTreeData })
+    await nextTick()
+
+    const musicNode = wrapper.find('[data-testid="tree-node-4"]')
+    await musicNode.trigger('click')
+    await nextTick()
+
+    expect(wrapper.find('[data-testid="tree-node-4"]').classes()).toContain('rpte-node--selected')
+  })
+
+  it('should start child creation from the inline plus action instead of editing parent', async () => {
+    const hooks = createMockHooks()
+    const wrapper = mountEditor({ requestMode: 'manual', data: mockTreeData, requestHooks: hooks })
+    await nextTick()
+
+    await wrapper.find('[data-testid="tree-node-1"] [data-testid="tree-node-add-child"]').trigger('click')
+    await nextTick()
+
+    expect(wrapper.find('[data-testid="tree-node-1"] [data-testid="tree-node-edit-input"]').exists()).toBe(false)
+    const editInput = wrapper.find('[data-testid="tree-node-edit-input"] input')
+    expect(editInput.exists()).toBe(true)
+
+    await editInput.setValue('Invoices')
+    await editInput.trigger('keydown', { key: 'Enter' })
+    await editInput.trigger('blur')
+    await flushPromises()
+
+    expect(hooks.create).toHaveBeenCalledWith({ parentId: 1, name: 'Invoices' })
+    expect(hooks.create).toHaveBeenCalledTimes(1)
   })
 
   it('should be focusable via tabindex', async () => {

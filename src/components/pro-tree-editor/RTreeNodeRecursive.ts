@@ -34,6 +34,7 @@ export const RTreeNodeRecursive = defineComponent({
   emits: [
     'select',
     'toggle',
+    'startCreateChild',
     'startEdit',
     'submitEdit',
     'cancelEdit',
@@ -80,6 +81,7 @@ export const RTreeNodeRecursive = defineComponent({
           dropReason: dropInfo.reason,
           onToggle: () => emit('toggle', props.node.id),
           onSelect: () => emit('select', props.node.id),
+          onStartCreateChild: () => emit('startCreateChild', props.node.id),
           onStartEdit: () => emit('startEdit', props.node.id),
           onSubmitEdit: (name: string) => emit('submitEdit', props.node.id, name),
           onCancelEdit: () => emit('cancelEdit', props.node.id),
@@ -104,6 +106,7 @@ export const RTreeNodeRecursive = defineComponent({
               depth: props.depth + 1,
               onSelect: (id: string | number) => emit('select', id),
               onToggle: (id: string | number) => emit('toggle', id),
+              onStartCreateChild: (id: string | number) => emit('startCreateChild', id),
               onStartEdit: (id: string | number) => emit('startEdit', id),
               onSubmitEdit: (id: string | number, name: string) => emit('submitEdit', id, name),
               onCancelEdit: (id: string | number) => emit('cancelEdit', id),
