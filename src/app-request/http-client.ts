@@ -306,7 +306,11 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
     request,
     get: <T = unknown>(url: string, params?: Record<string, unknown>) =>
       request<T>({ url, method: 'GET', params }),
-    post: <T = unknown>(url: string, data?: unknown) => request<T>({ url, method: 'POST', data }),
+    post: <T = unknown>(
+      url: string,
+      data?: unknown,
+      options?: Omit<RequestOptions, 'url' | 'method' | 'data'>,
+    ) => request<T>({ ...options, url, method: 'POST', data }),
     put: <T = unknown>(url: string, data?: unknown) => request<T>({ url, method: 'PUT', data }),
     patch: <T = unknown>(url: string, data?: unknown) => request<T>({ url, method: 'PATCH', data }),
     delete: <T = unknown>(url: string, params?: Record<string, unknown>) =>

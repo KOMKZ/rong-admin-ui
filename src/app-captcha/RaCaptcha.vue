@@ -105,35 +105,38 @@
       throw new Error('CAPTCHA scene token is empty')
     }
 
-    window.initAliyunCaptcha({
-      SceneId: sceneToken.scene_id,
-      EncryptedSceneId: sceneToken.token,
-      mode: props.config.mode || 'popup',
-      element: `#${elementId.value}`,
-      button: `#${buttonId.value}`,
-      success: props.onVerify,
-      fail(error) {
-        const normalized = error instanceof Error ? error : new Error(String(error))
-        props.onError?.(normalized)
-        emit('error', normalized)
-      },
-      getInstance,
-      slideStyle: props.config.slideStyle || { width: 360, height: 40 },
-      language: props.config.language || 'cn',
-      timeout: props.config.timeout,
-      rem: props.config.rem,
-      autoRefresh: props.config.autoRefresh,
-      immediate: props.config.immediate,
-      onError(error) {
-        const normalized = error instanceof Error ? error : new Error(String(error))
-        status.value = 'error'
-        props.onError?.(normalized)
-        emit('error', normalized)
-      },
+    await new Promise<void>((resolve, reject) => {
+      window.initAliyunCaptcha?.({
+        SceneId: sceneToken.scene_id,
+        EncryptedSceneId: sceneToken.token,
+        mode: props.config.mode || 'popup',
+        element: `#${elementId.value}`,
+        button: `#${buttonId.value}`,
+        success: props.onVerify,
+        fail(error) {
+          const normalized = error instanceof Error ? error : new Error(String(error))
+          props.onError?.(normalized)
+          emit('error', normalized)
+        },
+        getInstance(instance) {
+          getInstance(instance)
+          resolve()
+        },
+        slideStyle: props.config.slideStyle || { width: 360, height: 40 },
+        language: props.config.language || 'cn',
+        timeout: props.config.timeout,
+        rem: props.config.rem,
+        autoRefresh: props.config.autoRefresh,
+        immediate: props.config.immediate,
+        onError(error) {
+          const normalized = error instanceof Error ? error : new Error(String(error))
+          status.value = 'error'
+          props.onError?.(normalized)
+          emit('error', normalized)
+          reject(normalized)
+        },
+      })
     })
-    if (status.value !== 'ready') {
-      status.value = 'ready'
-    }
   }
 
   onMounted(() => {
@@ -152,6 +155,10 @@
       return
     }
     if (status.value !== 'ready') return
+    if (typeof captchaInstance.value?.show === 'function') {
+      captchaInstance.value.show()
+      return
+    }
     document.getElementById(buttonId.value)?.click()
   }
 
@@ -168,6 +175,12 @@
   }
 
   .ra-captcha__button {
-    display: none;
+    position: fixed;
+    left: -9999px;
+    top: 0;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    overflow: hidden;
   }
 </style>

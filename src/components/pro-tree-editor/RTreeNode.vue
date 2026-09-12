@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+  import './RTreeNode.css'
   import { ref, computed, nextTick, watch, type PropType } from 'vue'
   import { NButton, NInput, NCheckbox, NTooltip, NBadge } from 'naive-ui'
   import RIcon from '../icon/RIcon.vue'
@@ -46,6 +47,7 @@
   const emit = defineEmits<{
     toggle: []
     select: []
+    startCreateChild: []
     startEdit: []
     submitEdit: [name: string]
     cancelEdit: []
@@ -123,6 +125,18 @@
     if (value && value !== props.node.label) {
       emit('submitEdit', value)
     } else {
+      emit('cancelEdit')
+    }
+  }
+
+  function handleEditKeydown(e: KeyboardEvent): void {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      handleSubmitEdit()
+      return
+    }
+    if (e.key === 'Escape') {
+      e.preventDefault()
       emit('cancelEdit')
     }
   }
@@ -239,8 +253,7 @@
           size="tiny"
           class="rpte-node__edit-input"
           data-testid="tree-node-edit-input"
-          @keydown.enter.stop="handleSubmitEdit"
-          @keydown.esc.stop="emit('cancelEdit')"
+          @keydown.stop="handleEditKeydown"
           @blur="handleSubmitEdit"
         />
       </template>
@@ -287,7 +300,7 @@
           size="tiny"
           class="rpte-node__action-btn"
           data-testid="tree-node-add-child"
-          @click.stop="emit('startEdit')"
+          @click.stop="emit('startCreateChild')"
         >
           <template #icon><RIcon name="plus" :size="12" /></template>
         </NButton>
@@ -332,4 +345,3 @@
     </div>
   </div>
 </template>
-

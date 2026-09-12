@@ -80,7 +80,6 @@ async function loadTree(ctx: TreeActionContext): Promise<void> {
     state.expandedKeys.value = new Set()
     initExpansion(state.expandedKeys, data, options.defaultExpandLevel.value)
     events.emitRequest('success', 'loadTree')
-    events.emitDataChange('create')
   } catch (err) {
     if (events.isStaleRequest('loadTree', reqId)) return
     const treeError = parseTreeError(err)

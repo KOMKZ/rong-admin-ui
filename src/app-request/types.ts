@@ -19,6 +19,7 @@ export interface RequestOptions {
   signal?: AbortSignal
   skipAuthRefresh?: boolean
   authRetry?: boolean
+  humanVerifyScene?: string
 }
 
 export interface ApiResponse<T = unknown> {
@@ -61,7 +62,11 @@ export interface TokenProvider {
 export interface HttpClient {
   request: <T = unknown>(options: RequestOptions) => Promise<ApiResponse<T>>
   get: <T = unknown>(url: string, params?: Record<string, unknown>) => Promise<ApiResponse<T>>
-  post: <T = unknown>(url: string, data?: unknown) => Promise<ApiResponse<T>>
+  post: <T = unknown>(
+    url: string,
+    data?: unknown,
+    options?: Omit<RequestOptions, 'url' | 'method' | 'data'>,
+  ) => Promise<ApiResponse<T>>
   put: <T = unknown>(url: string, data?: unknown) => Promise<ApiResponse<T>>
   patch: <T = unknown>(url: string, data?: unknown) => Promise<ApiResponse<T>>
   delete: <T = unknown>(url: string, params?: Record<string, unknown>) => Promise<ApiResponse<T>>
