@@ -45,6 +45,7 @@ const defaultStorage: TokenStorage = {
  * for external use (e.g. exporting to story pages).
  */
 export function createRongAdminApp(options: RongAdminPresetOptions): RongAdminAppInstance {
+  const tokenTransport = options.auth?.tokenTransport ?? 'bearer'
   const tokenManager = createTokenManager({
     storage: options.auth?.storage ?? defaultStorage,
     enableCrossTabSync: options.auth?.enableCrossTabSync ?? true,
@@ -83,9 +84,10 @@ export function createRongAdminApp(options: RongAdminPresetOptions): RongAdminAp
       baseURL: options.request?.baseURL ?? '/api',
       timeout: options.request?.timeout ?? 15000,
       headers: options.request?.headers,
+      withCredentials: options.request?.withCredentials,
     },
     tokenProvider: {
-      getToken: () => tokenManager.getToken(),
+      getToken: () => (tokenTransport === 'cookie' ? null : tokenManager.getToken()),
       refreshToken: () => tokenManager.refreshNow(),
     },
     interceptors: options.request?.interceptors,

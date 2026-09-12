@@ -24,6 +24,7 @@ export interface RongAdminPresetOptions {
   auth?: {
     storage?: TokenStorage
     enableCrossTabSync?: boolean
+    tokenTransport?: 'bearer' | 'cookie'
     refreshApi?: TokenRefreshApi
     refreshThresholdMs?: number
     onTokenExpired?: () => void
@@ -34,6 +35,7 @@ export interface RongAdminPresetOptions {
     baseURL?: string
     timeout?: number
     headers?: Record<string, string>
+    withCredentials?: boolean
     interceptors?: RequestInterceptor[]
     errorStrategy?: ErrorStrategyConfig
   }
