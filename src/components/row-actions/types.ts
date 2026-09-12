@@ -13,6 +13,7 @@ export interface RowAction<T = object> {
 export interface RowActionsProps<T = object> {
   row: T
   actions: RowAction<T>[]
+  density?: 'default' | 'compact'
   maxInline?: number
   moreLabel?: string
   testIdPrefix?: string

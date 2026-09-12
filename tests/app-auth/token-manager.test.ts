@@ -106,6 +106,9 @@ describe('createTokenManager', () => {
     await vi.advanceTimersByTimeAsync(6000)
 
     expect(onRefreshFailed).toHaveBeenCalled()
+    expect(manager.getToken()).toBeNull()
+    expect(manager.getRefreshToken()).toBeNull()
+    expect(manager.isAuthenticated()).toBe(false)
     manager.destroy()
   })
 

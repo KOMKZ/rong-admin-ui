@@ -141,6 +141,9 @@ export class TokenManagerRuntime implements TokenManagerInstance {
       this.broadcastSync('token_refreshed')
       return true
     } catch (err) {
+      this.clearTokens()
+      this.stopAutoRefresh()
+      this.broadcastSync('logout')
       this.config.onRefreshFailed?.(err instanceof Error ? err : new Error(String(err)))
       return false
     } finally {

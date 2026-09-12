@@ -86,6 +86,40 @@ describe('createRongAdminApp', () => {
     app.destroy()
   })
 
+  it('should pass refresh failure callback to token manager', async () => {
+    const values = new Map<string, string>()
+    const storage: TokenStorage = {
+      get: (key) => values.get(key) ?? null,
+      set: (key, value) => values.set(key, value),
+      remove: (key) => {
+        values.delete(key)
+      },
+    }
+    const onRefreshFailed = vi.fn()
+    const app = createRongAdminApp({
+      rootComponent: TestRoot,
+      auth: {
+        storage,
+        refreshApi: {
+          refresh: vi.fn().mockRejectedValue(new Error('refresh failed')),
+        },
+        onRefreshFailed,
+      },
+    })
+
+    app.tokenManager.onLoginSuccess({
+      accessToken: 'old-access',
+      refreshToken: 'old-refresh',
+      expiresIn: 300,
+    })
+
+    await app.tokenManager.refreshNow()
+
+    expect(onRefreshFailed).toHaveBeenCalledOnce()
+    expect(app.tokenManager.getToken()).toBeNull()
+    app.destroy()
+  })
+
   it('should include permission directive via plugin manager', async () => {
     document.body.innerHTML = '<div id="perm-app"></div>'
 

@@ -51,6 +51,7 @@ export function createRongAdminApp(options: RongAdminPresetOptions): RongAdminAp
     refreshApi: options.auth?.refreshApi,
     refreshThresholdMs: options.auth?.refreshThresholdMs,
     onTokenExpired: options.auth?.onTokenExpired,
+    onRefreshFailed: options.auth?.onRefreshFailed,
   })
 
   const permissionService = createPermissionService()

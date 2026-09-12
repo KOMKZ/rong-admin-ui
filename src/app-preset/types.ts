@@ -27,6 +27,7 @@ export interface RongAdminPresetOptions {
     refreshApi?: TokenRefreshApi
     refreshThresholdMs?: number
     onTokenExpired?: () => void
+    onRefreshFailed?: (error: Error) => void
   }
 
   request?: {

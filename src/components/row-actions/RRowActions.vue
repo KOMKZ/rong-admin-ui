@@ -5,7 +5,7 @@
   import type { RowAction, RowActionsProps } from './types'
 
   const props = withDefaults(defineProps<RowActionsProps<T>>(), {
-    maxInline: 3,
+    density: 'default',
     moreLabel: '更多',
     testIdPrefix: 'row-action',
   })
@@ -42,7 +42,9 @@
     action: [key: string, row: T]
   }>()
 
-  const normalizedMaxInline = computed(() => Math.max(0, props.maxInline))
+  const fallbackMaxInline = computed(() => (props.density === 'compact' ? 1 : 3))
+  const normalizedMaxInline = computed(() => Math.max(0, props.maxInline ?? fallbackMaxInline.value))
+  const actionGap = computed(() => (props.density === 'compact' ? 4 : 6))
   const visibleActions = computed(() => {
     if (props.actions.length <= normalizedMaxInline.value) return props.actions
     return props.actions.slice(0, normalizedMaxInline.value)
@@ -97,7 +99,13 @@
 </script>
 
 <template>
-  <NSpace class="r-row-actions" :size="6" :wrap="false" @click.stop>
+  <NSpace
+    class="r-row-actions"
+    :class="`r-row-actions--${density}`"
+    :size="actionGap"
+    :wrap="false"
+    @click.stop
+  >
     <template v-for="action in visibleActions" :key="action.key">
       <NButton
         size="small"
@@ -143,6 +151,10 @@
 
   .r-row-actions :deep(.n-button__icon) {
     margin-right: var(--ra-spacing-0-5);
+  }
+
+  .r-row-actions--compact :deep(.n-button) {
+    --n-padding: 0 var(--ra-spacing-0-5);
   }
 
   :global(.r-row-actions__menu-item--danger) {
