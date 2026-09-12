@@ -137,6 +137,10 @@ export default defineConfig({
           __dirname,
           'src/components/rich-text-editor/index.ts',
         ),
+        'components/mini-rich-text/index': resolve(
+          __dirname,
+          'src/components/mini-rich-text/index.ts',
+        ),
         'components/data-grid/index': resolve(__dirname, 'src/components/data-grid/index.ts'),
         'components/tree-select/index': resolve(__dirname, 'src/components/tree-select/index.ts'),
         'components/docs-browser/index': resolve(__dirname, 'src/components/docs-browser/index.ts'),
