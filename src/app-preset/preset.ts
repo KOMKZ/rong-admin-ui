@@ -90,6 +90,7 @@ export function createRongAdminApp(options: RongAdminPresetOptions): RongAdminAp
       getToken: () => (tokenTransport === 'cookie' ? null : tokenManager.getToken()),
       refreshToken: () => tokenManager.refreshNow(),
     },
+    csrfProvider: options.request?.csrfProvider,
     interceptors: options.request?.interceptors,
     errorStrategy: options.request?.errorStrategy,
   })

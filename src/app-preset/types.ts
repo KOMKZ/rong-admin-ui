@@ -1,7 +1,12 @@
 import type { Component } from 'vue'
 import type { AppPlugin, AppErrorHandler, AppContext } from '../app-core/types'
 import type { TokenStorage, TokenRefreshApi, TokenManagerInstance } from '../app-auth/types'
-import type { RequestInterceptor, ErrorStrategyConfig, HttpClient } from '../app-request/types'
+import type {
+  CSRFProvider,
+  RequestInterceptor,
+  ErrorStrategyConfig,
+  HttpClient,
+} from '../app-request/types'
 import type { ProjectConfig, RuntimeConfig, WebsiteConfig } from '../app-config/types'
 import type { PermissionServiceInstance } from '../app-permission/permission-service'
 import type {
@@ -36,6 +41,7 @@ export interface RongAdminPresetOptions {
     timeout?: number
     headers?: Record<string, string>
     withCredentials?: boolean
+    csrfProvider?: CSRFProvider
     interceptors?: RequestInterceptor[]
     errorStrategy?: ErrorStrategyConfig
   }
