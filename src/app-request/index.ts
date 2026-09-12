@@ -9,6 +9,7 @@ export type {
   ErrorStrategy,
   ErrorStrategyConfig,
   TokenProvider,
+  CSRFProvider,
   HttpClient,
   HttpClientConfig,
 } from './types'

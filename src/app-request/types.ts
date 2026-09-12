@@ -19,6 +19,8 @@ export interface RequestOptions {
   signal?: AbortSignal
   skipAuthRefresh?: boolean
   authRetry?: boolean
+  skipCSRF?: boolean
+  csrfRetry?: boolean
   humanVerifyScene?: string
 }
 
@@ -59,6 +61,12 @@ export interface TokenProvider {
   refreshToken?: () => Promise<boolean>
 }
 
+export interface CSRFProvider {
+  headerName?: string
+  getToken: () => Promise<string | null>
+  refreshToken?: () => Promise<string | null>
+}
+
 export interface HttpClient {
   request: <T = unknown>(options: RequestOptions) => Promise<ApiResponse<T>>
   get: <T = unknown>(url: string, params?: Record<string, unknown>) => Promise<ApiResponse<T>>
@@ -75,6 +83,7 @@ export interface HttpClient {
 export interface HttpClientConfig {
   requestConfig: RequestConfig
   tokenProvider?: TokenProvider
+  csrfProvider?: CSRFProvider
   interceptors?: RequestInterceptor[]
   errorStrategy?: ErrorStrategyConfig
 }

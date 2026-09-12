@@ -75,6 +75,64 @@ describe('createHttpClient', () => {
     )
   })
 
+  it('should attach csrf token only for unsafe methods', async () => {
+    const getToken = vi.fn().mockResolvedValue('csrf-token')
+    const client = createHttpClient({
+      requestConfig: { baseURL: 'https://api.test.com' },
+      csrfProvider: {
+        headerName: 'X-CSRF-Token',
+        getToken,
+      },
+    })
+
+    await client.get('/users')
+    await client.post('/users', { name: 'test' })
+
+    expect(getToken).toHaveBeenCalledTimes(1)
+    expect(fetch).toHaveBeenNthCalledWith(
+      2,
+      'https://api.test.com/users',
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.objectContaining({
+          'X-CSRF-Token': 'csrf-token',
+        }),
+      }),
+    )
+  })
+
+  it('should refresh csrf token and retry once on 403', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: false, status: 403, statusText: 'Forbidden' })
+      .mockResolvedValueOnce({
+        ok: true,
+        json: () => Promise.resolve({ code: 200, message: 'ok', data: { id: 4 } }),
+      })
+    vi.stubGlobal('fetch', fetchMock)
+
+    let token = 'old-csrf'
+    const refreshToken = vi.fn().mockImplementation(async () => {
+      token = 'new-csrf'
+      return token
+    })
+    const client = createHttpClient({
+      requestConfig: { baseURL: 'https://api.test.com' },
+      csrfProvider: {
+        getToken: async () => token,
+        refreshToken,
+      },
+    })
+
+    const result = await client.post<{ id: number }>('/secure', { name: 'test' })
+
+    expect(result.data.id).toBe(4)
+    expect(refreshToken).toHaveBeenCalledOnce()
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+    expect(fetchMock.mock.calls[0][1].headers['X-CSRF-Token']).toBe('old-csrf')
+    expect(fetchMock.mock.calls[1][1].headers['X-CSRF-Token']).toBe('new-csrf')
+  })
+
   it('should call error interceptor on network error with kind=NETWORK_ERROR', async () => {
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('Network failed')))
 

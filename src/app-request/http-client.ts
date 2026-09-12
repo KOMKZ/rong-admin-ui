@@ -50,6 +50,36 @@ function buildHeaders(config: HttpClientConfig, options: RequestOptions): Record
   return headers
 }
 
+function shouldAttachCSRF(method: string, options: RequestOptions): boolean {
+  if (options.skipCSRF) return false
+  return !['GET', 'HEAD', 'OPTIONS'].includes(method.toUpperCase())
+}
+
+async function attachCSRFHeader(
+  config: HttpClientConfig,
+  method: string,
+  options: RequestOptions,
+  headers: Record<string, string>,
+): Promise<void> {
+  if (!config.csrfProvider || !shouldAttachCSRF(method, options)) return
+  const token = await config.csrfProvider.getToken()
+  if (!token) return
+  headers[config.csrfProvider.headerName ?? 'X-CSRF-Token'] = token
+}
+
+function shouldRetryCSRF(
+  config: HttpClientConfig,
+  response: Response,
+  options: RequestOptions,
+): boolean {
+  return (
+    response.status === 403 &&
+    !options.skipCSRF &&
+    !options.csrfRetry &&
+    Boolean(config.csrfProvider?.refreshToken)
+  )
+}
+
 async function applyRequestInterceptors(
   config: HttpClientConfig,
   options: RequestOptions,
@@ -227,6 +257,7 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
       processedOptions.params,
     )
     const headers = buildHeaders(config, processedOptions)
+    await attachCSRFHeader(config, method, processedOptions, headers)
 
     const timeoutController = new AbortController()
     const timeout = processedOptions.timeout ?? config.requestConfig.timeout ?? 30000
@@ -252,6 +283,13 @@ export function createHttpClient(config: HttpClientConfig): HttpClient {
       clearTimeout(timeoutId)
 
       if (!response.ok) {
+        if (shouldRetryCSRF(config, response, processedOptions)) {
+          const token = await config.csrfProvider?.refreshToken?.()
+          if (token) {
+            return request<T>({ ...processedOptions, csrfRetry: true })
+          }
+        }
+
         if (
           response.status === 401 &&
           !processedOptions.skipAuthRefresh &&
