@@ -2,7 +2,7 @@
 
 - mode: changed
 - files_scanned: 439
-- funcs_scanned: 3631
+- funcs_scanned: 3642
 - issues: 0
 - blocking: 0
 
