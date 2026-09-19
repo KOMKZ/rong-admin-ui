@@ -1,3 +1,5 @@
+import type { DataTableColumn } from '../data-table/types'
+
 export type ResourcePickerKey = string | number
 
 export interface ResourcePickerTag {
@@ -20,7 +22,25 @@ export interface ResourcePickerLoadParams {
   keyword: string
   page: number
   pageSize: number
+  filters?: Record<string, unknown>
 }
+
+export interface ResourcePickerFilterOption {
+  label: string
+  value: string | number
+  [key: string]: unknown
+}
+
+export interface ResourcePickerFilter {
+  key: string
+  label: string
+  type: 'select' | 'text'
+  placeholder?: string
+  options?: ResourcePickerFilterOption[]
+  clearable?: boolean
+}
+
+export type ResourcePickerView = 'card' | 'table'
 
 export interface ResourcePickerLoadResult<TItem extends ResourcePickerItem = ResourcePickerItem> {
   items: TItem[]
@@ -34,6 +54,9 @@ export interface ResourcePickerTab<TItem extends ResourcePickerItem = ResourcePi
   searchPlaceholder?: string
   pageSize?: number
   loadOnActivate?: boolean
+  view?: ResourcePickerView
+  filters?: ResourcePickerFilter[]
+  tableColumns?: DataTableColumn<TItem & Record<string, unknown>>[]
   load: (params: ResourcePickerLoadParams) => Promise<ResourcePickerLoadResult<TItem>>
 }
 

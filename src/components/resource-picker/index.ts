@@ -6,7 +6,10 @@ export type {
   ResourcePickerKey,
   ResourcePickerLoadParams,
   ResourcePickerLoadResult,
+  ResourcePickerFilter,
+  ResourcePickerFilterOption,
   ResourcePickerTab,
   ResourcePickerTag,
+  ResourcePickerView,
   ResourcePickerToolbarSlotScope,
 } from './types'

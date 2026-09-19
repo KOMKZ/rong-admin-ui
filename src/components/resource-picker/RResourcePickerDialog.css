@@ -74,6 +74,25 @@
     gap: var(--ra-spacing-3);
   }
 
+  .r-resource-picker__filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--ra-spacing-3);
+  }
+
+  .r-resource-picker__filter {
+    display: flex;
+    min-width: 180px;
+    flex-direction: column;
+    gap: var(--ra-spacing-1);
+  }
+
+  .r-resource-picker__filter-label {
+    color: var(--ra-color-text-secondary);
+    font-size: var(--ra-font-size-xs);
+  }
+
   .r-resource-picker__card {
     min-height: 156px;
     border: 1px solid var(--ra-color-border-default);

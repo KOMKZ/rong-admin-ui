@@ -11,6 +11,27 @@ const tabs = (load: ResourcePickerTab['load']): ResourcePickerTab[] => [
   },
 ]
 
+const tableTabs = (load: ResourcePickerTab['load']): ResourcePickerTab[] => [
+  {
+    key: 'system_prompt',
+    label: '系统提示词',
+    view: 'table',
+    filters: [
+      {
+        key: 'category_id',
+        label: '分类',
+        type: 'select',
+        options: [{ label: '内容创作', value: 1 }],
+      },
+    ],
+    tableColumns: [
+      { key: 'id', title: 'ID' },
+      { key: 'title', title: '标题' },
+    ],
+    load,
+  },
+]
+
 describe('RResourcePickerDialog', () => {
   it('does not load resources when opened by default', () => {
     const load = vi.fn().mockResolvedValue({ items: [], total: 0 })
@@ -50,8 +71,40 @@ describe('RResourcePickerDialog', () => {
       keyword: '',
       page: 1,
       pageSize: 12,
+      filters: {},
     })
     expect(document.body.innerHTML).toContain('清晰女声')
+    wrapper.unmount()
+  })
+
+  it('loads table resources with filters and confirms one selected row', async () => {
+    const load = vi.fn().mockResolvedValue({
+      items: [{ id: 7, title: '书籍推荐提示词' }],
+      total: 1,
+    })
+    const wrapper = mount(RResourcePickerDialog, {
+      props: {
+        visible: true,
+        initialActiveKey: 'system_prompt',
+        tabs: tableTabs(load),
+      },
+      attachTo: document.body,
+    })
+
+    ;(
+      document.querySelector(
+        '[data-testid="resource-picker-dialog-tab-system_prompt"]',
+      ) as HTMLButtonElement
+    ).click()
+    await flushPromises()
+    expect(load).toHaveBeenCalledWith({
+      tabKey: 'system_prompt',
+      keyword: '',
+      page: 1,
+      pageSize: 12,
+      filters: { category_id: null },
+    })
+    expect(document.body.innerHTML).toContain('书籍推荐提示词')
     wrapper.unmount()
   })
 

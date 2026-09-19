@@ -1,14 +1,16 @@
 <script lang="ts" setup>
 import './RResourcePickerDialog.css'
   import { computed, reactive, ref, watch, type PropType } from 'vue'
-  import { NAlert, NButton, NEmpty, NInput, NPagination, NSpace, NSpin, NTag } from 'naive-ui'
+  import { NAlert, NButton, NEmpty, NInput, NPagination, NSelect, NSpace, NSpin, NTag } from 'naive-ui'
   import { RIcon } from '../icon'
+  import RDataTable from '../data-table/RDataTable.vue'
   import RModalDialog from '../modal-dialog/RModalDialog.vue'
   import type {
     ResourcePickerConfirmPayload,
     ResourcePickerItem,
     ResourcePickerKey,
     ResourcePickerLoadResult,
+    ResourcePickerFilter,
     ResourcePickerTab,
   } from './types'
 
@@ -20,6 +22,7 @@ import './RResourcePickerDialog.css'
     keyword: string
     page: number
     pageSize: number
+    filters: Record<string, unknown>
     total: number
     items: ResourcePickerItem[]
     requestId: number
@@ -30,7 +33,7 @@ import './RResourcePickerDialog.css'
     modelValue: { type: Object as PropType<ResourcePickerItem | null>, default: null },
     tabs: { type: Array as PropType<ResourcePickerTab[]>, required: true },
     title: { type: String, default: '选择资源' },
-    width: { type: [Number, String] as PropType<number | string>, default: 1040 },
+    width: { type: [Number, String] as PropType<number | string>, default: '80vw' },
     loadOnOpen: { type: Boolean, default: false },
     initialActiveKey: { type: String, default: '' },
     confirmText: { type: String, default: '使用此资源' },
@@ -76,6 +79,8 @@ import './RResourcePickerDialog.css'
     gridTemplateColumns: `repeat(auto-fill, minmax(${props.cardMinWidth}px, 1fr))`,
   }))
 
+  const tableView = computed(() => activeTab.value?.view === 'table')
+
   watch(
     () => props.visible,
     (visible) => {
@@ -106,6 +111,7 @@ import './RResourcePickerDialog.css'
         keyword: '',
         page: 1,
         pageSize: tab.pageSize ?? 12,
+        filters: Object.fromEntries((tab.filters ?? []).map((filter) => [filter.key, null])),
         total: 0,
         items: [],
         requestId: 0,
@@ -141,6 +147,7 @@ import './RResourcePickerDialog.css'
         keyword: state.keyword.trim(),
         page: state.page,
         pageSize: state.pageSize,
+        filters: { ...state.filters },
       })
       if (state.requestId !== requestId) return
       applyLoadResult(state, result)
@@ -185,10 +192,46 @@ import './RResourcePickerDialog.css'
     void loadTab(activeTab.value.key)
   }
 
+  function handleFilterChange(filter: ResourcePickerFilter, value: unknown): void {
+    if (!activeState.value) return
+    activeState.value.filters[filter.key] = value
+    activeState.value.page = 1
+  }
+
+  function filterValue(key: string): string | number | null {
+    const value = activeState.value?.filters[key]
+    return typeof value === 'string' || typeof value === 'number' ? value : null
+  }
+
+  function handleFilterSearch(): void {
+    handleSearch()
+  }
+
+  function handleFilterReset(): void {
+    if (!activeTab.value || !activeState.value) return
+    for (const filter of activeTab.value.filters ?? []) {
+      activeState.value.filters[filter.key] = null
+    }
+    activeState.value.page = 1
+    void loadTab(activeTab.value.key)
+  }
+
   function selectItem(item: ResourcePickerItem): void {
     if (item.disabled || !activeTab.value) return
     selectedItem.value = item
     emit('select', item, activeTab.value.key)
+  }
+
+  function selectTableRows(keys: Array<string | number>): void {
+    if (!activeState.value) return
+    const key = keys[keys.length - 1]
+    const item = activeState.value.items.find((candidate) => candidate.id === key)
+    if (item) selectItem(item)
+    else selectedItem.value = null
+  }
+
+  function selectTableRow(row: Record<string, unknown>): void {
+    selectItem(row as unknown as ResourcePickerItem)
   }
 
   function handleCardKeydown(event: KeyboardEvent, item: ResourcePickerItem): void {
@@ -288,6 +331,38 @@ import './RResourcePickerDialog.css'
           </NSpace>
         </div>
 
+        <div v-if="activeTab.filters?.length" class="r-resource-picker__filters">
+          <div v-for="criterion in activeTab.filters" :key="criterion.key" class="r-resource-picker__filter">
+            <span class="r-resource-picker__filter-label">{{ criterion.label }}</span>
+            <NSelect
+              v-if="criterion.type === 'select'"
+              :value="filterValue(criterion.key)"
+              :options="criterion.options ?? []"
+              :placeholder="criterion.placeholder"
+              :clearable="criterion.clearable !== false"
+              :disabled="activeState.loading"
+              @update:value="handleFilterChange(criterion, $event)"
+            />
+            <NInput
+              v-else
+              :value="String(activeState.filters[criterion.key] ?? '')"
+              :placeholder="criterion.placeholder"
+              :clearable="criterion.clearable !== false"
+              :disabled="activeState.loading"
+              @update:value="handleFilterChange(criterion, $event)"
+              @keyup.enter="handleFilterSearch"
+            />
+          </div>
+          <NButton :disabled="activeState.loading" @click="handleFilterSearch">筛选</NButton>
+          <NButton
+            v-if="activeTab.filters?.length"
+            :disabled="activeState.loading"
+            @click="handleFilterReset"
+          >
+            重置
+          </NButton>
+        </div>
+
         <NAlert v-if="activeState.error" type="error" :bordered="false">
           <div class="r-resource-picker__error">
             <span>{{ activeState.error }}</span>
@@ -296,8 +371,25 @@ import './RResourcePickerDialog.css'
         </NAlert>
 
         <NSpin :show="activeState.loading">
+          <RDataTable
+            v-if="tableView"
+            :columns="activeTab.tableColumns ?? []"
+            :data="activeState.items as (ResourcePickerItem & Record<string, unknown>)[]"
+            :loading="activeState.loading"
+            :selectable="true"
+            :checked-row-keys="selectedItem ? [selectedItem.id] : []"
+            :pagination="{ page: activeState.page, pageSize: activeState.pageSize, total: activeState.total, pageSizes: [12, 24, 48] }"
+            :remote="true"
+            :empty-text="emptyText"
+            row-key="id"
+            density="compact"
+            @update:checked-row-keys="selectTableRows"
+            @row-click="selectTableRow"
+            @update:page="handlePageChange"
+            @update:page-size="handlePageSizeChange"
+          />
           <div
-            v-if="activeState.items.length > 0"
+            v-else-if="activeState.items.length > 0"
             class="r-resource-picker__grid"
             :style="gridStyle"
           >
@@ -376,4 +468,3 @@ import './RResourcePickerDialog.css'
     </div>
   </RModalDialog>
 </template>
-
