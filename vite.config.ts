@@ -104,6 +104,10 @@ export default defineConfig({
           'src/components/notification-center/index.ts',
         ),
         'components/pro-upload/index': resolve(__dirname, 'src/components/pro-upload/index.ts'),
+        'components/media-resource-upload/index': resolve(
+          __dirname,
+          'src/components/media-resource-upload/index.ts',
+        ),
         'components/image-preview/index': resolve(
           __dirname,
           'src/components/image-preview/index.ts',

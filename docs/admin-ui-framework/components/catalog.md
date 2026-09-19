@@ -2,10 +2,10 @@
 
 ## 组件分层
 
-| 层级             | 定位     | 组件                                                                                                                                       |
-| ---------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| layout           | 页面骨架 | RPage, RListPage, RFormPage, RDetailPage, RSectionCard                                                                                     |
-| business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RResourcePickerDialog, RFileUpload, RProUpload, RImageCropUpload, RMoneyText, RMoneyInput, RJsonViewer, RProTreeEditor, RDashboardBuilder, RDashboardWorkspace |
+| 层级             | 定位     | 组件                                                                                                                                                                                                                          |
+| ---------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| layout           | 页面骨架 | RPage, RListPage, RFormPage, RDetailPage, RSectionCard                                                                                                                                                                        |
+| business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RResourcePickerDialog, RFileUpload, RProUpload, RMediaResourceUpload, RImageCropUpload, RMoneyText, RMoneyInput, RJsonViewer, RProTreeEditor, RDashboardBuilder, RDashboardWorkspace |
 
 ## 组件清单
 
@@ -65,6 +65,14 @@
 - **规格文档**: `components/spec-image-crop-upload.md`
 - **测试**: `tests/components/image-crop-upload.test.ts`, `tests/components/image-crop-upload-utils.test.ts`
 - **消费方调用**: `hrise-admin-web/src/views/admin/components/AdminAvatarUpload.vue`
+
+### RMediaResourceUpload
+
+- **文件**: `src/components/media-resource-upload/RMediaResourceUpload.vue`
+- **契约**: `src/components/media-resource-upload/types.ts`
+- **规格文档**: `components/spec-media-resource-upload.md`
+- **测试**: `tests/components/media-resource-upload.test.ts`
+- **消费方调用**: `hrise-admin-web/src/views/v3/content-creation/templates/edit.vue`
 
 ### RMoneyText / RMoneyInput
 

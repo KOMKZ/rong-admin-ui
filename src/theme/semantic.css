@@ -67,6 +67,12 @@
   --ra-color-info-text: var(--ra-primitive-blue-8);
   --ra-color-info-border: var(--ra-primitive-blue-3);
 
+  /* ───── Accent — 能力图标紫色强调（RIconTile tone="accent"） ───── */
+  --ra-color-accent: var(--ra-primitive-violet-6);
+  --ra-color-accent-bg: var(--ra-primitive-violet-1);
+  --ra-color-accent-text: var(--ra-primitive-violet-8);
+  --ra-color-accent-border: var(--ra-primitive-violet-3);
+
   /* ───── Text on Brand Surface ───── */
   --ra-color-text-on-brand: #ffffff;
 
