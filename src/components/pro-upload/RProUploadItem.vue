@@ -1,5 +1,11 @@
 <script setup lang="ts">
   import { computed } from 'vue'
+  import {
+    canPreviewProUploadFile,
+    formatProUploadFileSize,
+    resolveProUploadPreviewKind,
+    resolveProUploadPreviewUrl,
+  } from './preview'
   import type { ProUploadFileItem, ProUploadLocale } from './types'
   import { defaultLocale } from './types'
 
@@ -26,18 +32,18 @@
     return props.locale[key] ?? defaultLocale[key] ?? key
   }
 
-  function formatSize(bytes: number): string {
-    if (bytes < 1024) return `${bytes} B`
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
-  }
-
-  const previewUrl = computed(() => props.file.url ?? props.file.thumbUrl)
+  const previewUrl = computed(() => resolveProUploadPreviewUrl(props.file))
+  const previewKind = computed(() => resolveProUploadPreviewKind(props.file))
+  const canPreview = computed(() => canPreviewProUploadFile(props.file))
 
   const isPicture = computed(() => props.listType !== 'text')
   const isCard = computed(() => props.listType === 'picture-card')
 
   const statusClass = computed(() => `rpu-item--${props.file.status}`)
+
+  function handlePreview(): void {
+    if (canPreview.value) emit('preview', props.file)
+  }
 </script>
 
 <template>
@@ -48,13 +54,32 @@
     :aria-label="file.name"
   >
     <!-- Thumbnail -->
-    <div v-if="isPicture" class="rpu-item__thumb" @click="emit('preview', file)">
+    <div
+      v-if="isPicture"
+      class="rpu-item__thumb"
+      :class="{ 'rpu-item__thumb--previewable': canPreview }"
+      :role="canPreview ? 'button' : undefined"
+      :tabindex="canPreview ? 0 : undefined"
+      :aria-label="canPreview ? `${t('previewLabel')} ${file.name}` : undefined"
+      @click="handlePreview"
+      @keydown.enter.space.prevent="handlePreview"
+    >
       <img
-        v-if="previewUrl"
+        v-if="previewUrl && previewKind === 'image'"
         :src="previewUrl"
         :alt="file.name"
         class="rpu-item__thumb-img"
         loading="lazy"
+      />
+      <video
+        v-else-if="previewUrl && previewKind === 'video'"
+        :src="previewUrl"
+        :poster="file.posterUrl"
+        class="rpu-item__thumb-video"
+        muted
+        playsinline
+        preload="metadata"
+        aria-hidden="true"
       />
       <div v-else class="rpu-item__thumb-placeholder">
         <svg
@@ -69,6 +94,12 @@
           <polyline points="14 2 14 8 20 8" />
         </svg>
       </div>
+
+      <span v-if="previewKind === 'video' && previewUrl" class="rpu-item__play" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8 5v14l11-7z" />
+        </svg>
+      </span>
 
       <!-- Upload overlay -->
       <div v-if="file.status === 'uploading'" class="rpu-item__overlay">
@@ -100,8 +131,18 @@
 
     <!-- Info -->
     <div class="rpu-item__info">
-      <span class="rpu-item__name" :title="file.name">{{ file.name }}</span>
-      <span v-if="!isCard" class="rpu-item__size">{{ formatSize(file.size) }}</span>
+      <button
+        v-if="!isPicture && canPreview"
+        type="button"
+        class="rpu-item__name rpu-item__name--preview"
+        :title="`${t('previewLabel')} ${file.name}`"
+        :aria-label="`${t('previewLabel')} ${file.name}`"
+        @click="handlePreview"
+      >
+        {{ file.name }}
+      </button>
+      <span v-else class="rpu-item__name" :title="file.name">{{ file.name }}</span>
+      <span v-if="!isCard" class="rpu-item__size">{{ formatProUploadFileSize(file.size) }}</span>
       <span v-if="file.status === 'error'" class="rpu-item__error">{{
         file.error ?? t('uploadFailed')
       }}</span>
@@ -227,9 +268,16 @@
   .rpu-item__thumb {
     position: relative;
     flex-shrink: 0;
-    cursor: pointer;
+    cursor: default;
     overflow: hidden;
     border-radius: var(--ra-radius-sm);
+  }
+  .rpu-item__thumb--previewable {
+    cursor: pointer;
+  }
+  .rpu-item__thumb--previewable:focus-visible {
+    outline: 2px solid var(--ra-color-focus-ring);
+    outline-offset: 2px;
   }
   .rpu-item--row .rpu-item__thumb {
     width: 40px;
@@ -243,6 +291,25 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+  .rpu-item__thumb-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+  .rpu-item__play {
+    position: absolute;
+    inset: 50% auto auto 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    color: var(--ra-color-text-on-brand);
+    background: var(--ra-color-bg-overlay);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
   }
   .rpu-item__thumb-placeholder {
     width: 100%;
@@ -326,6 +393,23 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+  .rpu-item__name--preview {
+    display: block;
+    max-width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+  }
+  .rpu-item__name--preview:hover {
+    color: var(--ra-color-brand-primary);
+  }
+  .rpu-item__name--preview:focus-visible {
+    outline: 2px solid var(--ra-color-focus-ring);
+    outline-offset: 2px;
   }
   .rpu-item__size {
     font-size: var(--ra-font-size-2xs);

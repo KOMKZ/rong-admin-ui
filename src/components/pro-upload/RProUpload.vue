@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import './RProUpload.css'
+  import './RProUpload.css'
   import { ref, computed, onBeforeUnmount } from 'vue'
   import type { ProUploadProps, ProUploadFileItem, ProUploadLocale, ProUploadExpose } from './types'
   import { defaultLocale } from './types'
+  import { canPreviewProUploadFile } from './preview'
   import { useUploadCore, revokeThumbUrls } from './useUploadCore'
   import RProUploadItem from './RProUploadItem.vue'
+  import RProUploadPreviewDialog from './RProUploadPreviewDialog.vue'
 
   const props = withDefaults(defineProps<ProUploadProps>(), {
     multiple: false,
@@ -32,6 +34,7 @@ import './RProUpload.css'
     renderItem: undefined,
     locale: () => ({}),
     retryConfig: () => ({ maxRetries: 2, retryDelay: 1000 }),
+    timeoutMs: 120000,
     value: undefined,
     modelValue: undefined,
   })
@@ -69,9 +72,13 @@ import './RProUpload.css'
 
   const inputRef = ref<HTMLInputElement | null>(null)
   const isDragOver = ref(false)
-  const previewVisible = ref(false)
-  const previewUrl = ref('')
-  const previewAlt = ref('')
+  const previewFile = ref<ProUploadFileItem | null>(null)
+  const previewVisible = computed({
+    get: () => previewFile.value !== null,
+    set: (visible: boolean) => {
+      if (!visible) previewFile.value = null
+    },
+  })
 
   const showTrigger = computed(() => {
     if (props.readonly) return false
@@ -128,21 +135,8 @@ import './RProUpload.css'
   }
 
   function handlePreview(file: ProUploadFileItem) {
-    const url = file.url ?? file.thumbUrl
-    if (url) {
-      previewUrl.value = url
-      previewAlt.value = file.name
-      previewVisible.value = true
-    }
+    if (canPreviewProUploadFile(file)) previewFile.value = file
     emit('preview', file)
-  }
-
-  function closePreview() {
-    previewVisible.value = false
-  }
-
-  function handlePreviewKeydown(e: KeyboardEvent) {
-    if (e.key === 'Escape') closePreview()
   }
 
   onBeforeUnmount(() => {
@@ -312,43 +306,6 @@ import './RProUpload.css'
       </div>
     </template>
 
-    <!-- Preview modal -->
-    <Teleport to="body">
-      <Transition name="rpu-fade">
-        <div
-          v-if="previewVisible"
-          class="rpu__preview-mask"
-          role="dialog"
-          aria-modal="true"
-          :aria-label="`预览: ${previewAlt}`"
-          data-testid="pro-upload-preview"
-          @click="closePreview"
-          @keydown="handlePreviewKeydown"
-        >
-          <div class="rpu__preview-body" @click.stop>
-            <img :src="previewUrl" :alt="previewAlt" class="rpu__preview-img" />
-            <button
-              type="button"
-              class="rpu__preview-close"
-              aria-label="关闭预览"
-              @click="closePreview"
-            >
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
+    <RProUploadPreviewDialog v-model:visible="previewVisible" :file="previewFile" />
   </div>
 </template>
-

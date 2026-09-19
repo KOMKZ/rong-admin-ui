@@ -28,9 +28,6 @@ import { DefineComponent } from 'vue';
 import { Directive } from 'vue';
 import { ExtractPropTypes } from 'vue';
 import { ExtractThemeOverrides } from 'naive-ui/es/_mixins/use-theme';
-import { FormInst } from 'naive-ui';
-import { FormRules } from 'naive-ui';
-import { FormValidateMessages } from 'naive-ui/es/form/src/interface';
 import { FormValidationStatus } from 'naive-ui';
 import { FuncOrRecordOrUndef } from 'naive-ui/es/upload/src/interface';
 import { FunctionalComponent } from 'vue';
@@ -42,8 +39,6 @@ import { ICellRendererParams } from 'ag-grid-community';
 import { ImageGroupProps } from 'naive-ui';
 import { InputHTMLAttributes } from 'vue';
 import { InputSlots } from 'naive-ui';
-import { LabelAlign } from 'naive-ui/es/form/src/interface';
-import { LabelPlacement } from 'naive-ui/es/form/src/interface';
 import { ListType } from 'naive-ui/es/upload/src/interface';
 import { LucideIcon as LucideIcon_2 } from 'lucide-vue-next';
 import { MaybeArray } from 'naive-ui/es/_utils';
@@ -109,8 +104,7 @@ import { ScrollBy } from 'naive-ui/es/_internal/scrollbar/src/Scrollbar';
 import { ScrollTo } from 'naive-ui/es/_internal/scrollbar/src/Scrollbar';
 import { ShallowUnwrapRef } from 'vue';
 import { ShouldUseThumbnailUrl } from 'naive-ui/es/upload/src/interface';
-import { Size } from 'naive-ui/es/form/src/interface';
-import { Size as Size_2 } from 'naive-ui/es/input/src/interface';
+import { Size } from 'naive-ui/es/input/src/interface';
 import { Slot } from 'vue';
 import { SlotsType } from 'vue';
 import { SVGAttributes } from 'vue';
@@ -143,6 +137,51 @@ export interface AgentProgress {
     status: 'idle' | 'running' | 'done';
     // (undocumented)
     totalNodes?: number;
+}
+
+// @public (undocumented)
+export interface AliyunCaptchaGlobalConfig {
+    // (undocumented)
+    prefix: string;
+    // (undocumented)
+    region: 'cn' | 'sgp';
+}
+
+// @public (undocumented)
+export interface AliyunCaptchaOptions {
+    // (undocumented)
+    autoRefresh?: boolean;
+    // (undocumented)
+    button: string;
+    // (undocumented)
+    element: string;
+    // (undocumented)
+    EncryptedSceneId?: string;
+    // (undocumented)
+    fail?: (result: unknown) => void;
+    // (undocumented)
+    getInstance: (instance: CaptchaInstance) => void;
+    // (undocumented)
+    immediate?: boolean;
+    // (undocumented)
+    language?: string;
+    // (undocumented)
+    mode: string;
+    // (undocumented)
+    onError?: (error: Error) => void;
+    // (undocumented)
+    rem?: number;
+    // (undocumented)
+    SceneId: string;
+    // (undocumented)
+    slideStyle?: {
+        width: number;
+        height: number;
+    };
+    // (undocumented)
+    success: CaptchaVerifyCallback;
+    // (undocumented)
+    timeout?: number;
 }
 
 // @public (undocumented)
@@ -280,8 +319,139 @@ export interface ArticleFolderAdapterOptions {
     httpClient: TreeHttpClient;
 }
 
+// @public (undocumented)
+export interface ArtifactPreviewItem {
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    metadata?: unknown;
+    // (undocumented)
+    mimeType?: string;
+    // (undocumented)
+    raw?: unknown;
+    // (undocumented)
+    size?: number;
+    // (undocumented)
+    title?: string;
+    // (undocumented)
+    type?: string;
+    // (undocumented)
+    uri?: string;
+}
+
 // @public
 export type AsyncOptionsLoader = (model: Record<string, unknown>) => Promise<FormFieldOption[]>;
+
+// @public (undocumented)
+export interface AsyncTaskAction {
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    onClick: (task: AsyncTaskRecord) => void | Promise<void>;
+    // (undocumented)
+    type?: 'default' | 'primary' | 'success' | 'warning' | 'error' | 'info';
+}
+
+// @public (undocumented)
+export interface AsyncTaskCenterInstance {
+    // (undocumented)
+    actions: (task: AsyncTaskRecord) => AsyncTaskAction[];
+    // (undocumented)
+    clearAll: () => void;
+    // (undocumented)
+    destroy: () => void;
+    // (undocumented)
+    pendingCount: ComputedRef<number>;
+    // (undocumented)
+    records: ComputedRef<AsyncTaskRecord[]>;
+    // (undocumented)
+    refresh: (jobId: string) => Promise<void>;
+    // (undocumented)
+    remove: (jobId: string) => void;
+    // (undocumented)
+    start: () => void;
+    // (undocumented)
+    stop: () => void;
+    // (undocumented)
+    watch: (input: WatchAsyncTaskInput) => void;
+}
+
+// @public (undocumented)
+export interface AsyncTaskCenterOptions {
+    // (undocumented)
+    maxRecords?: number;
+    // (undocumented)
+    onStatusChange?: (task: AsyncTaskRecord, previousStatus: AsyncTaskStatus) => void;
+    // (undocumented)
+    pollIntervalMs?: number;
+    // (undocumented)
+    query: AsyncTaskQuery;
+    // (undocumented)
+    resolveActions?: (task: AsyncTaskRecord) => AsyncTaskAction[];
+    // (undocumented)
+    storageKey?: string;
+    // (undocumented)
+    timeoutMs?: number;
+}
+
+// @public (undocumented)
+export interface AsyncTaskQuery {
+    // (undocumented)
+    getMany: (jobIds: string[]) => Promise<AsyncTaskSnapshot[]>;
+}
+
+// @public (undocumented)
+export interface AsyncTaskRecord {
+    // (undocumented)
+    artifact?: string;
+    // (undocumented)
+    createdAt: number;
+    // (undocumented)
+    deadlineAt: number;
+    // (undocumented)
+    errorMessage?: string;
+    // (undocumented)
+    jobId: string;
+    // (undocumented)
+    metadata?: Record<string, unknown>;
+    // (undocumented)
+    progress: number;
+    // (undocumented)
+    status: AsyncTaskStatus;
+    // (undocumented)
+    taskType: string;
+    // (undocumented)
+    title: string;
+    // (undocumented)
+    unread: boolean;
+    // (undocumented)
+    updatedAt: number;
+}
+
+// @public (undocumented)
+export interface AsyncTaskSnapshot {
+    // (undocumented)
+    artifact?: string;
+    // (undocumented)
+    errorMessage?: string;
+    // (undocumented)
+    jobId: string;
+    // (undocumented)
+    progress: number;
+    // (undocumented)
+    status: string;
+    // (undocumented)
+    taskType: string;
+    // (undocumented)
+    updatedAt?: string;
+}
+
+// @public (undocumented)
+export type AsyncTaskStatus = 'pending' | 'running' | 'succeeded' | 'failed' | 'cancelled' | 'timeout';
 
 // @public (undocumented)
 export interface AuthConfig {
@@ -300,7 +470,7 @@ export interface AuthConfig {
     // (undocumented)
     storage: TokenStorage;
     // (undocumented)
-    storageKeys?: AuthStorageKeys;
+    storageKeys?: Partial<AuthStorageKeys>;
 }
 
 // @public (undocumented)
@@ -313,6 +483,8 @@ export interface AuthState {
     isAuthenticated: boolean;
     // (undocumented)
     isRefreshing: boolean;
+    // (undocumented)
+    refreshAt: number | null;
 }
 
 // @public (undocumented)
@@ -321,6 +493,8 @@ export interface AuthStorageKeys {
     accessToken: string;
     // (undocumented)
     expiresAt: string;
+    // (undocumented)
+    refreshAt: string;
     // (undocumented)
     refreshToken: string;
 }
@@ -414,6 +588,75 @@ export function canvasToBlob(canvas: HTMLCanvasElement, outputType: ImageCropOut
 
 // @public (undocumented)
 export function canvasToFile(canvas: HTMLCanvasElement, sourceFile: File, options?: ImageCropOptions): Promise<File>;
+
+// @public (undocumented)
+export interface CaptchaConfig {
+    // (undocumented)
+    autoRefresh?: boolean;
+    // (undocumented)
+    enabled: boolean;
+    // (undocumented)
+    immediate?: boolean;
+    // (undocumented)
+    language?: 'cn' | 'tw' | 'en';
+    // (undocumented)
+    mode?: 'popup' | 'embed';
+    // (undocumented)
+    prefix: string;
+    // (undocumented)
+    provider: 'aliyun';
+    // (undocumented)
+    region?: 'cn' | 'sgp';
+    // (undocumented)
+    rem?: number;
+    // (undocumented)
+    scene: string;
+    // (undocumented)
+    scriptUrl?: string;
+    // (undocumented)
+    slideStyle?: {
+        width: number;
+        height: number;
+    };
+    // (undocumented)
+    timeout?: number;
+}
+
+// @public (undocumented)
+export type CaptchaErrorCallback = (error: Error) => void;
+
+// @public (undocumented)
+export interface CaptchaInstance {
+    // (undocumented)
+    hide?: () => void;
+    // (undocumented)
+    reset?: () => void;
+    // (undocumented)
+    show?: () => void;
+}
+
+// @public (undocumented)
+export interface CaptchaSceneToken {
+    // (undocumented)
+    expires_in: number;
+    // (undocumented)
+    provider: string;
+    // (undocumented)
+    scene: string;
+    // (undocumented)
+    scene_id: string;
+    // (undocumented)
+    token: string;
+}
+
+// @public (undocumented)
+export type CaptchaSceneTokenLoader = (scene: string) => Promise<CaptchaSceneToken>;
+
+// @public (undocumented)
+export type CaptchaStatus = 'disabled' | 'loading' | 'ready' | 'error';
+
+// @public (undocumented)
+export type CaptchaVerifyCallback = (captchaVerifyParam: string) => void | Promise<void>;
 
 // @public (undocumented)
 export interface ChatConversation {
@@ -658,6 +901,96 @@ export interface ChunkUploadOptions {
 export function cloneGraph(graph: WorkflowGraph): WorkflowGraph;
 
 // @public (undocumented)
+export interface CodeGeneratorApplyPayload {
+    // (undocumented)
+    sourceText: string;
+    // (undocumented)
+    strategyKey: string;
+    // (undocumented)
+    targetType: string;
+    // (undocumented)
+    value: string;
+}
+
+// @public (undocumented)
+export interface CodeGeneratorDialogEmits {
+    // (undocumented)
+    'update:show': [value: boolean];
+    // (undocumented)
+    'update:targetType': [value: string];
+    // (undocumented)
+    apply: [payload: CodeGeneratorApplyPayload];
+}
+
+// @public (undocumented)
+export interface CodeGeneratorDialogProps {
+    // (undocumented)
+    applyLabel?: string;
+    // (undocumented)
+    cancelLabel?: string;
+    // (undocumented)
+    currentValue?: string;
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    extra?: Record<string, unknown>;
+    // (undocumented)
+    previewLabel?: string;
+    // (undocumented)
+    show: boolean;
+    // (undocumented)
+    sourceLabel?: string;
+    // (undocumented)
+    sourcePlaceholder?: string;
+    // (undocumented)
+    sourceText?: string;
+    // (undocumented)
+    strategies: CodeGeneratorStrategy[];
+    // (undocumented)
+    targetType?: string;
+    // (undocumented)
+    targetTypes: CodeGeneratorTargetType[];
+    // (undocumented)
+    title?: string;
+}
+
+// @public (undocumented)
+export interface CodeGeneratorStrategy {
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    generate: (context: CodeGeneratorStrategyContext) => string;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    targetTypes: string[];
+}
+
+// @public (undocumented)
+export interface CodeGeneratorStrategyContext {
+    // (undocumented)
+    currentValue: string;
+    // (undocumented)
+    extra?: Record<string, unknown>;
+    // (undocumented)
+    sourceText: string;
+    // (undocumented)
+    targetType: string;
+}
+
+// @public (undocumented)
+export interface CodeGeneratorTargetType {
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label: string;
+}
+
+// @public (undocumented)
 export interface CodeVerifyEmits {
     // (undocumented)
     'update:modelValue': [value: string];
@@ -686,6 +1019,8 @@ export interface CodeVerifyProps {
     // (undocumented)
     autoFocus?: boolean;
     // (undocumented)
+    autoStartCountdown?: boolean;
+    // (undocumented)
     codeLength?: number;
     // (undocumented)
     countdown?: number;
@@ -699,6 +1034,8 @@ export interface CodeVerifyProps {
     placeholder?: string;
     // (undocumented)
     resendLabel?: string;
+    // (undocumented)
+    sendDisabled?: boolean;
     // (undocumented)
     sending?: boolean;
     // (undocumented)
@@ -744,13 +1081,13 @@ export interface ColumnConfigItem {
     visible: boolean;
 }
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_14" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_23" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const ColumnEditDrawer: DefineComponent<__VLS_Props_14, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+export const ColumnEditDrawer: DefineComponent<__VLS_Props_23, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
 save: (form: ColumnEditForm) => any;
 "update:visible": (v: boolean) => any;
-}, string, PublicProps, Readonly<__VLS_Props_14> & Readonly<{
+}, string, PublicProps, Readonly<__VLS_Props_23> & Readonly<{
 onSave?: ((form: ColumnEditForm) => any) | undefined;
 "onUpdate:visible"?: ((v: boolean) => any) | undefined;
 }>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, any>;
@@ -816,6 +1153,9 @@ export function createArticleFolderAdapter(options: ArticleFolderAdapterOptions)
     requestHooks: TreeRequestHooks;
     checkDelete: CheckDeleteFn;
 };
+
+// @public (undocumented)
+export function createAsyncTaskCenter(options: AsyncTaskCenterOptions): AsyncTaskCenterInstance;
 
 // @public (undocumented)
 export function createDashboardExportPayload(dashboard: DashboardDefinition, layout: DashboardLayoutItem[]): DashboardExportPayload;
@@ -928,14 +1268,24 @@ export interface CrudFormDialogProps {
 // @public (undocumented)
 export type CrudMode = 'create' | 'edit' | 'view';
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_13" needs to be exported by the entry point index.d.ts
+// @public (undocumented)
+export interface CSRFProvider {
+    // (undocumented)
+    getToken: () => Promise<string | null>;
+    // (undocumented)
+    headerName?: string;
+    // (undocumented)
+    refreshToken?: () => Promise<string | null>;
+}
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_22" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const CustomHeader: DefineComponent<__VLS_Props_13, {
+export const CustomHeader: DefineComponent<__VLS_Props_22, {
 init: typeof init;
 refresh: typeof refresh;
 destroy: typeof destroy;
-}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_13> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_22> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
 export { darkTheme }
 
@@ -1254,11 +1604,16 @@ export interface DataTableColumn<T = Record<string, unknown>> {
 }
 
 // @public (undocumented)
+export type DataTableDensity = 'compact' | 'default' | 'comfortable' | 'operations';
+
+// @public (undocumented)
 export interface DataTableEmits<T = Record<string, unknown>> {
     // (undocumented)
     'server-params-change': [params: ServerSideParams];
     // (undocumented)
     'update:checkedRowKeys': [keys: DataTableRowKey[]];
+    // (undocumented)
+    'update:density': [density: DataTableDensity];
     // (undocumented)
     'update:filters': [filters: DataTableFilterState[]];
     // (undocumented)
@@ -1274,7 +1629,9 @@ export interface DataTableEmits<T = Record<string, unknown>> {
     // (undocumented)
     export: [payload: DataTableExportPayload<T>];
     // (undocumented)
-    rowClick: [row: T, index: number];
+    refresh: [];
+    // (undocumented)
+    rowClick: [row: any, index: number];
 }
 
 // @public (undocumented)
@@ -1325,6 +1682,9 @@ export interface DataTableFilterState {
 }
 
 // @public (undocumented)
+export type DataTableOverflowPolicy = 'visible' | 'horizontal' | 'auto';
+
+// @public (undocumented)
 export interface DataTablePagination {
     // (undocumented)
     page: number;
@@ -1353,6 +1713,10 @@ export interface DataTableProps<T = Record<string, unknown>> {
     // (undocumented)
     defaultSort?: DataTableSortState;
     // (undocumented)
+    density?: DataTableDensity;
+    // (undocumented)
+    densitySwitchable?: boolean;
+    // (undocumented)
     emptyText?: string;
     exportable?: boolean;
     exportHandler?: (payload: DataTableExportPayload<T>) => void | Promise<void>;
@@ -1362,7 +1726,11 @@ export interface DataTableProps<T = Record<string, unknown>> {
     // (undocumented)
     maxHeight?: number | string;
     // (undocumented)
+    overflowPolicy?: DataTableOverflowPolicy;
+    // (undocumented)
     pagination?: DataTablePagination | false;
+    // (undocumented)
+    refreshable?: boolean;
     remote?: boolean;
     // (undocumented)
     rowKey?: string | ((row: T) => DataTableRowKey);
@@ -1415,16 +1783,22 @@ export interface DataTableSortState {
     order: 'ascend' | 'descend' | false;
 }
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_20" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_29" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const DateTimeCellEditor: DefineComponent<__VLS_Props_20, {
+export const DateTimeCellEditor: DefineComponent<__VLS_Props_29, {
 getValue: typeof getValue_3;
 isCancelBeforeStart: typeof isCancelBeforeStart_3;
 isCancelAfterEnd: typeof isCancelAfterEnd_3;
-}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_20> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_29> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {
 inputRef: HTMLInputElement;
 }, HTMLInputElement>;
+
+// @public (undocumented)
+export function decimalMoneyToMinor(value: string, scale?: number): number | null;
+
+// @public (undocumented)
+export const DEFAULT_ALIYUN_CAPTCHA_SCRIPT_URL = "https://o.alicdn.com/captcha-frontend/aliyunCaptcha/AliyunCaptcha.js";
 
 // @public (undocumented)
 export const DEFAULT_I18N: TreeI18n;
@@ -1555,6 +1929,33 @@ export interface DesignConfig {
     // (undocumented)
     primaryColor: string;
 }
+
+// @public (undocumented)
+export interface DetailPageProps {
+    // (undocumented)
+    dataTestid?: string;
+}
+
+// @public (undocumented)
+export interface DetectedResource {
+    // (undocumented)
+    id: string;
+    // (undocumented)
+    kind: ResourcePreviewKind;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    path: string;
+    // (undocumented)
+    previewable: boolean;
+    // (undocumented)
+    url: string;
+    // (undocumented)
+    value: string;
+}
+
+// @public (undocumented)
+export function detectJsonResources(value: unknown, options?: ResourceDetectOptions): DetectedResource[];
 
 // @public (undocumented)
 export interface DevtoolsPluginOptions {
@@ -1695,7 +2096,7 @@ export interface DocsApiAdapter {
     // (undocumented)
     getFileContent: (dir: string, path: string) => Promise<DocFileContent>;
     // (undocumented)
-    getFileList: (order: DocSortOrder, sortBy?: DocSortBy) => Promise<DocListFilesResponse>;
+    getFileList: (order: DocSortOrder, sortBy?: DocSortBy, page?: number, pageSize?: number) => Promise<DocListFilesResponse>;
 }
 
 // @public (undocumented)
@@ -1991,6 +2392,10 @@ export interface FilterBarProProps {
     cols?: number;
     // (undocumented)
     defaultCollapsed?: boolean;
+    // Warning: (ae-forgotten-export) The symbol "FilterBarLayoutPreset" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    layoutPreset?: FilterBarLayoutPreset;
     // (undocumented)
     maxVisibleFields?: number;
     // (undocumented)
@@ -2026,14 +2431,14 @@ export interface FilterBarProSlots {
     }) => VNode;
 }
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_15" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_24" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const FilterDrawer: DefineComponent<__VLS_Props_15, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+export const FilterDrawer: DefineComponent<__VLS_Props_24, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
 apply: (c: FilterCondition[]) => any;
 "update:visible": (v: boolean) => any;
 "update:conditions": (c: FilterCondition[]) => any;
-}, string, PublicProps, Readonly<__VLS_Props_15> & Readonly<{
+}, string, PublicProps, Readonly<__VLS_Props_24> & Readonly<{
 onApply?: ((c: FilterCondition[]) => any) | undefined;
 "onUpdate:visible"?: ((v: boolean) => any) | undefined;
 "onUpdate:conditions"?: ((c: FilterCondition[]) => any) | undefined;
@@ -2165,6 +2570,9 @@ export type FontWeightToken = 'normal' | 'medium' | 'semibold' | 'bold';
 // @public
 export function fontWeightVar(token: FontWeightToken): string;
 
+// @public (undocumented)
+export function formatMinorMoney(value: MoneyValue, options?: MoneyFormatOptions): string;
+
 // @public
 export interface FormFieldGroup {
     collapsible?: boolean;
@@ -2207,10 +2615,16 @@ export interface FormFieldRule {
 
 // @public (undocumented)
 export interface FormFieldSchema {
+    accept?: string;
+    action?: string;
     asyncOptions?: AsyncOptionsLoader;
+    businessId?: string;
+    businessType?: string;
     buttonGroupMultiple?: boolean;
+    clearable?: boolean;
     // (undocumented)
     component?: Component;
+    componentEventMap?: Record<string, string>;
     // (undocumented)
     componentProps?: Record<string, unknown>;
     // (undocumented)
@@ -2219,12 +2633,17 @@ export interface FormFieldSchema {
     // (undocumented)
     disabled?: boolean | ((model: Record<string, unknown>) => boolean);
     group?: string;
+    headers?: Record<string, string>;
     // (undocumented)
     hidden?: boolean | ((model: Record<string, unknown>) => boolean);
+    inputType?: 'text' | 'password';
     // (undocumented)
     key: string;
     // (undocumented)
     label: string;
+    maxCount?: number;
+    maxSizeMB?: number;
+    mediaClass?: 'image' | 'video' | 'archive' | 'file' | string;
     // (undocumented)
     options?: FormFieldOption[];
     // (undocumented)
@@ -2233,12 +2652,31 @@ export interface FormFieldSchema {
     rules?: FormFieldRule[];
     // (undocumented)
     span?: number;
+    storage?: string;
     // (undocumented)
     type: FormFieldType;
+    withCredentials?: boolean;
 }
 
 // @public (undocumented)
-export type FormFieldType = 'input' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'switch' | 'date' | 'daterange' | 'number' | 'upload' | 'button-group' | 'custom';
+export type FormFieldType = 'input' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'switch' | 'date' | 'daterange' | 'number' | 'upload' | 'image_crop_upload' | 'storage_id' | 'button-group' | 'custom';
+
+// @public (undocumented)
+export interface FormPageProps {
+    // (undocumented)
+    cardTestid?: string;
+    // (undocumented)
+    dataTestid?: string;
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    title?: string;
+    // (undocumented)
+    width?: FormPageWidth;
+}
+
+// @public (undocumented)
+export type FormPageWidth = 'narrow' | 'medium' | 'wide' | 'full';
 
 // @public (undocumented)
 export interface FormRendererEmits {
@@ -2271,6 +2709,8 @@ export interface FormRendererProps {
     // (undocumented)
     cols?: number;
     // (undocumented)
+    columnGap?: number;
+    // (undocumented)
     disabled?: boolean;
     groups?: FormFieldGroup[];
     // (undocumented)
@@ -2282,7 +2722,10 @@ export interface FormRendererProps {
     // (undocumented)
     readonly?: boolean;
     // (undocumented)
+    rowGap?: number;
+    // (undocumented)
     schema: FormFieldSchema[];
+    showActions?: boolean;
     // (undocumented)
     showFeedback?: boolean;
     // (undocumented)
@@ -2509,7 +2952,7 @@ export interface HttpClient {
     // (undocumented)
     patch: <T = unknown>(url: string, data?: unknown) => Promise<ApiResponse<T>>;
     // (undocumented)
-    post: <T = unknown>(url: string, data?: unknown) => Promise<ApiResponse<T>>;
+    post: <T = unknown>(url: string, data?: unknown, options?: Omit<RequestOptions, 'url' | 'method' | 'data'>) => Promise<ApiResponse<T>>;
     // (undocumented)
     put: <T = unknown>(url: string, data?: unknown) => Promise<ApiResponse<T>>;
     // (undocumented)
@@ -2518,6 +2961,8 @@ export interface HttpClient {
 
 // @public (undocumented)
 export interface HttpClientConfig {
+    // (undocumented)
+    csrfProvider?: CSRFProvider;
     // (undocumented)
     errorStrategy?: ErrorStrategyConfig;
     // (undocumented)
@@ -2579,6 +3024,23 @@ export interface IconRegistryEntry {
 
 // @public (undocumented)
 export type IconSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | number;
+
+// @public (undocumented)
+export interface IconTileProps {
+    icon: string;
+    // (undocumented)
+    size?: IconTileSize;
+    // (undocumented)
+    strokeWidth?: number;
+    // (undocumented)
+    tone?: IconTileTone;
+}
+
+// @public (undocumented)
+export type IconTileSize = 'sm' | 'md' | 'lg' | number;
+
+// @public
+export type IconTileTone = 'brand' | 'success' | 'warning' | 'danger' | 'info' | 'accent' | 'neutral';
 
 // @public (undocumented)
 export interface ImageCropLocale {
@@ -2701,6 +3163,9 @@ export interface IndexProgressProps {
 // @public (undocumented)
 export type IndexStatus = 'idle' | 'indexing' | 'completed' | 'failed';
 
+// @public (undocumented)
+export function inspectMiniRichTextCompatibility(input: string): MiniRichTextCompatibilityIssue[];
+
 // @public
 export function installAppConfig(app: App, input?: Partial<AppConfigInput>): AppConfigContext;
 
@@ -2712,6 +3177,66 @@ export function isImageFile(file: File): boolean;
 
 // @public (undocumented)
 export function isToolInvocationEvent(e: ToolCallEvent): e is ToolInvocationEvent;
+
+// @public (undocumented)
+export function isValidDecimalMoney(value: string, scale?: number): boolean;
+
+// @public (undocumented)
+export interface JsonViewerExpose {
+    // (undocumented)
+    close: () => void;
+    // (undocumented)
+    copy: () => Promise<void>;
+    // (undocumented)
+    open: () => void;
+}
+
+// @public (undocumented)
+export interface JsonViewerLine {
+    // (undocumented)
+    number: number;
+    // (undocumented)
+    tokens: JsonViewerToken[];
+}
+
+// @public (undocumented)
+export interface JsonViewerProps {
+    // (undocumented)
+    copyable?: boolean;
+    // (undocumented)
+    emptyText?: string;
+    // (undocumented)
+    expandable?: boolean;
+    // (undocumented)
+    height?: number | string;
+    // (undocumented)
+    maxHeight?: number | string;
+    // (undocumented)
+    showHeader?: boolean;
+    // (undocumented)
+    size?: JsonViewerSize;
+    // (undocumented)
+    title?: string;
+    // (undocumented)
+    value?: JsonViewerValue;
+}
+
+// @public (undocumented)
+export type JsonViewerSize = 'small' | 'medium' | 'large';
+
+// @public (undocumented)
+export interface JsonViewerToken {
+    // (undocumented)
+    text: string;
+    // (undocumented)
+    type: JsonViewerTokenType;
+}
+
+// @public (undocumented)
+export type JsonViewerTokenType = 'plain' | 'key' | 'string' | 'number' | 'boolean' | 'null' | 'punctuation';
+
+// @public (undocumented)
+export type JsonViewerValue = unknown;
 
 // @public (undocumented)
 export type KpiGridCols = 1 | 2 | 3 | 4 | 6;
@@ -2829,6 +3354,59 @@ export type LineHeightToken = 'none' | 'tight' | 'snug' | 'base' | 'relaxed' | '
 export function lineHeightVar(token: LineHeightToken): string;
 
 // @public (undocumented)
+export interface ListPageEmits {
+    // (undocumented)
+    'update:columnPresets': [presets: ColumnPreset[]];
+    // (undocumented)
+    'update:density': [density: TableDensity];
+    // (undocumented)
+    'update:fullscreen': [fullscreen: boolean];
+    // (undocumented)
+    action: [key: string];
+    // (undocumented)
+    export: [];
+    // (undocumented)
+    refresh: [];
+}
+
+// @public (undocumented)
+export interface ListPageProps {
+    // (undocumented)
+    actions?: TableToolbarAction[];
+    // (undocumented)
+    columnConfigurable?: boolean;
+    // (undocumented)
+    columnPresets?: ColumnPreset[];
+    // (undocumented)
+    currentDensity?: TableDensity;
+    // (undocumented)
+    dataTestid?: string;
+    // (undocumented)
+    densitySwitchable?: boolean;
+    // (undocumented)
+    exportable?: boolean;
+    // (undocumented)
+    exportConfirmMessage?: string;
+    // (undocumented)
+    exportLabel?: string;
+    // (undocumented)
+    fullscreenable?: boolean;
+    // (undocumented)
+    loading?: boolean;
+    // (undocumented)
+    refreshable?: boolean;
+    // (undocumented)
+    tableTestid?: string;
+    // (undocumented)
+    title?: string;
+}
+
+// Warning: (ae-forgotten-export) The symbol "LoadAliyunCaptchaOptions" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export function loadAliyunCaptcha(options: LoadAliyunCaptchaOptions): Promise<void>;
+
+// @public (undocumented)
 export interface LoadingBarApi {
     // (undocumented)
     error: () => void;
@@ -2852,12 +3430,12 @@ export type MarkdownEditorViewMode = 'split' | 'edit' | 'preview';
 // @public (undocumented)
 export type MarkdownPreviewTheme = 'github' | 'github-dark';
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_10" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_18" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const MarkdownToc: DefineComponent<__VLS_Props_10, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+export const MarkdownToc: DefineComponent<__VLS_Props_18, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
 "scroll-to": (id: string) => any;
-}, string, PublicProps, Readonly<__VLS_Props_10> & Readonly<{
+}, string, PublicProps, Readonly<__VLS_Props_18> & Readonly<{
 "onScroll-to"?: ((id: string) => any) | undefined;
 }>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
@@ -2882,6 +3460,88 @@ export interface MCPServerOption {
         name: string;
         description: string;
     }>;
+}
+
+// @public
+export interface MediaResource {
+    // (undocumented)
+    contentType: string;
+    // (undocumented)
+    durationMs?: number;
+    // (undocumented)
+    filename: string;
+    // (undocumented)
+    height?: number;
+    // (undocumented)
+    mediaClass: MediaResourceClass;
+    // (undocumented)
+    size: number;
+    // (undocumented)
+    storageId: string;
+    // (undocumented)
+    url: string;
+    // (undocumented)
+    width?: number;
+}
+
+// @public (undocumented)
+export type MediaResourceClass = 'image' | 'video' | 'audio' | 'document' | 'archive';
+
+// @public (undocumented)
+export function mediaResourceToUploadFile(resource: MediaResource): ProUploadFileItem;
+
+// @public (undocumented)
+export interface MediaResourceUploadEmits {
+    // (undocumented)
+    (event: 'update:modelValue', value: MediaResource | null): void;
+    // (undocumented)
+    (event: 'success', resource: MediaResource, file: ProUploadFileItem, response: unknown): void;
+    // (undocumented)
+    (event: 'error', file: ProUploadFileItem, error: Error): void;
+    // (undocumented)
+    (event: 'remove', resource: MediaResource | null): void;
+}
+
+// @public (undocumented)
+export interface MediaResourceUploadProps {
+    // (undocumented)
+    accept?: string;
+    // (undocumented)
+    action?: string;
+    // (undocumented)
+    businessId?: string;
+    // (undocumented)
+    businessType?: string;
+    // (undocumented)
+    customRequest?: (options: ProUploadRequestOptions) => void;
+    // (undocumented)
+    dataTestid?: string;
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    draggable?: boolean;
+    // (undocumented)
+    headers?: Record<string, string>;
+    // (undocumented)
+    listType?: ProUploadProps['listType'];
+    // (undocumented)
+    maxSizeMB?: number;
+    // (undocumented)
+    mediaClass: MediaResourceClass;
+    // (undocumented)
+    modelValue?: MediaResource | null;
+    // (undocumented)
+    readonly?: boolean;
+    // (undocumented)
+    storage: string;
+    // (undocumented)
+    withCredentials?: boolean;
+}
+
+// @public (undocumented)
+export interface MediaResourceUploadSlots {
+    // (undocumented)
+    tip?: () => VNode;
 }
 
 // @public (undocumented)
@@ -3057,6 +3717,55 @@ export interface MessageApi {
 }
 
 // @public (undocumented)
+export interface MiniRichTextCompatibilityIssue {
+    // (undocumented)
+    level: 'warning' | 'error';
+    // (undocumented)
+    message: string;
+}
+
+// @public (undocumented)
+export interface MiniRichTextEditorProps {
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    enableFullscreenPreview?: boolean;
+    // (undocumented)
+    height?: string | number;
+    // (undocumented)
+    imageUploadAdapter?: MiniRichTextImageUploadAdapter;
+    // (undocumented)
+    modelValue?: string;
+    // (undocumented)
+    placeholder?: string;
+    // (undocumented)
+    readonly?: boolean;
+}
+
+// @public (undocumented)
+export interface MiniRichTextImageUploadAdapter {
+    // (undocumented)
+    upload: (file: File) => Promise<{
+        url: string;
+        alt?: string;
+    }>;
+}
+
+// @public (undocumented)
+export type MiniRichTextPreviewMode = 'mini' | 'web';
+
+// @public (undocumented)
+export interface MiniRichTextPreviewProps {
+    // (undocumented)
+    content?: string;
+    // (undocumented)
+    emptyText?: string;
+}
+
+// @public (undocumented)
+export function minorMoneyToDecimal(value: number | null | undefined, scale?: number): string;
+
+// @public (undocumented)
 export interface ModalDialogEmits {
     // (undocumented)
     'update:visible': [visible: boolean];
@@ -3123,21 +3832,38 @@ export interface ModalDialogSlots {
 // @public (undocumented)
 export type ModalPreset = 'dialog' | 'confirm' | 'info' | 'success' | 'warning' | 'error';
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_17" needs to be exported by the entry point index.d.ts
+// @public (undocumented)
+export interface MoneyFormatOptions {
+    // (undocumented)
+    currency?: string;
+    // (undocumented)
+    currencyPosition?: 'prefix' | 'suffix';
+    // (undocumented)
+    emptyText?: string;
+    // (undocumented)
+    scale?: number;
+    // (undocumented)
+    showCurrency?: boolean;
+}
+
+// @public (undocumented)
+export type MoneyValue = number | null | undefined;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_26" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const MultiSelectCellEditor: DefineComponent<__VLS_Props_17, {
+export const MultiSelectCellEditor: DefineComponent<__VLS_Props_26, {
 getValue: typeof getValue_2;
 isCancelBeforeStart: typeof isCancelBeforeStart_2;
 isCancelAfterEnd: typeof isCancelAfterEnd_2;
-}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_17> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_26> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {
 wrapRef: HTMLDivElement;
 }, HTMLDivElement>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_19" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_28" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const MultiSelectCellRenderer: DefineComponent<__VLS_Props_19, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_19> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+export const MultiSelectCellRenderer: DefineComponent<__VLS_Props_28, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_28> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
 export { NAlert }
 
@@ -3205,6 +3931,9 @@ export function normalizeCropFileName(fileName: string, outputType: ImageCropOut
 export function normalizeMenuTree(items: AppMenuItem[]): AppMenuItem[];
 
 // @public (undocumented)
+export function normalizeMoneyScale(scale?: number): number;
+
+// @public (undocumented)
 export function normalizeRouteQuickActionsConfig(value: unknown): RouteQuickActionsWidgetConfig;
 
 // @public (undocumented)
@@ -3270,6 +3999,7 @@ export interface NotificationItem {
     duration?: number;
     // (undocumented)
     id: string;
+    metadata?: Record<string, unknown>;
     onAction?: () => void;
     // (undocumented)
     read: boolean;
@@ -3375,6 +4105,14 @@ export interface PageHeaderProps {
 }
 
 // @public (undocumented)
+export interface PageProps {
+    // (undocumented)
+    dataTestid?: string;
+    // (undocumented)
+    tone?: PageTone;
+}
+
+// @public (undocumented)
 export interface PageSkeletonProps {
     // (undocumented)
     animated?: boolean;
@@ -3391,6 +4129,9 @@ export interface PageSkeletonProps {
     // (undocumented)
     showToolbar?: boolean;
 }
+
+// @public (undocumented)
+export type PageTone = 'default' | 'plain';
 
 // @public (undocumented)
 export function parseDashboardImportPayload(text: string): DashboardExportPayload;
@@ -3873,10 +4614,14 @@ export interface ProUploadFileItem {
     // (undocumented)
     fileId?: number;
     // (undocumented)
+    mediaInfo?: ProUploadMediaInfo;
+    // (undocumented)
     name: string;
     // (undocumented)
     progress: number;
     raw?: File;
+    // (undocumented)
+    responseData?: unknown;
     _retryCount?: number;
     // (undocumented)
     size: number;
@@ -3919,6 +4664,36 @@ export interface ProUploadLocale {
     retryLabel?: string;
     // (undocumented)
     uploadFailed?: string;
+}
+
+// @public (undocumented)
+export interface ProUploadMediaInfo {
+    // (undocumented)
+    [key: string]: unknown;
+    // (undocumented)
+    aspect_ratio?: string;
+    // (undocumented)
+    bitrate_kbps?: number;
+    // (undocumented)
+    codec_name?: string;
+    // (undocumented)
+    content_type?: string;
+    // (undocumented)
+    duration_ms?: number;
+    // (undocumented)
+    format_name?: string;
+    // (undocumented)
+    height?: number;
+    // (undocumented)
+    media_class?: string;
+    // (undocumented)
+    probe_error?: string;
+    // (undocumented)
+    probe_status?: 'success' | 'failed' | string;
+    // (undocumented)
+    size_bytes?: number;
+    // (undocumented)
+    width?: number;
 }
 
 // @public (undocumented)
@@ -3978,6 +4753,10 @@ export interface ProUploadRawResponse {
     file_size?: number;
     // (undocumented)
     id?: number;
+    // (undocumented)
+    media_info?: ProUploadMediaInfo;
+    // (undocumented)
+    mediaInfo?: ProUploadMediaInfo;
     // (undocumented)
     original_filename?: string;
     // (undocumented)
@@ -4087,11 +4866,25 @@ export interface QueryTableProps<T = Record<string, unknown>> {
     // (undocumented)
     defaultPageSize?: number;
     // (undocumented)
+    emptyDescription?: string;
+    // (undocumented)
+    emptyIcon?: string;
+    // (undocumented)
+    emptyTitle?: string;
+    // (undocumented)
+    errorIcon?: string;
+    // (undocumented)
+    errorTitle?: string;
+    // (undocumented)
     fetchData: (params: QueryTableFetchParams) => Promise<QueryTableFetchResult<T>>;
     // (undocumented)
     pageSizes?: number[];
     // (undocumented)
     querySchema?: FormFieldSchema[];
+    // (undocumented)
+    resolveErrorMessage?: (error: unknown) => string;
+    // (undocumented)
+    retryLabel?: string;
     // (undocumented)
     rowKey?: string | ((row: T) => DataTableRowKey);
     // (undocumented)
@@ -4112,6 +4905,13 @@ export interface QuickFilter {
     value: unknown;
 }
 
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RaCaptcha: __VLS_WithTemplateSlots<typeof __VLS_component, __VLS_TemplateResult["slots"]>;
+
 // @public (undocumented)
 export type RadiusToken = 'none' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full';
 
@@ -4125,12 +4925,32 @@ export function radiusVar(token: RadiusToken): string;
 // @public (undocumented)
 export const RAppShell: __VLS_WithTemplateSlots_5<typeof __VLS_component_5, __VLS_TemplateResult_5["slots"]>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_21" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_21" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_21" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_15" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RBatchActionBar: __VLS_WithTemplateSlots_21<typeof __VLS_component_21, __VLS_TemplateResult_21["slots"]>;
+export const RArtifactPreview: DefineComponent<__VLS_Props_15, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_15> & Readonly<{}>, {
+items: ArtifactPreviewItem[];
+loading: boolean;
+maxHeight: number | string;
+emptyText: string;
+statusText: string;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_11" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RAsyncTaskCenter: DefineComponent<__VLS_Props_11, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+open: (task: string) => any;
+}, string, PublicProps, Readonly<__VLS_Props_11> & Readonly<{
+onOpen?: ((task: string) => any) | undefined;
+}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, any>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_26" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_26" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_26" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RBatchActionBar: __VLS_WithTemplateSlots_26<typeof __VLS_component_26, __VLS_TemplateResult_26["slots"]>;
 
 // @public (undocumented)
 export const RBreadcrumb: DefineComponent<ExtractPropTypes<    {
@@ -4173,8 +4993,8 @@ onApply?: ((content: string) => any) | undefined;
 "onUpdate:visible"?: ((value: boolean) => any) | undefined;
 }>, {
 title: string;
-visible: boolean;
 content: string;
+visible: boolean;
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
 // Warning: (ae-forgotten-export) The symbol "RChatConversationListProps" needs to be exported by the entry point index.d.ts
@@ -4224,7 +5044,7 @@ disabled: {
 type: PropType<boolean | undefined>;
 default: undefined;
 };
-size: PropType<Size_2>;
+size: PropType<Size>;
 rows: {
 type: PropType<number | string>;
 default: number;
@@ -4799,7 +5619,7 @@ disabled: {
 type: PropType<boolean | undefined>;
 default: undefined;
 };
-size: PropType<Size_2>;
+size: PropType<Size>;
 rows: {
 type: PropType<number | string>;
 default: number;
@@ -5436,7 +6256,7 @@ disabled: {
 type: PropType<boolean | undefined>;
 default: undefined;
 };
-size: PropType<Size_2>;
+size: PropType<Size>;
 rows: {
 type: PropType<number | string>;
 default: number;
@@ -6011,7 +6831,7 @@ disabled: {
 type: PropType<boolean | undefined>;
 default: undefined;
 };
-size: PropType<Size_2>;
+size: PropType<Size>;
 rows: {
 type: PropType<number | string>;
 default: number;
@@ -6568,19 +7388,19 @@ showPasswordToggle: boolean;
 // @public (undocumented)
 export const RChatMarkdownRenderer: DefineComponent<RChatMarkdownRendererProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<RChatMarkdownRendererProps> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_32" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_31" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_31" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_36" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_36" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_36" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RChatMessage: __VLS_WithTemplateSlots_32<typeof __VLS_component_31, __VLS_TemplateResult_31["slots"]>;
+export const RChatMessage: __VLS_WithTemplateSlots_36<typeof __VLS_component_36, __VLS_TemplateResult_36["slots"]>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_31" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_30" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_30" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_35" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_35" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_35" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RChatMessageList: __VLS_WithTemplateSlots_31<typeof __VLS_component_30, __VLS_TemplateResult_30["slots"]>;
+export const RChatMessageList: __VLS_WithTemplateSlots_35<typeof __VLS_component_35, __VLS_TemplateResult_35["slots"]>;
 
 // Warning: (ae-forgotten-export) The symbol "RChatModelSelectorProps" needs to be exported by the entry point index.d.ts
 //
@@ -6602,12 +7422,12 @@ disabled: boolean;
 tierModels: Partial<Record<TierKey, string>>;
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, any>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_30" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_29" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_29" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_34" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_34" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_34" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RChatPanel: __VLS_WithTemplateSlots_30<typeof __VLS_component_29, __VLS_TemplateResult_29["slots"]>;
+export const RChatPanel: __VLS_WithTemplateSlots_34<typeof __VLS_component_34, __VLS_TemplateResult_34["slots"]>;
 
 // Warning: (ae-forgotten-export) The symbol "RChatStreamRendererProps" needs to be exported by the entry point index.d.ts
 //
@@ -6789,6 +7609,143 @@ cardMinWidth: number;
 }, {}, {}, {}, string, ComponentProvideOptions, true, {}, HTMLDivElement>;
 
 // @public (undocumented)
+export const RCodeGeneratorDialog: DefineComponent<ExtractPropTypes<    {
+show: {
+type: BooleanConstructor;
+required: true;
+};
+title: {
+type: StringConstructor;
+default: string;
+};
+targetTypes: {
+type: PropType<CodeGeneratorTargetType[]>;
+required: true;
+};
+strategies: {
+type: PropType<CodeGeneratorStrategy[]>;
+required: true;
+};
+targetType: {
+type: StringConstructor;
+default: string;
+};
+sourceText: {
+type: StringConstructor;
+default: string;
+};
+currentValue: {
+type: StringConstructor;
+default: string;
+};
+extra: {
+type: PropType<Record<string, unknown>>;
+default: () => {};
+};
+sourceLabel: {
+type: StringConstructor;
+default: string;
+};
+sourcePlaceholder: {
+type: StringConstructor;
+default: string;
+};
+previewLabel: {
+type: StringConstructor;
+default: string;
+};
+applyLabel: {
+type: StringConstructor;
+default: string;
+};
+cancelLabel: {
+type: StringConstructor;
+default: string;
+};
+disabled: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+apply: (payload: CodeGeneratorApplyPayload) => any;
+"update:show": (value: boolean) => any;
+"update:targetType": (value: string) => any;
+}, string, PublicProps, Readonly<ExtractPropTypes<    {
+show: {
+type: BooleanConstructor;
+required: true;
+};
+title: {
+type: StringConstructor;
+default: string;
+};
+targetTypes: {
+type: PropType<CodeGeneratorTargetType[]>;
+required: true;
+};
+strategies: {
+type: PropType<CodeGeneratorStrategy[]>;
+required: true;
+};
+targetType: {
+type: StringConstructor;
+default: string;
+};
+sourceText: {
+type: StringConstructor;
+default: string;
+};
+currentValue: {
+type: StringConstructor;
+default: string;
+};
+extra: {
+type: PropType<Record<string, unknown>>;
+default: () => {};
+};
+sourceLabel: {
+type: StringConstructor;
+default: string;
+};
+sourcePlaceholder: {
+type: StringConstructor;
+default: string;
+};
+previewLabel: {
+type: StringConstructor;
+default: string;
+};
+applyLabel: {
+type: StringConstructor;
+default: string;
+};
+cancelLabel: {
+type: StringConstructor;
+default: string;
+};
+disabled: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>> & Readonly<{
+onApply?: ((payload: CodeGeneratorApplyPayload) => any) | undefined;
+"onUpdate:show"?: ((value: boolean) => any) | undefined;
+"onUpdate:targetType"?: ((value: string) => any) | undefined;
+}>, {
+disabled: boolean;
+title: string;
+previewLabel: string;
+currentValue: string;
+extra: Record<string, unknown>;
+targetType: string;
+sourceText: string;
+sourceLabel: string;
+sourcePlaceholder: string;
+applyLabel: string;
+cancelLabel: string;
+}, {}, {}, {}, string, ComponentProvideOptions, true, {}, any>;
+
+// @public (undocumented)
 export const RCodeVerify: DefineComponent<ExtractPropTypes<    {
 modelValue: {
 type: StringConstructor;
@@ -6822,6 +7779,10 @@ disabled: {
 type: BooleanConstructor;
 default: boolean;
 };
+sendDisabled: {
+type: BooleanConstructor;
+default: boolean;
+};
 sending: {
 type: BooleanConstructor;
 default: boolean;
@@ -6835,6 +7796,10 @@ type: (StringConstructor | NumberConstructor)[];
 default: undefined;
 };
 autoFocus: {
+type: BooleanConstructor;
+default: boolean;
+};
+autoStartCountdown: {
 type: BooleanConstructor;
 default: boolean;
 };
@@ -6881,6 +7846,10 @@ disabled: {
 type: BooleanConstructor;
 default: boolean;
 };
+sendDisabled: {
+type: BooleanConstructor;
+default: boolean;
+};
 sending: {
 type: BooleanConstructor;
 default: boolean;
@@ -6897,6 +7866,10 @@ autoFocus: {
 type: BooleanConstructor;
 default: boolean;
 };
+autoStartCountdown: {
+type: BooleanConstructor;
+default: boolean;
+};
 }>> & Readonly<{
 onSend?: (() => any) | undefined;
 "onUpdate:modelValue"?: ((value: string) => any) | undefined;
@@ -6904,15 +7877,17 @@ onComplete?: ((code: string) => any) | undefined;
 }>, {
 size: "small" | "medium" | "large";
 disabled: boolean;
-autoFocus: boolean;
 placeholder: string;
+autoFocus: boolean;
 codeLength: number;
 countdown: number;
 sendLabel: string;
 sendingLabel: string;
 resendLabel: string;
+sendDisabled: boolean;
 sending: boolean;
 inputWidth: string | number;
+autoStartCountdown: boolean;
 }, {}, {}, {}, string, ComponentProvideOptions, true, {
 codeInputRef: CreateComponentPublicInstanceWithMixins<Readonly<ExtractPropTypes<    {
 bordered: {
@@ -6933,7 +7908,7 @@ disabled: {
 type: PropType<boolean | undefined>;
 default: undefined;
 };
-size: PropType<Size_2>;
+size: PropType<Size>;
 rows: {
 type: PropType<number | string>;
 default: number;
@@ -7508,7 +8483,7 @@ disabled: {
 type: PropType<boolean | undefined>;
 default: undefined;
 };
-size: PropType<Size_2>;
+size: PropType<Size>;
 rows: {
 type: PropType<number | string>;
 default: number;
@@ -8060,21 +9035,21 @@ showPasswordToggle: boolean;
 }> | null;
 }, HTMLDivElement>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_37" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_36" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_36" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_41" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_41" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_41" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RCollapsiblePanel: __VLS_WithTemplateSlots_37<typeof __VLS_component_36, __VLS_TemplateResult_36["slots"]>;
+export const RCollapsiblePanel: __VLS_WithTemplateSlots_41<typeof __VLS_component_41, __VLS_TemplateResult_41["slots"]>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_7" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_8" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RCommandPalette: DefineComponent<__VLS_Props_7, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+export const RCommandPalette: DefineComponent<__VLS_Props_8, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 select: (item: CommandItem) => any;
 search: (query: string) => any;
 "update:visible": (value: boolean) => any;
-}, string, PublicProps, Readonly<__VLS_Props_7> & Readonly<{
+}, string, PublicProps, Readonly<__VLS_Props_8> & Readonly<{
 onSelect?: ((item: CommandItem) => any) | undefined;
 onSearch?: ((query: string) => any) | undefined;
 "onUpdate:visible"?: ((value: boolean) => any) | undefined;
@@ -8157,8 +9132,8 @@ getFormRef: () => FormRendererExpose | null;
 }, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 cancel: () => any;
 submit: (model: Record<string, unknown>, mode: CrudMode) => any;
-"update:model": (model: Record<string, unknown>) => any;
 "update:visible": (visible: boolean) => any;
+"update:model": (model: Record<string, unknown>) => any;
 }, string, PublicProps, Readonly<ExtractPropTypes<    {
 visible: {
 type: BooleanConstructor;
@@ -8199,8 +9174,8 @@ default: number;
 }>> & Readonly<{
 onCancel?: (() => any) | undefined;
 onSubmit?: ((model: Record<string, unknown>, mode: CrudMode) => any) | undefined;
-"onUpdate:model"?: ((model: Record<string, unknown>) => any) | undefined;
 "onUpdate:visible"?: ((visible: boolean) => any) | undefined;
+"onUpdate:model"?: ((model: Record<string, unknown>) => any) | undefined;
 }>, {
 mode: CrudMode;
 title: string;
@@ -8209,337 +9184,7 @@ width: string | number;
 labelWidth: string | number;
 cols: number;
 }, {}, {}, {}, string, ComponentProvideOptions, true, {
-formRef: ({
-$: ComponentInternalInstance;
-$data: {};
-$props: Partial<{
-size: "small" | "medium" | "large";
-disabled: boolean;
-groups: FormFieldGroup[];
-readonly: boolean;
-labelWidth: string | number;
-labelPlacement: "left" | "top";
-cols: number;
-showFeedback: boolean;
-}> & Omit<{
-readonly size: "small" | "medium" | "large";
-readonly disabled: boolean;
-readonly readonly: boolean;
-readonly schema: FormFieldSchema[];
-readonly model: Record<string, unknown>;
-readonly labelWidth: string | number;
-readonly labelPlacement: "left" | "top";
-readonly cols: number;
-readonly showFeedback: boolean;
-readonly groups?: FormFieldGroup[] | undefined;
-readonly onReset?: (() => any) | undefined;
-readonly onSubmit?: ((model: Record<string, unknown>) => any) | undefined;
-readonly "onUpdate:model"?: ((model: Record<string, unknown>) => any) | undefined;
-} & VNodeProps & AllowedComponentProps & ComponentCustomProps, "size" | "disabled" | "groups" | "readonly" | "labelWidth" | "labelPlacement" | "cols" | "showFeedback">;
-$attrs: {
-[x: string]: unknown;
-};
-$refs: {
-[x: string]: unknown;
-} & {
 formRef: CreateComponentPublicInstanceWithMixins<Readonly<ExtractPropTypes<    {
-readonly inline: BooleanConstructor;
-readonly labelWidth: PropType<number | string>;
-readonly labelAlign: PropType<LabelAlign>;
-readonly labelPlacement: {
-readonly type: PropType<LabelPlacement>;
-readonly default: "top";
-};
-readonly model: {
-readonly type: PropType<Record<string, any>>;
-readonly default: () => void;
-};
-readonly rules: PropType<FormRules>;
-readonly disabled: BooleanConstructor;
-readonly size: PropType<Size>;
-readonly showRequireMark: {
-readonly type: PropType<boolean | undefined>;
-readonly default: undefined;
-};
-readonly requireMarkPlacement: PropType<"left" | "right" | "right-hanging">;
-readonly showFeedback: {
-readonly type: BooleanConstructor;
-readonly default: true;
-};
-readonly onSubmit: {
-readonly type: PropType<(e: Event) => void>;
-readonly default: (e: Event) => void;
-};
-readonly showLabel: {
-readonly type: PropType<boolean | undefined>;
-readonly default: undefined;
-};
-readonly validateMessages: PropType<Partial<FormValidateMessages>>;
-readonly theme: PropType<Theme<"Form", {
-blankHeightSmall: string;
-blankHeightMedium: string;
-blankHeightLarge: string;
-lineHeight: string;
-labelTextColor: string;
-asteriskColor: string;
-feedbackTextColorError: string;
-feedbackTextColorWarning: string;
-feedbackTextColor: string;
-feedbackPadding: string;
-feedbackHeightSmall: string;
-feedbackHeightMedium: string;
-feedbackHeightLarge: string;
-feedbackFontSizeSmall: string;
-feedbackFontSizeMedium: string;
-feedbackFontSizeLarge: string;
-labelFontSizeLeftSmall: string;
-labelFontSizeLeftMedium: string;
-labelFontSizeLeftLarge: string;
-labelFontSizeTopSmall: string;
-labelFontSizeTopMedium: string;
-labelFontSizeTopLarge: string;
-labelHeightSmall: string;
-labelHeightMedium: string;
-labelHeightLarge: string;
-labelPaddingVertical: string;
-labelPaddingHorizontal: string;
-labelTextAlignVertical: string;
-labelTextAlignHorizontal: string;
-labelFontWeight: string;
-}, any>>;
-readonly themeOverrides: PropType<ExtractThemeOverrides<Theme<"Form", {
-blankHeightSmall: string;
-blankHeightMedium: string;
-blankHeightLarge: string;
-lineHeight: string;
-labelTextColor: string;
-asteriskColor: string;
-feedbackTextColorError: string;
-feedbackTextColorWarning: string;
-feedbackTextColor: string;
-feedbackPadding: string;
-feedbackHeightSmall: string;
-feedbackHeightMedium: string;
-feedbackHeightLarge: string;
-feedbackFontSizeSmall: string;
-feedbackFontSizeMedium: string;
-feedbackFontSizeLarge: string;
-labelFontSizeLeftSmall: string;
-labelFontSizeLeftMedium: string;
-labelFontSizeLeftLarge: string;
-labelFontSizeTopSmall: string;
-labelFontSizeTopMedium: string;
-labelFontSizeTopLarge: string;
-labelHeightSmall: string;
-labelHeightMedium: string;
-labelHeightLarge: string;
-labelPaddingVertical: string;
-labelPaddingHorizontal: string;
-labelTextAlignVertical: string;
-labelTextAlignHorizontal: string;
-labelFontWeight: string;
-}, any>>>;
-readonly builtinThemeOverrides: PropType<ExtractThemeOverrides<Theme<"Form", {
-blankHeightSmall: string;
-blankHeightMedium: string;
-blankHeightLarge: string;
-lineHeight: string;
-labelTextColor: string;
-asteriskColor: string;
-feedbackTextColorError: string;
-feedbackTextColorWarning: string;
-feedbackTextColor: string;
-feedbackPadding: string;
-feedbackHeightSmall: string;
-feedbackHeightMedium: string;
-feedbackHeightLarge: string;
-feedbackFontSizeSmall: string;
-feedbackFontSizeMedium: string;
-feedbackFontSizeLarge: string;
-labelFontSizeLeftSmall: string;
-labelFontSizeLeftMedium: string;
-labelFontSizeLeftLarge: string;
-labelFontSizeTopSmall: string;
-labelFontSizeTopMedium: string;
-labelFontSizeTopLarge: string;
-labelHeightSmall: string;
-labelHeightMedium: string;
-labelHeightLarge: string;
-labelPaddingVertical: string;
-labelPaddingHorizontal: string;
-labelTextAlignVertical: string;
-labelTextAlignHorizontal: string;
-labelFontWeight: string;
-}, any>>>;
-}>> & Readonly<{}>, FormInst & {
-mergedClsPrefix: Ref<string, string>;
-}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, PublicProps, {
-readonly disabled: boolean;
-readonly onSubmit: (e: Event) => void;
-readonly inline: boolean;
-readonly labelPlacement: LabelPlacement;
-readonly model: Record<string, any>;
-readonly showRequireMark: boolean | undefined;
-readonly showFeedback: boolean;
-readonly showLabel: boolean | undefined;
-}, true, {}, {}, GlobalComponents, GlobalDirectives, string, {}, any, ComponentProvideOptions, {
-P: {};
-B: {};
-D: {};
-C: {};
-M: {};
-Defaults: {};
-}, Readonly<ExtractPropTypes<    {
-readonly inline: BooleanConstructor;
-readonly labelWidth: PropType<number | string>;
-readonly labelAlign: PropType<LabelAlign>;
-readonly labelPlacement: {
-readonly type: PropType<LabelPlacement>;
-readonly default: "top";
-};
-readonly model: {
-readonly type: PropType<Record<string, any>>;
-readonly default: () => void;
-};
-readonly rules: PropType<FormRules>;
-readonly disabled: BooleanConstructor;
-readonly size: PropType<Size>;
-readonly showRequireMark: {
-readonly type: PropType<boolean | undefined>;
-readonly default: undefined;
-};
-readonly requireMarkPlacement: PropType<"left" | "right" | "right-hanging">;
-readonly showFeedback: {
-readonly type: BooleanConstructor;
-readonly default: true;
-};
-readonly onSubmit: {
-readonly type: PropType<(e: Event) => void>;
-readonly default: (e: Event) => void;
-};
-readonly showLabel: {
-readonly type: PropType<boolean | undefined>;
-readonly default: undefined;
-};
-readonly validateMessages: PropType<Partial<FormValidateMessages>>;
-readonly theme: PropType<Theme<"Form", {
-blankHeightSmall: string;
-blankHeightMedium: string;
-blankHeightLarge: string;
-lineHeight: string;
-labelTextColor: string;
-asteriskColor: string;
-feedbackTextColorError: string;
-feedbackTextColorWarning: string;
-feedbackTextColor: string;
-feedbackPadding: string;
-feedbackHeightSmall: string;
-feedbackHeightMedium: string;
-feedbackHeightLarge: string;
-feedbackFontSizeSmall: string;
-feedbackFontSizeMedium: string;
-feedbackFontSizeLarge: string;
-labelFontSizeLeftSmall: string;
-labelFontSizeLeftMedium: string;
-labelFontSizeLeftLarge: string;
-labelFontSizeTopSmall: string;
-labelFontSizeTopMedium: string;
-labelFontSizeTopLarge: string;
-labelHeightSmall: string;
-labelHeightMedium: string;
-labelHeightLarge: string;
-labelPaddingVertical: string;
-labelPaddingHorizontal: string;
-labelTextAlignVertical: string;
-labelTextAlignHorizontal: string;
-labelFontWeight: string;
-}, any>>;
-readonly themeOverrides: PropType<ExtractThemeOverrides<Theme<"Form", {
-blankHeightSmall: string;
-blankHeightMedium: string;
-blankHeightLarge: string;
-lineHeight: string;
-labelTextColor: string;
-asteriskColor: string;
-feedbackTextColorError: string;
-feedbackTextColorWarning: string;
-feedbackTextColor: string;
-feedbackPadding: string;
-feedbackHeightSmall: string;
-feedbackHeightMedium: string;
-feedbackHeightLarge: string;
-feedbackFontSizeSmall: string;
-feedbackFontSizeMedium: string;
-feedbackFontSizeLarge: string;
-labelFontSizeLeftSmall: string;
-labelFontSizeLeftMedium: string;
-labelFontSizeLeftLarge: string;
-labelFontSizeTopSmall: string;
-labelFontSizeTopMedium: string;
-labelFontSizeTopLarge: string;
-labelHeightSmall: string;
-labelHeightMedium: string;
-labelHeightLarge: string;
-labelPaddingVertical: string;
-labelPaddingHorizontal: string;
-labelTextAlignVertical: string;
-labelTextAlignHorizontal: string;
-labelFontWeight: string;
-}, any>>>;
-readonly builtinThemeOverrides: PropType<ExtractThemeOverrides<Theme<"Form", {
-blankHeightSmall: string;
-blankHeightMedium: string;
-blankHeightLarge: string;
-lineHeight: string;
-labelTextColor: string;
-asteriskColor: string;
-feedbackTextColorError: string;
-feedbackTextColorWarning: string;
-feedbackTextColor: string;
-feedbackPadding: string;
-feedbackHeightSmall: string;
-feedbackHeightMedium: string;
-feedbackHeightLarge: string;
-feedbackFontSizeSmall: string;
-feedbackFontSizeMedium: string;
-feedbackFontSizeLarge: string;
-labelFontSizeLeftSmall: string;
-labelFontSizeLeftMedium: string;
-labelFontSizeLeftLarge: string;
-labelFontSizeTopSmall: string;
-labelFontSizeTopMedium: string;
-labelFontSizeTopLarge: string;
-labelHeightSmall: string;
-labelHeightMedium: string;
-labelHeightLarge: string;
-labelPaddingVertical: string;
-labelPaddingHorizontal: string;
-labelTextAlignVertical: string;
-labelTextAlignHorizontal: string;
-labelFontWeight: string;
-}, any>>>;
-}>> & Readonly<{}>, FormInst & {
-mergedClsPrefix: Ref<string, string>;
-}, {}, {}, {}, {
-readonly disabled: boolean;
-readonly onSubmit: (e: Event) => void;
-readonly inline: boolean;
-readonly labelPlacement: LabelPlacement;
-readonly model: Record<string, any>;
-readonly showRequireMark: boolean | undefined;
-readonly showFeedback: boolean;
-readonly showLabel: boolean | undefined;
-}> | null;
-};
-$slots: Readonly<{
-[name: string]: Slot<any> | undefined;
-}>;
-$root: ComponentPublicInstance | null;
-$parent: ComponentPublicInstance | null;
-$host: Element | null;
-$emit: ((event: "reset") => void) & ((event: "submit", model: Record<string, unknown>) => void) & ((event: "update:model", model: Record<string, unknown>) => void);
-$el: any;
-$options: ComponentOptionsBase<Readonly<ExtractPropTypes<    {
 schema: {
 type: PropType<FormFieldSchema[]>;
 required: true;
@@ -8560,6 +9205,14 @@ cols: {
 type: NumberConstructor;
 default: number;
 };
+rowGap: {
+type: NumberConstructor;
+default: number;
+};
+columnGap: {
+type: NumberConstructor;
+default: number;
+};
 disabled: {
 type: BooleanConstructor;
 default: boolean;
@@ -8573,6 +9226,10 @@ type: PropType<"small" | "medium" | "large">;
 default: string;
 };
 showFeedback: {
+type: BooleanConstructor;
+default: boolean;
+};
+showActions: {
 type: BooleanConstructor;
 default: boolean;
 };
@@ -8596,7 +9253,7 @@ reloadOptions: (key: string) => Promise<void>;
 reset: () => any;
 submit: (model: Record<string, unknown>) => any;
 "update:model": (model: Record<string, unknown>) => any;
-}, string, {
+}, PublicProps, {
 size: "small" | "medium" | "large";
 disabled: boolean;
 groups: FormFieldGroup[];
@@ -8604,37 +9261,18 @@ readonly: boolean;
 labelWidth: string | number;
 labelPlacement: "left" | "top";
 cols: number;
+rowGap: number;
+columnGap: number;
 showFeedback: boolean;
-}, {}, string, {}, GlobalComponents, GlobalDirectives, string, ComponentProvideOptions> & {
-beforeCreate?: (() => void) | (() => void)[];
-created?: (() => void) | (() => void)[];
-beforeMount?: (() => void) | (() => void)[];
-mounted?: (() => void) | (() => void)[];
-beforeUpdate?: (() => void) | (() => void)[];
-updated?: (() => void) | (() => void)[];
-activated?: (() => void) | (() => void)[];
-deactivated?: (() => void) | (() => void)[];
-beforeDestroy?: (() => void) | (() => void)[];
-beforeUnmount?: (() => void) | (() => void)[];
-destroyed?: (() => void) | (() => void)[];
-unmounted?: (() => void) | (() => void)[];
-renderTracked?: ((e: DebuggerEvent) => void) | ((e: DebuggerEvent) => void)[];
-renderTriggered?: ((e: DebuggerEvent) => void) | ((e: DebuggerEvent) => void)[];
-errorCaptured?: ((err: unknown, instance: ComponentPublicInstance | null, info: string) => boolean | void) | ((err: unknown, instance: ComponentPublicInstance | null, info: string) => boolean | void)[];
-};
-$forceUpdate: () => void;
-$nextTick: nextTick;
-$watch<T extends string | ((...args: any) => any)>(source: T, cb: T extends (...args: any) => infer R ? (...args: [R, R, OnCleanup]) => any : (...args: [any, any, OnCleanup]) => any, options?: WatchOptions): WatchStopHandle;
-} & Readonly<{
-size: "small" | "medium" | "large";
-disabled: boolean;
-groups: FormFieldGroup[];
-readonly: boolean;
-labelWidth: string | number;
-labelPlacement: "left" | "top";
-cols: number;
-showFeedback: boolean;
-}> & Omit<Readonly<ExtractPropTypes<    {
+showActions: boolean;
+}, true, {}, {}, GlobalComponents, GlobalDirectives, string, {}, any, ComponentProvideOptions, {
+P: {};
+B: {};
+D: {};
+C: {};
+M: {};
+Defaults: {};
+}, Readonly<ExtractPropTypes<    {
 schema: {
 type: PropType<FormFieldSchema[]>;
 required: true;
@@ -8655,6 +9293,14 @@ cols: {
 type: NumberConstructor;
 default: number;
 };
+rowGap: {
+type: NumberConstructor;
+default: number;
+};
+columnGap: {
+type: NumberConstructor;
+default: number;
+};
 disabled: {
 type: BooleanConstructor;
 default: boolean;
@@ -8671,6 +9317,10 @@ showFeedback: {
 type: BooleanConstructor;
 default: boolean;
 };
+showActions: {
+type: BooleanConstructor;
+default: boolean;
+};
 groups: {
 type: PropType<FormFieldGroup[]>;
 default: undefined;
@@ -8679,7 +9329,7 @@ default: undefined;
 onReset?: (() => any) | undefined;
 onSubmit?: ((model: Record<string, unknown>) => any) | undefined;
 "onUpdate:model"?: ((model: Record<string, unknown>) => any) | undefined;
-}>, "validate" | "resetFields" | "getValues" | "setValues" | "clearValidate" | "patchField" | "reloadOptions" | ("size" | "disabled" | "groups" | "readonly" | "labelWidth" | "labelPlacement" | "cols" | "showFeedback")> & ShallowUnwrapRef<    {
+}>, {
 validate: () => Promise<boolean>;
 resetFields: () => void;
 getValues: () => Record<string, unknown>;
@@ -8687,45 +9337,52 @@ setValues: (values: Record<string, unknown>) => void;
 clearValidate: (keys?: string[]) => void;
 patchField: (key: string, patch: Partial<FormFieldSchema>) => void;
 reloadOptions: (key: string) => Promise<void>;
-}> & {} & ComponentCustomProperties & {} & {
-$slots: {
-groupHeader?(_: {
-group: FormFieldGroup;
-}): any;
-fieldPrefix?(_: {
-field: FormFieldSchema;
-}): any;
-fieldPrefix?(_: {
-field: FormFieldSchema;
-}): any;
-fieldPrefix?(_: {
-field: FormFieldSchema;
-}): any;
-fieldSuffix?(_: {
-field: FormFieldSchema;
-}): any;
-fieldSuffix?(_: {
-field: FormFieldSchema;
-}): any;
-fieldSuffix?(_: {
-field: FormFieldSchema;
-}): any;
-actions?(_: {}): any;
-};
-}) | null;
+}, {}, {}, {}, {
+size: "small" | "medium" | "large";
+disabled: boolean;
+groups: FormFieldGroup[];
+readonly: boolean;
+labelWidth: string | number;
+labelPlacement: "left" | "top";
+cols: number;
+rowGap: number;
+columnGap: number;
+showFeedback: boolean;
+showActions: boolean;
+}> | null;
 }, any>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_29" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_28" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_28" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_32" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RDashboardBuilder: __VLS_WithTemplateSlots_29<typeof __VLS_component_28, __VLS_TemplateResult_28["slots"]>;
+export const RDashboardBuilder: DefineComponent<__VLS_Props_32, {
+reload: () => Promise<void>;
+save: () => Promise<void>;
+toggleEditing: (next?: boolean) => void;
+getLayout: () => DashboardLayoutItem[];
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+error: (error: Error) => any;
+saved: (layout: DashboardLayoutItem[]) => any;
+"layout-change": (layout: DashboardLayoutItem[]) => any;
+}, string, PublicProps, Readonly<__VLS_Props_32> & Readonly<{
+onError?: ((error: Error) => any) | undefined;
+onSaved?: ((layout: DashboardLayoutItem[]) => any) | undefined;
+"onLayout-change"?: ((layout: DashboardLayoutItem[]) => any) | undefined;
+}>, {
+readonly: boolean;
+columns: number;
+editing: boolean | null;
+widgetRegistry: Record<string, Component | DashboardWidgetRegistryEntry>;
+breakpointColumns: Partial<DashboardResponsiveColumns>;
+defaultEditing: boolean;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {
+gridRef: HTMLDivElement;
+}, HTMLDivElement>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_24" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_33" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RDashboardWorkspace: DefineComponent<__VLS_Props_24, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+export const RDashboardWorkspace: DefineComponent<__VLS_Props_33, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 change: (dashboard: DashboardDefinition) => any;
 error: (error: Error) => any;
 saved: (payload: {
@@ -8733,7 +9390,7 @@ dashboard: DashboardDefinition;
 layout: DashboardLayoutItem[];
 }) => any;
 "update:activeDashboardId": (dashboardId: string) => any;
-}, string, PublicProps, Readonly<__VLS_Props_24> & Readonly<{
+}, string, PublicProps, Readonly<__VLS_Props_33> & Readonly<{
 onChange?: ((dashboard: DashboardDefinition) => any) | undefined;
 onError?: ((error: Error) => any) | undefined;
 onSaved?: ((payload: {
@@ -8751,12 +9408,61 @@ defaultEditing: boolean;
 fileInputRef: HTMLInputElement;
 }, HTMLDivElement>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_27" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_26" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_26" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
-export const RDataGrid: __VLS_WithTemplateSlots_27<typeof __VLS_component_26, __VLS_TemplateResult_26["slots"]>;
+export const RDataGrid: DefineComponent<RDataGridProps, {
+getGridApi: () => unknown;
+getAllRows: () => Record<string, unknown>[];
+addRow: () => void;
+addColumn: () => void;
+deleteSelectedRows: () => void;
+exportCsv: () => void;
+getTableData: () => {
+columns: DataGridColumn[];
+rows: Record<string, unknown>[];
+};
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+save: (data: {
+columns: DataGridColumn[];
+rows: Record<string, unknown>[];
+}) => any;
+"update:rows": (rows: Record<string, unknown>[]) => any;
+"update:columns": (columns: DataGridColumn[]) => any;
+cellChange: (params: {
+rowIndex: number;
+field: string;
+value: unknown;
+}) => any;
+rowAdd: (row: Record<string, unknown>) => any;
+rowDelete: (rows: Record<string, unknown>[]) => any;
+columnAdd: (column: DataGridColumn) => any;
+columnDelete: (column: DataGridColumn) => any;
+}, string, PublicProps, Readonly<RDataGridProps> & Readonly<{
+onSave?: ((data: {
+columns: DataGridColumn[];
+rows: Record<string, unknown>[];
+}) => any) | undefined;
+"onUpdate:rows"?: ((rows: Record<string, unknown>[]) => any) | undefined;
+"onUpdate:columns"?: ((columns: DataGridColumn[]) => any) | undefined;
+onCellChange?: ((params: {
+rowIndex: number;
+field: string;
+value: unknown;
+}) => any) | undefined;
+onRowAdd?: ((row: Record<string, unknown>) => any) | undefined;
+onRowDelete?: ((rows: Record<string, unknown>[]) => any) | undefined;
+onColumnAdd?: ((column: DataGridColumn) => any) | undefined;
+onColumnDelete?: ((column: DataGridColumn) => any) | undefined;
+}>, {
+readonly: boolean;
+height: string | number;
+allowExport: boolean;
+hideToolbar: boolean;
+allowAddColumn: boolean;
+allowAddRow: boolean;
+allowDelete: boolean;
+allowColumnDrag: boolean;
+allowRowDrag: boolean;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, any>;
 
 // @public (undocumented)
 export interface RDataGridEmits {
@@ -8824,12 +9530,16 @@ export const RDataTable: <T extends Record<string, unknown> = Record<string, unk
         remote: boolean;
         loading: boolean;
         bordered: boolean;
+        maxHeight: string | number;
         rowKey: string | ((row: T) => DataTableRowKey);
         pagination: false | DataTablePagination;
         striped: boolean;
         singleLine: boolean;
-        maxHeight: string | number;
+        density: DataTableDensity;
+        refreshable: boolean;
+        densitySwitchable: boolean;
         scrollX: string | number;
+        overflowPolicy: DataTableOverflowPolicy;
         selectable: boolean;
         checkedRowKeys: DataTableRowKey[];
         defaultSort: DataTableSortState;
@@ -8847,7 +9557,6 @@ export const RDataTable: <T extends Record<string, unknown> = Record<string, unk
         exportHandler: (payload: DataTableExportPayload<T>) => void | Promise<void>;
         batchDeleteHandler: (payload: DataTableBatchPayload<T>) => void | Promise<void>;
     }> & Omit<{
-        readonly size: "small" | "medium" | "large";
         readonly data: T[];
         readonly loading: boolean;
         readonly bordered: boolean;
@@ -8856,6 +9565,10 @@ export const RDataTable: <T extends Record<string, unknown> = Record<string, unk
         readonly pagination: false | DataTablePagination;
         readonly striped: boolean;
         readonly singleLine: boolean;
+        readonly density: DataTableDensity;
+        readonly refreshable: boolean;
+        readonly densitySwitchable: boolean;
+        readonly overflowPolicy: DataTableOverflowPolicy;
         readonly selectable: boolean;
         readonly checkedRowKeys: DataTableRowKey[];
         readonly emptyText: string;
@@ -8868,6 +9581,7 @@ export const RDataTable: <T extends Record<string, unknown> = Record<string, unk
         readonly exportSelectedConfirmMessage: string;
         readonly batchDeleteLabel: string;
         readonly batchDeleteConfirmMessage: string;
+        readonly size?: "small" | "medium" | "large" | undefined;
         readonly remote?: boolean | undefined;
         readonly maxHeight?: string | number | undefined;
         readonly scrollX?: string | number | undefined;
@@ -8875,30 +9589,23 @@ export const RDataTable: <T extends Record<string, unknown> = Record<string, unk
         readonly columnStorageKey?: string | undefined;
         readonly exportHandler?: ((payload: DataTableExportPayload<T>) => void | Promise<void>) | undefined;
         readonly batchDeleteHandler?: ((payload: DataTableBatchPayload<T>) => void | Promise<void>) | undefined;
+        readonly onRefresh?: (() => any) | undefined;
         readonly "onUpdate:page"?: ((page: number) => any) | undefined;
         readonly "onUpdate:pageSize"?: ((pageSize: number) => any) | undefined;
         readonly "onUpdate:checkedRowKeys"?: ((keys: DataTableRowKey[]) => any) | undefined;
         readonly "onUpdate:sort"?: ((sort: DataTableSortState) => any) | undefined;
         readonly "onUpdate:filters"?: ((filters: DataTableFilterState[]) => any) | undefined;
         readonly "onServer-params-change"?: ((params: ServerSideParams) => any) | undefined;
-        readonly onRowClick?: ((row: T, index: number) => any) | undefined;
+        readonly "onUpdate:density"?: ((density: DataTableDensity) => any) | undefined;
+        readonly onRowClick?: ((row: any, index: number) => any) | undefined;
         readonly onExport?: ((payload: DataTableExportPayload<T>) => any) | undefined;
         readonly onBatchDelete?: ((payload: DataTableBatchPayload<T>) => any) | undefined;
         readonly onBatchAction?: ((key: string, selectedKeys: DataTableRowKey[], selectedRows: T[]) => any) | undefined;
-    } & VNodeProps & AllowedComponentProps & ComponentCustomProps, "size" | "remote" | "loading" | "bordered" | "rowKey" | "pagination" | "striped" | "singleLine" | "maxHeight" | "scrollX" | "selectable" | "checkedRowKeys" | "defaultSort" | "emptyText" | "columnConfigurable" | "columnStorageKey" | "exportable" | "exportSelected" | "batchDeletable" | "batchActions" | "exportSelectedLabel" | "exportSelectedConfirmMessage" | "batchDeleteLabel" | "batchDeleteConfirmMessage" | "exportHandler" | "batchDeleteHandler">, "data" | "columns" | "onUpdate:page" | "onUpdate:pageSize" | "onUpdate:checkedRowKeys" | "onUpdate:sort" | "onUpdate:filters" | "onServer-params-change" | "onRowClick" | "onExport" | "onBatchDelete" | "onBatchAction" | ("size" | "remote" | "loading" | "bordered" | "rowKey" | "pagination" | "striped" | "singleLine" | "maxHeight" | "scrollX" | "selectable" | "checkedRowKeys" | "defaultSort" | "emptyText" | "columnConfigurable" | "columnStorageKey" | "exportable" | "exportSelected" | "batchDeletable" | "batchActions" | "exportSelectedLabel" | "exportSelectedConfirmMessage" | "batchDeleteLabel" | "batchDeleteConfirmMessage" | "exportHandler" | "batchDeleteHandler")> & {} & Partial<{}>> & PublicProps;
+    } & VNodeProps & AllowedComponentProps & ComponentCustomProps, "size" | "remote" | "loading" | "bordered" | "maxHeight" | "rowKey" | "pagination" | "striped" | "singleLine" | "density" | "refreshable" | "densitySwitchable" | "scrollX" | "overflowPolicy" | "selectable" | "checkedRowKeys" | "defaultSort" | "emptyText" | "columnConfigurable" | "columnStorageKey" | "exportable" | "exportSelected" | "batchDeletable" | "batchActions" | "exportSelectedLabel" | "exportSelectedConfirmMessage" | "batchDeleteLabel" | "batchDeleteConfirmMessage" | "exportHandler" | "batchDeleteHandler">, "data" | "onRefresh" | "columns" | "onUpdate:page" | "onUpdate:pageSize" | "onUpdate:checkedRowKeys" | "onUpdate:sort" | "onUpdate:filters" | "onServer-params-change" | "onUpdate:density" | "onRowClick" | "onExport" | "onBatchDelete" | "onBatchAction" | ("size" | "remote" | "loading" | "bordered" | "maxHeight" | "rowKey" | "pagination" | "striped" | "singleLine" | "density" | "refreshable" | "densitySwitchable" | "scrollX" | "overflowPolicy" | "selectable" | "checkedRowKeys" | "defaultSort" | "emptyText" | "columnConfigurable" | "columnStorageKey" | "exportable" | "exportSelected" | "batchDeletable" | "batchActions" | "exportSelectedLabel" | "exportSelectedConfirmMessage" | "batchDeleteLabel" | "batchDeleteConfirmMessage" | "exportHandler" | "batchDeleteHandler")> & {} & Partial<{}>> & PublicProps;
     expose(exposed: ShallowUnwrapRef<DataTableExpose>): void;
     attrs: any;
-    slots: {
-        toolbar?(_: {}): any;
-        batchToolbar?(_: {
-            selectedCount: number;
-            selectedKeys: DataTableRowKey[];
-        }): any;
-        empty?(_: {}): any;
-        loading?(_: {}): any;
-        summary?(_: {}): any;
-    };
-    emit: ((evt: "update:page", page: number) => void) & ((evt: "update:pageSize", pageSize: number) => void) & ((evt: "update:checkedRowKeys", keys: DataTableRowKey[]) => void) & ((evt: "update:sort", sort: DataTableSortState) => void) & ((evt: "update:filters", filters: DataTableFilterState[]) => void) & ((evt: "server-params-change", params: ServerSideParams) => void) & ((evt: "rowClick", row: T, index: number) => void) & ((evt: "export", payload: DataTableExportPayload<T>) => void) & ((evt: "batchDelete", payload: DataTableBatchPayload<T>) => void) & ((evt: "batchAction", key: string, selectedKeys: DataTableRowKey[], selectedRows: T[]) => void);
+    slots: Readonly<DataTableSlots<T>> & DataTableSlots<T>;
+    emit: ((evt: "refresh") => void) & ((evt: "update:page", page: number) => void) & ((evt: "update:pageSize", pageSize: number) => void) & ((evt: "update:checkedRowKeys", keys: DataTableRowKey[]) => void) & ((evt: "update:sort", sort: DataTableSortState) => void) & ((evt: "update:filters", filters: DataTableFilterState[]) => void) & ((evt: "server-params-change", params: ServerSideParams) => void) & ((evt: "update:density", density: DataTableDensity) => void) & ((evt: "rowClick", row: any, index: number) => void) & ((evt: "export", payload: DataTableExportPayload<T>) => void) & ((evt: "batchDelete", payload: DataTableBatchPayload<T>) => void) & ((evt: "batchAction", key: string, selectedKeys: DataTableRowKey[], selectedRows: T[]) => void);
 }>) => VNode & {
     __ctx?: Awaited<typeof __VLS_setup>;
 };
@@ -8917,10 +9624,17 @@ export const RDemoSection: __VLS_WithTemplateSlots_10<typeof __VLS_component_10,
 // @public (undocumented)
 export const RDescriptionsPanel: __VLS_WithTemplateSlots_18<typeof __VLS_component_18, __VLS_TemplateResult_18["slots"]>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_22" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_25" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_25" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_25" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RDocsBrowser: DefineComponent<__VLS_Props_22, {
+export const RDetailPage: __VLS_WithTemplateSlots_25<typeof __VLS_component_25, __VLS_TemplateResult_25["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_31" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RDocsBrowser: DefineComponent<__VLS_Props_31, {
 refresh: typeof handleRefresh;
 clearCache: typeof handleClearCache;
 openByTag: typeof syncFromActiveFileTag;
@@ -8930,7 +9644,7 @@ refresh: () => any;
 "file-tag-change": (tag: string) => any;
 "directory-change": (dir: string) => any;
 "cache-clear": () => any;
-}, string, PublicProps, Readonly<__VLS_Props_22> & Readonly<{
+}, string, PublicProps, Readonly<__VLS_Props_31> & Readonly<{
 onRefresh?: (() => any) | undefined;
 "onFile-select"?: ((file: DocFileItem) => any) | undefined;
 "onFile-tag-change"?: ((tag: string) => any) | undefined;
@@ -9079,10 +9793,10 @@ export interface REmptyStateProps {
     title?: string;
 }
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_30" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_39" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const REntityExecutionPanel: DefineComponent<__VLS_Props_30, {
+export const REntityExecutionPanel: DefineComponent<__VLS_Props_39, {
 getTimeline: () => CreateComponentPublicInstanceWithMixins<Readonly<{
 nodes: FlowNode[];
 edges: FlowEdge[];
@@ -9113,7 +9827,7 @@ height: string;
 }> | null;
 }, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 "update:show": (value: boolean) => any;
-}, string, PublicProps, Readonly<__VLS_Props_30> & Readonly<{
+}, string, PublicProps, Readonly<__VLS_Props_39> & Readonly<{
 "onUpdate:show"?: ((value: boolean) => any) | undefined;
 }>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {
 timelineRef: CreateComponentPublicInstanceWithMixins<Readonly<{
@@ -9189,15 +9903,25 @@ export interface RequestInterceptor {
 // @public (undocumented)
 export interface RequestOptions {
     // (undocumented)
+    authRetry?: boolean;
+    // (undocumented)
+    csrfRetry?: boolean;
+    // (undocumented)
     data?: unknown;
     // (undocumented)
     headers?: Record<string, string>;
+    // (undocumented)
+    humanVerifyScene?: string;
     // (undocumented)
     method?: HttpMethod;
     // (undocumented)
     params?: Record<string, unknown>;
     // (undocumented)
     signal?: AbortSignal;
+    // (undocumented)
+    skipAuthRefresh?: boolean;
+    // (undocumented)
+    skipCSRF?: boolean;
     // (undocumented)
     timeout?: number;
     // (undocumented)
@@ -9220,6 +9944,137 @@ export function resolveOutputType(file: File, options?: ImageCropOptions): Image
 
 // @public
 export function resolveToken(property: string): string;
+
+// @public (undocumented)
+export interface ResourceDetectOptions {
+    // (undocumented)
+    maxDepth?: number;
+    // (undocumented)
+    maxItems?: number;
+    // (undocumented)
+    resolveUrl?: ResourcePreviewUrlResolver;
+}
+
+// @public (undocumented)
+export interface ResourcePickerCardSlotScope<TItem extends ResourcePickerItem = ResourcePickerItem> {
+    // (undocumented)
+    disabled: boolean;
+    // (undocumented)
+    item: TItem;
+    // (undocumented)
+    select: () => void;
+    // (undocumented)
+    selected: boolean;
+    // (undocumented)
+    tab: ResourcePickerTab<TItem>;
+}
+
+// @public (undocumented)
+export interface ResourcePickerConfirmPayload<TItem extends ResourcePickerItem = ResourcePickerItem> {
+    // (undocumented)
+    item: TItem | null;
+    // (undocumented)
+    tabKey: string;
+}
+
+// @public (undocumented)
+export interface ResourcePickerItem {
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    id: ResourcePickerKey;
+    // (undocumented)
+    raw?: unknown;
+    // (undocumented)
+    subtitle?: string;
+    // (undocumented)
+    tags?: ResourcePickerTag[];
+    // (undocumented)
+    title: string;
+}
+
+// @public (undocumented)
+export type ResourcePickerKey = string | number;
+
+// @public (undocumented)
+export interface ResourcePickerLoadParams {
+    // (undocumented)
+    keyword: string;
+    // (undocumented)
+    page: number;
+    // (undocumented)
+    pageSize: number;
+    // (undocumented)
+    tabKey: string;
+}
+
+// @public (undocumented)
+export interface ResourcePickerLoadResult<TItem extends ResourcePickerItem = ResourcePickerItem> {
+    // (undocumented)
+    items: TItem[];
+    // (undocumented)
+    total: number;
+}
+
+// @public (undocumented)
+export interface ResourcePickerTab<TItem extends ResourcePickerItem = ResourcePickerItem> {
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    load: (params: ResourcePickerLoadParams) => Promise<ResourcePickerLoadResult<TItem>>;
+    // (undocumented)
+    loadOnActivate?: boolean;
+    // (undocumented)
+    pageSize?: number;
+    // (undocumented)
+    searchPlaceholder?: string;
+}
+
+// @public (undocumented)
+export interface ResourcePickerTag {
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    type?: 'default' | 'info' | 'success' | 'warning' | 'error';
+}
+
+// @public (undocumented)
+export interface ResourcePickerToolbarSlotScope {
+    // (undocumented)
+    keyword: string;
+    // (undocumented)
+    loaded: boolean;
+    // (undocumented)
+    loading: boolean;
+    // (undocumented)
+    reload: () => void;
+    // (undocumented)
+    tab: ResourcePickerTab;
+}
+
+// @public (undocumented)
+export type ResourcePreviewKind = 'image' | 'video' | 'file';
+
+// @public (undocumented)
+export interface ResourcePreviewResolverContext {
+    // (undocumented)
+    inferredKind: ResourcePreviewKind;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    path: string;
+    // (undocumented)
+    value: string;
+}
+
+// @public (undocumented)
+export type ResourcePreviewUrlResolver = (value: string, context: ResourcePreviewResolverContext) => string | null | undefined;
 
 // @public (undocumented)
 export type ResultStatus = 'success' | 'error' | 'warning' | 'info' | '403' | '404' | '500';
@@ -9331,44 +10186,181 @@ export const RFileUpload: __VLS_WithTemplateSlots_3<typeof __VLS_component_3, __
 // @public (undocumented)
 export const RFilterBarPro: __VLS_WithTemplateSlots_15<typeof __VLS_component_15, __VLS_TemplateResult_15["slots"]>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_33" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_32" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_32" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_37" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_37" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_37" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RFlowCanvas: __VLS_WithTemplateSlots_33<typeof __VLS_component_32, __VLS_TemplateResult_32["slots"]>;
+export const RFlowCanvas: __VLS_WithTemplateSlots_37<typeof __VLS_component_37, __VLS_TemplateResult_37["slots"]>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_34" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_33" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_33" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_38" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_38" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_38" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RFlowEditor: __VLS_WithTemplateSlots_34<typeof __VLS_component_33, __VLS_TemplateResult_33["slots"]>;
+export const RFlowEditor: __VLS_WithTemplateSlots_38<typeof __VLS_component_38, __VLS_TemplateResult_38["slots"]>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_29" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_38" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RFlowTimeline: DefineComponent<__VLS_Props_29, {
+export const RFlowTimeline: DefineComponent<__VLS_Props_38, {
 handleEvent: typeof handleEvent;
 connectSSE: typeof connectSSE;
-reset: typeof reset;
-}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_29> & Readonly<{}>, {
+reset: typeof reset_2;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_38> & Readonly<{}>, {
 height: string;
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_24" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_24" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_24" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RFormRenderer: __VLS_WithTemplateSlots<typeof __VLS_component, __VLS_TemplateResult["slots"]>;
+export const RFormPage: __VLS_WithTemplateSlots_24<typeof __VLS_component_24, __VLS_TemplateResult_24["slots"]>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_22" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_22" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_22" needs to be exported by the entry point index.d.ts
+// @public (undocumented)
+export const RFormRenderer: DefineComponent<ExtractPropTypes<    {
+schema: {
+type: PropType<FormFieldSchema[]>;
+required: true;
+};
+model: {
+type: PropType<Record<string, unknown>>;
+required: true;
+};
+labelWidth: {
+type: PropType<number | string>;
+default: string;
+};
+labelPlacement: {
+type: PropType<"left" | "top">;
+default: string;
+};
+cols: {
+type: NumberConstructor;
+default: number;
+};
+rowGap: {
+type: NumberConstructor;
+default: number;
+};
+columnGap: {
+type: NumberConstructor;
+default: number;
+};
+disabled: {
+type: BooleanConstructor;
+default: boolean;
+};
+readonly: {
+type: BooleanConstructor;
+default: boolean;
+};
+size: {
+type: PropType<"small" | "medium" | "large">;
+default: string;
+};
+showFeedback: {
+type: BooleanConstructor;
+default: boolean;
+};
+showActions: {
+type: BooleanConstructor;
+default: boolean;
+};
+groups: {
+type: PropType<FormFieldGroup[]>;
+default: undefined;
+};
+}>, {
+validate: () => Promise<boolean>;
+resetFields: () => void;
+getValues: () => Record<string, unknown>;
+setValues: (values: Record<string, unknown>) => void;
+clearValidate: (keys?: string[]) => void;
+patchField: (key: string, patch: Partial<FormFieldSchema>) => void;
+reloadOptions: (key: string) => Promise<void>;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+reset: () => any;
+submit: (model: Record<string, unknown>) => any;
+"update:model": (model: Record<string, unknown>) => any;
+}, string, PublicProps, Readonly<ExtractPropTypes<    {
+schema: {
+type: PropType<FormFieldSchema[]>;
+required: true;
+};
+model: {
+type: PropType<Record<string, unknown>>;
+required: true;
+};
+labelWidth: {
+type: PropType<number | string>;
+default: string;
+};
+labelPlacement: {
+type: PropType<"left" | "top">;
+default: string;
+};
+cols: {
+type: NumberConstructor;
+default: number;
+};
+rowGap: {
+type: NumberConstructor;
+default: number;
+};
+columnGap: {
+type: NumberConstructor;
+default: number;
+};
+disabled: {
+type: BooleanConstructor;
+default: boolean;
+};
+readonly: {
+type: BooleanConstructor;
+default: boolean;
+};
+size: {
+type: PropType<"small" | "medium" | "large">;
+default: string;
+};
+showFeedback: {
+type: BooleanConstructor;
+default: boolean;
+};
+showActions: {
+type: BooleanConstructor;
+default: boolean;
+};
+groups: {
+type: PropType<FormFieldGroup[]>;
+default: undefined;
+};
+}>> & Readonly<{
+onReset?: (() => any) | undefined;
+onSubmit?: ((model: Record<string, unknown>) => any) | undefined;
+"onUpdate:model"?: ((model: Record<string, unknown>) => any) | undefined;
+}>, {
+size: "small" | "medium" | "large";
+disabled: boolean;
+groups: FormFieldGroup[];
+readonly: boolean;
+labelWidth: string | number;
+labelPlacement: "left" | "top";
+cols: number;
+rowGap: number;
+columnGap: number;
+showFeedback: boolean;
+showActions: boolean;
+}, {}, {}, {}, string, ComponentProvideOptions, true, {}, any>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_27" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_27" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_27" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RFormTable: __VLS_WithTemplateSlots_22<typeof __VLS_component_22, __VLS_TemplateResult_22["slots"]>;
+export const RFormTable: __VLS_WithTemplateSlots_27<typeof __VLS_component_27, __VLS_TemplateResult_27["slots"]>;
 
 // @public (undocumented)
 export interface RichTextEditorI18n {
@@ -9421,10 +10413,10 @@ export interface RichTextEditorI18n {
 // @public (undocumented)
 export type RichTextEditorTheme = 'classic' | 'minimal' | 'midnight' | 'aurora';
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_2" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RIcon: DefineComponent<__VLS_Props, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props> & Readonly<{}>, {
+export const RIcon: DefineComponent<__VLS_Props_2, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_2> & Readonly<{}>, {
 size: IconSize;
 color: IconColor;
 strokeWidth: number;
@@ -9553,15 +10545,22 @@ export interface RIconProps {
     strokeWidth?: number;
 }
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_8" needs to be exported by the entry point index.d.ts
+// @public (undocumented)
+export const RIconTile: DefineComponent<IconTileProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<IconTileProps> & Readonly<{}>, {
+size: IconTileSize;
+strokeWidth: number;
+tone: IconTileTone;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLSpanElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_12" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RImageCropperDialog: DefineComponent<__VLS_Props_8, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+export const RImageCropperDialog: DefineComponent<__VLS_Props_12, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
 cancel: () => any;
 error: (error: Error) => any;
 confirm: (result: ImageCropResult) => any;
 "update:visible": (value: boolean) => any;
-}, string, PublicProps, Readonly<__VLS_Props_8> & Readonly<{
+}, string, PublicProps, Readonly<__VLS_Props_12> & Readonly<{
 onCancel?: (() => any) | undefined;
 onError?: ((error: Error) => any) | undefined;
 onConfirm?: ((result: ImageCropResult) => any) | undefined;
@@ -9575,12 +10574,22 @@ cropperHostRef: HTMLDivElement;
 sourceImageRef: HTMLImageElement;
 }, any>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_24" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_24" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_24" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_30" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_30" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_30" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RImageCropUpload: __VLS_WithTemplateSlots_24<typeof __VLS_component_24, __VLS_TemplateResult_24["slots"]>;
+export const RImageCropUpload: __VLS_WithTemplateSlots_30<typeof __VLS_component_30, __VLS_TemplateResult_30["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_13" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RImagePreview: DefineComponent<__VLS_Props_13, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_13> & Readonly<{}>, {
+height: number;
+width: number;
+urls: string[];
+objectFit: "contain" | "cover" | "fill" | "none" | "scale-down";
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, any>;
 
 // @public (undocumented)
 export const RIndexProgress: DefineComponent<ExtractPropTypes<    {
@@ -9640,12 +10649,66 @@ status: IndexStatus_2;
 showLabel: boolean;
 }, {}, {}, {}, string, ComponentProvideOptions, true, {}, HTMLDivElement>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_3" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_14" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RKpiGrid: DefineComponent<__VLS_Props_3, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+export const RJsonResourceViewer: DefineComponent<__VLS_Props_14, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+copy: (value: string) => any;
+expand: (value: string) => any;
+"resource-preview": (resource: DetectedResource) => any;
+"resource-copy": (resource: DetectedResource) => any;
+"resource-open": (resource: DetectedResource) => any;
+}, string, PublicProps, Readonly<__VLS_Props_14> & Readonly<{
+onCopy?: ((value: string) => any) | undefined;
+onExpand?: ((value: string) => any) | undefined;
+"onResource-preview"?: ((resource: DetectedResource) => any) | undefined;
+"onResource-copy"?: ((resource: DetectedResource) => any) | undefined;
+"onResource-open"?: ((resource: DetectedResource) => any) | undefined;
+}>, {
+size: "small" | "medium" | "large";
+title: string;
+height: number | string;
+maxHeight: number | string;
+emptyText: string;
+expandable: boolean;
+showHeader: boolean;
+copyable: boolean;
+showResources: boolean;
+inlineResources: boolean;
+maxResources: number;
+resourceUrlResolver: ResourcePreviewUrlResolver;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_19" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RJsonViewer: DefineComponent<__VLS_Props_19, {
+open: () => void;
+close: () => void;
+copy: () => Promise<void>;
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {} & {
+copy: (value: string) => any;
+expand: (value: string) => any;
+}, string, PublicProps, Readonly<__VLS_Props_19> & Readonly<{
+onCopy?: ((value: string) => any) | undefined;
+onExpand?: ((value: string) => any) | undefined;
+}>, {
+size: "small" | "medium" | "large";
+title: string;
+height: number | string;
+maxHeight: number | string;
+emptyText: string;
+expandable: boolean;
+showHeader: boolean;
+copyable: boolean;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_4" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RKpiGrid: DefineComponent<__VLS_Props_4, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 "item-click": (key: string) => any;
-}, string, PublicProps, Readonly<__VLS_Props_3> & Readonly<{
+}, string, PublicProps, Readonly<__VLS_Props_4> & Readonly<{
 "onItem-click"?: ((key: string) => any) | undefined;
 }>, {
 loading: boolean;
@@ -9671,21 +10734,28 @@ export interface RKpiGridProps {
     loading?: boolean;
 }
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_33" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_42" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RLanguageSelector: DefineComponent<__VLS_Props_33, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+export const RLanguageSelector: DefineComponent<__VLS_Props_42, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 "update:modelValue": (value: string) => any;
-}, string, PublicProps, Readonly<__VLS_Props_33> & Readonly<{
+}, string, PublicProps, Readonly<__VLS_Props_42> & Readonly<{
 "onUpdate:modelValue"?: ((value: string) => any) | undefined;
 }>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, any>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_26" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_25" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_25" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_23" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_23" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_23" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RMarkdownEditor: __VLS_WithTemplateSlots_26<typeof __VLS_component_25, __VLS_TemplateResult_25["slots"]>;
+export const RListPage: __VLS_WithTemplateSlots_23<typeof __VLS_component_23, __VLS_TemplateResult_23["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_32" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_32" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_32" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RMarkdownEditor: __VLS_WithTemplateSlots_32<typeof __VLS_component_32, __VLS_TemplateResult_32["slots"]>;
 
 // @public (undocumented)
 export interface RMarkdownEditorEmits {
@@ -9719,13 +10789,13 @@ export interface RMarkdownEditorProps {
     viewMode?: MarkdownEditorViewMode;
 }
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_9" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_17" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RMarkdownPreview: DefineComponent<__VLS_Props_9, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_9> & Readonly<{}>, {
+export const RMarkdownPreview: DefineComponent<__VLS_Props_17, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_17> & Readonly<{}>, {
 scale: number;
-content: string;
 theme: MarkdownPreviewTheme;
+content: string;
 enableMermaid: boolean;
 enableHighlight: boolean;
 highlightTheme: string;
@@ -9751,6 +10821,13 @@ export interface RMarkdownPreviewProps {
     theme?: MarkdownPreviewTheme;
 }
 
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_29" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_29" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_29" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RMediaResourceUpload: __VLS_WithTemplateSlots_29<typeof __VLS_component_29, __VLS_TemplateResult_29["slots"]>;
+
 // @public (undocumented)
 export const RMenuPresetEditor: DefineComponent<MenuPresetEditorProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 "update:activePresetId": (presetId: string) => any;
@@ -9767,6 +10844,37 @@ export const RMenuPresetEditor: DefineComponent<MenuPresetEditorProps, {}, {}, {
 }>, {
 loading: boolean;
 defaultPresetId: string;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, any>;
+
+// @public (undocumented)
+export const RMiniRichTextEditor: DefineComponent<MiniRichTextEditorProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+blur: () => any;
+focus: () => any;
+"update:modelValue": (value: string) => any;
+imageUploadError: (error: Error) => any;
+}, string, PublicProps, Readonly<MiniRichTextEditorProps> & Readonly<{
+onBlur?: (() => any) | undefined;
+onFocus?: (() => any) | undefined;
+"onUpdate:modelValue"?: ((value: string) => any) | undefined;
+onImageUploadError?: ((error: Error) => any) | undefined;
+}>, {
+disabled: boolean;
+readonly: boolean;
+height: string | number;
+placeholder: string;
+modelValue: string;
+imageUploadAdapter: MiniRichTextImageUploadAdapter;
+enableFullscreenPreview: boolean;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {
+editorShellRef: HTMLDivElement;
+editorRef: HTMLDivElement;
+fileInputRef: HTMLInputElement;
+}, HTMLElement>;
+
+// @public (undocumented)
+export const RMiniRichTextPreview: DefineComponent<MiniRichTextPreviewProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<MiniRichTextPreviewProps> & Readonly<{}>, {
+content: string;
+emptyText: string;
 }, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
 // Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_2" needs to be exported by the entry point index.d.ts
@@ -9775,6 +10883,72 @@ defaultPresetId: string;
 //
 // @public (undocumented)
 export const RModalDialog: __VLS_WithTemplateSlots_2<typeof __VLS_component_2, __VLS_TemplateResult_2["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_9" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RMoneyInput: DefineComponent<__VLS_Props_9, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+"update:value": (value: number | null) => any;
+"valid-change": (valid: boolean) => any;
+}, string, PublicProps, Readonly<__VLS_Props_9> & Readonly<{
+"onUpdate:value"?: ((value: number | null) => any) | undefined;
+"onValid-change"?: ((valid: boolean) => any) | undefined;
+}>, {
+size: "tiny" | "small" | "medium" | "large";
+value: number | null;
+disabled: boolean;
+max: number;
+min: number;
+scale: number;
+placeholder: string;
+currency: string;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+// @public (undocumented)
+export interface RMoneyInputEmits {
+    // (undocumented)
+    (e: 'update:value', value: number | null): void;
+    // (undocumented)
+    (e: 'valid-change', valid: boolean): void;
+}
+
+// @public (undocumented)
+export interface RMoneyInputProps {
+    // (undocumented)
+    currency?: string;
+    // (undocumented)
+    disabled?: boolean;
+    // (undocumented)
+    max?: number;
+    // (undocumented)
+    min?: number;
+    // (undocumented)
+    placeholder?: string;
+    // (undocumented)
+    scale?: number;
+    // (undocumented)
+    size?: 'tiny' | 'small' | 'medium' | 'large';
+    // (undocumented)
+    value?: number | null;
+}
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_10" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RMoneyText: DefineComponent<__VLS_Props_10, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_10> & Readonly<{}>, {
+value: number | null;
+scale: number;
+emptyText: string;
+currency: string;
+showCurrency: boolean;
+currencyPosition: "prefix" | "suffix";
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLSpanElement>;
+
+// @public (undocumented)
+export interface RMoneyTextProps extends MoneyFormatOptions {
+    // (undocumented)
+    value?: MoneyValue;
+}
 
 // @public (undocumented)
 export const RNotificationCenter: DefineComponent<ExtractPropTypes<    {
@@ -9833,13 +11007,15 @@ onRead?: ((id: string) => any) | undefined;
 onDismiss?: ((id: string) => any) | undefined;
 "onClear-all"?: (() => any) | undefined;
 }>, {
-placement: "bottom-start" | "bottom" | "bottom-end";
-maxVisible: number;
 showBadge: boolean;
+placement: "bottom" | "bottom-start" | "bottom-end";
+maxVisible: number;
 }, {}, {}, {}, string, ComponentProvideOptions, true, {}, any>;
 
 // @public (undocumented)
 export interface RongAdminAppInstance {
+    // (undocumented)
+    asyncTaskCenter: AsyncTaskCenterInstance | null;
     // (undocumented)
     bootstrap: () => Promise<AppContext>;
     // (undocumented)
@@ -9859,12 +11035,16 @@ export interface RongAdminAppInstance {
 // @public (undocumented)
 export interface RongAdminPresetOptions {
     // (undocumented)
+    asyncTasks?: AsyncTaskCenterOptions;
+    // (undocumented)
     auth?: {
         storage?: TokenStorage;
         enableCrossTabSync?: boolean;
+        tokenTransport?: 'bearer' | 'cookie';
         refreshApi?: TokenRefreshApi;
         refreshThresholdMs?: number;
         onTokenExpired?: () => void;
+        onRefreshFailed?: (error: Error) => void;
     };
     // (undocumented)
     config?: {
@@ -9883,6 +11063,8 @@ export interface RongAdminPresetOptions {
         baseURL?: string;
         timeout?: number;
         headers?: Record<string, string>;
+        withCredentials?: boolean;
+        csrfProvider?: CSRFProvider;
         interceptors?: RequestInterceptor[];
         errorStrategy?: ErrorStrategyConfig;
     };
@@ -9909,19 +11091,19 @@ export interface RongAdminPresetOptions {
     };
 }
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_36" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_35" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_35" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_40" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_40" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_40" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const ROpsChartPlaceholder: __VLS_WithTemplateSlots_36<typeof __VLS_component_35, __VLS_TemplateResult_35["slots"]>;
+export const ROpsChartPlaceholder: __VLS_WithTemplateSlots_40<typeof __VLS_component_40, __VLS_TemplateResult_40["slots"]>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_35" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_34" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_34" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_39" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_39" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_39" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const ROpsPanel: __VLS_WithTemplateSlots_35<typeof __VLS_component_34, __VLS_TemplateResult_34["slots"]>;
+export const ROpsPanel: __VLS_WithTemplateSlots_39<typeof __VLS_component_39, __VLS_TemplateResult_39["slots"]>;
 
 // @public (undocumented)
 export interface RouteGeneratorOptions {
@@ -10022,7 +11204,7 @@ export interface RouterGuardHooks {
     // (undocumented)
     afterAuth?: (to: string) => void;
     // (undocumented)
-    beforeAuth?: (to: string, from: string) => boolean | string | undefined;
+    beforeAuth?: (to: string, from: string) => boolean | string | undefined | Promise<boolean | string | undefined>;
     // (undocumented)
     onAuthFail?: (to: string) => string;
 }
@@ -10076,6 +11258,62 @@ export interface RouterSetupConfig {
     // (undocumented)
     whiteList: string[];
 }
+
+// @public (undocumented)
+export interface RowAction<T = object> {
+    // (undocumented)
+    danger?: boolean;
+    // (undocumented)
+    disabled?: boolean | ((row: T) => boolean);
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    onClick?: (row: T) => void;
+    // (undocumented)
+    type?: 'default' | 'primary' | 'info' | 'success' | 'warning' | 'error';
+}
+
+// @public (undocumented)
+export interface RowActionsEmits<T = object> {
+    // (undocumented)
+    action: [key: string, row: T];
+}
+
+// @public (undocumented)
+export interface RowActionsProps<T = object> {
+    // (undocumented)
+    actions: RowAction<T>[];
+    // (undocumented)
+    density?: 'default' | 'compact';
+    // (undocumented)
+    maxInline?: number;
+    // (undocumented)
+    moreLabel?: string;
+    // (undocumented)
+    row: T;
+    // (undocumented)
+    testIdPrefix?: string;
+}
+
+// @public (undocumented)
+export interface RowActionsSlots<T = object> {
+    // (undocumented)
+    action?: (params: {
+        action: RowAction<T>;
+        row: T;
+    }) => VNode;
+}
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_21" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_21" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_21" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RPage: __VLS_WithTemplateSlots_21<typeof __VLS_component_21, __VLS_TemplateResult_21["slots"]>;
 
 // Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_8" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "__VLS_component_8" needs to be exported by the entry point index.d.ts
@@ -10276,7 +11514,7 @@ disabled: {
 type: PropType<boolean | undefined>;
 default: undefined;
 };
-size: PropType<Size_2>;
+size: PropType<Size>;
 rows: {
 type: PropType<number | string>;
 default: number;
@@ -10851,7 +12089,7 @@ disabled: {
 type: PropType<boolean | undefined>;
 default: undefined;
 };
-size: PropType<Size_2>;
+size: PropType<Size>;
 rows: {
 type: PropType<number | string>;
 default: number;
@@ -11433,10 +12671,8 @@ required: true;
 title: string;
 }, {}, {}, {}, string, ComponentProvideOptions, true, {}, HTMLElement>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_25" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
-export const RProTreeEditor: __VLS_WithTemplateSlots_25<DefineComponent<ExtractPropTypes<    {
+export const RProTreeEditor: DefineComponent<ExtractPropTypes<    {
 data: {
 type: PropType<TreeNodeData[]>;
 default: () => never[];
@@ -11613,14 +12849,14 @@ onDataChange?: ((event: TreeDataChangeEvent) => any) | undefined;
 showBreadcrumb: boolean;
 data: TreeNodeData[];
 draggable: boolean;
+density: TreeDensity;
 selectable: boolean;
 checkedKeys: (string | number)[];
+selectedKey: string | number | null;
 i18n: TreeI18n;
 batch: false | TreeBatchConfig;
-density: TreeDensity;
 icons: TreeNodeIcons;
 showCounts: boolean;
-selectedKey: string | number | null;
 defaultExpandLevel: number;
 requestMode: TreeRequestMode;
 requestHooks: TreeRequestHooks;
@@ -11628,21 +12864,14 @@ checkDelete: CheckDeleteFn;
 optimistic: boolean;
 maxDepth: number;
 lazyLoad: boolean;
-}, {}, {}, {}, string, ComponentProvideOptions, true, {
-treeContainerRef: HTMLDivElement;
-}, HTMLDivElement>, {
-    toolbar?(_: {}): any;
-    'toolbar-extra'?(_: {}): any;
-    loading?(_: {}): any;
-    empty?(_: {}): any;
-}>;
+}, {}, {}, {}, string, ComponentProvideOptions, true, {}, any>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_23" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_23" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_23" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_28" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_28" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_28" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RProUpload: __VLS_WithTemplateSlots_23<typeof __VLS_component_23, __VLS_TemplateResult_23["slots"]>;
+export const RProUpload: __VLS_WithTemplateSlots_28<typeof __VLS_component_28, __VLS_TemplateResult_28["slots"]>;
 
 // @public (undocumented)
 export const RQualityPanel: DefineComponent<ExtractPropTypes<    {
@@ -11674,6 +12903,29 @@ title: string;
 // @public (undocumented)
 export const RQueryTable: __VLS_WithTemplateSlots_4<typeof __VLS_component_4, __VLS_TemplateResult_4["slots"]>;
 
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_31" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_31" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_31" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RResourcePickerDialog: __VLS_WithTemplateSlots_31<typeof __VLS_component_31, __VLS_TemplateResult_31["slots"]>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_16" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RResourcePreview: DefineComponent<__VLS_Props_16, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+copy: (resource: DetectedResource) => any;
+open: (resource: DetectedResource) => any;
+preview: (resource: DetectedResource) => any;
+}, string, PublicProps, Readonly<__VLS_Props_16> & Readonly<{
+onCopy?: ((resource: DetectedResource) => any) | undefined;
+onOpen?: ((resource: DetectedResource) => any) | undefined;
+onPreview?: ((resource: DetectedResource) => any) | undefined;
+}>, {
+maxInline: number;
+resources: DetectedResource[];
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, any>;
+
 // Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_14" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "__VLS_component_14" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_14" needs to be exported by the entry point index.d.ts
@@ -11701,31 +12953,31 @@ export interface RResultStateProps {
     title?: string;
 }
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_12" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_21" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RRichTextEditor: DefineComponent<__VLS_Props_12, {
+export const RRichTextEditor: DefineComponent<__VLS_Props_21, {
 getEditor: () => unknown;
 getHTML: () => string;
 getJSON: () => unknown;
 }, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 blur: () => any;
 focus: () => any;
-"update:modelValue": (value: string) => any;
 ready: (editor: unknown) => any;
-}, string, PublicProps, Readonly<__VLS_Props_12> & Readonly<{
+"update:modelValue": (value: string) => any;
+}, string, PublicProps, Readonly<__VLS_Props_21> & Readonly<{
 onBlur?: (() => any) | undefined;
 onFocus?: (() => any) | undefined;
-"onUpdate:modelValue"?: ((value: string) => any) | undefined;
 onReady?: ((editor: unknown) => any) | undefined;
+"onUpdate:modelValue"?: ((value: string) => any) | undefined;
 }>, {
 readonly: boolean;
 height: string | number;
 bordered: boolean;
 theme: RichTextEditorTheme;
 placeholder: string;
-toolbar: ToolbarConfig | false;
 maxHeight: string | number;
+toolbar: ToolbarConfig | false;
 modelValue: string;
 preview: boolean;
 i18n: RichTextEditorI18n;
@@ -11788,19 +13040,64 @@ export interface RRichTextEditorProps {
     toolbar?: ToolbarConfig | false;
 }
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_26" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_35" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RRouteQuickActionsEditor: DefineComponent<__VLS_Props_26, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+export const RRouteQuickActionsEditor: DefineComponent<__VLS_Props_35, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 "update:modelValue": (value: Record<string, unknown>) => any;
-}, string, PublicProps, Readonly<__VLS_Props_26> & Readonly<{
+}, string, PublicProps, Readonly<__VLS_Props_35> & Readonly<{
 "onUpdate:modelValue"?: ((value: Record<string, unknown>) => any) | undefined;
 }>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_25" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_34" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RRouteQuickActionsWidget: DefineComponent<__VLS_Props_25, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_25> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+export const RRouteQuickActionsWidget: DefineComponent<__VLS_Props_34, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_34> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_PrettifyLocal_2" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RRowActions: <T extends object = object>(__VLS_props: NonNullable<Awaited<typeof __VLS_setup>>["props"], __VLS_ctx?: __VLS_PrettifyLocal_2<Pick<NonNullable<Awaited<typeof __VLS_setup>>, "attrs" | "emit" | "slots">>, __VLS_expose?: NonNullable<Awaited<typeof __VLS_setup>>["expose"], __VLS_setup?: Promise<{
+    props: __VLS_PrettifyLocal_2<Pick<Partial<{}> & Omit<{
+        readonly onAction?: ((key: string, row: T) => any) | undefined;
+    } & VNodeProps & AllowedComponentProps & ComponentCustomProps, never>, "onAction"> & RowActionsProps<T> & Partial<{}>> & PublicProps;
+    expose(exposed: ShallowUnwrapRef<    {}>): void;
+    attrs: any;
+    slots: {};
+    emit: (evt: "action", key: string, row: T) => void;
+}>) => VNode & {
+    __ctx?: Awaited<typeof __VLS_setup>;
+};
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_22" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_22" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_22" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export const RSectionCard: __VLS_WithTemplateSlots_22<typeof __VLS_component_22, __VLS_TemplateResult_22["slots"]>;
+
+// @public (undocumented)
+export const RSettingsBoard: DefineComponent<SettingsBoardProps, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+reset: (tab: SettingsBoardTab) => any;
+refresh: () => any;
+save: (tab: SettingsBoardTab) => any;
+"update:model": (model: Record<string, unknown>) => any;
+"update:activeTab": (value: string) => any;
+}, string, PublicProps, Readonly<SettingsBoardProps> & Readonly<{
+onReset?: ((tab: SettingsBoardTab) => any) | undefined;
+onRefresh?: (() => any) | undefined;
+onSave?: ((tab: SettingsBoardTab) => any) | undefined;
+"onUpdate:model"?: ((model: Record<string, unknown>) => any) | undefined;
+"onUpdate:activeTab"?: ((value: string) => any) | undefined;
+}>, {
+description: string;
+loading: boolean;
+cols: number;
+activeTab: string;
+statusText: string;
+saving: boolean;
+savedAtText: string;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLElement>;
 
 // @public (undocumented)
 export const RSettingsManager: DefineComponent<SettingsManagerProps, {
@@ -11814,20 +13111,20 @@ resetDirty: () => void;
 saveAll: () => Promise<void>;
 }, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 error: (error: Error) => any;
+loaded: (groups: SettingsGroup[]) => any;
 saved: (key: string, value: string) => any;
 "batch-saved": (fields: {
 key: string;
 value: string;
 }[]) => any;
-loaded: (groups: SettingsGroup[]) => any;
 }, string, PublicProps, Readonly<SettingsManagerProps> & Readonly<{
 onError?: ((error: Error) => any) | undefined;
+onLoaded?: ((groups: SettingsGroup[]) => any) | undefined;
 onSaved?: ((key: string, value: string) => any) | undefined;
 "onBatch-saved"?: ((fields: {
 key: string;
 value: string;
 }[]) => any) | undefined;
-onLoaded?: ((groups: SettingsGroup[]) => any) | undefined;
 }>, {
 description: string;
 title: string;
@@ -11840,9 +13137,7 @@ parseUploadResponse: (raw: unknown) => {
 url: string;
 storageId?: string;
 };
-}, {}, {}, {}, string, ComponentProvideOptions, false, {
-contentEl: HTMLDivElement;
-}, HTMLDivElement>;
+}, {}, {}, {}, string, ComponentProvideOptions, false, {}, any>;
 
 // Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_9" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "__VLS_component_9" needs to be exported by the entry point index.d.ts
@@ -12013,12 +13308,12 @@ showContextMenu: boolean;
 scrollRef: HTMLDivElement;
 }, HTMLDivElement>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_32" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_41" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RTemplateBrowser: DefineComponent<__VLS_Props_32, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+export const RTemplateBrowser: DefineComponent<__VLS_Props_41, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
 select: (item: RTemplateBrowserItem) => any;
-}, string, PublicProps, Readonly<__VLS_Props_32> & Readonly<{
+}, string, PublicProps, Readonly<__VLS_Props_41> & Readonly<{
 onSelect?: ((item: RTemplateBrowserItem) => any) | undefined;
 }>, {
 loading: boolean;
@@ -12080,12 +13375,12 @@ showDetail: boolean;
 // @public (undocumented)
 export const RTopbar: __VLS_WithTemplateSlots_7<typeof __VLS_component_7, __VLS_TemplateResult_7["slots"]>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_28" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_component_27" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_27" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_WithTemplateSlots_33" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_component_33" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_TemplateResult_33" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const RTreeSelect: __VLS_WithTemplateSlots_28<typeof __VLS_component_27, __VLS_TemplateResult_27["slots"]>;
+export const RTreeSelect: __VLS_WithTemplateSlots_33<typeof __VLS_component_33, __VLS_TemplateResult_33["slots"]>;
 
 // @public (undocumented)
 export interface RTreeSelectEmits {
@@ -12213,6 +13508,9 @@ export interface RWorkflowDesignerProps {
 }
 
 // @public (undocumented)
+export function sanitizeMiniRichText(input: string): string;
+
+// @public (undocumented)
 export interface SearchProgress {
     // (undocumented)
     provider?: string;
@@ -12224,21 +13522,35 @@ export interface SearchProgress {
     status: 'idle' | 'searching' | 'done';
 }
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_16" needs to be exported by the entry point index.d.ts
+// @public (undocumented)
+export interface SectionCardProps {
+    // (undocumented)
+    compact?: boolean;
+    // (undocumented)
+    dataTestid?: string;
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    flush?: boolean;
+    // (undocumented)
+    title?: string;
+}
+
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_25" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const SelectCellEditor: DefineComponent<__VLS_Props_16, {
+export const SelectCellEditor: DefineComponent<__VLS_Props_25, {
 getValue: typeof getValue;
 isCancelBeforeStart: typeof isCancelBeforeStart;
 isCancelAfterEnd: typeof isCancelAfterEnd;
-}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_16> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_25> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {
 wrapRef: HTMLDivElement;
 }, HTMLDivElement>;
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_18" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_27" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const SelectCellRenderer: DefineComponent<__VLS_Props_18, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_18> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
+export const SelectCellRenderer: DefineComponent<__VLS_Props_27, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_27> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {}, HTMLDivElement>;
 
 // @public (undocumented)
 export type SemanticColorToken = 'bg-page' | 'bg-surface' | 'bg-surface-secondary' | 'bg-surface-tertiary' | 'bg-elevated' | 'bg-elevated-soft' | 'bg-overlay' | 'bg-muted' | 'bg-code' | 'bg-hover' | 'bg-active' | 'text-primary' | 'text-secondary' | 'text-tertiary' | 'text-quaternary' | 'text-inverse' | 'text-code' | 'text-link' | 'text-link-hover' | 'border-default' | 'border-light' | 'border-strong' | 'border-interactive' | 'border-focus' | 'brand-primary' | 'brand-hover' | 'brand-active' | 'brand-light' | 'brand-subtle' | 'success' | 'success-bg' | 'success-text' | 'success-border' | 'warning' | 'warning-bg' | 'warning-text' | 'warning-border' | 'danger' | 'danger-bg' | 'danger-text' | 'danger-border' | 'info' | 'info-bg' | 'info-text' | 'info-border' | 'focus-ring' | 'text-on-brand';
@@ -12266,6 +13578,70 @@ export interface ServerSideParams {
     };
     // (undocumented)
     sort?: DataTableSortState;
+}
+
+// @public (undocumented)
+export interface SettingsBoardCard {
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    fields: FormFieldSchema[];
+    // (undocumented)
+    icon?: string;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    title: string;
+}
+
+// @public (undocumented)
+export interface SettingsBoardEmits {
+    // (undocumented)
+    'update:activeTab': [value: string];
+    // (undocumented)
+    'update:model': [model: Record<string, unknown>];
+    // (undocumented)
+    refresh: [];
+    // (undocumented)
+    reset: [tab: SettingsBoardTab];
+    // (undocumented)
+    save: [tab: SettingsBoardTab];
+}
+
+// @public (undocumented)
+export interface SettingsBoardProps {
+    // (undocumented)
+    activeTab?: string;
+    // (undocumented)
+    cols?: number;
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    loading?: boolean;
+    // (undocumented)
+    model: Record<string, unknown>;
+    // (undocumented)
+    savedAtText?: string;
+    // (undocumented)
+    saving?: boolean;
+    // (undocumented)
+    statusText?: string;
+    // (undocumented)
+    tabs: SettingsBoardTab[];
+    // (undocumented)
+    title: string;
+}
+
+// @public (undocumented)
+export interface SettingsBoardTab {
+    // (undocumented)
+    cards: SettingsBoardCard[];
+    // (undocumented)
+    description?: string;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    title: string;
 }
 
 // @public (undocumented)
@@ -12955,6 +14331,8 @@ export interface TokenManagerInstance {
     // (undocumented)
     destroy: () => void;
     // (undocumented)
+    getRefreshToken: () => string | null;
+    // (undocumented)
     getToken: () => string | null;
     // (undocumented)
     init: () => void;
@@ -12964,6 +14342,8 @@ export interface TokenManagerInstance {
     onLoginSuccess: (tokenPair: TokenPair) => void;
     // (undocumented)
     onLogout: () => void;
+    // (undocumented)
+    refreshNow: () => Promise<boolean>;
 }
 
 // @public (undocumented)
@@ -12972,6 +14352,8 @@ export interface TokenPair {
     accessToken: string;
     // (undocumented)
     expiresIn?: number;
+    // (undocumented)
+    refreshAfterSeconds?: number;
     // (undocumented)
     refreshToken?: string;
     // (undocumented)
@@ -12984,6 +14366,8 @@ export interface TokenProvider {
     getToken: () => string | null;
     // (undocumented)
     getTokenType?: () => string;
+    // (undocumented)
+    refreshToken?: () => Promise<boolean>;
 }
 
 // @public (undocumented)
@@ -13372,6 +14756,9 @@ export interface UploadFile {
     url?: string;
 }
 
+// @public
+export function uploadFileToMediaResource(file: ProUploadFileItem, expectedClass: MediaResourceClass): MediaResource;
+
 // @public (undocumented)
 export type UploadListType = 'text' | 'image' | 'image-card';
 
@@ -13399,6 +14786,9 @@ export interface UploadRequestOptions {
 export function useAppConfig(): AppConfigContext;
 
 // @public (undocumented)
+export function useAsyncTaskCenter(center: AsyncTaskCenterInstance): AsyncTaskCenterInstance;
+
+// @public (undocumented)
 export function useAuthorizedMenu<T>(rawMenus: Ref<MenuLike<T>[]>, uiAuth: Ref<UIAuthPayload | null>): ComputedRef<MenuLike<T>[]>;
 
 // @public (undocumented)
@@ -13406,97 +14796,13 @@ export function useChatSSE(): {
     isStreaming: Ref<boolean, boolean>;
     streamContent: Ref<string, string>;
     streamToolCallName: Ref<string, string>;
-    searchProgress: Ref<    {
-    status: "idle" | "searching" | "done";
-    query?: string | undefined;
-    resultCount?: number | undefined;
-    provider?: string | undefined;
-    }, SearchProgress | {
-    status: "idle" | "searching" | "done";
-    query?: string | undefined;
-    resultCount?: number | undefined;
-    provider?: string | undefined;
-    }>;
-    fetchProgress: Ref<    {
-    status: "idle" | "fetching" | "done";
-    domain?: string | undefined;
-    statusCode?: number | undefined;
-    latencyMs?: number | undefined;
-    fetchMethod?: "http" | "playwright" | undefined;
-    }, FetchProgress | {
-    status: "idle" | "fetching" | "done";
-    domain?: string | undefined;
-    statusCode?: number | undefined;
-    latencyMs?: number | undefined;
-    fetchMethod?: "http" | "playwright" | undefined;
-    }>;
-    mcpProgress: Ref<    {
-    status: "idle" | "calling" | "done";
-    serverName?: string | undefined;
-    toolName?: string | undefined;
-    }, MCPProgress | {
-    status: "idle" | "calling" | "done";
-    serverName?: string | undefined;
-    toolName?: string | undefined;
-    }>;
-    agentProgress: Ref<    {
-    status: "idle" | "running" | "done";
-    agentId?: number | undefined;
-    agentName?: string | undefined;
-    agentAvatar?: string | undefined;
-    totalNodes?: number | undefined;
-    currentStep?: number | undefined;
-    }, AgentProgress | {
-    status: "idle" | "running" | "done";
-    agentId?: number | undefined;
-    agentName?: string | undefined;
-    agentAvatar?: string | undefined;
-    totalNodes?: number | undefined;
-    currentStep?: number | undefined;
-    }>;
-    toolCallEvents: Ref<({
-    name: string;
-    args?: string | undefined;
-    result?: string | undefined;
-    latencyMs?: number | undefined;
-    } | {
-    type: "fetch_fallback";
-    url: string;
-    reason: string;
-    })[], ToolCallEvent[] | ({
-    name: string;
-    args?: string | undefined;
-    result?: string | undefined;
-    latencyMs?: number | undefined;
-    } | {
-    type: "fetch_fallback";
-    url: string;
-    reason: string;
-    })[]>;
-    tokenUsage: Ref<    {
-    inputTokens: number;
-    outputTokens: number;
-    totalTokens: number;
-    inputCost?: number | undefined;
-    outputCost?: number | undefined;
-    totalCost?: number | undefined;
-    } | null, TokenUsage | {
-    inputTokens: number;
-    outputTokens: number;
-    totalTokens: number;
-    inputCost?: number | undefined;
-    outputCost?: number | undefined;
-    totalCost?: number | undefined;
-    } | null>;
-    contextError: Ref<    {
-    type: "error";
-    code: "token_budget" | "rate_limit" | "content_filter" | "provider_error" | string;
-    message: string;
-    } | null, SSEError | {
-    type: "error";
-    code: "token_budget" | "rate_limit" | "content_filter" | "provider_error" | string;
-    message: string;
-    } | null>;
+    searchProgress: Ref<SearchProgress, SearchProgress>;
+    fetchProgress: Ref<FetchProgress, FetchProgress>;
+    mcpProgress: Ref<MCPProgress, MCPProgress>;
+    agentProgress: Ref<AgentProgress, AgentProgress>;
+    toolCallEvents: Ref<ToolCallEvent[], ToolCallEvent[]>;
+    tokenUsage: Ref<TokenUsage | null, TokenUsage | null>;
+    contextError: Ref<SSEError | null, SSEError | null>;
     error: Ref<Error | null, Error | null>;
     startStream: (options: ChatSSEOptions) => Promise<void>;
     stopStream: () => void;
@@ -13654,6 +14960,18 @@ export function validateImageDimensions(image: HTMLImageElement, options?: Image
 export function validateWorkflowGraph(graph: WorkflowGraph): WorkflowValidationIssue[];
 
 // @public (undocumented)
+export interface WatchAsyncTaskInput {
+    // (undocumented)
+    jobId: string;
+    // (undocumented)
+    metadata?: Record<string, unknown>;
+    // (undocumented)
+    taskType?: string;
+    // (undocumented)
+    title?: string;
+}
+
+// @public (undocumented)
 export interface WebsiteConfig {
     // (undocumented)
     copyright?: string;
@@ -13731,14 +15049,14 @@ export interface WorkflowValidationIssue {
     message: string;
 }
 
-// Warning: (ae-forgotten-export) The symbol "__VLS_Props_21" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "__VLS_Props_30" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
-export const YearCellEditor: DefineComponent<__VLS_Props_21, {
+export const YearCellEditor: DefineComponent<__VLS_Props_30, {
 getValue: typeof getValue_4;
 isCancelBeforeStart: typeof isCancelBeforeStart_4;
 isCancelAfterEnd: typeof isCancelAfterEnd_4;
-}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_21> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {
+}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, PublicProps, Readonly<__VLS_Props_30> & Readonly<{}>, {}, {}, {}, {}, string, ComponentProvideOptions, false, {
 inputRef: HTMLInputElement;
 }, HTMLInputElement>;
 
@@ -13753,8 +15071,8 @@ export function zIndexVar(token: ZIndexToken): string;
 // src/components/chat/RChatInput.vue:454:36 - (ae-forgotten-export) The symbol "RChatMCPSelectorProps" needs to be exported by the entry point index.d.ts
 // src/components/chat/RChatInput.vue:610:4 - (ae-forgotten-export) The symbol "focus_2" needs to be exported by the entry point index.d.ts
 // src/components/chat/RChatModelSelector.vue:106:4 - (ae-forgotten-export) The symbol "TierKey" needs to be exported by the entry point index.d.ts
-// src/components/code-verify/RCodeVerify.vue:391:67 - (ae-forgotten-export) The symbol "startCountdown" needs to be exported by the entry point index.d.ts
-// src/components/code-verify/RCodeVerify.vue:391:67 - (ae-forgotten-export) The symbol "resetCountdown" needs to be exported by the entry point index.d.ts
+// src/components/code-verify/RCodeVerify.vue:409:67 - (ae-forgotten-export) The symbol "startCountdown" needs to be exported by the entry point index.d.ts
+// src/components/code-verify/RCodeVerify.vue:409:67 - (ae-forgotten-export) The symbol "resetCountdown" needs to be exported by the entry point index.d.ts
 // src/components/data-grid/components/ColumnEditDrawer.vue:300:5 - (ae-forgotten-export) The symbol "ColumnEditForm" needs to be exported by the entry point index.d.ts
 // src/components/data-grid/components/CustomHeader.vue:165:4 - (ae-forgotten-export) The symbol "init" needs to be exported by the entry point index.d.ts
 // src/components/data-grid/components/CustomHeader.vue:165:4 - (ae-forgotten-export) The symbol "refresh" needs to be exported by the entry point index.d.ts
@@ -13772,17 +15090,17 @@ export function zIndexVar(token: ZIndexToken): string;
 // src/components/data-grid/components/YearCellEditor.vue:89:4 - (ae-forgotten-export) The symbol "getValue_4" needs to be exported by the entry point index.d.ts
 // src/components/data-grid/components/YearCellEditor.vue:89:4 - (ae-forgotten-export) The symbol "isCancelBeforeStart_4" needs to be exported by the entry point index.d.ts
 // src/components/data-grid/components/YearCellEditor.vue:89:4 - (ae-forgotten-export) The symbol "isCancelAfterEnd_4" needs to be exported by the entry point index.d.ts
-// src/components/docs-browser/RDocsBrowser.vue:3541:4 - (ae-forgotten-export) The symbol "handleRefresh" needs to be exported by the entry point index.d.ts
-// src/components/docs-browser/RDocsBrowser.vue:3541:4 - (ae-forgotten-export) The symbol "handleClearCache" needs to be exported by the entry point index.d.ts
-// src/components/docs-browser/RDocsBrowser.vue:3541:4 - (ae-forgotten-export) The symbol "syncFromActiveFileTag" needs to be exported by the entry point index.d.ts
+// src/components/docs-browser/RDocsBrowser.vue:2918:3 - (ae-forgotten-export) The symbol "handleRefresh" needs to be exported by the entry point index.d.ts
+// src/components/docs-browser/RDocsBrowser.vue:2925:4 - (ae-forgotten-export) The symbol "handleClearCache" needs to be exported by the entry point index.d.ts
+// src/components/docs-browser/RDocsBrowser.vue:2925:4 - (ae-forgotten-export) The symbol "syncFromActiveFileTag" needs to be exported by the entry point index.d.ts
 // src/components/flow/RFlowTimeline.vue:396:4 - (ae-forgotten-export) The symbol "handleEvent" needs to be exported by the entry point index.d.ts
 // src/components/flow/RFlowTimeline.vue:396:4 - (ae-forgotten-export) The symbol "connectSSE" needs to be exported by the entry point index.d.ts
-// src/components/flow/RFlowTimeline.vue:396:4 - (ae-forgotten-export) The symbol "reset" needs to be exported by the entry point index.d.ts
+// src/components/flow/RFlowTimeline.vue:396:4 - (ae-forgotten-export) The symbol "reset_2" needs to be exported by the entry point index.d.ts
 // src/components/index-progress/RIndexProgress.vue:97:73 - (ae-forgotten-export) The symbol "IndexStatus_2" needs to be exported by the entry point index.d.ts
 // src/components/layout/RTabsView.vue:523:47 - (ae-forgotten-export) The symbol "scrollToActive" needs to be exported by the entry point index.d.ts
 // src/components/step-progress/RStepProgress.vue:98:4 - (ae-forgotten-export) The symbol "StepItem_2" needs to be exported by the entry point index.d.ts
 // src/components/timeline-view/RTimelineView.vue:109:4 - (ae-forgotten-export) The symbol "TimelineEntry_2" needs to be exported by the entry point index.d.ts
-// src/components/workflow-designer/RWorkflowDesigner.vue:2138:19 - (ae-forgotten-export) The symbol "WorkflowApproverDataSource" needs to be exported by the entry point index.d.ts
+// src/components/workflow-designer/RWorkflowDesigner.vue:1714:19 - (ae-forgotten-export) The symbol "WorkflowApproverDataSource" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

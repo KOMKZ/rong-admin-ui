@@ -47,6 +47,7 @@ export function parseServerResponse(
     fileId: (data.id ?? data.ID ?? data.file_id) as number | undefined,
     storageId: (data.storage_id ?? data.StorageID ?? data.storageId) as string | undefined,
     url: (data.url ?? data.URL) as string | undefined,
+    posterUrl: readThumbnailURL(data),
     name: (data.original_name ?? data.original_filename ?? data.OriginalFilename) as
       | string
       | undefined,
@@ -55,12 +56,19 @@ export function parseServerResponse(
   }
 }
 
+function readThumbnailURL(data: Record<string, unknown>): string | undefined {
+  const thumbnail = data.thumbnail
+  if (!thumbnail || typeof thumbnail !== 'object') return undefined
+  return (thumbnail as Record<string, unknown>).url as string | undefined
+}
+
 export function defaultUploadRequest(
   props: ProUploadProps,
   options: ProUploadRequestOptions,
 ) {
   const xhr = new XMLHttpRequest()
   xhr.open(props.method ?? 'POST', props.action ?? '/api/files/upload')
+  if (props.timeoutMs && props.timeoutMs > 0) xhr.timeout = props.timeoutMs
   xhr.withCredentials = props.withCredentials ?? false
   for (const [key, value] of Object.entries(props.headers ?? {})) {
     xhr.setRequestHeader(key, value)
@@ -109,6 +117,9 @@ function bindXHRUploadEvents(
   })
   xhr.addEventListener('error', () => options.onError(new Error('Network error')))
   xhr.addEventListener('abort', () => options.onError(new Error('Upload aborted')))
+  xhr.addEventListener('timeout', () =>
+    options.onError(new Error('上传超时，请检查网络后重试')),
+  )
 }
 
 function parseXHRResponse(text: string): unknown {

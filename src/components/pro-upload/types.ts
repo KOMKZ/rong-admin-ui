@@ -13,6 +13,7 @@ export interface ProUploadFileItem {
   progress: number
   url?: string
   thumbUrl?: string
+  posterUrl?: string
   storageId?: string
   fileId?: number
   responseData?: unknown
@@ -61,6 +62,7 @@ export interface ProUploadRawResponse {
   content_type?: string
   media_info?: ProUploadMediaInfo
   mediaInfo?: ProUploadMediaInfo
+  thumbnail?: ProUploadRawResponse
   [key: string]: unknown
 }
 
@@ -135,6 +137,8 @@ export interface ProUploadProps {
   concurrency?: number
   /** Retry configuration */
   retryConfig?: ProUploadRetryConfig
+  /** Request timeout for the built-in XMLHttpRequest transport */
+  timeoutMs?: number
   /** Storage domain type (e.g. "avatar", "image", "document") */
   storage?: string
   /** Upload endpoint for the built-in XMLHttpRequest transport */

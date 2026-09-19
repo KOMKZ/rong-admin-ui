@@ -1,7 +1,27 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
+import { defineComponent, h } from 'vue'
 import RProUpload from '@/components/pro-upload/RProUpload.vue'
 import type { ProUploadFileItem } from '@/components/pro-upload/types'
+
+const modalDialogStub = defineComponent({
+  name: 'RModalDialog',
+  props: {
+    visible: Boolean,
+    title: String,
+  },
+  emits: ['update:visible'],
+  setup(props, { slots }) {
+    return () =>
+      props.visible
+        ? h(
+            'section',
+            { 'data-testid': 'modal-dialog-stub', 'data-title': props.title },
+            slots.default?.(),
+          )
+        : null
+  },
+})
 
 function createMockFile(name = 'photo.jpg', size = 1024, type = 'image/jpeg'): File {
   const blob = new Blob(['x'.repeat(size)], { type })
@@ -533,16 +553,15 @@ describe('RProUpload', () => {
       })
       const wrapper = mount(RProUpload, {
         props: { value: [existing] },
-        attachTo: document.body,
+        global: { stubs: { RModalDialog: modalDialogStub } },
       })
 
       await wrapper.find('.rpu-item__thumb').trigger('click')
       await flushPromises()
 
-      const previewImages = document.body.querySelectorAll<HTMLImageElement>('.rpu__preview-img')
-      const previewImage = previewImages[previewImages.length - 1]
-      expect(previewImage?.getAttribute('src')).toBe('https://cdn.example.com/avatar.jpg')
-      wrapper.unmount()
+      expect(wrapper.find('[data-testid="pro-upload-preview-image"]').attributes('src')).toBe(
+        'https://cdn.example.com/avatar.jpg',
+      )
     })
   })
 
