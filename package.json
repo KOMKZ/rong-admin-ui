@@ -110,7 +110,9 @@
     "quality-gate:ci": "bash scripts/ci/run-ci.sh",
     "knowledge:new": "node scripts/knowledge/new-iteration.mjs",
     "prepublishOnly": "npm run build",
-    "pack:dry": "npm pack --dry-run"
+    "pack:dry": "npm pack --dry-run",
+    "upload-cases:gate": "node ../servertools/structure-gate/frontend-upload-cases-gate.mjs --config .hrise/upload-cases-gate.json",
+    "upload-cases:gate:test": "node --test ../servertools/structure-gate/frontend-upload-cases-gate.test.mjs"
   },
   "dependencies": {
     "cropperjs": "^2.1.1",

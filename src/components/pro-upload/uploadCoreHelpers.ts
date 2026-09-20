@@ -1,9 +1,4 @@
-import type {
-  ProUploadFileItem,
-  ProUploadPayloadContext,
-  ProUploadProps,
-  ProUploadRequestOptions,
-} from './types'
+import type { ProUploadFileItem, ProUploadProps, ProUploadRequestOptions } from './types'
 
 export interface UploadValidationResult {
   valid: boolean
@@ -11,24 +6,10 @@ export interface UploadValidationResult {
   limit?: number | string
 }
 
-export function getPayloadContext(props: ProUploadProps): ProUploadPayloadContext {
-  return {
-    storage: props.storage,
-    category: props.category,
-    businessId: props.businessId,
-    businessType: props.businessType,
-  }
-}
-
-export function buildFormData(props: ProUploadProps, file: File): FormData {
-  if (props.buildUploadPayload) {
-    return props.buildUploadPayload(file, getPayloadContext(props))
-  }
+/** 默认 transport 只携带文件本体；业务策略字段由 upload case 的 customRequest 写入。 */
+export function buildFormData(file: File): FormData {
   const fd = new FormData()
   fd.append('file', file)
-  if (props.storage) fd.append('storage', props.storage)
-  if (props.businessId) fd.append('business_id', props.businessId)
-  if (props.businessType) fd.append('business_type', props.businessType)
   return fd
 }
 
@@ -62,10 +43,7 @@ function readThumbnailURL(data: Record<string, unknown>): string | undefined {
   return (thumbnail as Record<string, unknown>).url as string | undefined
 }
 
-export function defaultUploadRequest(
-  props: ProUploadProps,
-  options: ProUploadRequestOptions,
-) {
+export function defaultUploadRequest(props: ProUploadProps, options: ProUploadRequestOptions) {
   const xhr = new XMLHttpRequest()
   xhr.open(props.method ?? 'POST', props.action ?? '/api/files/upload')
   if (props.timeoutMs && props.timeoutMs > 0) xhr.timeout = props.timeoutMs
@@ -101,10 +79,7 @@ export function validateUploadFileContent(
   return { valid: false, type: 'accept', limit: props.accept }
 }
 
-function bindXHRUploadEvents(
-  xhr: XMLHttpRequest,
-  options: ProUploadRequestOptions,
-) {
+function bindXHRUploadEvents(xhr: XMLHttpRequest, options: ProUploadRequestOptions) {
   xhr.upload.addEventListener('progress', (e) => {
     if (e.lengthComputable) options.onProgress(Math.round((e.loaded / e.total) * 100))
   })
@@ -117,9 +92,7 @@ function bindXHRUploadEvents(
   })
   xhr.addEventListener('error', () => options.onError(new Error('Network error')))
   xhr.addEventListener('abort', () => options.onError(new Error('Upload aborted')))
-  xhr.addEventListener('timeout', () =>
-    options.onError(new Error('上传超时，请检查网络后重试')),
-  )
+  xhr.addEventListener('timeout', () => options.onError(new Error('上传超时，请检查网络后重试')))
 }
 
 function parseXHRResponse(text: string): unknown {

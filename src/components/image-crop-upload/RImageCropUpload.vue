@@ -1,11 +1,7 @@
 <script setup lang="ts">
   import { onBeforeUnmount, ref } from 'vue'
   import RProUpload from '../pro-upload/RProUpload.vue'
-  import type {
-    ProUploadExpose,
-    ProUploadFileItem,
-    ProUploadPayloadContext,
-  } from '../pro-upload/types'
+  import type { ProUploadExpose, ProUploadFileItem } from '../pro-upload/types'
   import RImageCropperDialog from './RImageCropperDialog.vue'
   import { isImageFile } from './cropper-utils'
   import type { ImageCropResult, ImageCropUploadProps } from './types'
@@ -27,18 +23,13 @@
     maxCount: undefined,
     maxSizeMB: undefined,
     accept: undefined,
-    storage: undefined,
     action: '/api/files/upload',
     method: 'POST',
     headers: undefined,
     withCredentials: false,
-    category: undefined,
-    businessId: undefined,
-    businessType: undefined,
     customRequest: undefined,
     beforeUpload: undefined,
     transformFile: undefined,
-    buildUploadPayload: undefined,
     parseResponse: undefined,
     renderItem: undefined,
     locale: () => ({}),
@@ -63,7 +54,6 @@
 
   interface PendingCrop {
     sourceFile: File
-    context: ProUploadPayloadContext
     resolve: (file: File | Promise<File>) => void
     reject: (error: Error) => void
   }
@@ -73,12 +63,9 @@
   const cropSourceFile = ref<File | undefined>(undefined)
   const pendingCrop = ref<PendingCrop | null>(null)
 
-  function applyExternalTransform(
-    file: File,
-    context: ProUploadPayloadContext,
-  ): File | Promise<File> {
+  function applyExternalTransform(file: File): File | Promise<File> {
     if (!props.transformFile) return file
-    return props.transformFile(file, context)
+    return props.transformFile(file)
   }
 
   function clearCropState(): void {
@@ -87,15 +74,14 @@
     pendingCrop.value = null
   }
 
-  function handleTransformFile(file: File, context: ProUploadPayloadContext): Promise<File> {
+  function handleTransformFile(file: File): Promise<File> {
     if (!props.crop || !isImageFile(file)) {
-      return Promise.resolve(applyExternalTransform(file, context))
+      return Promise.resolve(applyExternalTransform(file))
     }
 
     return new Promise<File>((resolve, reject) => {
       pendingCrop.value = {
         sourceFile: file,
-        context,
         resolve,
         reject,
       }
@@ -109,7 +95,7 @@
     if (!pending) return
 
     emit('crop-success', result)
-    pending.resolve(applyExternalTransform(result.file, pending.context))
+    pending.resolve(applyExternalTransform(result.file))
     clearCropState()
   }
 
@@ -205,19 +191,14 @@
       :draggable="draggable"
       :concurrency="concurrency"
       :retry-config="retryConfig"
-      :storage="storage"
       :action="action"
       :method="method"
       :headers="headers"
       :with-credentials="withCredentials"
-      :category="category"
-      :business-id="businessId"
-      :business-type="businessType"
       :list-type="listType"
       :custom-request="customRequest"
       :before-upload="beforeUpload"
       :transform-file="handleTransformFile"
-      :build-upload-payload="buildUploadPayload"
       :parse-response="parseResponse"
       :render-item="renderItem"
       :locale="locale"

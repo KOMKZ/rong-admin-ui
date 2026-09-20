@@ -175,9 +175,6 @@ describe('RProUpload', () => {
       const wrapper = mount(RProUpload, {
         props: {
           customRequest,
-          storage: 'avatar',
-          businessId: '123',
-          businessType: 'user',
         },
       })
 
@@ -191,9 +188,7 @@ describe('RProUpload', () => {
       const callArgs = customRequest.mock.calls[0][0]
       expect(callArgs.file).toBeInstanceOf(File)
       expect(callArgs.formData).toBeInstanceOf(FormData)
-      expect(callArgs.formData.get('storage')).toBe('avatar')
-      expect(callArgs.formData.get('business_id')).toBe('123')
-      expect(callArgs.formData.get('business_type')).toBe('user')
+      expect(callArgs.formData.get('file')).toBeTruthy()
       expect(typeof callArgs.onProgress).toBe('function')
       expect(typeof callArgs.onSuccess).toBe('function')
       expect(typeof callArgs.onError).toBe('function')
@@ -206,7 +201,7 @@ describe('RProUpload', () => {
       })
 
       const wrapper = mount(RProUpload, {
-        props: { customRequest, storage: 'avatar' },
+        props: { customRequest },
       })
 
       const input = wrapper.find('[data-testid="pro-upload-input"]')
@@ -245,7 +240,7 @@ describe('RProUpload', () => {
       })
 
       const wrapper = mount(RProUpload, {
-        props: { customRequest, storage: 'asset' },
+        props: { customRequest },
       })
 
       const input = wrapper.find('[data-testid="pro-upload-input"]')
@@ -392,9 +387,6 @@ describe('RProUpload', () => {
         props: {
           customRequest,
           transformFile,
-          storage: 'avatar',
-          businessId: 'admin-1',
-          businessType: 'admin_avatar',
         },
       })
 
@@ -404,12 +396,7 @@ describe('RProUpload', () => {
       await input.trigger('change')
       await flushPromises()
 
-      expect(transformFile).toHaveBeenCalledWith(file, {
-        storage: 'avatar',
-        category: undefined,
-        businessId: 'admin-1',
-        businessType: 'admin_avatar',
-      })
+      expect(transformFile).toHaveBeenCalledWith(file)
       expect(customRequest).toHaveBeenCalledTimes(1)
       const callArgs = customRequest.mock.calls[0][0]
       expect(callArgs.file.name).toBe(transformedFile.name)
@@ -732,18 +719,15 @@ describe('RProUpload', () => {
     })
   })
 
-  describe('Custom buildUploadPayload', () => {
-    it('uses custom payload builder', async () => {
-      const customRequest = vi.fn()
-      const buildUploadPayload = vi.fn((file: File) => {
-        const fd = new FormData()
-        fd.append('custom_file', file)
-        fd.append('custom_field', 'test')
-        return fd
+  describe('Custom payload via customRequest', () => {
+    it('lets the caller append case fields into options.formData', async () => {
+      const customRequest = vi.fn((opts: any) => {
+        opts.formData.append('custom_field', 'test')
+        opts.onSuccess({ storage_id: 'custom-sid', url: 'https://custom.url/file.jpg' })
       })
 
       const wrapper = mount(RProUpload, {
-        props: { customRequest, buildUploadPayload },
+        props: { customRequest },
       })
 
       const input = wrapper.find('[data-testid="pro-upload-input"]')
@@ -752,9 +736,10 @@ describe('RProUpload', () => {
       await input.trigger('change')
       await flushPromises()
 
-      expect(buildUploadPayload).toHaveBeenCalledTimes(1)
-      const callArgs = customRequest.mock.calls[0][0]
-      expect(callArgs.formData.get('custom_field')).toBe('test')
+      const list = wrapper.emitted('update:value')!
+      const item = (list[list.length - 1][0] as ProUploadFileItem[])[0]
+      expect(item.status).toBe('success')
+      expect(item.storageId).toBe('custom-sid')
     })
   })
 

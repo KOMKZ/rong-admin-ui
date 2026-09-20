@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { ref, watch } from 'vue'
   import RProUpload from '../pro-upload/RProUpload.vue'
-  import type { ProUploadFileItem, ProUploadPayloadContext } from '../pro-upload/types'
+  import type { ProUploadFileItem } from '../pro-upload/types'
   import { mediaResourceToUploadFile, uploadFileToMediaResource } from './mediaResourceAdapter'
   import type {
     MediaResourceUploadEmits,
@@ -13,20 +13,13 @@
 
   const props = withDefaults(defineProps<MediaResourceUploadProps>(), {
     modelValue: null,
-    generateThumbnail: false,
     timeoutMs: 120000,
     accept: undefined,
     maxSizeMB: undefined,
     disabled: false,
     readonly: false,
     draggable: true,
-    action: '/api/files/upload',
-    headers: undefined,
-    withCredentials: false,
-    businessId: undefined,
-    businessType: undefined,
     listType: 'picture-card',
-    customRequest: undefined,
     dataTestid: 'media-resource-upload',
   })
   const emit = defineEmits<MediaResourceUploadEmits>()
@@ -41,18 +34,6 @@
     },
     { immediate: true, deep: true },
   )
-
-  function buildUploadPayload(file: File, context: ProUploadPayloadContext): FormData {
-    const formData = new FormData()
-    formData.append('file', file)
-    formData.append('storage', context.storage ?? props.storage)
-    formData.append('media_class', props.mediaClass)
-    formData.append('include_media_info', 'true')
-    if (props.generateThumbnail) formData.append('generate_thumbnail', 'true')
-    if (context.businessId) formData.append('business_id', context.businessId)
-    if (context.businessType) formData.append('business_type', context.businessType)
-    return formData
-  }
 
   function handleUpdate(list: ProUploadFileItem[]): void {
     files.value = list
@@ -73,9 +54,7 @@
 
   function handleError(file: ProUploadFileItem, error: Error): void {
     files.value = files.value.map((current) =>
-      current.uid === file.uid
-        ? { ...current, status: 'error', error: error.message }
-        : current,
+      current.uid === file.uid ? { ...current, status: 'error', error: error.message } : current,
     )
     emit('error', file, error)
   }
@@ -103,16 +82,9 @@
       :disabled="disabled"
       :readonly="readonly"
       :draggable="draggable"
-      :storage="storage"
-      :action="action"
-      :headers="headers"
-      :with-credentials="withCredentials"
       :timeout-ms="timeoutMs"
-      :business-id="businessId"
-      :business-type="businessType"
       :list-type="listType"
       :custom-request="customRequest"
-      :build-upload-payload="buildUploadPayload"
       @update:model-value="handleUpdate"
       @success="handleSuccess"
       @error="handleError"

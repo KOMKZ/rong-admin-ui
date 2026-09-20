@@ -96,6 +96,7 @@ GATE_11_CMD="run_in \"$UI_DIR\" \"npm run build\" && run_in \"$WEB_DIR\" \"npm r
 GATE_12_CMD="run_in \"$WEB_DIR\" 'grep -q \"@rong/admin-ui/style.css\" src/main.ts && ! grep -q \"@rong/admin-ui/dist/admin-ui.css\" src/main.ts'"
 GATE_13_CMD="run_in \"$WEB_DIR\" \"npx playwright test e2e/style-load.spec.ts --reporter=list\""
 GATE_14_CMD="bash \"$UI_DIR/scripts/ci/pack-smoke.sh\""
+GATE_15_CMD="run_in \"$UI_DIR\" \"npm run upload-cases:gate\" && run_in \"$WEB_DIR\" \"npm run upload-cases:gate\""
 
 COUNT="$(enabled_gate_count)"
 
@@ -116,11 +117,12 @@ if [[ "$COUNT" -ge 10 ]]; then
   run_gate "G10" "e2e-smoke" "$GATE_10_CMD"
 fi
 
-if [[ "$COUNT" -ge 14 ]]; then
+if [[ "$COUNT" -ge 15 ]]; then
   run_gate "G11" "build-parity" "$GATE_11_CMD"
   run_gate "G12" "css-import-check" "$GATE_12_CMD"
   run_gate "G13" "style-load-verification" "$GATE_13_CMD"
   run_gate "G14" "pack-consumption-smoke" "$GATE_14_CMD"
+  run_gate "G15" "upload-cases-gate" "$GATE_15_CMD"
 fi
 
 {

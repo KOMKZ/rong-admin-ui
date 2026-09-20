@@ -23,22 +23,17 @@ export interface MediaResource {
 
 export interface MediaResourceUploadProps {
   modelValue?: MediaResource | null
+  /** 读模型媒体类别，用于回填与响应适配兜底；上传 payload 的 media_class 由 upload case 写入。 */
   mediaClass: MediaResourceClass
-  generateThumbnail?: boolean
+  /** 必选：由调用方用 upload case 构造（storage / business_type / media_class 等策略字段在这里写入）。 */
+  customRequest: (options: ProUploadRequestOptions) => void
   timeoutMs?: number
-  storage: string
   accept?: string
   maxSizeMB?: number
   disabled?: boolean
   readonly?: boolean
   draggable?: boolean
-  action?: string
-  headers?: Record<string, string>
-  withCredentials?: boolean
-  businessId?: string
-  businessType?: string
   listType?: ProUploadProps['listType']
-  customRequest?: (options: ProUploadRequestOptions) => void
   dataTestid?: string
 }
 

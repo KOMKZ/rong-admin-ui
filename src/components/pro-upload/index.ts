@@ -1,4 +1,5 @@
 export { default as RProUpload } from './RProUpload.vue'
+export { defaultUploadRequest } from './uploadCoreHelpers'
 export type {
   ProUploadProps,
   ProUploadEmits,
@@ -10,7 +11,6 @@ export type {
   ProUploadRequestOptions,
   ProUploadRetryConfig,
   ProUploadLocale,
-  ProUploadPayloadContext,
   ProUploadRawResponse,
 } from './types'
 export { defaultLocale as proUploadDefaultLocale } from './types'

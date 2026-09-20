@@ -28,10 +28,12 @@ const modalDialogStub = defineComponent({
   },
 })
 
+const stubCustomRequest = vi.fn()
+
 describe('RMediaResourceUpload', () => {
   it('hydrates an existing resource with its preview URL', () => {
     const wrapper = mount(RMediaResourceUpload, {
-      props: { modelValue: cover, mediaClass: 'image', storage: 'sys_pub' },
+      props: { modelValue: cover, mediaClass: 'image', customRequest: stubCustomRequest },
     })
     const image = wrapper.find('img')
     expect(image.exists()).toBe(true)
@@ -79,7 +81,7 @@ describe('RMediaResourceUpload', () => {
 
   it('clears the resource when the upload item is removed', async () => {
     const wrapper = mount(RMediaResourceUpload, {
-      props: { modelValue: cover, mediaClass: 'image', storage: 'sys_pub' },
+      props: { modelValue: cover, mediaClass: 'image', customRequest: stubCustomRequest },
     })
 
     wrapper.findComponent({ name: 'RProUpload' }).vm.$emit('remove')
@@ -100,7 +102,7 @@ describe('RMediaResourceUpload', () => {
       durationMs: 12_000,
     }
     const wrapper = mount(RMediaResourceUpload, {
-      props: { modelValue: video, mediaClass: 'video', storage: 'sys_pub' },
+      props: { modelValue: video, mediaClass: 'video', customRequest: stubCustomRequest },
       global: { stubs: { RModalDialog: modalDialogStub } },
     })
 

@@ -8,7 +8,6 @@
 <template>
   <RProUpload
     v-model:value="fileList"
-    storage="avatar"
     :max-count="1"
     :max-size-m-b="2"
     accept=".jpg,.jpeg,.png,.gif"
@@ -21,30 +20,27 @@
 
 ## Props
 
-| 属性                 | 类型                                    | 默认值           | 说明                                       |
-| -------------------- | --------------------------------------- | ---------------- | ------------------------------------------ |
-| `value`              | `ProUploadFileItem[]`                   | —                | 受控文件列表                               |
-| `multiple`           | `boolean`                               | `false`          | 是否允许多选                               |
-| `accept`             | `string`                                | —                | 接受的文件类型（`.jpg,.png` 或 `image/*`） |
-| `maxCount`           | `number`                                | —                | 最大文件数量                               |
-| `maxSizeMB`          | `number`                                | —                | 单文件最大 MB                              |
-| `disabled`           | `boolean`                               | `false`          | 禁用状态                                   |
-| `readonly`           | `boolean`                               | `false`          | 只读状态（展示文件，不可操作）             |
-| `draggable`          | `boolean`                               | `true`           | 是否启用拖拽上传                           |
-| `concurrency`        | `number`                                | `3`              | 并发上传数                                 |
-| `retryConfig`        | `{ maxRetries, retryDelay }`            | `{ 2, 1000 }`    | 失败重试策略                               |
-| `storage`            | `string`                                | —                | 存储类型（avatar/image/document）          |
-| `category`           | `string`                                | —                | 文件分类                                   |
-| `businessId`         | `string`                                | —                | 关联业务 ID                                |
-| `businessType`       | `string`                                | —                | 关联业务类型                               |
-| `listType`           | `'text' \| 'picture' \| 'picture-card'` | `'picture-card'` | 展示方式                                   |
-| `customRequest`      | `(options) => void`                     | —                | 自定义上传请求                             |
-| `beforeUpload`       | `(file) => boolean \| Promise<boolean>` | —                | 上传前拦截                                 |
-| `transformFile`      | `(file, ctx) => File \| Promise<File>`  | —                | 上传前文件转换，如裁切、压缩、格式转换     |
-| `buildUploadPayload` | `(file, ctx) => FormData`               | —                | 自定义 FormData 构建                       |
-| `parseResponse`      | `(raw) => Partial<FileItem>`            | —                | 自定义响应解析                             |
-| `renderItem`         | `({ file }) => VNode`                   | —                | 自定义文件项渲染                           |
-| `locale`             | `Partial<ProUploadLocale>`              | —                | 国际化文案覆盖                             |
+| 属性          | 类型                         | 默认值        | 说明                                       |
+| ------------- | ---------------------------- | ------------- | ------------------------------------------ |
+| `value`       | `ProUploadFileItem[]`        | —             | 受控文件列表                               |
+| `multiple`    | `boolean`                    | `false`       | 是否允许多选                               |
+| `accept`      | `string`                     | —             | 接受的文件类型（`.jpg,.png` 或 `image/*`） |
+| `maxCount`    | `number`                     | —             | 最大文件数量                               |
+| `maxSizeMB`   | `number`                     | —             | 单文件最大 MB                              |
+| `disabled`    | `boolean`                    | `false`       | 禁用状态                                   |
+| `readonly`    | `boolean`                    | `false`       | 只读状态（展示文件，不可操作）             |
+| `draggable`   | `boolean`                    | `true`        | 是否启用拖拽上传                           |
+| `concurrency` | `number`                     | `3`           | 并发上传数                                 |
+| `retryConfig` | `{ maxRetries, retryDelay }` | `{ 2, 1000 }` | 失败重试策略                               |
+
+| `storage` / `businessType` / `businessId` 等业务策略 props 已移除：底座不持有上传策略，由调用方的 upload case 经 `customRequest` 写入 `options.formData`。
+| `listType` | `'text' \| 'picture' \| 'picture-card'` | `'picture-card'` | 展示方式 |
+| `customRequest` | `(options) => void` | — | 自定义上传请求 |
+| `beforeUpload` | `(file) => boolean \| Promise<boolean>` | — | 上传前拦截 |
+| `transformFile` | `(file) => File \| Promise<File>` | — | 上传前文件转换，如裁切、压缩、格式转换 |
+| `parseResponse` | `(raw) => Partial<FileItem>` | — | 自定义响应解析 |
+| `renderItem` | `({ file }) => VNode` | — | 自定义文件项渲染 |
+| `locale` | `Partial<ProUploadLocale>` | — | 国际化文案覆盖 |
 
 ## Events
 
@@ -90,14 +86,13 @@ interface ProUploadFileItem {
 
 ### 默认 FormData 映射
 
-组件默认构建的 FormData 字段：
+组件默认构建的 FormData 只包含文件本体：
 
-| FormData 字段   | 来源               |
-| --------------- | ------------------ |
-| `file`          | File 对象          |
-| `storage`       | props.storage      |
-| `business_id`   | props.businessId   |
-| `business_type` | props.businessType |
+| FormData 字段 | 来源      |
+| ------------- | --------- |
+| `file`        | File 对象 |
+
+`storage`、`business_id`、`business_type`、`media_class` 等协议字段由消费应用的上传用例（upload case）在 `customRequest` 内写入 `options.formData`；底座不持有业务策略，也不提供业务默认值。
 
 ### 默认响应解析
 

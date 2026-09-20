@@ -5,7 +5,7 @@
  * is up-to-date with the current build output.
  */
 import { execSync } from 'node:child_process'
-import { existsSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 const root = process.cwd()
@@ -32,6 +32,21 @@ try {
     console.error('[gate:api] FAILED - api-extractor error:')
     console.error(output.slice(0, 1000))
     process.exit(1)
+  }
+}
+
+// api-extractor 固定输出 CRLF；仓库事实是 LF，这里统一规范化，避免 diff-check 全量脏。
+function normalizeReportFile(file) {
+  if (!/\.api\.(json|md)$/.test(file)) return
+  const normalized = readFileSync(file, 'utf8').replace(/\r\n/g, '\n')
+  writeFileSync(file, normalized)
+}
+for (const entry of readdirSync(reportDir, { withFileTypes: true })) {
+  if (entry.isFile()) normalizeReportFile(join(reportDir, entry.name))
+  else if (entry.isDirectory()) {
+    for (const name of readdirSync(join(reportDir, entry.name))) {
+      normalizeReportFile(join(reportDir, entry.name, name))
+    }
   }
 }
 

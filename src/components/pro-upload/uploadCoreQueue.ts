@@ -5,11 +5,7 @@ import type {
   ProUploadRequestOptions,
   ProUploadRetryConfig,
 } from './types'
-import {
-  buildFormData,
-  defaultUploadRequest,
-  parseServerResponse,
-} from './uploadCoreHelpers'
+import { buildFormData, defaultUploadRequest, parseServerResponse } from './uploadCoreHelpers'
 
 interface UploadQueueRuntime {
   activeUploads: number
@@ -87,10 +83,9 @@ function buildRequestOptions(
   options.abortControllers.set(item.uid, controller)
   return {
     file: item.raw!,
-    formData: buildFormData(options.props, item.raw!),
+    formData: buildFormData(item.raw!),
     signal: controller.signal,
-    onProgress: (percent) =>
-      options.updateFile(item.uid, { progress: Math.min(percent, 99) }),
+    onProgress: (percent) => options.updateFile(item.uid, { progress: Math.min(percent, 99) }),
     onSuccess: (response) => handleUploadSuccess(options, runtime, processQueue, item, response),
     onError: (error) => handleUploadError(options, runtime, processQueue, item, error),
   }
@@ -135,11 +130,7 @@ function handleUploadError(
   processQueue()
 }
 
-function abortActiveFile(
-  options: UploadQueueOptions,
-  runtime: UploadQueueRuntime,
-  uid: string,
-) {
+function abortActiveFile(options: UploadQueueOptions, runtime: UploadQueueRuntime, uid: string) {
   const controller = options.abortControllers.get(uid)
   if (!controller) return
   controller.abort()
@@ -155,11 +146,7 @@ function clearQueue(options: UploadQueueOptions, runtime: UploadQueueRuntime) {
   runtime.activeUploads = 0
 }
 
-function finishUpload(
-  options: UploadQueueOptions,
-  runtime: UploadQueueRuntime,
-  uid: string,
-) {
+function finishUpload(options: UploadQueueOptions, runtime: UploadQueueRuntime, uid: string) {
   runtime.activeUploads--
   runtime.processingUids.delete(uid)
   options.abortControllers.delete(uid)

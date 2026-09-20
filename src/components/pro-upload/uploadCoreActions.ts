@@ -1,11 +1,7 @@
 import type { Ref } from 'vue'
 import type { ProUploadFileItem, ProUploadProps } from './types'
 import { createFileItem, revokeThumbUrls } from './uploadCoreFileItem'
-import {
-  getPayloadContext,
-  validateUploadFile,
-  validateUploadFileContent,
-} from './uploadCoreHelpers'
+import { validateUploadFile, validateUploadFileContent } from './uploadCoreHelpers'
 
 interface UploadActionsOptions {
   emit: {
@@ -84,7 +80,7 @@ async function runBeforeUploadAndTransform(
   }
   if (!options.props.transformFile) return file
   try {
-    return await options.props.transformFile(file, getPayloadContext(options.props))
+    return await options.props.transformFile(file)
   } catch {
     return null
   }

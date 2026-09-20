@@ -1813,6 +1813,9 @@ export const DEFAULT_TREE_SELECT_I18N: TreeSelectI18n;
 export const defaultImageCropLocale: Required<ImageCropLocale>;
 
 // @public (undocumented)
+export function defaultUploadRequest(props: ProUploadProps, options: ProUploadRequestOptions): void;
+
+// @public (undocumented)
 export interface DeleteConstraint {
     // (undocumented)
     articleCount?: number;
@@ -3479,6 +3482,8 @@ export interface MediaResource {
     // (undocumented)
     storageId: string;
     // (undocumented)
+    thumbnail?: MediaResource | null;
+    // (undocumented)
     url: string;
     // (undocumented)
     width?: number;
@@ -3506,14 +3511,7 @@ export interface MediaResourceUploadEmits {
 export interface MediaResourceUploadProps {
     // (undocumented)
     accept?: string;
-    // (undocumented)
-    action?: string;
-    // (undocumented)
-    businessId?: string;
-    // (undocumented)
-    businessType?: string;
-    // (undocumented)
-    customRequest?: (options: ProUploadRequestOptions) => void;
+    customRequest: (options: ProUploadRequestOptions) => void;
     // (undocumented)
     dataTestid?: string;
     // (undocumented)
@@ -3521,21 +3519,16 @@ export interface MediaResourceUploadProps {
     // (undocumented)
     draggable?: boolean;
     // (undocumented)
-    headers?: Record<string, string>;
-    // (undocumented)
     listType?: ProUploadProps['listType'];
     // (undocumented)
     maxSizeMB?: number;
-    // (undocumented)
     mediaClass: MediaResourceClass;
     // (undocumented)
     modelValue?: MediaResource | null;
     // (undocumented)
     readonly?: boolean;
     // (undocumented)
-    storage: string;
-    // (undocumented)
-    withCredentials?: boolean;
+    timeoutMs?: number;
 }
 
 // @public (undocumented)
@@ -4618,6 +4611,8 @@ export interface ProUploadFileItem {
     // (undocumented)
     name: string;
     // (undocumented)
+    posterUrl?: string;
+    // (undocumented)
     progress: number;
     raw?: File;
     // (undocumented)
@@ -4697,26 +4692,10 @@ export interface ProUploadMediaInfo {
 }
 
 // @public (undocumented)
-export interface ProUploadPayloadContext {
-    // (undocumented)
-    businessId?: string;
-    // (undocumented)
-    businessType?: string;
-    // (undocumented)
-    category?: string;
-    // (undocumented)
-    storage?: string;
-}
-
-// @public (undocumented)
 export interface ProUploadProps {
     accept?: string;
     action?: string;
     beforeUpload?: (file: File) => boolean | Promise<boolean>;
-    buildUploadPayload?: (file: File, ctx: ProUploadPayloadContext) => FormData;
-    businessId?: string;
-    businessType?: string;
-    category?: string;
     concurrency?: number;
     customRequest?: (options: ProUploadRequestOptions) => void;
     disabled?: boolean;
@@ -4735,8 +4714,8 @@ export interface ProUploadProps {
         file: ProUploadFileItem;
     }) => VNode;
     retryConfig?: ProUploadRetryConfig;
-    storage?: string;
-    transformFile?: (file: File, ctx: ProUploadPayloadContext) => File | Promise<File>;
+    timeoutMs?: number;
+    transformFile?: (file: File) => File | Promise<File>;
     value?: ProUploadFileItem[];
     withCredentials?: boolean;
 }
@@ -4765,6 +4744,8 @@ export interface ProUploadRawResponse {
     size?: number;
     // (undocumented)
     storage_id?: string;
+    // (undocumented)
+    thumbnail?: ProUploadRawResponse;
     // (undocumented)
     url?: string;
 }
@@ -9978,6 +9959,32 @@ export interface ResourcePickerConfirmPayload<TItem extends ResourcePickerItem =
 }
 
 // @public (undocumented)
+export interface ResourcePickerFilter {
+    // (undocumented)
+    clearable?: boolean;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    options?: ResourcePickerFilterOption[];
+    // (undocumented)
+    placeholder?: string;
+    // (undocumented)
+    type: 'select' | 'text';
+}
+
+// @public (undocumented)
+export interface ResourcePickerFilterOption {
+    // (undocumented)
+    [key: string]: unknown;
+    // (undocumented)
+    label: string;
+    // (undocumented)
+    value: string | number;
+}
+
+// @public (undocumented)
 export interface ResourcePickerItem {
     // (undocumented)
     description?: string;
@@ -10001,6 +10008,8 @@ export type ResourcePickerKey = string | number;
 // @public (undocumented)
 export interface ResourcePickerLoadParams {
     // (undocumented)
+    filters?: Record<string, unknown>;
+    // (undocumented)
     keyword: string;
     // (undocumented)
     page: number;
@@ -10023,6 +10032,8 @@ export interface ResourcePickerTab<TItem extends ResourcePickerItem = ResourcePi
     // (undocumented)
     description?: string;
     // (undocumented)
+    filters?: ResourcePickerFilter[];
+    // (undocumented)
     key: string;
     // (undocumented)
     label: string;
@@ -10034,6 +10045,10 @@ export interface ResourcePickerTab<TItem extends ResourcePickerItem = ResourcePi
     pageSize?: number;
     // (undocumented)
     searchPlaceholder?: string;
+    // (undocumented)
+    tableColumns?: DataTableColumn<TItem & Record<string, unknown>>[];
+    // (undocumented)
+    view?: ResourcePickerView;
 }
 
 // @public (undocumented)
@@ -10057,6 +10072,9 @@ export interface ResourcePickerToolbarSlotScope {
     // (undocumented)
     tab: ResourcePickerTab;
 }
+
+// @public (undocumented)
+export type ResourcePickerView = 'card' | 'table';
 
 // @public (undocumented)
 export type ResourcePreviewKind = 'image' | 'video' | 'file';
@@ -14757,7 +14775,7 @@ export interface UploadFile {
 }
 
 // @public
-export function uploadFileToMediaResource(file: ProUploadFileItem, expectedClass: MediaResourceClass): MediaResource;
+export function uploadFileToMediaResource(file: ProUploadFileItem, expectedClass: MediaResourceClass, response?: unknown): MediaResource;
 
 // @public (undocumented)
 export type UploadListType = 'text' | 'image' | 'image-card';

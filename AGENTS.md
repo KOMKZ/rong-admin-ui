@@ -14,7 +14,7 @@
 
 - 涉及上传、媒体、图片、视频、音频、封面、预览、回填、`storage_id` 或资源 URL 时，先读取 `../../happy-rise-skills/hrs-skill-rong-app-dev/rong-code-governance/references/gates/media-resource-contract.md`。
 - 开发新上传能力前先检查 `docs/admin-ui-framework/components/catalog.md`。显式业务表单中的单个持久化媒体字段优先使用 `RMediaResourceUpload`，Schema 驱动字段使用表单框架内部字段组件，多文件列表使用 `RProUpload`，图片裁剪使用 `RImageCropUpload`。
-- 公共组件只表达中立资源语义；不得写入业务字段名、业务 API、业务默认 storage 或页面文案。
+- 公共组件只表达中立资源语义；不得写入业务字段名、业务 API、业务默认 storage 或页面文案。`RProUpload` / `RMediaResourceUpload` / `RImageCropUpload` 不持有 `storage`、`businessType` 等 policy props；业务策略由消费应用的上传用例（upload case）经 `customRequest` 写入 multipart（schema 驱动字段由 `RStorageIdField` 等表单框架内部组件承接）。
 - 新增或修改公共上传组件时，同步维护 public export、类型、规格文档、组件测试和真实消费方验证。
 
 ## Review 门禁

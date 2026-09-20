@@ -20720,6 +20720,69 @@
           }
         },
         {
+          "kind": "Function",
+          "canonicalReference": "@rong/admin-ui!defaultUploadRequest:function(1)",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export declare function defaultUploadRequest(props: "
+            },
+            {
+              "kind": "Reference",
+              "text": "ProUploadProps",
+              "canonicalReference": "@rong/admin-ui!ProUploadProps:interface"
+            },
+            {
+              "kind": "Content",
+              "text": ", options: "
+            },
+            {
+              "kind": "Reference",
+              "text": "ProUploadRequestOptions",
+              "canonicalReference": "@rong/admin-ui!ProUploadRequestOptions:interface"
+            },
+            {
+              "kind": "Content",
+              "text": "): "
+            },
+            {
+              "kind": "Content",
+              "text": "void"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "src/components/pro-upload/uploadCoreHelpers.ts",
+          "returnTypeTokenRange": {
+            "startIndex": 5,
+            "endIndex": 6
+          },
+          "releaseTag": "Public",
+          "overloadIndex": 1,
+          "parameters": [
+            {
+              "parameterName": "props",
+              "parameterTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              },
+              "isOptional": false
+            },
+            {
+              "parameterName": "options",
+              "parameterTypeTokenRange": {
+                "startIndex": 3,
+                "endIndex": 4
+              },
+              "isOptional": false
+            }
+          ],
+          "name": "defaultUploadRequest"
+        },
+        {
           "kind": "Interface",
           "canonicalReference": "@rong/admin-ui!DeleteConstraint:interface",
           "docComment": "",
@@ -41193,6 +41256,38 @@
             },
             {
               "kind": "PropertySignature",
+              "canonicalReference": "@rong/admin-ui!MediaResource#thumbnail:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "thumbnail?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "MediaResource",
+                  "canonicalReference": "@rong/admin-ui!MediaResource:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": " | null"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "thumbnail",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              }
+            },
+            {
+              "kind": "PropertySignature",
               "canonicalReference": "@rong/admin-ui!MediaResource#url:member",
               "docComment": "",
               "excerptTokens": [
@@ -41681,93 +41776,12 @@
             },
             {
               "kind": "PropertySignature",
-              "canonicalReference": "@rong/admin-ui!MediaResourceUploadProps#action:member",
-              "docComment": "",
-              "excerptTokens": [
-                {
-                  "kind": "Content",
-                  "text": "action?: "
-                },
-                {
-                  "kind": "Content",
-                  "text": "string"
-                },
-                {
-                  "kind": "Content",
-                  "text": ";"
-                }
-              ],
-              "isReadonly": false,
-              "isOptional": true,
-              "releaseTag": "Public",
-              "name": "action",
-              "propertyTypeTokenRange": {
-                "startIndex": 1,
-                "endIndex": 2
-              }
-            },
-            {
-              "kind": "PropertySignature",
-              "canonicalReference": "@rong/admin-ui!MediaResourceUploadProps#businessId:member",
-              "docComment": "",
-              "excerptTokens": [
-                {
-                  "kind": "Content",
-                  "text": "businessId?: "
-                },
-                {
-                  "kind": "Content",
-                  "text": "string"
-                },
-                {
-                  "kind": "Content",
-                  "text": ";"
-                }
-              ],
-              "isReadonly": false,
-              "isOptional": true,
-              "releaseTag": "Public",
-              "name": "businessId",
-              "propertyTypeTokenRange": {
-                "startIndex": 1,
-                "endIndex": 2
-              }
-            },
-            {
-              "kind": "PropertySignature",
-              "canonicalReference": "@rong/admin-ui!MediaResourceUploadProps#businessType:member",
-              "docComment": "",
-              "excerptTokens": [
-                {
-                  "kind": "Content",
-                  "text": "businessType?: "
-                },
-                {
-                  "kind": "Content",
-                  "text": "string"
-                },
-                {
-                  "kind": "Content",
-                  "text": ";"
-                }
-              ],
-              "isReadonly": false,
-              "isOptional": true,
-              "releaseTag": "Public",
-              "name": "businessType",
-              "propertyTypeTokenRange": {
-                "startIndex": 1,
-                "endIndex": 2
-              }
-            },
-            {
-              "kind": "PropertySignature",
               "canonicalReference": "@rong/admin-ui!MediaResourceUploadProps#customRequest:member",
-              "docComment": "",
+              "docComment": "/**\n * 必选：由调用方用 upload case 构造（storage / business_type / media_class 等策略字段在这里写入）。\n */\n",
               "excerptTokens": [
                 {
                   "kind": "Content",
-                  "text": "customRequest?: "
+                  "text": "customRequest: "
                 },
                 {
                   "kind": "Content",
@@ -41788,7 +41802,7 @@
                 }
               ],
               "isReadonly": false,
-              "isOptional": true,
+              "isOptional": false,
               "releaseTag": "Public",
               "name": "customRequest",
               "propertyTypeTokenRange": {
@@ -41879,38 +41893,6 @@
             },
             {
               "kind": "PropertySignature",
-              "canonicalReference": "@rong/admin-ui!MediaResourceUploadProps#headers:member",
-              "docComment": "",
-              "excerptTokens": [
-                {
-                  "kind": "Content",
-                  "text": "headers?: "
-                },
-                {
-                  "kind": "Reference",
-                  "text": "Record",
-                  "canonicalReference": "!Record:type"
-                },
-                {
-                  "kind": "Content",
-                  "text": "<string, string>"
-                },
-                {
-                  "kind": "Content",
-                  "text": ";"
-                }
-              ],
-              "isReadonly": false,
-              "isOptional": true,
-              "releaseTag": "Public",
-              "name": "headers",
-              "propertyTypeTokenRange": {
-                "startIndex": 1,
-                "endIndex": 3
-              }
-            },
-            {
-              "kind": "PropertySignature",
               "canonicalReference": "@rong/admin-ui!MediaResourceUploadProps#listType:member",
               "docComment": "",
               "excerptTokens": [
@@ -41971,7 +41953,7 @@
             {
               "kind": "PropertySignature",
               "canonicalReference": "@rong/admin-ui!MediaResourceUploadProps#mediaClass:member",
-              "docComment": "",
+              "docComment": "/**\n * 读模型媒体类别，用于回填与响应适配兜底；上传 payload 的 media_class 由 upload case 写入。\n */\n",
               "excerptTokens": [
                 {
                   "kind": "Content",
@@ -42057,43 +42039,16 @@
             },
             {
               "kind": "PropertySignature",
-              "canonicalReference": "@rong/admin-ui!MediaResourceUploadProps#storage:member",
+              "canonicalReference": "@rong/admin-ui!MediaResourceUploadProps#timeoutMs:member",
               "docComment": "",
               "excerptTokens": [
                 {
                   "kind": "Content",
-                  "text": "storage: "
+                  "text": "timeoutMs?: "
                 },
                 {
                   "kind": "Content",
-                  "text": "string"
-                },
-                {
-                  "kind": "Content",
-                  "text": ";"
-                }
-              ],
-              "isReadonly": false,
-              "isOptional": false,
-              "releaseTag": "Public",
-              "name": "storage",
-              "propertyTypeTokenRange": {
-                "startIndex": 1,
-                "endIndex": 2
-              }
-            },
-            {
-              "kind": "PropertySignature",
-              "canonicalReference": "@rong/admin-ui!MediaResourceUploadProps#withCredentials:member",
-              "docComment": "",
-              "excerptTokens": [
-                {
-                  "kind": "Content",
-                  "text": "withCredentials?: "
-                },
-                {
-                  "kind": "Content",
-                  "text": "boolean"
+                  "text": "number"
                 },
                 {
                   "kind": "Content",
@@ -42103,7 +42058,7 @@
               "isReadonly": false,
               "isOptional": true,
               "releaseTag": "Public",
-              "name": "withCredentials",
+              "name": "timeoutMs",
               "propertyTypeTokenRange": {
                 "startIndex": 1,
                 "endIndex": 2
@@ -53920,6 +53875,33 @@
             },
             {
               "kind": "PropertySignature",
+              "canonicalReference": "@rong/admin-ui!ProUploadFileItem#posterUrl:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "posterUrl?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "posterUrl",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
               "canonicalReference": "@rong/admin-ui!ProUploadFileItem#progress:member",
               "docComment": "",
               "excerptTokens": [
@@ -54895,132 +54877,6 @@
         },
         {
           "kind": "Interface",
-          "canonicalReference": "@rong/admin-ui!ProUploadPayloadContext:interface",
-          "docComment": "",
-          "excerptTokens": [
-            {
-              "kind": "Content",
-              "text": "export interface ProUploadPayloadContext "
-            }
-          ],
-          "fileUrlPath": "src/components/pro-upload/types.ts",
-          "releaseTag": "Public",
-          "name": "ProUploadPayloadContext",
-          "preserveMemberOrder": false,
-          "members": [
-            {
-              "kind": "PropertySignature",
-              "canonicalReference": "@rong/admin-ui!ProUploadPayloadContext#businessId:member",
-              "docComment": "",
-              "excerptTokens": [
-                {
-                  "kind": "Content",
-                  "text": "businessId?: "
-                },
-                {
-                  "kind": "Content",
-                  "text": "string"
-                },
-                {
-                  "kind": "Content",
-                  "text": ";"
-                }
-              ],
-              "isReadonly": false,
-              "isOptional": true,
-              "releaseTag": "Public",
-              "name": "businessId",
-              "propertyTypeTokenRange": {
-                "startIndex": 1,
-                "endIndex": 2
-              }
-            },
-            {
-              "kind": "PropertySignature",
-              "canonicalReference": "@rong/admin-ui!ProUploadPayloadContext#businessType:member",
-              "docComment": "",
-              "excerptTokens": [
-                {
-                  "kind": "Content",
-                  "text": "businessType?: "
-                },
-                {
-                  "kind": "Content",
-                  "text": "string"
-                },
-                {
-                  "kind": "Content",
-                  "text": ";"
-                }
-              ],
-              "isReadonly": false,
-              "isOptional": true,
-              "releaseTag": "Public",
-              "name": "businessType",
-              "propertyTypeTokenRange": {
-                "startIndex": 1,
-                "endIndex": 2
-              }
-            },
-            {
-              "kind": "PropertySignature",
-              "canonicalReference": "@rong/admin-ui!ProUploadPayloadContext#category:member",
-              "docComment": "",
-              "excerptTokens": [
-                {
-                  "kind": "Content",
-                  "text": "category?: "
-                },
-                {
-                  "kind": "Content",
-                  "text": "string"
-                },
-                {
-                  "kind": "Content",
-                  "text": ";"
-                }
-              ],
-              "isReadonly": false,
-              "isOptional": true,
-              "releaseTag": "Public",
-              "name": "category",
-              "propertyTypeTokenRange": {
-                "startIndex": 1,
-                "endIndex": 2
-              }
-            },
-            {
-              "kind": "PropertySignature",
-              "canonicalReference": "@rong/admin-ui!ProUploadPayloadContext#storage:member",
-              "docComment": "",
-              "excerptTokens": [
-                {
-                  "kind": "Content",
-                  "text": "storage?: "
-                },
-                {
-                  "kind": "Content",
-                  "text": "string"
-                },
-                {
-                  "kind": "Content",
-                  "text": ";"
-                }
-              ],
-              "isReadonly": false,
-              "isOptional": true,
-              "releaseTag": "Public",
-              "name": "storage",
-              "propertyTypeTokenRange": {
-                "startIndex": 1,
-                "endIndex": 2
-              }
-            }
-          ],
-          "extendsTokenRanges": []
-        },
-        {
-          "kind": "Interface",
           "canonicalReference": "@rong/admin-ui!ProUploadProps:interface",
           "docComment": "",
           "excerptTokens": [
@@ -55135,137 +54991,6 @@
             },
             {
               "kind": "PropertySignature",
-              "canonicalReference": "@rong/admin-ui!ProUploadProps#buildUploadPayload:member",
-              "docComment": "/**\n * Build FormData payload; override to add custom fields\n */\n",
-              "excerptTokens": [
-                {
-                  "kind": "Content",
-                  "text": "buildUploadPayload?: "
-                },
-                {
-                  "kind": "Content",
-                  "text": "(file: "
-                },
-                {
-                  "kind": "Reference",
-                  "text": "File",
-                  "canonicalReference": "!File:interface"
-                },
-                {
-                  "kind": "Content",
-                  "text": ", ctx: "
-                },
-                {
-                  "kind": "Reference",
-                  "text": "ProUploadPayloadContext",
-                  "canonicalReference": "@rong/admin-ui!ProUploadPayloadContext:interface"
-                },
-                {
-                  "kind": "Content",
-                  "text": ") => "
-                },
-                {
-                  "kind": "Reference",
-                  "text": "FormData",
-                  "canonicalReference": "!FormData:interface"
-                },
-                {
-                  "kind": "Content",
-                  "text": ";"
-                }
-              ],
-              "isReadonly": false,
-              "isOptional": true,
-              "releaseTag": "Public",
-              "name": "buildUploadPayload",
-              "propertyTypeTokenRange": {
-                "startIndex": 1,
-                "endIndex": 7
-              }
-            },
-            {
-              "kind": "PropertySignature",
-              "canonicalReference": "@rong/admin-ui!ProUploadProps#businessId:member",
-              "docComment": "/**\n * Business ID for file metadata\n */\n",
-              "excerptTokens": [
-                {
-                  "kind": "Content",
-                  "text": "businessId?: "
-                },
-                {
-                  "kind": "Content",
-                  "text": "string"
-                },
-                {
-                  "kind": "Content",
-                  "text": ";"
-                }
-              ],
-              "isReadonly": false,
-              "isOptional": true,
-              "releaseTag": "Public",
-              "name": "businessId",
-              "propertyTypeTokenRange": {
-                "startIndex": 1,
-                "endIndex": 2
-              }
-            },
-            {
-              "kind": "PropertySignature",
-              "canonicalReference": "@rong/admin-ui!ProUploadProps#businessType:member",
-              "docComment": "/**\n * Business type for file metadata\n */\n",
-              "excerptTokens": [
-                {
-                  "kind": "Content",
-                  "text": "businessType?: "
-                },
-                {
-                  "kind": "Content",
-                  "text": "string"
-                },
-                {
-                  "kind": "Content",
-                  "text": ";"
-                }
-              ],
-              "isReadonly": false,
-              "isOptional": true,
-              "releaseTag": "Public",
-              "name": "businessType",
-              "propertyTypeTokenRange": {
-                "startIndex": 1,
-                "endIndex": 2
-              }
-            },
-            {
-              "kind": "PropertySignature",
-              "canonicalReference": "@rong/admin-ui!ProUploadProps#category:member",
-              "docComment": "/**\n * Category for file metadata\n */\n",
-              "excerptTokens": [
-                {
-                  "kind": "Content",
-                  "text": "category?: "
-                },
-                {
-                  "kind": "Content",
-                  "text": "string"
-                },
-                {
-                  "kind": "Content",
-                  "text": ";"
-                }
-              ],
-              "isReadonly": false,
-              "isOptional": true,
-              "releaseTag": "Public",
-              "name": "category",
-              "propertyTypeTokenRange": {
-                "startIndex": 1,
-                "endIndex": 2
-              }
-            },
-            {
-              "kind": "PropertySignature",
               "canonicalReference": "@rong/admin-ui!ProUploadProps#concurrency:member",
               "docComment": "/**\n * Concurrent upload limit\n */\n",
               "excerptTokens": [
@@ -55294,7 +55019,7 @@
             {
               "kind": "PropertySignature",
               "canonicalReference": "@rong/admin-ui!ProUploadProps#customRequest:member",
-              "docComment": "/**\n * Custom upload request (pluggable network layer)\n */\n",
+              "docComment": "/**\n * Custom upload request (pluggable network layer). storage / business_type / media_class 等业务策略字段由调用方的上传用例（upload case） 在这里自行写入 options.formData；底座不持有、也不接收业务策略 props。\n */\n",
               "excerptTokens": [
                 {
                   "kind": "Content",
@@ -55764,16 +55489,16 @@
             },
             {
               "kind": "PropertySignature",
-              "canonicalReference": "@rong/admin-ui!ProUploadProps#storage:member",
-              "docComment": "/**\n * Storage domain type (e.g. \"avatar\", \"image\", \"document\")\n */\n",
+              "canonicalReference": "@rong/admin-ui!ProUploadProps#timeoutMs:member",
+              "docComment": "/**\n * Request timeout for the built-in XMLHttpRequest transport\n */\n",
               "excerptTokens": [
                 {
                   "kind": "Content",
-                  "text": "storage?: "
+                  "text": "timeoutMs?: "
                 },
                 {
                   "kind": "Content",
-                  "text": "string"
+                  "text": "number"
                 },
                 {
                   "kind": "Content",
@@ -55783,7 +55508,7 @@
               "isReadonly": false,
               "isOptional": true,
               "releaseTag": "Public",
-              "name": "storage",
+              "name": "timeoutMs",
               "propertyTypeTokenRange": {
                 "startIndex": 1,
                 "endIndex": 2
@@ -55806,15 +55531,6 @@
                   "kind": "Reference",
                   "text": "File",
                   "canonicalReference": "!File:interface"
-                },
-                {
-                  "kind": "Content",
-                  "text": ", ctx: "
-                },
-                {
-                  "kind": "Reference",
-                  "text": "ProUploadPayloadContext",
-                  "canonicalReference": "@rong/admin-ui!ProUploadPayloadContext:interface"
                 },
                 {
                   "kind": "Content",
@@ -55858,7 +55574,7 @@
               "name": "transformFile",
               "propertyTypeTokenRange": {
                 "startIndex": 1,
-                "endIndex": 12
+                "endIndex": 10
               }
             },
             {
@@ -56249,6 +55965,34 @@
               "isOptional": true,
               "releaseTag": "Public",
               "name": "storage_id",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "@rong/admin-ui!ProUploadRawResponse#thumbnail:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "thumbnail?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ProUploadRawResponse",
+                  "canonicalReference": "@rong/admin-ui!ProUploadRawResponse:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "thumbnail",
               "propertyTypeTokenRange": {
                 "startIndex": 1,
                 "endIndex": 2
@@ -78805,6 +78549,307 @@
         },
         {
           "kind": "Interface",
+          "canonicalReference": "@rong/admin-ui!ResourcePickerFilter:interface",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export interface ResourcePickerFilter "
+            }
+          ],
+          "fileUrlPath": "src/components/resource-picker/types.ts",
+          "releaseTag": "Public",
+          "name": "ResourcePickerFilter",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "@rong/admin-ui!ResourcePickerFilter#clearable:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "clearable?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "boolean"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "clearable",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "@rong/admin-ui!ResourcePickerFilter#key:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "key: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "key",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "@rong/admin-ui!ResourcePickerFilter#label:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "label: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "label",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "@rong/admin-ui!ResourcePickerFilter#options:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "options?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ResourcePickerFilterOption",
+                  "canonicalReference": "@rong/admin-ui!ResourcePickerFilterOption:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "[]"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "options",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "@rong/admin-ui!ResourcePickerFilter#placeholder:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "placeholder?: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "placeholder",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "@rong/admin-ui!ResourcePickerFilter#type:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "type: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "'select' | 'text'"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "type",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            }
+          ],
+          "extendsTokenRanges": []
+        },
+        {
+          "kind": "Interface",
+          "canonicalReference": "@rong/admin-ui!ResourcePickerFilterOption:interface",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export interface ResourcePickerFilterOption "
+            }
+          ],
+          "fileUrlPath": "src/components/resource-picker/types.ts",
+          "releaseTag": "Public",
+          "name": "ResourcePickerFilterOption",
+          "preserveMemberOrder": false,
+          "members": [
+            {
+              "kind": "IndexSignature",
+              "canonicalReference": "@rong/admin-ui!ResourcePickerFilterOption:index(1)",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "[key: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": "]: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "unknown"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "returnTypeTokenRange": {
+                "startIndex": 3,
+                "endIndex": 4
+              },
+              "releaseTag": "Public",
+              "overloadIndex": 1,
+              "parameters": [
+                {
+                  "parameterName": "key",
+                  "parameterTypeTokenRange": {
+                    "startIndex": 1,
+                    "endIndex": 2
+                  },
+                  "isOptional": false
+                }
+              ]
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "@rong/admin-ui!ResourcePickerFilterOption#label:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "label: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "label",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "@rong/admin-ui!ResourcePickerFilterOption#value:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "value: "
+                },
+                {
+                  "kind": "Content",
+                  "text": "string | number"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": false,
+              "releaseTag": "Public",
+              "name": "value",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            }
+          ],
+          "extendsTokenRanges": []
+        },
+        {
+          "kind": "Interface",
           "canonicalReference": "@rong/admin-ui!ResourcePickerItem:interface",
           "docComment": "",
           "excerptTokens": [
@@ -79057,6 +79102,38 @@
           "name": "ResourcePickerLoadParams",
           "preserveMemberOrder": false,
           "members": [
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "@rong/admin-ui!ResourcePickerLoadParams#filters:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "filters?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Record",
+                  "canonicalReference": "!Record:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<string, unknown>"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "filters",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              }
+            },
             {
               "kind": "PropertySignature",
               "canonicalReference": "@rong/admin-ui!ResourcePickerLoadParams#keyword:member",
@@ -79346,6 +79423,38 @@
             },
             {
               "kind": "PropertySignature",
+              "canonicalReference": "@rong/admin-ui!ResourcePickerTab#filters:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "filters?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ResourcePickerFilter",
+                  "canonicalReference": "@rong/admin-ui!ResourcePickerFilter:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "[]"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "filters",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 3
+              }
+            },
+            {
+              "kind": "PropertySignature",
               "canonicalReference": "@rong/admin-ui!ResourcePickerTab#key:member",
               "docComment": "",
               "excerptTokens": [
@@ -79528,6 +79637,75 @@
               "isOptional": true,
               "releaseTag": "Public",
               "name": "searchPlaceholder",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 2
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "@rong/admin-ui!ResourcePickerTab#tableColumns:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "tableColumns?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "DataTableColumn",
+                  "canonicalReference": "@rong/admin-ui!DataTableColumn:interface"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<TItem & "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "Record",
+                  "canonicalReference": "!Record:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": "<string, unknown>>[]"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "tableColumns",
+              "propertyTypeTokenRange": {
+                "startIndex": 1,
+                "endIndex": 5
+              }
+            },
+            {
+              "kind": "PropertySignature",
+              "canonicalReference": "@rong/admin-ui!ResourcePickerTab#view:member",
+              "docComment": "",
+              "excerptTokens": [
+                {
+                  "kind": "Content",
+                  "text": "view?: "
+                },
+                {
+                  "kind": "Reference",
+                  "text": "ResourcePickerView",
+                  "canonicalReference": "@rong/admin-ui!ResourcePickerView:type"
+                },
+                {
+                  "kind": "Content",
+                  "text": ";"
+                }
+              ],
+              "isReadonly": false,
+              "isOptional": true,
+              "releaseTag": "Public",
+              "name": "view",
               "propertyTypeTokenRange": {
                 "startIndex": 1,
                 "endIndex": 2
@@ -79761,6 +79939,32 @@
             }
           ],
           "extendsTokenRanges": []
+        },
+        {
+          "kind": "TypeAlias",
+          "canonicalReference": "@rong/admin-ui!ResourcePickerView:type",
+          "docComment": "",
+          "excerptTokens": [
+            {
+              "kind": "Content",
+              "text": "export type ResourcePickerView = "
+            },
+            {
+              "kind": "Content",
+              "text": "'card' | 'table'"
+            },
+            {
+              "kind": "Content",
+              "text": ";"
+            }
+          ],
+          "fileUrlPath": "src/components/resource-picker/types.ts",
+          "releaseTag": "Public",
+          "name": "ResourcePickerView",
+          "typeTokenRange": {
+            "startIndex": 1,
+            "endIndex": 2
+          }
         },
         {
           "kind": "TypeAlias",
@@ -114981,6 +115185,14 @@
             },
             {
               "kind": "Content",
+              "text": ", response?: "
+            },
+            {
+              "kind": "Content",
+              "text": "unknown"
+            },
+            {
+              "kind": "Content",
               "text": "): "
             },
             {
@@ -114995,8 +115207,8 @@
           ],
           "fileUrlPath": "src/components/media-resource-upload/mediaResourceAdapter.ts",
           "returnTypeTokenRange": {
-            "startIndex": 5,
-            "endIndex": 6
+            "startIndex": 7,
+            "endIndex": 8
           },
           "releaseTag": "Public",
           "overloadIndex": 1,
@@ -115016,6 +115228,14 @@
                 "endIndex": 4
               },
               "isOptional": false
+            },
+            {
+              "parameterName": "response",
+              "parameterTypeTokenRange": {
+                "startIndex": 5,
+                "endIndex": 6
+              },
+              "isOptional": true
             }
           ],
           "name": "uploadFileToMediaResource"

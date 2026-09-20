@@ -94,7 +94,6 @@ describe('RImageCropUpload', () => {
     const wrapper = mount(RImageCropUpload, {
       props: {
         customRequest,
-        storage: 'avatar',
         maxCount: 1,
         accept: 'image/*',
       },
@@ -115,7 +114,7 @@ describe('RImageCropUpload', () => {
     expect(customRequest).toHaveBeenCalledTimes(1)
     const callArgs = customRequest.mock.calls[0][0]
     expect(callArgs.file.name).toBe('cropped.jpg')
-    expect(callArgs.formData.get('storage')).toBe('avatar')
+    expect(callArgs.formData.get('file')).toBeTruthy()
   })
 
   it('skips upload when crop is cancelled', async () => {

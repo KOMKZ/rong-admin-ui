@@ -43,13 +43,6 @@ export interface ProUploadMediaInfo {
 
 /* ─── Storage Integration ─── */
 
-export interface ProUploadPayloadContext {
-  storage?: string
-  category?: string
-  businessId?: string
-  businessType?: string
-}
-
 export interface ProUploadRawResponse {
   id?: number
   file_id?: number
@@ -139,8 +132,6 @@ export interface ProUploadProps {
   retryConfig?: ProUploadRetryConfig
   /** Request timeout for the built-in XMLHttpRequest transport */
   timeoutMs?: number
-  /** Storage domain type (e.g. "avatar", "image", "document") */
-  storage?: string
   /** Upload endpoint for the built-in XMLHttpRequest transport */
   action?: string
   /** Upload method for the built-in transport */
@@ -149,22 +140,18 @@ export interface ProUploadProps {
   headers?: Record<string, string>
   /** Whether the built-in transport should send credentials */
   withCredentials?: boolean
-  /** Category for file metadata */
-  category?: string
-  /** Business ID for file metadata */
-  businessId?: string
-  /** Business type for file metadata */
-  businessType?: string
   /** Display mode */
   listType?: 'text' | 'picture' | 'picture-card'
-  /** Custom upload request (pluggable network layer) */
+  /**
+   * Custom upload request (pluggable network layer).
+   * storage / business_type / media_class 等业务策略字段由调用方的上传用例（upload case）
+   * 在这里自行写入 options.formData；底座不持有、也不接收业务策略 props。
+   */
   customRequest?: (options: ProUploadRequestOptions) => void
   /** Hook before upload; return false or Promise<false> to prevent */
   beforeUpload?: (file: File) => boolean | Promise<boolean>
   /** Transform a validated File before it enters upload queue */
-  transformFile?: (file: File, ctx: ProUploadPayloadContext) => File | Promise<File>
-  /** Build FormData payload; override to add custom fields */
-  buildUploadPayload?: (file: File, ctx: ProUploadPayloadContext) => FormData
+  transformFile?: (file: File) => File | Promise<File>
   /** Parse raw server response into FileItem fields */
   parseResponse?: (raw: unknown) => Partial<ProUploadFileItem>
   /** Custom file item renderer */

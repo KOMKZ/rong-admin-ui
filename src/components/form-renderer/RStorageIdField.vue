@@ -1,6 +1,11 @@
 <script setup lang="ts">
   import { computed } from 'vue'
-  import { RProUpload, type ProUploadFileItem, type ProUploadPayloadContext } from '../pro-upload'
+  import {
+    RProUpload,
+    defaultUploadRequest,
+    type ProUploadFileItem,
+    type ProUploadRequestOptions,
+  } from '../pro-upload'
   import type { FormFieldSchema } from './types'
 
   const props = defineProps<{
@@ -56,14 +61,23 @@
     emit('update:modelValue', multiple.value ? storageIds : (storageIds[0] ?? ''))
   }
 
-  function buildUploadPayload(file: File, ctx: ProUploadPayloadContext): FormData {
-    const formData = new FormData()
-    formData.append('file', file)
-    if (ctx.storage) formData.append('storage', ctx.storage)
-    if (ctx.businessId) formData.append('business_id', ctx.businessId)
-    if (ctx.businessType) formData.append('business_type', ctx.businessType)
+  // Schema 驱动的 storage_id 字段是合同认可的保留通道：
+  // 策略字段来自字段 schema（field.storage / field.businessType），不是页面 props。
+  function schemaUploadRequest(options: ProUploadRequestOptions): void {
+    const { formData } = options
+    if (props.field.storage) formData.append('storage', props.field.storage)
+    if (props.field.businessId) formData.append('business_id', props.field.businessId)
+    if (props.field.businessType) formData.append('business_type', props.field.businessType)
     if (props.field.mediaClass) formData.append('media_class', props.field.mediaClass)
-    return formData
+    defaultUploadRequest(
+      {
+        action: props.field.action,
+        method: 'POST',
+        headers: props.field.headers,
+        withCredentials: props.field.withCredentials ?? false,
+      },
+      options,
+    )
   }
 </script>
 
@@ -76,14 +90,8 @@
     :max-size-m-b="field.maxSizeMB"
     :disabled="disabled"
     :readonly="readonly"
-    :storage="field.storage"
-    :business-id="field.businessId"
-    :business-type="field.businessType"
-    :action="field.action"
-    :headers="field.headers"
-    :with-credentials="field.withCredentials"
     :list-type="listType"
-    :build-upload-payload="buildUploadPayload"
+    :custom-request="schemaUploadRequest"
     @update:model-value="handleUpdate"
   />
 </template>
