@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-  import { computed, ref, type PropType } from 'vue'
+  import { computed, onBeforeUnmount, onMounted, ref, type PropType } from 'vue'
   import { NButton, NTooltip } from 'naive-ui'
   import RIcon from '../icon/RIcon.vue'
   import type { DescriptionItem, DescriptionGroup, DescriptionsPanelExpose } from './types'
@@ -28,9 +28,33 @@
     ),
   )
 
+  // 响应式列数按视口宽度解析；number 传入时保持固定列数。
+  const RESPONSIVE_COLUMNS: Array<{ key: 'xs' | 'sm' | 'md' | 'lg' | 'xl'; minWidth: number }> = [
+    { key: 'xs', minWidth: 0 },
+    { key: 'sm', minWidth: 640 },
+    { key: 'md', minWidth: 768 },
+    { key: 'lg', minWidth: 1024 },
+    { key: 'xl', minWidth: 1280 },
+  ]
+
+  const viewportWidth = ref(typeof window === 'undefined' ? 1024 : window.innerWidth)
+
+  function handleViewportResize() {
+    viewportWidth.value = window.innerWidth
+  }
+
+  onMounted(() => window.addEventListener('resize', handleViewportResize, { passive: true }))
+  onBeforeUnmount(() => window.removeEventListener('resize', handleViewportResize))
+
   const columnCount = computed(() => {
     if (typeof props.columns === 'number') return props.columns
-    return props.columns.md ?? 3
+    if (!props.columns) return 3
+    let resolved = 3
+    for (const { key, minWidth } of RESPONSIVE_COLUMNS) {
+      const value = props.columns[key]
+      if (value !== undefined && viewportWidth.value >= minWidth) resolved = value
+    }
+    return resolved
   })
 
   const labelStyle = computed(() => {

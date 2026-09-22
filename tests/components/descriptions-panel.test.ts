@@ -135,4 +135,50 @@ describe('RDescriptionsPanel', () => {
     })
     expect(wrapper.text()).toContain('N/A')
   })
+
+  describe('responsive columns', () => {
+    function setViewportWidth(width: number) {
+      Object.defineProperty(window, 'innerWidth', { value: width, configurable: true })
+      window.dispatchEvent(new Event('resize'))
+    }
+
+    function gridStyle(wrapper: ReturnType<typeof mount>) {
+      return wrapper.find('[data-testid="descriptions-items"]').attributes('style') ?? ''
+    }
+
+    it('keeps fixed columns when a number is passed', () => {
+      setViewportWidth(375)
+      const wrapper = mount(RDescriptionsPanel, {
+        props: { items: sampleItems, columns: 2 },
+      })
+      expect(gridStyle(wrapper)).toContain('repeat(2, 1fr)')
+      setViewportWidth(1024)
+    })
+
+    it('resolves object columns by viewport width', async () => {
+      setViewportWidth(375)
+      const wrapper = mount(RDescriptionsPanel, {
+        props: { items: sampleItems, columns: { xs: 1, sm: 2, md: 3, lg: 5 } },
+      })
+      expect(gridStyle(wrapper)).toContain('repeat(1, 1fr)')
+
+      setViewportWidth(720)
+      await wrapper.vm.$nextTick()
+      expect(gridStyle(wrapper)).toContain('repeat(2, 1fr)')
+
+      setViewportWidth(1440)
+      await wrapper.vm.$nextTick()
+      expect(gridStyle(wrapper)).toContain('repeat(5, 1fr)')
+      setViewportWidth(1024)
+    })
+
+    it('falls back to 3 columns when no breakpoint matches', () => {
+      setViewportWidth(500)
+      const wrapper = mount(RDescriptionsPanel, {
+        props: { items: sampleItems, columns: { lg: 4 } },
+      })
+      expect(gridStyle(wrapper)).toContain('repeat(3, 1fr)')
+      setViewportWidth(1024)
+    })
+  })
 })
