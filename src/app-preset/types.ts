@@ -60,6 +60,8 @@ export interface RongAdminPresetOptions {
   }
 
   router?: {
+    /** 自定义 history 实例（如 createWebHistory('/admin/')）；缺省 createWebHistory() */
+    history?: RouterPipelineOptions['history']
     staticRoutes?: RouteRecordRaw[]
     whiteList?: string[]
     loginPath?: string

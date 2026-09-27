@@ -67,6 +67,7 @@ export function createRongAdminApp(options: RongAdminPresetOptions): RongAdminAp
   let routerPipeline: RouterPipelineInstance | null = null
   if (options.router) {
     routerPipeline = createAdminRouterPipeline({
+      history: options.router.history,
       staticRoutes: options.router.staticRoutes,
       whiteList: options.router.whiteList,
       loginPath: options.router.loginPath,
