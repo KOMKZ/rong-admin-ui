@@ -8,8 +8,9 @@
 
 - `schema: FormFieldSchema[]` — 字段定义（key/label/type/rules/options）
 - `model: Record<string, unknown>` — 表单数据（双向绑定）
-- 支持字段类型：input / textarea / number / select / radio / checkbox / switch / date / daterange / custom
+- 支持字段类型：input / textarea / number / select / radio / checkbox / switch / date / daterange / storage_id / custom
 - `clearable?: boolean` — input / textarea / number / select / date / daterange 透传清除能力；列表筛选场景由 `RFilterBarPro` 默认启用
+- `customRequest?: (options: ProUploadRequestOptions) => void` — 为 schema 上传字段注入消费应用的鉴权、CSRF 和进度传输；字段策略仍来自 schema
 
 ## 输出
 
@@ -34,6 +35,7 @@
 - disabled 字段支持函数式条件禁用
 - 列表筛选字段必须可清除；需要禁止清除时显式设置 `clearable: false`
 - 自定义字段通过 `type: 'custom'` + `component` prop 注入
+- `storage_id` 字段由内部字段组件追加 storage/business metadata；应用只能通过 `customRequest` 注入中立传输，UI 框架不得持有业务策略或应用鉴权实现
 
 ## 示例
 

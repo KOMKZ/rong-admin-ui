@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { computed } from 'vue'
+  import { computed, ref, watch } from 'vue'
   import {
     RProUpload,
     defaultUploadRequest,
@@ -19,16 +19,16 @@
     'update:modelValue': [value: unknown]
   }>()
 
-  const files = computed<ProUploadFileItem[]>(() => {
-    const value = props.modelValue
-    if (Array.isArray(value)) {
-      return value
-        .map((item, index) => uploadValueToItem(item, index))
-        .filter((item): item is ProUploadFileItem => item != null)
-    }
-    const item = uploadValueToItem(value, 0)
-    return item ? [item] : []
-  })
+  const files = ref<ProUploadFileItem[]>([])
+
+  watch(
+    () => props.modelValue,
+    (value) => {
+      if (hasActiveUpload(files.value)) return
+      files.value = normalizeUploadValue(value)
+    },
+    { immediate: true, deep: true },
+  )
 
   const multiple = computed(() => (props.field.maxCount ?? 1) > 1)
   const listType = computed<'text' | 'picture' | 'picture-card'>(() =>
@@ -39,6 +39,8 @@
     if (!value) return null
     if (typeof value === 'object') return value as ProUploadFileItem
     const storageId = String(value)
+    const projected = files.value.find((item) => item.storageId === storageId && item.url)
+    if (projected) return projected
     return {
       uid: `${props.field.key}-${index}-${storageId}`,
       name: storageId,
@@ -51,14 +53,28 @@
   }
 
   function handleUpdate(list: ProUploadFileItem[]): void {
+    files.value = list
     if (props.field.type !== 'storage_id') {
       emit('update:modelValue', list)
       return
     }
+    if (hasActiveUpload(list)) return
     const storageIds = list
       .filter((item) => item.status === 'success' && item.storageId)
       .map((item) => item.storageId ?? '')
+    if (storageIds.length === 0 && list.some((item) => item.status === 'error')) return
     emit('update:modelValue', multiple.value ? storageIds : (storageIds[0] ?? ''))
+  }
+
+  function normalizeUploadValue(value: unknown): ProUploadFileItem[] {
+    const values = Array.isArray(value) ? value : [value]
+    return values
+      .map((item, index) => uploadValueToItem(item, index))
+      .filter((item): item is ProUploadFileItem => item != null)
+  }
+
+  function hasActiveUpload(list: ProUploadFileItem[]): boolean {
+    return list.some((item) => ['pending', 'queued', 'uploading'].includes(item.status))
   }
 
   // Schema 驱动的 storage_id 字段是合同认可的保留通道：
@@ -69,6 +85,10 @@
     if (props.field.businessId) formData.append('business_id', props.field.businessId)
     if (props.field.businessType) formData.append('business_type', props.field.businessType)
     if (props.field.mediaClass) formData.append('media_class', props.field.mediaClass)
+    if (props.field.customRequest) {
+      props.field.customRequest(options)
+      return
+    }
     defaultUploadRequest(
       {
         action: props.field.action,

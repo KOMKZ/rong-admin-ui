@@ -27,6 +27,7 @@
 | 名称 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | clearable | `boolean` | false | input / textarea / number / select / date / daterange 是否显示清除入口；`RFilterBarPro` 筛选场景默认对这些字段启用 |
+| customRequest | `(options: ProUploadRequestOptions) => void` | - | `storage_id` 等 schema 上传字段的应用传输注入点；用于认证、CSRF、进度与异常，业务上传策略仍由字段 schema 提供 |
 
 ### Emits
 

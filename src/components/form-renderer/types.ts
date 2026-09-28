@@ -1,4 +1,5 @@
 import type { Component, VNode } from 'vue'
+import type { ProUploadRequestOptions } from '../pro-upload/types'
 
 export type FormFieldType =
   | 'input'
@@ -105,6 +106,8 @@ export interface FormFieldSchema {
   headers?: Record<string, string>
   /** Whether upload request should include credentials */
   withCredentials?: boolean
+  /** App-provided transport for schema upload fields (auth/CSRF/progress); business policy stays in schema. */
+  customRequest?: (options: ProUploadRequestOptions) => void
   /** Group key this field belongs to (used with FormRendererProps.groups) */
   group?: string
 }

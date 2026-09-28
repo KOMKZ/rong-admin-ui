@@ -26,6 +26,10 @@
 `mediaClass`、`accept`、大小限制和文案；API adapter 负责 snake_case DTO 与
 `MediaResource` 的转换。
 
+Schema 驱动字段需要应用认证或 CSRF 时，通过 `FormFieldSchema.customRequest`
+注入上传 transport。内部字段组件先按 schema 追加 storage/business/media class，
+再委托 transport；UI 框架不读取应用 token，也不内置业务 upload case。
+
 ## 读写边界
 
 - 数据库和写接口只保存或接收稳定 storage ID，不保存 URL。
