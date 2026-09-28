@@ -95,6 +95,11 @@ function isAllowedAttribute(element: HTMLElement, name: string, value: string): 
   if (normalized === 'style') return sanitizeStyleAttribute(element, value)
   if (element.tagName === 'A' && normalized === 'href') return isSafeUrl(value)
   if (element.tagName === 'IMG') {
+    // data-storage-id 是稳定资源引用（ticket 000241）：编辑器插入时写入，
+    // 读侧按它批量重建展示 URL；只放行受控格式（非空、无引号/标签字符）。
+    if (normalized === 'data-storage-id') {
+      return value.trim().length > 0 && !/["'<>=]/.test(value)
+    }
     return (
       (normalized === 'src' ||
         normalized === 'alt' ||

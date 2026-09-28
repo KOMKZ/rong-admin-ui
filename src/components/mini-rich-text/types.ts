@@ -1,5 +1,7 @@
+// MiniRichTextImageUploadAdapter 上传结果合同：url 必填；storageId 为稳定资源引用，
+// 存在时编辑器把 data-storage-id 写入 img（读侧按它重建展示 URL，ticket 000241）。
 export interface MiniRichTextImageUploadAdapter {
-  upload: (file: File) => Promise<{ url: string; alt?: string }>
+  upload: (file: File) => Promise<{ url: string; storageId?: string; alt?: string }>
 }
 
 export type MiniRichTextPreviewMode = 'mini' | 'web'

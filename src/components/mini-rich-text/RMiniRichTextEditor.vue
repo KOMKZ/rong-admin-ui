@@ -167,7 +167,9 @@
     uploadingImage.value = true
     try {
       const result = await props.imageUploadAdapter.upload(file)
-      insertImage(result.url, result.alt || file.name)
+      // storageId 可选：新消费方（article）同时回传稳定资源引用，
+      // 旧消费方（notify）只回传 url 时行为不变。
+      insertImage(result.url, result.alt || file.name, result.storageId)
     } catch (cause) {
       emit('imageUploadError', cause instanceof Error ? cause : new Error(String(cause)))
     } finally {
@@ -175,13 +177,14 @@
     }
   }
 
-  function insertImage(url: string, alt: string): void {
+  function insertImage(url: string, alt: string, storageId?: string): void {
     if (!url.trim()) return
     editorRef.value?.focus()
+    const storageAttr = storageId?.trim() ? ` data-storage-id="${escapeAttr(storageId.trim())}"` : ''
     document.execCommand(
       'insertHTML',
       false,
-      `<p><img src="${escapeAttr(url)}" alt="${escapeAttr(alt)}" style="max-width: 100%; height: auto;"></p>`,
+      `<p><img src="${escapeAttr(url)}"${storageAttr} alt="${escapeAttr(alt)}" style="max-width: 100%; height: auto;"></p>`,
     )
     syncValue()
   }
