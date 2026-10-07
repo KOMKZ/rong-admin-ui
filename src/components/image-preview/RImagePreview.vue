@@ -7,12 +7,15 @@
   const props = withDefaults(
     defineProps<{
       urls?: string[]
+      /** 点击放大使用的原图列表；缺省回落到 urls。缩略图与放大图按索引一一对应。 */
+      previewUrls?: string[]
       width?: number
       height?: number
       objectFit?: 'contain' | 'cover' | 'fill' | 'none' | 'scale-down'
     }>(),
     {
       urls: () => [],
+      previewUrls: undefined,
       width: 96,
       height: 96,
       objectFit: 'cover',
@@ -20,6 +23,13 @@
   )
 
   const validUrls = computed(() => props.urls.map((url) => url.trim()).filter(Boolean))
+
+  /** 缩略图过滤空值后与原始列表的索引可能错位，放大目标按缩略图在原列表中的位置取值。 */
+  function previewSrcAt(displayUrl: string): string {
+    const sourceIndex = props.urls.indexOf(displayUrl)
+    if (sourceIndex < 0) return displayUrl
+    return props.previewUrls?.[sourceIndex]?.trim() || displayUrl
+  }
 </script>
 
 <template>
@@ -29,6 +39,7 @@
         v-for="url in validUrls"
         :key="url"
         :src="url"
+        :preview-src="previewSrcAt(url)"
         :width="width"
         :height="height"
         :object-fit="objectFit"
