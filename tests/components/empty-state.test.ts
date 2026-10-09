@@ -1,6 +1,17 @@
 import { describe, it, expect } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
+import { createMemoryHistory, createRouter } from 'vue-router'
 import REmptyState from '../../src/components/empty-state/REmptyState.vue'
+
+function createTestRouter() {
+  return createRouter({
+    history: createMemoryHistory(),
+    routes: [
+      { path: '/', component: { template: '<div />' } },
+      { path: '/create', component: { template: '<div />' } },
+    ],
+  })
+}
 
 describe('REmptyState', () => {
   it('renders with default props', () => {
@@ -31,6 +42,41 @@ describe('REmptyState', () => {
     })
     await wrapper.find('[data-testid="empty-state-action"]').trigger('click')
     expect(wrapper.emitted('action')).toBeTruthy()
+  })
+
+  it('renders actionTo as a real route anchor and navigates without command emission', async () => {
+    const router = createTestRouter()
+    await router.push('/')
+    const wrapper = mount(REmptyState, {
+      props: { actionLabel: 'Create', actionTo: '/create' },
+      global: { plugins: [router] },
+    })
+
+    const anchor = wrapper.find('a[data-testid="empty-state-action"]')
+    expect(anchor.exists()).toBe(true)
+    expect(anchor.attributes('href')).toContain('/create')
+    expect(wrapper.find('button[data-testid="empty-state-action"]').exists()).toBe(false)
+
+    await anchor.trigger('click')
+    await flushPromises()
+
+    expect(router.currentRoute.value.path).toBe('/create')
+    expect(wrapper.emitted('action')).toBeUndefined()
+  })
+
+  it('keeps modified actionTo clicks native and does not emit command action', async () => {
+    const router = createTestRouter()
+    await router.push('/')
+    const wrapper = mount(REmptyState, {
+      props: { actionLabel: 'Create', actionTo: '/create' },
+      global: { plugins: [router] },
+    })
+
+    await wrapper.find('a[data-testid="empty-state-action"]').trigger('click', { ctrlKey: true })
+    await flushPromises()
+
+    expect(router.currentRoute.value.path).toBe('/')
+    expect(wrapper.emitted('action')).toBeUndefined()
   })
 
   it('applies size class', () => {

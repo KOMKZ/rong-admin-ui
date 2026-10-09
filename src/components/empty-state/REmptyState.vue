@@ -1,6 +1,8 @@
 <script lang="ts" setup>
+  import type { RouteLocationRaw } from 'vue-router'
   import type { EmptyStateSize } from './types'
   import { RIcon } from '../icon'
+  import { RRouteButton } from '../route-button'
   import { NButton } from 'naive-ui'
 
   withDefaults(
@@ -10,6 +12,8 @@
       description?: string
       actionLabel?: string
       actionType?: 'primary' | 'default'
+      /** 提供时动作渲染为真实路由链接（不 emit action）；缺省保持命令按钮协议。 */
+      actionTo?: RouteLocationRaw
       size?: EmptyStateSize
     }>(),
     {
@@ -18,6 +22,7 @@
       description: '',
       actionLabel: '',
       actionType: 'primary',
+      actionTo: undefined,
       size: 'medium',
     },
   )
@@ -43,8 +48,16 @@
 
     <div v-if="actionLabel || $slots.actions" class="r-empty-state__actions">
       <slot name="actions">
+        <RRouteButton
+          v-if="actionLabel && actionTo"
+          :type="actionType"
+          :to="actionTo"
+          data-testid="empty-state-action"
+        >
+          {{ actionLabel }}
+        </RRouteButton>
         <NButton
-          v-if="actionLabel"
+          v-else-if="actionLabel"
           :type="actionType"
           data-testid="empty-state-action"
           @click="emit('action')"

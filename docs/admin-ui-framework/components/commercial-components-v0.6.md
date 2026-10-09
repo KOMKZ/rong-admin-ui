@@ -18,12 +18,12 @@
 
 ### Props
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `name` | `string` | - | 图标名称（Lucide 图标名，如 `home`, `users`, `settings`） |
-| `size` | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| number` | `'md'` | 图标尺寸 |
-| `color` | `'inherit' \| 'primary' \| 'secondary' \| 'tertiary' \| 'brand' \| 'success' \| 'warning' \| 'danger' \| 'info' \| string` | `'inherit'` | 图标颜色 |
-| `strokeWidth` | `number` | `2` | 线条粗细 |
+| 属性          | 类型                                                                                                                       | 默认值      | 说明                                                      |
+| ------------- | -------------------------------------------------------------------------------------------------------------------------- | ----------- | --------------------------------------------------------- |
+| `name`        | `string`                                                                                                                   | -           | 图标名称（Lucide 图标名，如 `home`, `users`, `settings`） |
+| `size`        | `'xs' \| 'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl' \| number`                                                                  | `'md'`      | 图标尺寸                                                  |
+| `color`       | `'inherit' \| 'primary' \| 'secondary' \| 'tertiary' \| 'brand' \| 'success' \| 'warning' \| 'danger' \| 'info' \| string` | `'inherit'` | 图标颜色                                                  |
+| `strokeWidth` | `number`                                                                                                                   | `2`         | 线条粗细                                                  |
 
 ### A11y
 
@@ -37,11 +37,11 @@
 
 ### 示例矩阵
 
-| 场景 | 示例 |
-|------|------|
-| 基础 | `<RIcon name="home" />` |
-| 尺寸 | `<RIcon name="home" size="lg" />` |
-| 颜色 | `<RIcon name="check" color="success" />` |
+| 场景 | 示例                                           |
+| ---- | ---------------------------------------------- |
+| 基础 | `<RIcon name="home" />`                        |
+| 尺寸 | `<RIcon name="home" size="lg" />`              |
+| 颜色 | `<RIcon name="check" color="success" />`       |
 | 状态 | `<RIcon name="alert-circle" color="danger" />` |
 
 ---
@@ -61,29 +61,29 @@
 
 ### Props
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `title` | `string` | - | 页面标题 |
-| `description` | `string` | - | 页面描述 |
-| `breadcrumbs` | `BreadcrumbItem[]` | - | 面包屑数据 |
-| `showBack` | `boolean` | `false` | 是否显示返回按钮 |
-| `backLabel` | `string` | `'Back'` | 返回按钮文字 |
-| `status` | `'draft' \| 'published' \| 'archived' \| 'error'` | - | 状态指示 |
-| `statusLabel` | `string` | - | 状态文字 |
-| `sticky` | `boolean` | `false` | 是否吸顶 |
+| 属性          | 类型                                              | 默认值   | 说明             |
+| ------------- | ------------------------------------------------- | -------- | ---------------- |
+| `title`       | `string`                                          | -        | 页面标题         |
+| `description` | `string`                                          | -        | 页面描述         |
+| `breadcrumbs` | `BreadcrumbItem[]`                                | -        | 面包屑数据       |
+| `showBack`    | `boolean`                                         | `false`  | 是否显示返回按钮 |
+| `backLabel`   | `string`                                          | `'Back'` | 返回按钮文字     |
+| `status`      | `'draft' \| 'published' \| 'archived' \| 'error'` | -        | 状态指示         |
+| `statusLabel` | `string`                                          | -        | 状态文字         |
+| `sticky`      | `boolean`                                         | `false`  | 是否吸顶         |
 
 ### Slots
 
-| 名称 | 说明 |
-|------|------|
+| 名称      | 说明         |
+| --------- | ------------ |
 | `actions` | 操作按钮区域 |
-| `extra` | 额外内容区域 |
+| `extra`   | 额外内容区域 |
 
 ### Events
 
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `back` | - | 点击返回按钮时触发 |
+| 事件               | 参数                   | 说明               |
+| ------------------ | ---------------------- | ------------------ |
+| `back`             | -                      | 点击返回按钮时触发 |
 | `breadcrumb-click` | `item: BreadcrumbItem` | 点击面包屑项时触发 |
 
 ### A11y
@@ -99,13 +99,13 @@
 
 ### 示例矩阵
 
-| 场景 | 说明 |
-|------|------|
-| 基础 | 标题 + 描述 |
-| 带操作 | 标题 + 操作按钮 |
-| 带状态 | 标题 + 状态标签 |
+| 场景     | 说明              |
+| -------- | ----------------- |
+| 基础     | 标题 + 描述       |
+| 带操作   | 标题 + 操作按钮   |
+| 带状态   | 标题 + 状态标签   |
 | 带面包屑 | 标题 + 面包屑导航 |
-| 吸顶 | 滚动时固定在顶部 |
+| 吸顶     | 滚动时固定在顶部  |
 
 ---
 
@@ -123,27 +123,27 @@
 
 ### Props
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `title` | `string` | - | 指标名称 |
-| `value` | `string \| number` | - | 指标值 |
-| `prefix` | `string` | - | 值前缀（如 ¥） |
-| `suffix` | `string` | - | 值后缀（如 %） |
-| `icon` | `string` | - | 图标名称 |
-| `trend` | `'up' \| 'down' \| 'flat'` | - | 趋势方向 |
-| `trendValue` | `string` | - | 趋势数值（如 +12%） |
-| `trendLabel` | `string` | - | 趋势描述 |
-| `description` | `string` | - | 补充说明 |
-| `loading` | `boolean` | `false` | 加载状态 |
-| `clickable` | `boolean` | `false` | 是否可点击 |
-| `size` | `'small' \| 'medium' \| 'large'` | `'medium'` | 尺寸 |
-| `variant` | `'default' \| 'outlined' \| 'filled'` | `'default'` | 样式变体 |
+| 属性          | 类型                                  | 默认值      | 说明                |
+| ------------- | ------------------------------------- | ----------- | ------------------- |
+| `title`       | `string`                              | -           | 指标名称            |
+| `value`       | `string \| number`                    | -           | 指标值              |
+| `prefix`      | `string`                              | -           | 值前缀（如 ¥）      |
+| `suffix`      | `string`                              | -           | 值后缀（如 %）      |
+| `icon`        | `string`                              | -           | 图标名称            |
+| `trend`       | `'up' \| 'down' \| 'flat'`            | -           | 趋势方向            |
+| `trendValue`  | `string`                              | -           | 趋势数值（如 +12%） |
+| `trendLabel`  | `string`                              | -           | 趋势描述            |
+| `description` | `string`                              | -           | 补充说明            |
+| `loading`     | `boolean`                             | `false`     | 加载状态            |
+| `clickable`   | `boolean`                             | `false`     | 是否可点击          |
+| `size`        | `'small' \| 'medium' \| 'large'`      | `'medium'`  | 尺寸                |
+| `variant`     | `'default' \| 'outlined' \| 'filled'` | `'default'` | 样式变体            |
 
 ### Events
 
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `click` | - | 点击卡片时触发（需 clickable=true） |
+| 事件    | 参数 | 说明                                |
+| ------- | ---- | ----------------------------------- |
+| `click` | -    | 点击卡片时触发（需 clickable=true） |
 
 ### A11y
 
@@ -157,13 +157,13 @@
 
 ### 示例矩阵
 
-| 场景 | 说明 |
-|------|------|
-| 基础 | 标题 + 值 |
+| 场景   | 说明              |
+| ------ | ----------------- |
+| 基础   | 标题 + 值         |
 | 带趋势 | 显示上升/下降趋势 |
-| 带图标 | 左侧显示图标 |
-| 可点击 | 点击跳转详情 |
-| 加载中 | 骨架屏状态 |
+| 带图标 | 左侧显示图标      |
+| 可点击 | 点击跳转详情      |
+| 加载中 | 骨架屏状态        |
 
 ---
 
@@ -181,17 +181,17 @@
 
 ### Props
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `items` | `KpiItem[]` | - | 指标数据数组 |
-| `cols` | `1 \| 2 \| 3 \| 4 \| 5 \| 6` | `4` | 列数 |
-| `loading` | `boolean` | `false` | 全局加载状态 |
-| `gap` | `string` | `'var(--ra-spacing-4)'` | 间距 |
+| 属性      | 类型                         | 默认值                  | 说明         |
+| --------- | ---------------------------- | ----------------------- | ------------ |
+| `items`   | `KpiItem[]`                  | -                       | 指标数据数组 |
+| `cols`    | `1 \| 2 \| 3 \| 4 \| 5 \| 6` | `4`                     | 列数         |
+| `loading` | `boolean`                    | `false`                 | 全局加载状态 |
+| `gap`     | `string`                     | `'var(--ra-spacing-4)'` | 间距         |
 
 ### Events
 
-| 事件 | 参数 | 说明 |
-|------|------|------|
+| 事件         | 参数          | 说明               |
+| ------------ | ------------- | ------------------ |
 | `item-click` | `key: string` | 点击某个卡片时触发 |
 
 ### A11y
@@ -220,34 +220,34 @@
 
 ### Props
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `visible` | `boolean` | - | 是否显示（v-model） |
-| `title` | `string` | - | 抽屉标题 |
-| `width` | `'small' \| 'medium' \| 'large' \| 'xlarge' \| number` | `'medium'` | 抽屉宽度 |
-| `placement` | `'left' \| 'right'` | `'right'` | 出现位置 |
-| `schema` | `FormFieldSchema[]` | - | 表单字段配置 |
-| `model` | `Record<string, unknown>` | - | 表单数据（v-model） |
-| `submitText` | `string` | `'Submit'` | 提交按钮文字 |
-| `cancelText` | `string` | `'Cancel'` | 取消按钮文字 |
-| `loading` | `boolean` | `false` | 提交中状态 |
-| `validateOnSubmit` | `boolean` | `true` | 提交时是否校验 |
+| 属性               | 类型                                                   | 默认值     | 说明                |
+| ------------------ | ------------------------------------------------------ | ---------- | ------------------- |
+| `visible`          | `boolean`                                              | -          | 是否显示（v-model） |
+| `title`            | `string`                                               | -          | 抽屉标题            |
+| `width`            | `'small' \| 'medium' \| 'large' \| 'xlarge' \| number` | `'medium'` | 抽屉宽度            |
+| `placement`        | `'left' \| 'right'`                                    | `'right'`  | 出现位置            |
+| `schema`           | `FormFieldSchema[]`                                    | -          | 表单字段配置        |
+| `model`            | `Record<string, unknown>`                              | -          | 表单数据（v-model） |
+| `submitText`       | `string`                                               | `'Submit'` | 提交按钮文字        |
+| `cancelText`       | `string`                                               | `'Cancel'` | 取消按钮文字        |
+| `loading`          | `boolean`                                              | `false`    | 提交中状态          |
+| `validateOnSubmit` | `boolean`                                              | `true`     | 提交时是否校验      |
 
 ### Events
 
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:visible` | `boolean` | 显示状态变化 |
-| `update:model` | `Record<string, unknown>` | 表单数据变化 |
-| `submit` | `model: Record<string, unknown>` | 提交表单 |
-| `cancel` | - | 取消操作 |
+| 事件             | 参数                             | 说明         |
+| ---------------- | -------------------------------- | ------------ |
+| `update:visible` | `boolean`                        | 显示状态变化 |
+| `update:model`   | `Record<string, unknown>`        | 表单数据变化 |
+| `submit`         | `model: Record<string, unknown>` | 提交表单     |
+| `cancel`         | -                                | 取消操作     |
 
 ### Expose
 
-| 方法 | 参数 | 说明 |
-|------|------|------|
-| `validate` | - | 触发表单校验 |
-| `resetFields` | - | 重置表单 |
+| 方法          | 参数 | 说明         |
+| ------------- | ---- | ------------ |
+| `validate`    | -    | 触发表单校验 |
+| `resetFields` | -    | 重置表单     |
 
 ### A11y
 
@@ -276,31 +276,43 @@
 
 ### Props
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `icon` | `string` | `'inbox'` | 图标名称 |
-| `title` | `string` | `'No data'` | 标题 |
-| `description` | `string` | - | 描述文字 |
-| `actionLabel` | `string` | - | 操作按钮文字 |
-| `size` | `'small' \| 'medium' \| 'large'` | `'medium'` | 尺寸 |
+| 属性          | 类型                             | 默认值      | 说明                                                                                       |
+| ------------- | -------------------------------- | ----------- | ------------------------------------------------------------------------------------------ |
+| `icon`        | `string`                         | `'inbox'`   | 图标名称                                                                                   |
+| `title`       | `string`                         | `'No data'` | 标题                                                                                       |
+| `description` | `string`                         | -           | 描述文字                                                                                   |
+| `actionLabel` | `string`                         | -           | 操作文案；与 `actionTo` 组合时渲染链接，否则渲染命令按钮                                   |
+| `actionType`  | `'primary' \| 'default'`         | `'primary'` | 操作按钮视觉类型                                                                           |
+| `actionTo`    | `RouteLocationRaw`               | -           | 应用内纯导航目标；提供时输出真实 anchor，支持右键、中键和 Ctrl/Cmd+点击，且不触发 `action` |
+| `size`        | `'small' \| 'medium' \| 'large'` | `'medium'`  | 尺寸                                                                                       |
 
 ### Slots
 
-| 名称 | 说明 |
-|------|------|
-| `icon` | 自定义图标 |
-| `default` | 自定义操作区域 |
+| 名称      | 说明                     |
+| --------- | ------------------------ |
+| `actions` | 完整替换默认操作区域     |
+| `default` | 空状态操作区后的补充内容 |
 
 ### Events
 
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `action` | - | 点击操作按钮 |
+| 事件     | 参数 | 说明                                   |
+| -------- | ---- | -------------------------------------- |
+| `action` | -    | 点击命令按钮；设置 `actionTo` 后不触发 |
 
 ### A11y
 
 - 图标为装饰性，不参与可访问性树
-- 操作按钮可键盘访问
+- 命令按钮与链接操作均可键盘访问
+
+### 导航与命令边界
+
+纯导航空态使用 `actionTo`，由 `RRouteButton` 生成 router 解析后的真实 `href`；不要再监听
+`action` 调用 `router.push`。重试、重新加载等命令不设置 `actionTo`，继续监听 `action`：
+
+```vue
+<REmptyState action-label="新建模型" :action-to="{ name: 'ModelCreate' }" />
+<REmptyState action-label="重试" @action="reload" />
+```
 
 ---
 
@@ -318,25 +330,25 @@
 
 ### Props
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `status` | `'success' \| 'error' \| 'info' \| 'warning' \| '404' \| '403' \| '500'` | `'info'` | 状态类型 |
-| `title` | `string` | - | 标题 |
-| `description` | `string` | - | 描述 |
-| `showIcon` | `boolean` | `true` | 是否显示图标 |
+| 属性          | 类型                                                                     | 默认值   | 说明         |
+| ------------- | ------------------------------------------------------------------------ | -------- | ------------ |
+| `status`      | `'success' \| 'error' \| 'info' \| 'warning' \| '404' \| '403' \| '500'` | `'info'` | 状态类型     |
+| `title`       | `string`                                                                 | -        | 标题         |
+| `description` | `string`                                                                 | -        | 描述         |
+| `showIcon`    | `boolean`                                                                | `true`   | 是否显示图标 |
 
 ### Slots
 
-| 名称 | 说明 |
-|------|------|
-| `icon` | 自定义图标 |
+| 名称      | 说明         |
+| --------- | ------------ |
+| `icon`    | 自定义图标   |
 | `actions` | 操作按钮区域 |
-| `extra` | 额外内容 |
+| `extra`   | 额外内容     |
 
 ### Events
 
-| 事件 | 参数 | 说明 |
-|------|------|------|
+| 事件     | 参数           | 说明         |
+| -------- | -------------- | ------------ |
 | `action` | `type: string` | 操作按钮点击 |
 
 ---
@@ -355,29 +367,29 @@
 
 ### Props
 
-| 属性 | 类型 | 默认值 | 说明 |
-|------|------|--------|------|
-| `visible` | `boolean` | - | 是否显示（v-model） |
-| `items` | `CommandItem[]` | - | 命令列表 |
-| `placeholder` | `string` | `'Type a command or search...'` | 搜索框占位符 |
-| `loading` | `boolean` | `false` | 加载状态 |
-| `emptyText` | `string` | `'No results found'` | 空结果提示 |
+| 属性          | 类型            | 默认值                          | 说明                |
+| ------------- | --------------- | ------------------------------- | ------------------- |
+| `visible`     | `boolean`       | -                               | 是否显示（v-model） |
+| `items`       | `CommandItem[]` | -                               | 命令列表            |
+| `placeholder` | `string`        | `'Type a command or search...'` | 搜索框占位符        |
+| `loading`     | `boolean`       | `false`                         | 加载状态            |
+| `emptyText`   | `string`        | `'No results found'`            | 空结果提示          |
 
 ### Events
 
-| 事件 | 参数 | 说明 |
-|------|------|------|
-| `update:visible` | `boolean` | 显示状态变化 |
-| `select` | `item: CommandItem` | 选择命令 |
+| 事件             | 参数                | 说明         |
+| ---------------- | ------------------- | ------------ |
+| `update:visible` | `boolean`           | 显示状态变化 |
+| `select`         | `item: CommandItem` | 选择命令     |
 
 ### Keyboard
 
-| 快捷键 | 说明 |
-|--------|------|
-| `⌘K` / `Ctrl+K` | 打开面板 |
-| `↑` / `↓` | 导航 |
-| `Enter` | 执行选中项 |
-| `Esc` | 关闭面板 |
+| 快捷键          | 说明       |
+| --------------- | ---------- |
+| `⌘K` / `Ctrl+K` | 打开面板   |
+| `↑` / `↓`       | 导航       |
+| `Enter`         | 执行选中项 |
+| `Esc`           | 关闭面板   |
 
 ### A11y
 
@@ -398,6 +410,7 @@
 ### 列表页模板
 
 典型结构：
+
 ```
 ┌─────────────────────────────────────┐
 │ RPageHeader (标题 + 操作按钮)        │
@@ -415,6 +428,7 @@
 ### Dashboard 页模板
 
 典型结构：
+
 ```
 ┌─────────────────────────────────────┐
 │ RPageHeader (Dashboard + 刷新/导出)  │
@@ -432,6 +446,7 @@
 ### 详情页模板
 
 典型结构：
+
 ```
 ┌─────────────────────────────────────┐
 │ RPageHeader (返回 + 标题 + 状态)     │
@@ -467,13 +482,7 @@
 </NCard>
 
 <!-- After -->
-<RStatCard
-  title="Users"
-  :value="1024"
-  icon="users"
-  trend="up"
-  trend-value="+12%"
-/>
+<RStatCard title="Users" :value="1024" icon="users" trend="up" trend-value="+12%" />
 ```
 
 ### 从 RModalDialog 迁移到 RDrawerForm
