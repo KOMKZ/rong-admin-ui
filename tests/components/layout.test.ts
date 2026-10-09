@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
-import { mount, VueWrapper } from '@vue/test-utils'
+import { flushPromises, mount, VueWrapper } from '@vue/test-utils'
+import { createMemoryHistory, createRouter } from 'vue-router'
 import RAppShell from '../../src/components/layout/RAppShell.vue'
 import RSideNav from '../../src/components/layout/RSideNav.vue'
 import RTopbar from '../../src/components/layout/RTopbar.vue'
@@ -224,7 +225,9 @@ describe('RAppShell', () => {
 
   it('does not add header--fixed when headerFixed is false', () => {
     wrapper = mount(RAppShell, { props: { headerFixed: false } })
-    expect(wrapper.find('.r-app-shell__header').classes()).not.toContain('r-app-shell__header--fixed')
+    expect(wrapper.find('.r-app-shell__header').classes()).not.toContain(
+      'r-app-shell__header--fixed',
+    )
   })
 })
 
@@ -288,7 +291,9 @@ describe('RSideNav', () => {
 
   it('emits select when menu item clicked', async () => {
     const wrapper = mount(RSideNav, { props: { menus: baseMenus } })
-    const homeBtn = wrapper.findAll('button[role="menuitem"]').find((b) => b.text().includes('Home'))
+    const homeBtn = wrapper
+      .findAll('button[role="menuitem"]')
+      .find((b) => b.text().includes('Home'))
     expect(homeBtn).toBeTruthy()
     await homeBtn!.trigger('click')
     expect(wrapper.emitted('select')).toEqual([['home']])
@@ -564,78 +569,98 @@ describe('RTabsView', () => {
     { key: 'tab4', label: 'Tab 4', path: '/tab4', closable: false },
   ]
 
-  const mountOptions = {
-    global: { stubs: { teleport: true } },
+  function createTestRouter() {
+    return createRouter({
+      history: createMemoryHistory(),
+      routes: tabs.map((tab) => ({ path: tab.path, component: { template: '<div />' } })),
+    })
+  }
+
+  function mountTabs(props: Record<string, unknown> = {}) {
+    return mount(RTabsView, {
+      props: { tabs, ...props },
+      global: { plugins: [createTestRouter()], stubs: { teleport: true } },
+    })
   }
 
   it('renders with data-testid="tabs-view" and role="tablist"', () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs },
-      ...mountOptions,
-    })
+    const wrapper = mountTabs()
     expect(wrapper.find('[data-testid="tabs-view"]').exists()).toBe(true)
     expect(wrapper.find('.r-tabs-view').attributes('role')).toBe('tablist')
   })
 
   it('renders all tabs', () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs },
-      ...mountOptions,
-    })
+    const wrapper = mountTabs()
     expect(wrapper.text()).toContain('Tab 1')
     expect(wrapper.text()).toContain('Tab 2')
     expect(wrapper.text()).toContain('Tab 3')
     expect(wrapper.text()).toContain('Tab 4')
   })
 
-  it('emits select when tab clicked', async () => {
+  it('renders tab navigation as real anchors with href', () => {
+    const wrapper = mountTabs()
+    const anchors = wrapper.findAll('a[role="tab"]')
+    expect(anchors).toHaveLength(4)
+    expect(anchors[0].attributes('href')).toContain('/tab1')
+    expect(anchors[1].attributes('href')).toContain('/tab2')
+  })
+
+  it('navigates via the anchor on plain click', async () => {
+    const router = createTestRouter()
+    await router.push('/tab1')
     const wrapper = mount(RTabsView, {
       props: { tabs },
-      ...mountOptions,
+      global: { plugins: [router], stubs: { teleport: true } },
     })
-    const tabButtons = wrapper.findAll('button[role="tab"]')
+    const tab2 = wrapper.findAll('a[role="tab"]')[1]
+    await tab2.trigger('click')
+    await flushPromises()
+    expect(router.currentRoute.value.path).toBe('/tab2')
+  })
+
+  it('emits select as notification when tab clicked', async () => {
+    const wrapper = mountTabs()
+    const tabButtons = wrapper.findAll('[role="tab"]')
     await tabButtons[1].trigger('click')
     expect(wrapper.emitted('select')).toEqual([['tab2']])
   })
 
   it('applies active state to activeKey tab', () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs, activeKey: 'tab2' },
-      ...mountOptions,
-    })
+    const wrapper = mountTabs({ activeKey: 'tab2' })
     const activeTab = wrapper.find('.r-tabs-view__tab--active')
     expect(activeTab.exists()).toBe(true)
     expect(activeTab.text()).toContain('Tab 2')
-    expect(activeTab.attributes('aria-selected')).toBe('true')
-    expect(activeTab.attributes('tabindex')).toBe('0')
+    const anchor = activeTab.find('[role="tab"]')
+    expect(anchor.attributes('aria-selected')).toBe('true')
+    expect(anchor.attributes('tabindex')).toBe('0')
   })
 
   it('non-active tabs have tabindex="-1"', () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs, activeKey: 'tab1' },
-      ...mountOptions,
-    })
-    const tabButtons = wrapper.findAll('button[role="tab"]')
-    const nonActive = tabButtons.filter((t) => !t.classes().includes('r-tabs-view__tab--active'))
+    const wrapper = mountTabs({ activeKey: 'tab1' })
+    const tabAnchors = wrapper.findAll('[role="tab"]')
+    const nonActive = tabAnchors.filter((t) => t.attributes('aria-selected') !== 'true')
     nonActive.forEach((tab) => {
       expect(tab.attributes('tabindex')).toBe('-1')
     })
   })
 
-  it('tab buttons are keyboard operable (focusable with correct tabindex)', () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs, activeKey: 'tab2' },
-      ...mountOptions,
-    })
+  it('tab anchors are keyboard operable (focusable with correct tabindex)', () => {
+    const wrapper = mountTabs({ activeKey: 'tab2' })
     const activeTab = wrapper.find('.r-tabs-view__tab--active')
-    expect(activeTab.attributes('tabindex')).toBe('0')
+    expect(activeTab.find('[role="tab"]').attributes('tabindex')).toBe('0')
+  })
+
+  it('close button is a sibling of the tab anchor, not nested inside it', () => {
+    const wrapper = mountTabs({ activeKey: 'tab1' })
+    const tab1El = wrapper.findAll('.r-tabs-view__tab').find((t) => t.text().includes('Tab 1'))
+    const anchor = tab1El?.find('[role="tab"]')
+    expect(anchor?.exists()).toBe(true)
+    expect(anchor?.find('.r-tabs-view__close').exists()).toBe(false)
+    expect(tab1El?.find('.r-tabs-view__close').exists()).toBe(true)
   })
 
   it('emits close when close button clicked', async () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs, activeKey: 'tab2' },
-      ...mountOptions,
-    })
+    const wrapper = mountTabs({ activeKey: 'tab2' })
     const closeBtns = wrapper.findAll('.r-tabs-view__close')
     expect(closeBtns.length).toBeGreaterThan(0)
     await closeBtns[0].trigger('click')
@@ -643,128 +668,92 @@ describe('RTabsView', () => {
   })
 
   it('affix tab does not show close button', () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs, activeKey: 'tab3' },
-      ...mountOptions,
-    })
+    const wrapper = mountTabs({ activeKey: 'tab3' })
     const tab3El = wrapper.findAll('.r-tabs-view__tab').find((t) => t.text().includes('Tab 3'))
     expect(tab3El?.find('.r-tabs-view__close').exists()).toBe(false)
   })
 
   it('closable:false tab does not show close button', () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs, activeKey: 'tab4' },
-      ...mountOptions,
-    })
+    const wrapper = mountTabs({ activeKey: 'tab4' })
     const tab4El = wrapper.findAll('.r-tabs-view__tab').find((t) => t.text().includes('Tab 4'))
     expect(tab4El?.find('.r-tabs-view__close').exists()).toBe(false)
   })
 
   it('default closable tab shows close button', () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs, activeKey: 'tab1' },
-      ...mountOptions,
-    })
+    const wrapper = mountTabs({ activeKey: 'tab1' })
     const tab1El = wrapper.findAll('.r-tabs-view__tab').find((t) => t.text().includes('Tab 1'))
     expect(tab1El?.find('.r-tabs-view__close').exists()).toBe(true)
   })
 
   it('close button has aria-label', () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs },
-      ...mountOptions,
-    })
+    const wrapper = mountTabs()
     const closeBtn = wrapper.find('.r-tabs-view__close')
     expect(closeBtn.attributes('aria-label')).toBe('Close tab')
   })
 
-  it('shows context menu on right-click when showContextMenu is true', async () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs, showContextMenu: true },
-      ...mountOptions,
-    })
-    const tab2 = wrapper.findAll('button[role="tab"]')[1]
+  it('does not intercept right-click on tab links (browser menu stays native)', async () => {
+    const wrapper = mountTabs()
+    const tab2 = wrapper.findAll('[role="tab"]')[1]
     await tab2.trigger('contextmenu')
     const ctxMenu = wrapper.find('[data-testid="tabs-context-menu"]')
-    expect(ctxMenu.exists()).toBe(true)
+    expect(ctxMenu.exists()).toBe(false)
   })
 
-  it('context menu has Close, Close Others, Close All buttons', async () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs },
-      ...mountOptions,
-    })
-    const tab = wrapper.findAll('button[role="tab"]')[0]
-    await tab.trigger('contextmenu')
+  it('opens tab actions menu from the explicit actions trigger', async () => {
+    const wrapper = mountTabs({ activeKey: 'tab2' })
+    await wrapper.find('[data-testid="tabs-actions-trigger"]').trigger('click')
     const ctxMenu = wrapper.find('[data-testid="tabs-context-menu"]')
+    expect(ctxMenu.exists()).toBe(true)
+    // 菜单 Teleport 到 body 后必须锚定触发按钮坐标，而不是落在 fixed 静态位置。
+    expect(ctxMenu.attributes('style')).toContain('top:')
+    expect(ctxMenu.attributes('style')).toContain('left:')
     expect(ctxMenu.text()).toContain('Close')
     expect(ctxMenu.text()).toContain('Close Others')
     expect(ctxMenu.text()).toContain('Close All')
   })
 
-  it('emits close when context menu Close clicked', async () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs },
-      ...mountOptions,
-    })
-    const tab2 = wrapper.findAll('button[role="tab"]')[1]
-    await tab2.trigger('contextmenu')
-    const closeBtn = wrapper.find('[data-testid="tabs-context-menu"] button')
-    await closeBtn.trigger('click')
+  it('emits close for the active tab from the actions menu', async () => {
+    const wrapper = mountTabs({ activeKey: 'tab2' })
+    await wrapper.find('[data-testid="tabs-actions-trigger"]').trigger('click')
+    const buttons = wrapper.findAll('[data-testid="tabs-context-menu"] button')
+    await buttons[0].trigger('click')
     expect(wrapper.emitted('close')).toEqual([['tab2']])
   })
 
-  it('emits close-other when context menu Close Others clicked', async () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs },
-      ...mountOptions,
-    })
-    const tab2 = wrapper.findAll('button[role="tab"]')[1]
-    await tab2.trigger('contextmenu')
+  it('emits close-other from the actions menu', async () => {
+    const wrapper = mountTabs({ activeKey: 'tab2' })
+    await wrapper.find('[data-testid="tabs-actions-trigger"]').trigger('click')
     const buttons = wrapper.findAll('[data-testid="tabs-context-menu"] button')
     await buttons[1].trigger('click')
     expect(wrapper.emitted('close-other')).toEqual([['tab2']])
   })
 
-  it('emits close-all when context menu Close All clicked', async () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs },
-      ...mountOptions,
-    })
-    const tab = wrapper.findAll('button[role="tab"]')[0]
-    await tab.trigger('contextmenu')
+  it('emits close-all from the actions menu', async () => {
+    const wrapper = mountTabs({ activeKey: 'tab2' })
+    await wrapper.find('[data-testid="tabs-actions-trigger"]').trigger('click')
     const buttons = wrapper.findAll('[data-testid="tabs-context-menu"] button')
     await buttons[2].trigger('click')
     expect(wrapper.emitted('close-all')).toBeTruthy()
   })
 
-  it('does not show context menu when showContextMenu is false', async () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs, showContextMenu: false },
-      ...mountOptions,
-    })
-    const tab = wrapper.findAll('button[role="tab"]')[0]
-    await tab.trigger('contextmenu')
+  it('does not render actions trigger when showContextMenu is false', async () => {
+    const wrapper = mountTabs({ activeKey: 'tab2', showContextMenu: false })
+    expect(wrapper.find('[data-testid="tabs-actions-trigger"]').exists()).toBe(false)
+    await wrapper.findAll('[role="tab"]')[0].trigger('contextmenu')
     const ctxMenu = wrapper.find('[data-testid="tabs-context-menu"]')
     expect(ctxMenu.exists()).toBe(false)
   })
 
   it('exposes scrollToActive method', () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs },
-      ...mountOptions,
-    })
+    const wrapper = mountTabs()
     expect(typeof (wrapper.vm as { scrollToActive?: () => void }).scrollToActive).toBe('function')
   })
 
   it('scroll container renders with tabs and arrow buttons have correct aria-labels', () => {
-    const wrapper = mount(RTabsView, {
-      props: { tabs },
-      ...mountOptions,
-    })
+    const wrapper = mountTabs()
     const scrollEl = wrapper.find('.r-tabs-view__scroll')
     expect(scrollEl.exists()).toBe(true)
-    expect(scrollEl.findAll('button[role="tab"]').length).toBe(4)
+    expect(scrollEl.findAll('[role="tab"]').length).toBe(4)
     const leftArrow = wrapper.find('.r-tabs-view__arrow--left')
     const rightArrow = wrapper.find('.r-tabs-view__arrow--right')
     if (leftArrow.exists()) {

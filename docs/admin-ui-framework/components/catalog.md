@@ -119,6 +119,23 @@
 - **测试**: `tests/components/route-quick-actions-widget.test.ts`
 - **消费方调用**: `rong-admin-web/src/views/dashboard/index.vue`
 
+### RRouteButton
+
+- **文件**: `src/components/route-button/RRouteButton.vue`
+- **契约**: `src/components/route-button/types.ts`
+- **规格文档**: `components/spec-route-button.md`
+- **测试**: `tests/components/route-button.test.ts` (6 tests)
+- **消费方调用**: `hrise-admin-web/src/views/**`（页面 CTA，ticket 000487 起接入）
+- **说明**: 页面路由按钮原语；配合 `RRowActions` 的 `kind: 'route' | 'link'` action 与 `RTabsView` 真实链接页签，构成后台原生链接导航协议（`navigation/link-rel.ts` 是 `_blank` 安全 rel 的唯一决定位置）。
+
+### RRowActions
+
+- **文件**: `src/components/row-actions/RRowActions.vue`
+- **契约**: `src/components/row-actions/types.ts`
+- **测试**: `tests/components/row-actions.test.ts` (12 tests)
+- **消费方调用**: `hrise-admin-web/src/views/**`
+- **说明**: 行操作动作是 `command | route | link` 可判别联合；route/link 输出真实 anchor（inline 与 overflow Dropdown 同协议），command 保持按钮。
+
 ## 组件依赖
 
 所有组件依赖 `naive-ui` (peer dependency)，无框架层内部模块依赖。

@@ -197,6 +197,7 @@ export default defineConfig({
         ),
         'components/template/index': resolve(__dirname, 'src/components/template/index.ts'),
         'components/i18n/index': resolve(__dirname, 'src/components/i18n/index.ts'),
+        'components/route-button/index': resolve(__dirname, 'src/components/route-button/index.ts'),
         'app-captcha/index': resolve(__dirname, 'src/app-captcha/index.ts'),
         'naive/index': resolve(__dirname, 'src/naive/index.ts'),
       },

@@ -1,8 +1,8 @@
 # Frontend Structure Gate Report
 
 - mode: changed
-- files_scanned: 440
-- funcs_scanned: 3660
+- files_scanned: 446
+- funcs_scanned: 3718
 - issues: 0
 - blocking: 0
 
