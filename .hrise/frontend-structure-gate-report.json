@@ -1,8 +1,8 @@
 {
   "mode": "changed",
   "root": "/home/kitral/pro/happy-rise-cpy/happy-rise-devpro/rong-admin-ui",
-  "files_scanned": 446,
-  "funcs_scanned": 3718,
+  "files_scanned": 454,
+  "funcs_scanned": 3780,
   "blocking": 0,
   "issues": []
 }

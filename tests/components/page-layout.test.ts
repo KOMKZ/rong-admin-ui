@@ -3,6 +3,7 @@ import { mount } from '@vue/test-utils'
 import RFormPage from '../../src/components/page-layout/RFormPage.vue'
 import RListPage from '../../src/components/page-layout/RListPage.vue'
 import RSectionCard from '../../src/components/page-layout/RSectionCard.vue'
+import RPageTabs from '../../src/components/page-layout/RPageTabs.vue'
 
 describe('page layout components', () => {
   it('renders a list page with fixed filter and table card regions', () => {
@@ -61,5 +62,18 @@ describe('page layout components', () => {
 
     expect(wrapper.find('[data-testid="section-card"]').classes()).toContain('ra-card')
     expect(wrapper.text()).toContain('基础信息')
+  })
+
+  it('renders page-level tabs on the canonical flush surface', () => {
+    const wrapper = mount(RPageTabs, {
+      props: { dataTestid: 'page-tabs' },
+      slots: { default: '<nav data-testid="tabs-nav">tabs</nav>' },
+    })
+
+    const surface = wrapper.find('[data-testid="page-tabs"]')
+    expect(surface.classes()).toContain('ra-card')
+    expect(surface.classes()).toContain('ra-card--flush')
+    expect(surface.classes()).toContain('r-page-tabs')
+    expect(wrapper.find('[data-testid="tabs-nav"]').exists()).toBe(true)
   })
 })

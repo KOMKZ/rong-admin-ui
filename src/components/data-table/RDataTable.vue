@@ -28,6 +28,10 @@
       type: [String, Function] as PropType<string | ((row: T) => DataTableRowKey)>,
       default: 'id',
     },
+    rowProps: {
+      type: Function as PropType<(row: T, index: number) => Record<string, unknown>>,
+      default: undefined,
+    },
     pagination: {
       type: [Object, Boolean] as PropType<DataTablePagination | false>,
       default: false,
@@ -378,8 +382,14 @@
   }
 
   function handleRowProps(row: T, index: number): Record<string, unknown> {
+    const external = props.rowProps?.(row, index) ?? {}
+    const externalClick = external.onClick as ((event: MouseEvent) => void) | undefined
     return {
-      onClick: () => emit('rowClick', row, index),
+      ...external,
+      onClick: (event: MouseEvent) => {
+        externalClick?.(event)
+        emit('rowClick', row, index)
+      },
     }
   }
 

@@ -16,7 +16,7 @@
 | HTTP 请求      | app-request (HttpClient)                                                 | ✅ 已实现 |
 | 认证管理       | app-auth (TokenManager, cross-tab sync)                                  | ✅ 已实现 |
 | 配置注入       | app-config (ConfigProvider)                                              | ✅ 已实现 |
-| 页面骨架       | components/page-layout (RListPage, RFormPage, RDetailPage, RSectionCard) | ✅ 已实现 |
+| 页面骨架       | components/page-layout (RListPage, RFormPage, RDetailPage, RPageTabs, RSectionCard) | ✅ 已实现 |
 | 数据表格       | components/data-table (RDataTable)                                       | ✅ 已实现 |
 | 表单引擎       | components/form-renderer (RFormRenderer)                                 | ✅ 已实现 |
 | 对话框         | components/modal-dialog (RModalDialog)                                   | ✅ 已实现 |

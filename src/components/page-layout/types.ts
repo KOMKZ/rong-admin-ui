@@ -8,6 +8,11 @@ export interface PageProps {
   tone?: PageTone
 }
 
+/** 一级页面导航 Tab 的白色 Surface；NTabs 状态和 pane 内容仍由业务页持有。 */
+export interface PageTabsProps {
+  dataTestid?: string
+}
+
 export interface SectionCardProps {
   title?: string
   description?: string

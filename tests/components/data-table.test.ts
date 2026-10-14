@@ -62,6 +62,23 @@ describe('RDataTable', () => {
     expect(emitted![0][0]).toMatchObject({ id: 1, name: 'Item 1' })
   })
 
+  it('should merge consumer rowProps with the standard rowClick contract', async () => {
+    let dragged = false
+    const wrapper = mount(RDataTable, {
+      props: {
+        columns,
+        data,
+        rowProps: () => ({ draggable: true, onDragstart: () => { dragged = true } }),
+      },
+    })
+    const row = wrapper.findAll('tr').find((item) => item.text().includes('Item 1'))!
+    expect(row.attributes('draggable')).toBe('true')
+    await row.trigger('dragstart')
+    await row.trigger('click')
+    expect(dragged).toBe(true)
+    expect(wrapper.emitted('rowClick')).toBeTruthy()
+  })
+
   it('should not render selection column when selectable=false (default)', () => {
     const wrapper = mount(RDataTable, {
       props: { columns, data },
@@ -137,10 +154,9 @@ describe('RDataTable', () => {
     const wrapper = mount(RDataTable, {
       props: { columns, data, density: 'operations', densitySwitchable: true },
     })
-    const source = readFileSync(
-      join(process.cwd(), 'src/components/data-table/RDataTable.vue'),
-      'utf8',
-    )
+    const source = ['RDataTable.template.html', 'RDataTable.vue']
+      .map((file) => readFileSync(join(process.cwd(), 'src/components/data-table', file), 'utf8'))
+      .join('\n')
 
     expect(wrapper.find('[data-testid="data-table-density"]').exists()).toBe(true)
     expect(source).toContain('@click="handleDensityChange(opt.value)"')
@@ -149,7 +165,7 @@ describe('RDataTable', () => {
 
   it('governs table toolbar spacing in the framework layer', () => {
     const source = readFileSync(
-      join(process.cwd(), 'src/components/data-table/RDataTable.vue'),
+      join(process.cwd(), 'src/components/data-table/RDataTable.css'),
       'utf8',
     )
 
@@ -247,7 +263,7 @@ describe('RDataTable', () => {
 
   it('governs table header color and right edge spacing with framework tokens', () => {
     const source = readFileSync(
-      join(process.cwd(), 'src/components/data-table/RDataTable.vue'),
+      join(process.cwd(), 'src/components/data-table/RDataTable.css'),
       'utf8',
     )
 

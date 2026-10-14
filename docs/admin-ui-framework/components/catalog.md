@@ -4,12 +4,12 @@
 
 | 层级             | 定位     | 组件                                                                                                                                                                                                                          |
 | ---------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| layout           | 页面骨架 | RPage, RListPage, RFormPage, RDetailPage, RSectionCard                                                                                                                                                                        |
+| layout           | 页面骨架 | RPage, RListPage, RFormPage, RDetailPage, RPageTabs, RSectionCard                                                                                                                                                             |
 | business-neutral | 中台组件 | RDataTable, RFormRenderer, RModalDialog, RResourcePickerDialog, RFileUpload, RProUpload, RMediaResourceUpload, RImageCropUpload, RMoneyText, RMoneyInput, RJsonViewer, RProTreeEditor, RDashboardBuilder, RDashboardWorkspace |
 
 ## 组件清单
 
-### RPage / RListPage / RFormPage / RDetailPage / RSectionCard
+### RPage / RListPage / RFormPage / RDetailPage / RPageTabs / RSectionCard
 
 - **文件**: `src/components/page-layout/`
 - **契约**: `src/components/page-layout/types.ts`

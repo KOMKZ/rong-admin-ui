@@ -82,6 +82,8 @@ export interface DataTableProps<T = Record<string, unknown>> {
   data: T[]
   loading?: boolean
   rowKey?: string | ((row: T) => DataTableRowKey)
+  /** Optional native row props for workbench interactions such as drag sorting. */
+  rowProps?: (row: T, index: number) => Record<string, unknown>
   pagination?: DataTablePagination | false
   bordered?: boolean
   striped?: boolean
