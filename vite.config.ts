@@ -70,6 +70,10 @@ export default defineConfig({
           __dirname,
           'src/components/batch-action-bar/index.ts',
         ),
+        'components/editable-table/index': resolve(
+          __dirname,
+          'src/components/editable-table/index.ts',
+        ),
         'components/form-table/index': resolve(__dirname, 'src/components/form-table/index.ts'),
         'components/password-strength/index': resolve(
           __dirname,
