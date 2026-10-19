@@ -26,6 +26,8 @@ export interface FilterBarProProps {
   storageKey?: string
   savedSchemes?: FilterScheme[]
   maxVisibleFields?: number
+  /** Auto-collapse only when the schema is larger than this field count. */
+  collapsibleMinFields?: number
   cols?: number
   layoutPreset?: FilterBarLayoutPreset
   resetLabel?: string

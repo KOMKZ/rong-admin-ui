@@ -20,6 +20,7 @@
     storageKey: { type: String, default: undefined },
     savedSchemes: { type: Array as PropType<FilterScheme[]>, default: () => [] },
     maxVisibleFields: { type: Number, default: undefined },
+    collapsibleMinFields: { type: Number, default: 5 },
     cols: { type: Number, default: undefined },
     layoutPreset: {
       type: String as PropType<FilterBarLayoutPreset>,
@@ -73,6 +74,13 @@
     () => props.maxVisibleFields ?? presetMaxVisibleFields[props.layoutPreset],
   )
 
+  const hasAdvanced = computed(
+    () =>
+      props.collapsible &&
+      props.schema.length > resolvedMaxVisibleFields.value &&
+      (props.maxVisibleFields !== undefined || props.schema.length > props.collapsibleMinFields),
+  )
+
   watch(
     () => props.modelValue,
     (v) => {
@@ -83,7 +91,7 @@
 
   const visibleSchema = computed(() => {
     const schema =
-      !props.collapsible || !collapsed.value
+      !hasAdvanced.value || !collapsed.value
         ? props.schema
         : props.schema.slice(0, resolvedMaxVisibleFields.value)
     return schema.map((field) =>
@@ -92,10 +100,6 @@
         : field,
     )
   })
-
-  const hasAdvanced = computed(
-    () => props.collapsible && props.schema.length > resolvedMaxVisibleFields.value,
-  )
 
   const activeQuickFilters = computed(() => {
     return props.quickFilters.filter((qf) => localModel.value[qf.key] === qf.value)

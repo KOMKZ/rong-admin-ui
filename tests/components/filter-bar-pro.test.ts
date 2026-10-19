@@ -70,9 +70,25 @@ describe('RFilterBarPro', () => {
     expect(wrapper.find('[data-testid="filter-toggle-btn"]').exists()).toBe(true)
   })
 
+  it('keeps short filter schemas expanded by default', () => {
+    const wrapper = mount(RFilterBarPro, {
+      props: { schema: baseSchema, modelValue: {} },
+    })
+    const formRenderer = wrapper.findComponent(RFormRenderer)
+    const schema = formRenderer.props('schema') as FormFieldSchema[]
+
+    expect(schema).toHaveLength(baseSchema.length)
+    expect(wrapper.find('[data-testid="filter-toggle-btn"]').exists()).toBe(false)
+  })
+
   it('applies list-toolbar preset for dense list filters', () => {
     const wrapper = mount(RFilterBarPro, {
-      props: { schema: baseSchema, modelValue: {}, layoutPreset: 'list-toolbar' },
+      props: {
+        schema: baseSchema,
+        modelValue: {},
+        layoutPreset: 'list-toolbar',
+        maxVisibleFields: 2,
+      },
     })
     const formRenderer = wrapper.findComponent(RFormRenderer)
     const schema = formRenderer.props('schema') as FormFieldSchema[]
