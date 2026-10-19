@@ -2,6 +2,8 @@
   import { ref, watch } from 'vue'
   import RProUpload from '../pro-upload/RProUpload.vue'
   import type { ProUploadFileItem } from '../pro-upload/types'
+  import RImageCropperDialog from '../image-crop-upload/RImageCropperDialog.vue'
+  import { useCropTransform } from '../image-crop-upload/useCropTransform'
   import { mediaResourceToUploadFile, uploadFileToMediaResource } from './mediaResourceAdapter'
   import type {
     MediaResourceUploadEmits,
@@ -21,10 +23,23 @@
     draggable: true,
     listType: 'picture-card',
     dataTestid: 'media-resource-upload',
+    cropOptions: undefined,
+    cropLocale: undefined,
   })
   const emit = defineEmits<MediaResourceUploadEmits>()
   defineSlots<MediaResourceUploadSlots>()
   const files = ref<ProUploadFileItem[]>([])
+
+  const {
+    cropDialogVisible,
+    cropSourceFile,
+    handleTransformFile,
+    handleCropConfirm,
+    handleCropCancel,
+    handleCropError,
+  } = useCropTransform({
+    enabled: () => Boolean(props.cropOptions),
+  })
 
   watch(
     () => props.modelValue,
@@ -85,6 +100,7 @@
       :timeout-ms="timeoutMs"
       :list-type="listType"
       :custom-request="customRequest"
+      :transform-file="handleTransformFile"
       @update:model-value="handleUpdate"
       @success="handleSuccess"
       @error="handleError"
@@ -92,5 +108,15 @@
     >
       <template v-if="$slots.tip" #tip><slot name="tip" /></template>
     </RProUpload>
+
+    <RImageCropperDialog
+      v-model:visible="cropDialogVisible"
+      :file="cropSourceFile"
+      :options="cropOptions ?? {}"
+      :locale="cropLocale"
+      @confirm="handleCropConfirm"
+      @cancel="handleCropCancel"
+      @error="handleCropError"
+    />
   </div>
 </template>

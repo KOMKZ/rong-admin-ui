@@ -3,6 +3,7 @@ import type {
   ProUploadProps,
   ProUploadRequestOptions,
 } from '../pro-upload/types'
+import type { ImageCropLocale, ImageCropOptions } from '../image-crop-upload/types'
 import type { VNode } from 'vue'
 
 export type MediaResourceClass = 'image' | 'video' | 'audio' | 'document' | 'archive'
@@ -35,6 +36,10 @@ export interface MediaResourceUploadProps {
   draggable?: boolean
   listType?: ProUploadProps['listType']
   dataTestid?: string
+  /** 可选：提供后图片文件先进入裁切弹窗，裁切产物才进入上传与 MediaResource 解析；非图片文件不裁切。 */
+  cropOptions?: ImageCropOptions
+  /** 裁切弹窗文案覆盖。 */
+  cropLocale?: Partial<ImageCropLocale>
 }
 
 export interface MediaResourceUploadEmits {

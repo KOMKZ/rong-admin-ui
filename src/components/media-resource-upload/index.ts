@@ -1,5 +1,6 @@
 export { default as RMediaResourceUpload } from './RMediaResourceUpload.vue'
 export { mediaResourceToUploadFile, uploadFileToMediaResource } from './mediaResourceAdapter'
+export type { ImageCropLocale, ImageCropOptions } from '../image-crop-upload/types'
 export type {
   MediaResource,
   MediaResourceClass,

@@ -72,7 +72,7 @@
 - **契约**: `src/components/media-resource-upload/types.ts`
 - **规格文档**: `components/spec-media-resource-upload.md`
 - **测试**: `tests/components/media-resource-upload.test.ts`
-- **消费方调用**: `hrise-admin-web/src/views/v3/content-creation/templates/edit.vue`
+- **消费方调用**: `hrise-admin-web/src/views/v3/content-creation/templates/edit.vue`, `hrise-admin-web/src/views/system-resources/video-style-profiles/components/VideoStyleMediaFields.vue`
 
 ### RMoneyText / RMoneyInput
 

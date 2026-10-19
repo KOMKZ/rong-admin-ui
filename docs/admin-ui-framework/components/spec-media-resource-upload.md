@@ -11,6 +11,9 @@
 - `mediaClass` 与 `storage` 必须由消费方显式声明；组件不包含任何业务默认值。
 - 组件只支持单资源。多资源列表继续使用 `RProUpload`。
 - `include_media_info=true`、`media_class` 和业务标识由组件统一写入上传表单。
+- 可选 `cropOptions`（复用 `RImageCropUpload` 的 `ImageCropOptions`）：提供后图片文件先进入裁切弹窗，
+  裁切产物才进入上传与 `MediaResource` 解析；非图片文件不裁切。值模型仍是 `MediaResource | null`，
+  不因裁切退化为裸 storage ID；需要完整裁切上传列表能力时仍选 `RImageCropUpload`。
 
 ## 选择组件
 
@@ -52,10 +55,24 @@ Schema 驱动字段需要应用认证或 CSRF 时，通过 `FormFieldSchema.cust
 />
 ```
 
+带正方形裁切的封面（裁切产物才上传，回填值仍是完整 `MediaResource`）：
+
+```vue
+<RMediaResourceUpload
+  v-model="cover"
+  media-class="image"
+  :custom-request="createUploadCaseRequest(cases.cover)"
+  :accept="cases.cover.accept.join(',')"
+  :max-size-m-b="cases.cover.maxSizeMB"
+  :crop-options="{ aspectRatio: 1, outputWidth: 128, outputHeight: 128 }"
+/>
+```
+
 消费方保存时只提交 `cover?.storageId`，详情 API 应返回完整资源对象供回填。
 
 ## 验证
 
 - 组件测试覆盖已有资源回填、上传成功、缺 storage ID、缺 URL、删除，以及 picture-card / text 两种列表模式的视频点击播放；至少一条消费链路挂载真实 Dialog，不得只用 stub 证明弹框。
+- 裁切测试覆盖：配置 `cropOptions` 后图片先弹裁切框且确认前不发起上传、裁切产物经上传映射回完整 `MediaResource`、取消裁切不产出值、未配置时图片直传。
 - 消费方测试覆盖保存后重新加载仍可预览。
 - 公共能力变更同步检查组件导出、类型、规格、测试和真实消费方。

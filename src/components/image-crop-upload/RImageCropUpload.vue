@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import { onBeforeUnmount, ref } from 'vue'
+  import { ref } from 'vue'
   import RProUpload from '../pro-upload/RProUpload.vue'
   import type { ProUploadExpose, ProUploadFileItem } from '../pro-upload/types'
   import RImageCropperDialog from './RImageCropperDialog.vue'
-  import { isImageFile } from './cropper-utils'
+  import { useCropTransform } from './useCropTransform'
   import type { ImageCropResult, ImageCropUploadProps } from './types'
 
   defineOptions({ name: 'RImageCropUpload' })
@@ -52,65 +52,23 @@
     (e: 'crop-error', error: Error): void
   }>()
 
-  interface PendingCrop {
-    sourceFile: File
-    resolve: (file: File | Promise<File>) => void
-    reject: (error: Error) => void
-  }
-
   const uploadRef = ref<ProUploadExpose | null>(null)
-  const cropDialogVisible = ref(false)
-  const cropSourceFile = ref<File | undefined>(undefined)
-  const pendingCrop = ref<PendingCrop | null>(null)
 
-  function applyExternalTransform(file: File): File | Promise<File> {
-    if (!props.transformFile) return file
-    return props.transformFile(file)
-  }
-
-  function clearCropState(): void {
-    cropDialogVisible.value = false
-    cropSourceFile.value = undefined
-    pendingCrop.value = null
-  }
-
-  function handleTransformFile(file: File): Promise<File> {
-    if (!props.crop || !isImageFile(file)) {
-      return Promise.resolve(applyExternalTransform(file))
-    }
-
-    return new Promise<File>((resolve, reject) => {
-      pendingCrop.value = {
-        sourceFile: file,
-        resolve,
-        reject,
-      }
-      cropSourceFile.value = file
-      cropDialogVisible.value = true
-    })
-  }
-
-  function handleCropConfirm(result: ImageCropResult): void {
-    const pending = pendingCrop.value
-    if (!pending) return
-
-    emit('crop-success', result)
-    pending.resolve(applyExternalTransform(result.file))
-    clearCropState()
-  }
-
-  function handleCropCancel(): void {
-    const pending = pendingCrop.value
-    if (!pending) return
-
-    emit('crop-cancel', pending.sourceFile)
-    pending.reject(new Error('Image crop cancelled'))
-    clearCropState()
-  }
-
-  function handleCropError(error: Error): void {
-    emit('crop-error', error)
-  }
+  const {
+    cropDialogVisible,
+    cropSourceFile,
+    handleTransformFile,
+    handleCropConfirm,
+    handleCropCancel,
+    handleCropError,
+  } = useCropTransform({
+    enabled: () => Boolean(props.crop),
+    next: () => props.transformFile,
+    unmountRejectMessage: 'Image crop upload unmounted',
+    onConfirm: (result) => emit('crop-success', result),
+    onCancel: (file) => emit('crop-cancel', file),
+    onError: (error) => emit('crop-error', error),
+  })
 
   function forwardChange(fileList: ProUploadFileItem[]): void {
     emit('change', fileList)
@@ -143,13 +101,6 @@
   function forwardExceed(info: UploadExceedInfo): void {
     emit('exceed', info)
   }
-
-  onBeforeUnmount(() => {
-    if (pendingCrop.value) {
-      pendingCrop.value.reject(new Error('Image crop upload unmounted'))
-    }
-    clearCropState()
-  })
 
   function submit(): void {
     uploadRef.value?.submit()

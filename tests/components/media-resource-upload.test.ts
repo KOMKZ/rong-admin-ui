@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { mount } from '@vue/test-utils'
+import { flushPromises, mount } from '@vue/test-utils'
 import { defineComponent, h } from 'vue'
 import RMediaResourceUpload from '@/components/media-resource-upload/RMediaResourceUpload.vue'
 import {
@@ -7,6 +7,7 @@ import {
   uploadFileToMediaResource,
 } from '@/components/media-resource-upload/mediaResourceAdapter'
 import type { MediaResource } from '@/components/media-resource-upload/types'
+import { cropperDialogStub, createImageCropSourceFile } from '../helpers/crop-dialog-stub'
 
 const cover: MediaResource = {
   storageId: 'local:sys_pub@cover.jpg',
@@ -29,6 +30,16 @@ const modalDialogStub = defineComponent({
 })
 
 const stubCustomRequest = vi.fn()
+
+async function selectImageFile(
+  wrapper: ReturnType<typeof mount>,
+  file: File,
+): Promise<void> {
+  const input = wrapper.find('[data-testid="pro-upload-input"]')
+  Object.defineProperty(input.element, 'files', { value: [file], writable: true })
+  await input.trigger('change')
+  await flushPromises()
+}
 
 describe('RMediaResourceUpload', () => {
   it('hydrates an existing resource with its preview URL', () => {
@@ -150,5 +161,118 @@ describe('RMediaResourceUpload', () => {
       'video',
     )
     expect(video.thumbnail).toMatchObject(thumbnail)
+  })
+})
+
+describe('RMediaResourceUpload crop', () => {
+  const squareCropOptions = {
+    aspectRatio: 1,
+    cropBoxWidth: 360,
+    cropBoxHeight: 360,
+    outputWidth: 128,
+    outputHeight: 128,
+    outputQuality: 0.9,
+  }
+
+  it('opens the crop dialog before uploading when cropOptions is set', async () => {
+    const customRequest = vi.fn()
+    const wrapper = mount(RMediaResourceUpload, {
+      props: {
+        modelValue: null,
+        mediaClass: 'image',
+        customRequest,
+        cropOptions: squareCropOptions,
+      },
+      global: { stubs: { RImageCropperDialog: cropperDialogStub } },
+    })
+
+    await selectImageFile(wrapper, createImageCropSourceFile('cover-raw.png', 'image/png'))
+
+    expect(wrapper.find('[data-testid="crop-dialog-stub"]').exists()).toBe(true)
+    expect(customRequest).not.toHaveBeenCalled()
+    expect(wrapper.findComponent({ name: 'RImageCropperDialog' }).props('options')).toMatchObject(
+      squareCropOptions,
+    )
+
+    await wrapper.find('[data-testid="crop-confirm-stub"]').trigger('click')
+    await flushPromises()
+
+    expect(customRequest).toHaveBeenCalledTimes(1)
+    expect(customRequest.mock.calls[0][0].file.name).toBe('cover-cropped.jpg')
+  })
+
+  it('maps the cropped upload result to the media resource contract', async () => {
+    const customRequest = vi.fn()
+    const wrapper = mount(RMediaResourceUpload, {
+      props: {
+        modelValue: null,
+        mediaClass: 'image',
+        customRequest,
+        cropOptions: squareCropOptions,
+      },
+      global: { stubs: { RImageCropperDialog: cropperDialogStub } },
+    })
+
+    await selectImageFile(wrapper, createImageCropSourceFile('cover-raw.png', 'image/png'))
+    await wrapper.find('[data-testid="crop-confirm-stub"]').trigger('click')
+    await flushPromises()
+
+    wrapper.findComponent({ name: 'RProUpload' }).vm.$emit('success', {
+      uid: 'cropped-1',
+      name: 'cover-cropped.jpg',
+      size: 512,
+      type: 'image/jpeg',
+      status: 'success',
+      progress: 100,
+      storageId: 'local:sys_pub@cover-cropped.jpg',
+      url: '/api/files/storage/local:sys_pub@cover-cropped.jpg',
+    })
+    await wrapper.vm.$nextTick()
+
+    expect(wrapper.emitted('update:modelValue')).toEqual([
+      [
+        expect.objectContaining({
+          storageId: 'local:sys_pub@cover-cropped.jpg',
+          url: '/api/files/storage/local:sys_pub@cover-cropped.jpg',
+          mediaClass: 'image',
+          filename: 'cover-cropped.jpg',
+        }),
+      ],
+    ])
+  })
+
+  it('skips upload when the crop is cancelled', async () => {
+    const customRequest = vi.fn()
+    const wrapper = mount(RMediaResourceUpload, {
+      props: {
+        modelValue: null,
+        mediaClass: 'image',
+        customRequest,
+        cropOptions: squareCropOptions,
+      },
+      global: { stubs: { RImageCropperDialog: cropperDialogStub } },
+    })
+
+    await selectImageFile(wrapper, createImageCropSourceFile('cover-raw.jpg'))
+    await wrapper.find('[data-testid="crop-cancel-stub"]').trigger('click')
+    await flushPromises()
+
+    expect(wrapper.find('[data-testid="crop-dialog-stub"]').exists()).toBe(false)
+    expect(customRequest).not.toHaveBeenCalled()
+    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
+  })
+
+  it('uploads images directly when cropOptions is absent', async () => {
+    const customRequest = vi.fn()
+    const wrapper = mount(RMediaResourceUpload, {
+      props: { modelValue: null, mediaClass: 'image', customRequest },
+      global: { stubs: { RImageCropperDialog: cropperDialogStub } },
+    })
+
+    await selectImageFile(wrapper, createImageCropSourceFile('cover-raw.jpg'))
+
+    expect(wrapper.find('[data-testid="crop-dialog-stub"]').exists()).toBe(false)
+    expect(customRequest).toHaveBeenCalledTimes(1)
+    expect(customRequest.mock.calls[0][0].file.name).toBe('cover-raw.jpg')
   })
 })
